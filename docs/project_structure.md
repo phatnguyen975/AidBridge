@@ -64,7 +64,7 @@ AidBridge/
     │   │   └── observer/           # Listens to Inventory change events
     │   └── websocket/              # STOMP Handlers (Chat, Live Tracking)
     └── resources/
-        ├── application.yml                 # Global configuration (Port, JPA ddl-auto)
-        ├── application-local.example.yml   # Template file with empty keys (Safe to commit)
-        └── application-local.yml           # Actual file containing secrets (DO NOT commit)
+        ├── application.yaml                 # Global configuration (Port, JPA ddl-auto)
+        ├── application-local.example.yaml   # Template file with empty keys (Safe to commit)
+        └── application-local.yaml           # Actual file containing secrets (DO NOT commit)
 ```

@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: your_db_url
+    username: your_db_username
+    password: your_db_password
+
+  mail:
+    username: your_email
+    password: your_app_password
