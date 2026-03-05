@@ -13,3 +13,4 @@ When generating code or answering questions related to the `drc-app/` directory,
 7. **Error Handling:** Implement proper error handling and user feedback for network requests and database operations.
 8. **Performance:** Optimize for performance and battery efficiency, especially for location tracking features.
 9. **Security:** Ensure secure handling of user data and API keys, following best practices for Android security.
+10. **UI/UX:** Ensure that the UI is user-friendly and responsive across different screen sizes. Follow Material Design guidelines where applicable.

@@ -51,7 +51,10 @@ AidBridge/
     │   ├── dto/                    
     │   │   ├── request/            # Incoming client data (e.g., SosRequestDto)
     │   │   └── response/           # Outgoing client data, common API wrappers
-    │   ├── entity/                 # JPA Entities (User, Hub, Inventory)
+    │   ├── domain/                 # Core domain models
+    │   │   ├── entity/             # JPA entities mapped to database tables
+    │   │   └── enums/              # Domain enums used in entities and business logic
+    │   ├── mapper/                 # Mapper classes for converting Entity <-> DTO
     │   ├── exception/              # GlobalExceptionHandler, Custom Exceptions
     │   ├── repository/             # Spring Data JPA (PostGIS queries)
     │   ├── security/               # JWT Request Filter, Custom UserDetails
