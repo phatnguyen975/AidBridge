@@ -1,7 +1,7 @@
 <div align="center">
   <h1>AidBridge</h1>
-  <p>Disaster Relief Coordinator - DRC</p>
   <sub>March 06, 2026</sub>
+  <p>Disaster Relief Coordinator - DRC</p>
 </div>
 
 > A real-time, AI-assisted mobile application system designed to coordinate emergency disaster relief, bridging the gap between Victims, Volunteers, and Sponsors through Smart Hubs.
@@ -12,7 +12,6 @@
 - [Key Features](#-key-features)
 - [System Architecture & Tech Stack](#-system-architecture--tech-stack)
 - [Core Algorithms](#-core-algorithms)
-- [Project Structure](#-project-structure)
 - [Getting Started](#-getting-started)
 
 ## 🎯 About the Project
