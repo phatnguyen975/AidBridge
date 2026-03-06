@@ -12,6 +12,7 @@
 - [Key Features](#-key-features)
 - [System Architecture & Tech Stack](#-system-architecture--tech-stack)
 - [Core Algorithms](#-core-algorithms)
+- [Project Structure](#-project-structure)
 - [Getting Started](#-getting-started)
 
 ## 🎯 About the Project
@@ -80,6 +81,75 @@ Where:
 - **A (Average Response):** Speed of accepting tasks.
 - **E (Experience):** Familiarity with the specific geographical area.
 
+## 📂 Project Structure
+
+```text
+AidBridge/
+├── .github/
+│   └── instructions/
+│       ├── global.instructions.md
+│       ├── android.instructions.md
+│       └── spring.instructions.md
+│
+├── docs/
+│   ├── requirements.md             # Business logic and feature details
+│   ├── tech_stack.md               # Technology stack definitions
+│   └── project_structure.md        # This file
+│
+├── drc-app/                        # --- FRONTEND WORKSPACE ---
+│   ├── app/src/main/java/com/drc/aidbridge/
+│   │   ├── data/                   
+│   │   │   ├── local/              # Room DB: Entities, DAOs, AppDatabase
+│   │   │   ├── remote/             # Retrofit: ApiService, Interceptors
+│   │   │   └── repository/         # Repository Implementations
+│   │   ├── di/                     # Dagger-Hilt Modules
+│   │   │   ├── NetworkModule.java
+│   │   │   └── DatabaseModule.java
+│   │   ├── domain/                 
+│   │   │   ├── model/              # Domain Models (pure data objects only)
+│   │   │   ├── repository/         # Repository Interfaces
+│   │   │   └── usecase/            # Business logic (e.g., CalculateDistanceUseCase)
+│   │   ├── services/               
+│   │   │   ├── location/           # Background Location Tracking Service
+│   │   │   └── messaging/          # Firebase Cloud Messaging Service
+│   │   ├── ui/                     # Contains Views (Activities/Fragments) and ViewModels
+│   │   │   ├── base/               # BaseActivity, BaseFragment, BaseViewModel
+│   │   │   ├── auth/               # Login, Register screens
+│   │   │   ├── map/                # Map rendering, Markers, Polylines
+│   │   │   ├── sos/                # Quick SOS, SOS request form
+│   │   │   ├── volunteer/          # Missions, 30s countdown, Live tracking
+│   │   │   └── hub/                # Inventory management, QR scanning
+│   │   └── utils/                  # Formatters, Constants, Permission Helpers
+│   └── app/src/main/res/           
+│       ├── layout/                 # UI XML files
+│       ├── drawable/               # Custom icons (Green Marker, Shelter Flag)
+│       └── values/                 # strings.xml, colors.xml, themes.xml
+│
+└── spring-backend/                 # --- BACKEND WORKSPACE ---
+    ├── src/main/java/com/drc/aidbridge/
+    │   ├── config/                 # Spring configurations (CORS, WebSocket, Swagger)
+    │   ├── controller/             # REST API Endpoints
+    │   ├── dto/                    
+    │   │   ├── request/            # Incoming client data (e.g., SosRequestDto)
+    │   │   └── response/           # Outgoing client data, common API wrappers
+    │   ├── domain/                 # Core domain models
+    │   │   ├── entity/             # JPA entities mapped to database tables
+    │   │   └── enums/              # Domain enums used in entities and business logic
+    │   ├── mapper/                 # Mapper classes for converting Entity <-> DTO
+    │   ├── exception/              # GlobalExceptionHandler, Custom Exceptions
+    │   ├── repository/             # Spring Data JPA (PostGIS queries)
+    │   ├── security/               # JWT Request Filter, Custom UserDetails
+    │   ├── service/                
+    │   │   ├── impl/               # Service Implementations
+    │   │   ├── strategy/           # Contains Broadcast & Sequential Batches logic
+    │   │   └── observer/           # Listens to Inventory change events
+    │   └── websocket/              # STOMP Handlers (Chat, Live Tracking)
+    └── resources/
+        ├── application.yaml                 # Global configuration (Port, JPA ddl-auto)
+        ├── application-local.example.yaml   # Template file with empty keys (Safe to commit)
+        └── application-local.yaml           # Actual file containing secrets (DO NOT commit)
+```
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -92,8 +162,8 @@ Where:
 ### Setup Backend
 
 - Navigate to `spring-backend/resources/`.
-- Copy `application-local.example.yml` to `application-local.yml`.
-- Fill in your Supabase DB credentials and JWT secret in `application-local.yml`.
+- Copy `application-local.example.yaml` to `application-local.yaml`.
+- Fill in your Supabase DB credentials and JWT secret in `application-local.yaml`.
 - Run the Spring Boot application using your IDE.
 
 ### Setup Frontend
