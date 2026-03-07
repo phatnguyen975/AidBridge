@@ -1,0 +1,17 @@
+name: Git Flow Guard
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  enforce-dev-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if PR is coming from dev
+        if: github.head_ref != 'dev'
+        run: |
+          echo "Failed: Only the 'dev' branch can be merged into 'main'."
+          echo "The branch you are using is: ${{ github.head_ref }}"
+          exit 1
