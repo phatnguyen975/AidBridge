@@ -15,6 +15,11 @@ AidBridge/
 │   ├── tech_stack.md               # Technology stack definitions
 │   └── project_structure.md        # This file
 │
+├── database/                       # --- INFRASTRUCTURE (Supabase/PostgreSQL) ---
+│   ├── 01_init_postgis.sql         # Enable PostGIS extension
+│   ├── 02_schema.sql               # DDL: Create tables (Users, Hubs, Inventory)
+│   └── 03_seed_data.sql            # DML: Insert initial mock data
+│
 ├── drc-app/                        # --- FRONTEND WORKSPACE ---
 │   ├── app/src/main/java/com/drc/aidbridge/
 │   │   ├── data/                   
