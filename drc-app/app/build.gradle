@@ -91,7 +91,7 @@ dependencies {
     // Real-time Communication (WebSocket / STOMP)
     // ===========================
     // STOMP protocol over WebSocket - used for real-time chat, live tracking, and dispatch notifications
-    implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.6.6'
+    implementation 'com.github.NaikSoftware:stompprotocolandroid:1.6.6'
     // RxJava3 - reactive streams library required by StompProtocolAndroid for async event handling
     implementation 'io.reactivex.rxjava3:rxjava:3.1.9'
     // RxAndroid - provides Android-aware schedulers (mainThread, io) for RxJava3
@@ -111,7 +111,7 @@ dependencies {
     // Google Maps SDK - renders interactive map; supports custom markers, polylines, and heatmap tiles
     implementation 'com.google.android.gms:play-services-maps:19.1.0'
     // Fused Location Provider - battery-efficient GPS for live tracking and SOS coordinate capture
-    implementation 'com.google.android.gms:play-services-location:21.4.0'
+    implementation 'com.google.android.gms:play-services-location:21.2.0'
 
     // ===========================
     // QR Code Scanning (CameraX + ML Kit)

@@ -48,7 +48,7 @@ This project is a Monorepo containing an Android mobile app (Frontend) and a Spr
 
 | Library                                        | Version | Purpose                                                             |
 | ---------------------------------------------- | ------- | ------------------------------------------------------------------- |
-| `com.github.NaikSoftware:StompProtocolAndroid` | `1.6.6` | STOMP protocol over WebSocket for chat, live tracking, and dispatch |
+| `com.github.NaikSoftware:stompprotocolandroid` | `1.6.6` | STOMP protocol over WebSocket for chat, live tracking, and dispatch |
 | `io.reactivex.rxjava3:rxjava`                  | `3.1.9` | Reactive streams library (required by StompProtocolAndroid)         |
 | `io.reactivex.rxjava3:rxandroid`               | `3.0.2` | Android-aware schedulers (mainThread, io) for RxJava3               |
 
@@ -66,7 +66,7 @@ This project is a Monorepo containing an Android mobile app (Frontend) and a Spr
 | Library                                         | Version  | Purpose                                                                               |
 | ----------------------------------------------- | -------- | ------------------------------------------------------------------------------------- |
 | `com.google.android.gms:play-services-maps`     | `19.1.0` | Google Maps SDK — renders map, custom markers, polylines, and heatmap tiles           |
-| `com.google.android.gms:play-services-location` | `21.4.0` | Fused Location Provider — battery-efficient GPS for live tracking and SOS coordinates |
+| `com.google.android.gms:play-services-location` | `21.2.0` | Fused Location Provider — battery-efficient GPS for live tracking and SOS coordinates |
 
 ### 1.7 QR Code Scanning (CameraX + ML Kit)
 
