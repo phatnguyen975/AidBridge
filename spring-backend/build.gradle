@@ -25,44 +25,93 @@ repositories {
 }
 
 dependencies {
+    // ===========================
     // Core Spring Boot Starters
+    // ===========================
+    // Spring MVC - builds the REST API layer (Controllers, ExceptionHandlers, Filters)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // Spring Security - authentication, authorization, CSRF, and filter chain configuration
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    // Bean Validation (Jakarta) - @Valid, @NotNull, @Size, etc. on DTOs
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    // Spring WebSocket + STOMP - powers real-time chat, live tracking, and dispatch notifications
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    // Spring Actuator - exposes /actuator/health and /actuator/metrics for monitoring
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+    // ===========================
     // Data & Persistence
+    // ===========================
+    // Spring Data JPA - repository abstraction over Hibernate ORM
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // PostgreSQL JDBC driver - connects to Supabase (PostgreSQL) database
     runtimeOnly 'org.postgresql:postgresql'
+    // Hibernate Spatial - adds geospatial type support (Point, Polygon) and spatial HQL functions
+    // Enables ST_DWithin, ST_Distance queries needed for radius-based volunteer/hub discovery
+    implementation 'org.hibernate.orm:hibernate-spatial'
+    // JTS Topology Suite - Java geometry types (Point, LineString, Polygon) used by Hibernate Spatial
+    implementation 'org.locationtech.jts:jts-core:1.20.0'
 
-    // Cache & Messaging
+    // ===========================
+    // Cache & Session Store
+    // ===========================
+    // Spring Data Redis - caches OTP codes, JWT blacklist, dispatch state, and pub/sub for WebSocket
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // ===========================
     // Email Service
+    // ===========================
+    // Spring Mail - sends OTP verification emails to users during registration
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-    // JWT Authentication
-    implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+    // ===========================
+    // Push Notifications (Firebase Admin SDK)
+    // ===========================
+    // Firebase Admin SDK - sends FCM push notifications from server to Android clients
+    // Used for task dispatch (30-second window), status updates, and broadcast emergency alerts
+    implementation 'com.google.firebase:firebase-admin:9.4.3'
 
+    // ===========================
+    // JWT Authentication
+    // ===========================
+    // JJWT API - public interface for building and parsing JSON Web Tokens
+    implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+    // JJWT Implementation - runtime engine for JJWT (not needed at compile time)
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+    // JJWT Jackson - Jackson-based JSON serializer/deserializer for JWT claims
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+
+    // ===========================
+    // DTO Mapping
+    // ===========================
+    // MapStruct - compile-time code generator for Entity <-> DTO mapping (zero reflection)
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+    // MapStruct Processor - generates mapping implementation classes at compile time
+    // Must be declared AFTER Lombok processor so Lombok-generated getters/setters are visible
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+
+    // ===========================
     // Development Tools
+    // ===========================
+    // Spring DevTools - enables automatic restart and LiveReload during local development
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+    // ===========================
     // Lombok (Boilerplate Reduction)
+    // ===========================
+    // Lombok compile-only - provides @Data, @Builder, @Slf4j, etc. annotations
     compileOnly 'org.projectlombok:lombok'
+    // Lombok annotation processor - must run BEFORE MapStruct to expose generated accessors
     annotationProcessor 'org.projectlombok:lombok'
 
-    // Testing Dependencies
+    // ===========================
+    // Testing
+    // ===========================
+    // Spring Boot Test - JUnit 5, Mockito, MockMvc, @SpringBootTest, @DataJpaTest
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-data-redis-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-mail-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-websocket-test'
-
+    // Spring Security Test - @WithMockUser, SecurityMockMvcRequestPostProcessors for auth tests
+    testImplementation 'org.springframework.security:spring-security-test'
+    // JUnit Platform Launcher - required for Gradle to execute JUnit 5 test suites
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
