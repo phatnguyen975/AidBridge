@@ -1,3 +1,5 @@
+# AidBridge - Requirements
+
 ## Phần 1. Tổng quan về đồ án
 
 **Disaster Relief Coordinator (DRC)** là hệ thống ứng dụng di động hỗ trợ điều phối cứu trợ khẩn cấp trong thiên tai. Dự án tập trung giải quyết bài toán mất cân bằng nguồn lực (nơi thừa, nơi thiếu) bằng cách kết nối trực tiếp Nạn nhân, Mạnh thường quân và Tình nguyện viên trên một bản đồ thời gian thực. Ứng dụng sử dụng trí tuệ nhân tạo để phân loại mức độ khẩn cấp, giúp các đơn vị cứu hộ ưu tiên những trường hợp nguy hiểm đến tính mạng trước các nhu cầu nhu yếu phẩm thông thường.
