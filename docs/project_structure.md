@@ -1,4 +1,4 @@
-# AidBridge - Monorepo Directory Structure
+# AidBridge - Project Structure
 
 The project follows a Monorepo approach. The frontend utilizes Clean Architecture + MVVM. The backend applies the standard Spring Boot layered architecture combined with Design Patterns (Strategy, Observer) to handle coordination logic.
 

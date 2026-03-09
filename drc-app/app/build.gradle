@@ -1,5 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
+    // Dagger-Hilt - annotation-based dependency injection for Android
+    id 'com.google.dagger.hilt.android'
+    // Google Services - enables Firebase SDK configuration via google-services.json
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -15,7 +19,8 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // HiltTestRunner replaces default runner to support Hilt injection in instrumented tests
+        testInstrumentationRunner "com.google.dagger.hilt.android.testing.HiltTestRunner"
     }
 
     buildTypes {
@@ -24,18 +29,132 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildFeatures {
+        // ViewBinding generates a binding class for each XML layout - replaces findViewById()
+        viewBinding true
+    }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
 dependencies {
+    // ===========================
+    // Core UI & AndroidX Libraries
+    // ===========================
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
+
+    // ===========================
+    // Architecture Components (MVVM)
+    // ===========================
+    // ViewModel - survives configuration changes, holds UI state
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.9.0'
+    // LiveData - lifecycle-aware observable data holder for ViewModel -> UI updates
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.9.0'
+    // RecyclerView - efficient scrollable list/grid for history, request lists, volunteer lists
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
+    // Navigation Component - manages Fragment back-stack and in-app routing
+    implementation 'androidx.navigation:navigation-fragment:2.9.0'
+    implementation 'androidx.navigation:navigation-ui:2.9.0'
+    // SwipeRefreshLayout - pull-to-refresh gesture for list screens
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0'
+    // ViewPager2 - swipeable pages for multi-step registration/SOS wizard
+    implementation 'androidx.viewpager2:viewpager2:1.1.0'
+
+    // ===========================
+    // Dependency Injection (Dagger-Hilt)
+    // ===========================
+    // Hilt core - DI container that integrates with Android lifecycle components
+    implementation 'com.google.dagger:hilt-android:2.56'
+    // Hilt annotation processor - generates DI component and factory classes at compile time
+    annotationProcessor 'com.google.dagger:hilt-android-compiler:2.56'
+
+    // ===========================
+    // Networking (Retrofit2 + OkHttp3)
+    // ===========================
+    // Retrofit2 - type-safe HTTP client; maps API endpoints to Java interfaces
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    // Gson Converter - serializes/deserializes JSON request and response bodies automatically
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+    // OkHttp3 - underlying HTTP client used by Retrofit; handles connections and caching
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    // OkHttp Logging Interceptor - logs full HTTP request/response for debug builds
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+
+    // ===========================
+    // Real-time Communication (WebSocket / STOMP)
+    // ===========================
+    // STOMP protocol over WebSocket - used for real-time chat, live tracking, and dispatch notifications
+    implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.6.6'
+    // RxJava3 - reactive streams library required by StompProtocolAndroid for async event handling
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.9'
+    // RxAndroid - provides Android-aware schedulers (mainThread, io) for RxJava3
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
+
+    // ===========================
+    // Push Notifications (Firebase FCM)
+    // ===========================
+    // Firebase BOM - ensures all Firebase libraries use a consistent, compatible version set
+    implementation platform('com.google.firebase:firebase-bom:33.9.0')
+    // Firebase Cloud Messaging - receives task dispatch, status updates, and broadcast alerts from server
+    implementation 'com.google.firebase:firebase-messaging'
+
+    // ===========================
+    // Maps & Location Services
+    // ===========================
+    // Google Maps SDK - renders interactive map; supports custom markers, polylines, and heatmap tiles
+    implementation 'com.google.android.gms:play-services-maps:19.1.0'
+    // Fused Location Provider - battery-efficient GPS for live tracking and SOS coordinate capture
+    implementation 'com.google.android.gms:play-services-location:21.4.0'
+
+    // ===========================
+    // QR Code Scanning (CameraX + ML Kit)
+    // ===========================
+    // ML Kit Barcode Scanning - decodes QR codes for Staff check-in/check-out flows
+    implementation 'com.google.mlkit:barcode-scanning:17.3.0'
+    // CameraX Core - camera lifecycle abstraction layer
+    implementation 'androidx.camera:camera-core:1.4.1'
+    // CameraX Camera2 - hardware camera implementation backed by Camera2 API
+    implementation 'androidx.camera:camera-camera2:1.4.1'
+    // CameraX Lifecycle - binds camera stream to Activity/Fragment lifecycle automatically
+    implementation 'androidx.camera:camera-lifecycle:1.4.1'
+    // CameraX View - provides PreviewView widget for embedding camera preview in XML layouts
+    implementation 'androidx.camera:camera-view:1.4.1'
+
+    // ===========================
+    // Local Database (Room)
+    // ===========================
+    // Room Runtime - SQLite abstraction for offline storage (request history, cached map data)
+    implementation 'androidx.room:room-runtime:2.7.0'
+    // Room Annotation Processor - generates type-safe DAO implementation classes at compile time
+    annotationProcessor 'androidx.room:room-compiler:2.7.0'
+
+    // ===========================
+    // Image Loading
+    // ===========================
+    // Glide - disk/memory caching image loader for SOS photos, avatars, and donation item images
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+
+    // ===========================
+    // Secure Storage
+    // ===========================
+    // Security Crypto - EncryptedSharedPreferences for AES-256 storage of JWT access/refresh tokens
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+
+    // ===========================
+    // Testing
+    // ===========================
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+    // Hilt testing - enables @HiltAndroidTest and component injection in instrumented tests
+    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.56'
+    androidTestAnnotationProcessor 'com.google.dagger:hilt-android-compiler:2.56'
 }

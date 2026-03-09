@@ -16,6 +16,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // JitPack - required for StompProtocolAndroid (WebSocket STOMP client)
+        maven { url 'https://jitpack.io' }
     }
 }
 
