@@ -1,8 +1,7 @@
 package com.drc.aidbridge.utils;
 
-/**
- * Constants — central file for all magic numbers, keys, and configuration values.
- */
+import com.drc.aidbridge.BuildConfig;
+
 public final class Constants {
 
     private Constants() {

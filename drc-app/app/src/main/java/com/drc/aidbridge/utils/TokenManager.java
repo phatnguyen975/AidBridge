@@ -11,9 +11,6 @@ import androidx.security.crypto.MasterKey;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-/**
- * TokenManager — wrapper around EncryptedSharedPreferences for JWT token lifecycle management.
- */
 public class TokenManager {
 
     private final SharedPreferences securePreferences;
