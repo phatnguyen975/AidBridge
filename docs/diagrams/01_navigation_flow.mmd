@@ -1,0 +1,32 @@
+flowchart TD
+    SPLASH["SplashActivity\n(auto-redirect, 2s delay)"]
+    AUTH["AuthActivity\n(NavHostFragment)"]
+    GUEST["GuestFragment ⭐ Start Destination\n\n[Cứu hộ tab] SOS button\n[Bản đồ tab] Map placeholder\n[ℹ] → UserGuideActivity"]
+    LOGIN["LoginFragment\nEmail + Password"]
+    REGISTER["RegisterFragment\nName · Phone · Email\nPassword · Role · Terms"]
+    OTP["OtpFragment\n6-digit OTP\n(mock: 111111)"]
+    FORGOT_EMAIL["ForgotEmailFragment\nEnter email"]
+    FORGOT_OTP["ForgotOtpFragment\n6-digit OTP"]
+    FORGOT_PW["ForgotNewPasswordFragment\nNew password + Confirm"]
+    GUIDE["UserGuideActivity\nStatic help content"]
+    MAIN["MainActivity\n(post-auth shell)\nnav_home · nav_map"]
+    HOME_FRAG["HomeFragment\nAccount info · Role badge\nLogout"]
+    MAP_FRAG["MapFragment\n(Phase 3: Google Maps)"]
+
+    SPLASH -->|"no token (MOCK)"| AUTH
+    SPLASH -->|"token present"| MAIN
+    AUTH --> GUEST
+    GUEST -->|"ĐĂNG NHẬP"| LOGIN
+    GUEST -->|"Đăng ký"| REGISTER
+    GUEST -->|"ℹ icon"| GUIDE
+    LOGIN -->|"Login success\naction_loginFragment_to_mainActivity\npopUpTo auth_nav_graph inclusive"| MAIN
+    LOGIN -->|"Quên mật khẩu?"| FORGOT_EMAIL
+    LOGIN -->|"Đăng ký ngay"| REGISTER
+    REGISTER -->|"Đăng ký thành công"| OTP
+    OTP -->|"OTP correct\npopUpTo guestFragment (exclusive)\n→ loginFragment"| LOGIN
+    FORGOT_EMAIL -->|"Email valid"| FORGOT_OTP
+    FORGOT_OTP -->|"OTP correct"| FORGOT_PW
+    FORGOT_PW -->|"popBackStack to loginFragment"| LOGIN
+    MAIN --> HOME_FRAG
+    MAIN --> MAP_FRAG
+    HOME_FRAG -->|"Logout\nclearAll + CLEAR_TASK"| AUTH

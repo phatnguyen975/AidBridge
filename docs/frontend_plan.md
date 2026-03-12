@@ -1,6 +1,7 @@
 # AidBridge – Kế hoạch Phát triển Android (Implementation Plan)
 
 > **Ngôn ngữ:** Java 17 | **UI:** XML Layouts thuần túy | **Kiến trúc:** MVVM + Clean Architecture
+
 > **Min SDK:** 29 | **Target SDK:** 36 | **Build:** Gradle 8.13+ với Version Catalog
 
 ## Tổng quan các Phase

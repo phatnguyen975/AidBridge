@@ -1,0 +1,34 @@
+graph LR
+    subgraph AuthActivity["AuthActivity ─ auth_nav_graph"]
+        GF["GuestFragment\n• BottomNav (Cứu hộ/Bản đồ)\n• SOS button (Phase 3)\n• ivInfo → UserGuideActivity\n• btnLogin / tvRegisterLink"]
+        LF["LoginFragment\n• Email · Password\n• tvForgotPassword → ForgotEmail\n• Login success → MainActivity\n  (action + popUpTo inclusive)"]
+        RF["RegisterFragment\n• Name · Phone · Email · Password\n• Role cards (VICTIM/VOLUNTEER/SPONSOR)\n• Terms CheckBox\n• Register success → OtpFragment"]
+        OF["OtpFragment\n• 6 EditTexts w/ auto-advance TextWatcher\n• Countdown timer (59s)\n• OTP success → navigateToLogin()\n  (popUpTo guestFragment exclusive)"]
+        FEF["ForgotEmailFragment\n• Email input\n• POST /auth/forgot-password (mocked)"]
+        FOF["ForgotOtpFragment\n• 6 OTP boxes\n• email arg received via Safe Args\n• POST /auth/verify-reset-otp (mocked)"]
+        FNP["ForgotNewPasswordFragment\n• New PW + Confirm PW\n• Password match validation\n• POST /auth/reset-password (mocked)"]
+    end
+
+    subgraph Standalone["Standalone Activity"]
+        UGA["UserGuideActivity\n• CollapsingToolbar\n• 4 guide sections:\n  SOS · Map · Auth · Roles\n• Static content"]
+    end
+
+    subgraph MainShell["MainActivity ─ post-auth shell"]
+        MA["MainActivity\n• BottomNav (home / map)\n• nav_home → HomeFragment\n• nav_map  → MapFragment"]
+        HF["HomeFragment\n• Reads from TokenManager\n• tvUserName · tvUserEmail\n• tvUserRole (formatted Vi label)\n• btnLogout → clearAll() + AuthActivity"]
+        MF["MapFragment\n• Map placeholder\n• tint + alpha overlay\n• Phase 3: real Google Maps"]
+    end
+
+    GF --> LF
+    GF --> RF
+    GF -.-> UGA
+    LF --> MA
+    LF --> FEF
+    RF --> OF
+    OF -.-> LF
+    FEF --> FOF
+    FOF --> FNP
+    FNP -.-> LF
+    MA --> HF
+    MA --> MF
+    HF -.-> AuthActivity
