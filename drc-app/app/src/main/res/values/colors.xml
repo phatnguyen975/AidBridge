@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Background colors -->
+    <color name="bg_primary">#0F172A</color>
+    <color name="bg_surface">#1E293B</color>
+
+    <!-- Primary / Action colors -->
+    <color name="color_primary">#288DFA</color>
+    <color name="color_primary_dark">#1A6FD4</color>
+    <color name="color_primary_variant">#1565C0</color>
+
+    <!-- Status colors -->
+    <color name="error_red">#EF4444</color>
+    <color name="success_green">#34D399</color>
+
+    <!-- Text colors -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#94A3B8</color>
 </resources>
