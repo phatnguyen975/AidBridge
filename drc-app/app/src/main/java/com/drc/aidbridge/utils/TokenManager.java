@@ -1,44 +1,30 @@
 package com.drc.aidbridge.utils;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKey;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+/**
+ * TokenManager — wrapper around EncryptedSharedPreferences for JWT token lifecycle management.
+ *
+ * Injected via Hilt (@Singleton) — the SharedPreferences is an EncryptedSharedPreferences
+ * instance provided by AppModule.
+ */
+@Singleton
 public class TokenManager {
 
-    private final SharedPreferences securePreferences;
+    private final SharedPreferences prefs;
 
-    public TokenManager(@NonNull Context context) {
-        securePreferences = createSecurePreferences(context.getApplicationContext());
+    @Inject
+    public TokenManager(SharedPreferences prefs) {
+        this.prefs = prefs;
     }
 
-    private SharedPreferences createSecurePreferences(@NonNull Context context) {
-        try {
-            MasterKey masterKey = new MasterKey.Builder(context)
-                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                    .build();
-
-            return EncryptedSharedPreferences.create(
-                    context,
-                    Constants.PREF_NAME,
-                    masterKey,
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            );
-        } catch (GeneralSecurityException | IOException exception) {
-            throw new IllegalStateException("Unable to initialize encrypted token storage.", exception);
-        }
-    }
-
+    /** Saves both JWT tokens after a successful authentication response. */
     public void saveTokens(@Nullable String accessToken, @Nullable String refreshToken) {
-        SharedPreferences.Editor editor = securePreferences.edit();
+        SharedPreferences.Editor editor = prefs.edit();
 
         if (accessToken == null || accessToken.isBlank()) {
             editor.remove(Constants.KEY_ACCESS_TOKEN);
@@ -55,16 +41,47 @@ public class TokenManager {
         editor.apply();
     }
 
+    /**
+     * Caches user metadata locally so Profile and Home screens can display data
+     * without a network call on every launch.
+     */
+    public void saveUserInfo(String userId, String userName, String email, String role) {
+        prefs.edit()
+                .putString(Constants.KEY_USER_ID, userId)
+                .putString(Constants.KEY_USER_NAME, userName)
+                .putString(Constants.KEY_USER_EMAIL, email)
+                .putString(Constants.KEY_USER_ROLE, role)
+                .apply();
+    }
+
+    /** Returns the stored access token, or null if not logged in. */
     @Nullable
     public String getAccessToken() {
-        return securePreferences.getString(Constants.KEY_ACCESS_TOKEN, null);
+        return prefs.getString(Constants.KEY_ACCESS_TOKEN, null);
     }
 
+    /** Returns the stored refresh token, or null if not logged in. */
     @Nullable
     public String getRefreshToken() {
-        return securePreferences.getString(Constants.KEY_REFRESH_TOKEN, null);
+        return prefs.getString(Constants.KEY_REFRESH_TOKEN, null);
     }
 
+    /** Returns the cached user role. */
+    public String getUserRole() {
+        return prefs.getString(Constants.KEY_USER_ROLE, null);
+    }
+
+    /** Returns the cached user name. */
+    public String getUserName() {
+        return prefs.getString(Constants.KEY_USER_NAME, null);
+    }
+
+    /** Returns the cached user email. */
+    public String getUserEmail() {
+        return prefs.getString(Constants.KEY_USER_EMAIL, null);
+    }
+
+    /** Returns true if a non-null, non-blank access token is present (does NOT validate expiry). */
     public boolean hasActiveSession() {
         String accessToken = getAccessToken();
         String refreshToken = getRefreshToken();
@@ -74,14 +91,16 @@ public class TokenManager {
                 && !refreshToken.isBlank();
     }
 
+    /** Clears ALL stored tokens. */
     public void clearTokens() {
-        securePreferences.edit()
+        prefs.edit()
                 .remove(Constants.KEY_ACCESS_TOKEN)
                 .remove(Constants.KEY_REFRESH_TOKEN)
                 .apply();
     }
 
+    /** Clears ALL stored tokens and user data. */
     public void clearAll() {
-        securePreferences.edit().clear().apply();
+        prefs.edit().clear().apply();
     }
 }
