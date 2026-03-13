@@ -16,6 +16,10 @@ public final class Constants {
     public static final int READ_TIMEOUT = 30;
     public static final int WRITE_TIMEOUT = 30;
 
+    // --- Auth endpoints ---
+    public static final String AUTH_PATH_PREFIX = "/auth/";
+    public static final String REFRESH_TOKEN_ENDPOINT = "auth/refresh-token";
+
     // --- SharedPreferences / EncryptedSharedPreferences ---
     public static final String PREF_NAME = "aidbridge_secure_prefs";
     public static final String KEY_ACCESS_TOKEN = "access_token";
@@ -31,6 +35,9 @@ public final class Constants {
     // --- OTP Verification ---
     public static final int OTP_LENGTH = 6;
     public static final int OTP_RESEND_COUNTDOWN = 60;
+
+    // --- Data Validation ---
+    public static final int PASSWORD_MIN_LENGTH = 6;
 
     // --- Splash Screen ---
     public static final int SPLASH_DELAY_MS = 2000;

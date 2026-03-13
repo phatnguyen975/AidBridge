@@ -10,7 +10,8 @@ import androidx.core.content.ContextCompat;
 
 /**
  * PermissionHelper — utility class for runtime permission checking and requesting.
- * ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, CAMERA, and POST_NOTIFICATIONS
+ * 
+ * Covers ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, CAMERA, and POST_NOTIFICATIONS
  */
 public final class PermissionHelper {
 
