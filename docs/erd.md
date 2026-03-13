@@ -1,721 +1,644 @@
-# AidBridge — Entity Relationship Diagram
+# AidBridge — ERD v3.0
 
-> Rendered by **Mermaid** (`erDiagram`).  
-> Supported in: GitHub, VS Code (Markdown Preview Mermaid Support extension), GitLab, Notion, Obsidian.
+> **Engine:** PostgreSQL 15+  ·  **Extension:** `uuid-ossp`
+> **22 bảng · 10 ENUM · ~35 index**
+> **Nguyên tắc:** lat/lng DECIMAL(9,6) (không PostGIS), image_url VARCHAR trực tiếp trong bảng, OTP gộp vào `users`.
 
 ---
 
-## Full ERD (All 26 Tables)
+## 1. Schema Groups
+
+| Group | Bảng |
+|-------|------|
+| **Auth** | `users`, `refresh_tokens` |
+| **Profiles** | `volunteer_profiles`, `sponsor_profiles` |
+| **Infrastructure** | `hubs`, `hub_staff`, `shelters`, `system_config` |
+| **Catalog & Inventory** | `item_categories`, `hub_accepted_categories`, `hub_inventories`, `inventory_logs` |
+| **Requests** | `sos_requests`, `aid_requests`, `aid_request_items` |
+| **Donations** | `donations`, `donation_items` |
+| **Missions** | `missions`, `dispatch_attempts` |
+| **Communication** | `chat_messages`, `ratings`, `notifications` |
+
+---
+
+## 2. Full ERD
 
 ```mermaid
 erDiagram
-
-    %% ─────────────────────────────────────────
-    %% GROUP 1 · USER & AUTH
-    %% ─────────────────────────────────────────
-
+    %% AUTH
     users {
-        uuid        id              PK
-        varchar     full_name
-        varchar     email           UK
-        varchar     phone_number    UK
-        varchar     password_hash
-        user_role   role
-        boolean     is_verified
-        boolean     is_active
-        varchar     fcm_token
-        varchar     avatar_url
-        timestamptz created_at
-        timestamptz updated_at
-    }
-
-    otp_verifications {
-        uuid        id          PK
-        uuid        user_id     FK
-        varchar     otp_code
-        otp_type    otp_type
-        timestamptz expires_at
-        boolean     is_used
-        timestamptz created_at
+        string id PK
+        string full_name
+        string email
+        string phone_number
+        string password_hash
+        string role
+        boolean is_verified
+        boolean is_active
+        string fcm_token
+        string avatar_url
+        string otp_code
+        string otp_type
+        datetime otp_expires_at
+        datetime created_at
+        datetime updated_at
     }
 
     refresh_tokens {
-        uuid        id          PK
-        uuid        user_id     FK
-        varchar     token_hash  UK
-        varchar     device_info
-        timestamptz expires_at
-        boolean     is_revoked
-        timestamptz revoked_at
-        timestamptz created_at
+        string id PK
+        string user_id FK
+        string token_hash
+        string device_info
+        datetime expires_at
+        boolean is_revoked
+        datetime created_at
     }
 
-    %% ─────────────────────────────────────────
-    %% GROUP 2 · ROLE PROFILES
-    %% ─────────────────────────────────────────
-
+    %% PROFILES
     volunteer_profiles {
-        uuid        id                      PK
-        uuid        user_id                 FK "UNIQUE"
-        boolean     is_online
-        geometry    current_location        "Point 4326"
-        varchar     vehicle_type
-        int         total_tasks_completed
-        decimal     avg_rating
-        int         avg_response_seconds
-        timestamptz last_active_at
-        timestamptz created_at
-        timestamptz updated_at
-    }
-
-    volunteer_area_experiences {
-        uuid        id              PK
-        uuid        volunteer_id    FK
-        geometry    area            "Polygon 4326"
-        varchar     area_label
-        decimal     experience_score
-        int         missions_in_area
-        timestamptz last_mission_at
-        timestamptz created_at
-        timestamptz updated_at
+        string id PK
+        string user_id FK
+        boolean is_online
+        double current_lat
+        double current_lng
+        string vehicle_type
+        int total_tasks_completed
+        double avg_rating
+        int avg_response_seconds
+        datetime created_at
+        datetime updated_at
     }
 
     sponsor_profiles {
-        uuid        id                  PK
-        uuid        user_id             FK "UNIQUE"
-        int         total_points
-        int         total_items_donated
-        int         donation_count
-        badge_level badge_level
-        timestamptz created_at
-        timestamptz updated_at
+        string id PK
+        string user_id FK
+        int total_points
+        int total_items_donated
+        int donation_count
+        string badge_level
+        datetime created_at
+        datetime updated_at
     }
 
-    %% ─────────────────────────────────────────
-    %% GROUP 3 · SYSTEM CONFIG
-    %% ─────────────────────────────────────────
-
-    system_config {
-        varchar     key         PK
-        text        value
-        text        description
-        uuid        updated_by
-        timestamptz updated_at
-    }
-
-    %% ─────────────────────────────────────────
-    %% GROUP 4 · INFRASTRUCTURE
-    %% ─────────────────────────────────────────
-
+    %% INFRASTRUCTURE
     hubs {
-        uuid        id              PK
-        varchar     name
-        text        address
-        geometry    location        "Point 4326"
-        hub_status  status
-        varchar     contact_phone
-        text        notes
-        timestamptz created_at
-        timestamptz updated_at
-    }
-
-    hub_accepted_categories {
-        uuid        hub_id              FK
-        uuid        item_category_id    FK
+        string id PK
+        string name
+        string address
+        double lat
+        double lng
+        string status
+        string contact_phone
+        datetime created_at
+        datetime updated_at
     }
 
     hub_staff {
-        uuid        id              PK
-        uuid        hub_id          FK
-        uuid        user_id         FK
-        timestamptz assigned_at
-        timestamptz unassigned_at
+        string id PK
+        string hub_id FK
+        string user_id FK
+        boolean is_available
+        datetime assigned_at
+        datetime unassigned_at
     }
 
     shelters {
-        uuid            id                  PK
-        varchar         name
-        text            address
-        geometry        location            "Point 4326"
-        int             current_capacity
-        int             max_capacity
-        boolean         has_electricity
-        boolean         has_clean_water
-        shelter_status  status
-        text            notes
-        timestamptz     created_at
-        timestamptz     updated_at
+        string id PK
+        string name
+        string address
+        double lat
+        double lng
+        int current_capacity
+        int max_capacity
+        boolean has_electricity
+        boolean has_clean_water
+        string status
+        datetime created_at
+        datetime updated_at
     }
 
-    safe_paths {
-        uuid        id              PK
-        geometry    origin          "Point 4326"
-        geometry    destination     "Point 4326"
-        geometry    path_line       "LineString 4326"
-        decimal     distance_m
-        int         duration_sec
-        boolean     is_active
-        timestamptz expires_at
-        timestamptz created_at
+    system_config {
+        string key PK
+        string value
+        string description
+        datetime updated_at
     }
 
-    %% ─────────────────────────────────────────
-    %% GROUP 5 · ITEM CATALOG
-    %% ─────────────────────────────────────────
-
+    %% CATALOG & INVENTORY
     item_categories {
-        uuid        id          PK
-        uuid        parent_id   FK "self-ref, nullable"
-        varchar     name
-        varchar     name_vi
-        varchar     unit
-        boolean     is_leaf
-        timestamptz created_at
-        timestamptz updated_at
+        string id PK
+        string parent_id FK
+        string name
+        string name_vi
+        string unit
+        boolean is_leaf
+        datetime created_at
     }
 
-    %% ─────────────────────────────────────────
-    %% GROUP 6 · ATTACHMENTS
-    %% ─────────────────────────────────────────
-
-    attachments {
-        uuid        id              PK
-        entity_type entity_type     "polymorphic discriminator"
-        uuid        entity_id       "polymorphic FK"
-        varchar     url
-        varchar     mime_type
-        int         file_size_bytes
-        uuid        uploaded_by     FK
-        timestamptz created_at
+    hub_accepted_categories {
+        string hub_id PK
+        string item_category_id PK
     }
-
-    %% ─────────────────────────────────────────
-    %% GROUP 7 · INVENTORY
-    %% ─────────────────────────────────────────
 
     hub_inventories {
-        uuid        id                  PK
-        uuid        hub_id              FK
-        uuid        item_category_id    FK
-        int         current_quantity
-        int         low_stock_threshold
-        timestamptz created_at
-        timestamptz updated_at
+        string id PK
+        string hub_id FK
+        string item_category_id FK
+        int current_quantity
+        int low_stock_threshold
+        datetime updated_at
     }
 
     inventory_logs {
-        uuid                        id                  PK
-        uuid                        hub_inventory_id    FK
-        inventory_change_type       change_type
-        int                         quantity_delta
-        inventory_reference_type    reference_type
-        uuid                        reference_id        "polymorphic FK"
-        uuid                        performed_by        FK
-        int                         quantity_after      "denorm snapshot"
-        text                        notes
-        timestamptz                 created_at
+        string id PK
+        string hub_inventory_id FK
+        string change_type
+        int quantity_delta
+        string reference_type
+        string reference_id
+        string performed_by FK
+        int quantity_after
+        string notes
+        datetime created_at
     }
 
-    %% ─────────────────────────────────────────
-    %% GROUP 8 · REQUEST SYSTEM
-    %% ─────────────────────────────────────────
-
+    %% REQUESTS
     sos_requests {
-        uuid            id                  PK
-        uuid            requester_id        FK "nullable = Guest"
-        varchar         requester_name
-        varchar         requester_phone
-        varchar         victim_name
-        varchar         victim_phone
-        geometry        victim_location     "Point 4326"
-        text            victim_address
-        text            description
-        int             people_count
-        boolean         is_on_behalf
-        urgency_level   urgency_level
-        text            ai_summary
-        sos_status      status
-        text            cancellation_reason
-        timestamptz     resolved_at
-        timestamptz     created_at
-        timestamptz     updated_at
+        string id PK
+        string requester_id FK
+        string requester_name
+        string requester_phone
+        string victim_name
+        string victim_phone
+        double victim_lat
+        double victim_lng
+        string victim_address
+        string description
+        int people_count
+        boolean is_on_behalf
+        string urgency_level
+        string ai_summary
+        string status
+        string image_url
+        datetime created_at
+        datetime updated_at
     }
 
     aid_requests {
-        uuid                id              PK
-        uuid                requester_id    FK
-        geometry            location        "Point 4326"
-        text                address
-        int                 adults_count
-        int                 elderly_count
-        int                 children_count
-        text                notes
-        urgency_level       urgency_level
-        text                ai_summary
-        aid_request_status  status
-        timestamptz         resolved_at
-        timestamptz         created_at
-        timestamptz         updated_at
+        string id PK
+        string requester_id FK
+        double lat
+        double lng
+        string address
+        int adults_count
+        int elderly_count
+        int children_count
+        string notes
+        string urgency_level
+        string status
+        datetime created_at
+        datetime updated_at
     }
 
     aid_request_items {
-        uuid        id                  PK
-        uuid        aid_request_id      FK
-        uuid        item_category_id    FK
-        int         quantity
-        timestamptz created_at
+        string id PK
+        string aid_request_id FK
+        string item_category_id FK
+        int quantity
+        datetime created_at
     }
 
-    %% ─────────────────────────────────────────
-    %% GROUP 9 · DONATION SYSTEM
-    %% ─────────────────────────────────────────
-
+    %% DONATIONS
     donations {
-        uuid            id                      PK
-        uuid            sponsor_id              FK
-        uuid            hub_id                  FK
-        text            description
-        timestamptz     estimated_delivery_at
-        varchar         qr_code_token           UK
-        donation_status status
-        uuid            received_by             FK
-        timestamptz     received_at
-        text            rejection_reason
-        timestamptz     created_at
-        timestamptz     updated_at
+        string id PK
+        string sponsor_id FK
+        string hub_id FK
+        date estimated_delivery_at
+        string qr_code_token
+        string status
+        string received_by FK
+        datetime received_at
+        string rejection_reason
+        datetime created_at
+        datetime updated_at
     }
 
     donation_items {
-        uuid        id                  PK
-        uuid        donation_id         FK
-        uuid        item_category_id    FK
-        int         quantity
-        date        expiry_date
-        text        condition_notes
-        timestamptz created_at
+        string id PK
+        string donation_id FK
+        string item_category_id FK
+        int quantity
+        date expiry_date
+        string condition_notes
+        string image_url
+        datetime created_at
     }
 
-    %% ─────────────────────────────────────────
-    %% GROUP 10 · MISSION & DISPATCH
-    %% ─────────────────────────────────────────
-
+    %% MISSIONS
     missions {
-        uuid            id                      PK
-        mission_type    mission_type
-        uuid            sos_request_id          FK "RESCUE only"
-        uuid            aid_request_id          FK "DELIVERY only"
-        uuid            volunteer_id            FK
-        uuid            hub_id                  FK "DELIVERY only"
-        mission_status  status
-        varchar         qr_code_token           UK
-        decimal         priority_score          "denorm snapshot"
-        timestamptz     dispatched_at
-        timestamptz     accepted_at
-        timestamptz     picked_up_at
-        timestamptz     completed_at
-        timestamptz     cancelled_at
-        varchar         confirmation_image_url
-        timestamptz     created_at
-        timestamptz     updated_at
+        string id PK
+        string mission_type
+        string sos_request_id FK
+        string aid_request_id FK
+        string volunteer_id FK
+        string hub_id FK
+        string status
+        string qr_code_token
+        double priority_score
+        datetime accepted_at
+        datetime picked_up_at
+        datetime completed_at
+        datetime cancelled_at
+        string cancellation_reason
+        string confirmation_image_url
+        datetime created_at
+        datetime updated_at
     }
 
     dispatch_attempts {
-        uuid                id              PK
-        uuid                mission_id      FK
-        uuid                volunteer_id    FK
-        dispatch_type       dispatch_type
-        int                 batch_number
-        decimal             radius_km
-        decimal             priority_score  "denorm snapshot"
-        timestamptz         sent_at
-        dispatch_response   response
-        timestamptz         responded_at
+        string id PK
+        string mission_id FK
+        string volunteer_id FK
+        string dispatch_type
+        int batch_number
+        double radius_km
+        double priority_score
+        datetime sent_at
+        string response
+        datetime responded_at
     }
 
-    %% ─────────────────────────────────────────
-    %% GROUP 11 · COMMUNICATION
-    %% ─────────────────────────────────────────
-
+    %% COMMUNICATION
     chat_messages {
-        uuid            id              PK
-        uuid            mission_id      FK
-        uuid            sender_id       FK
-        message_type    message_type
-        text            message_text
-        uuid            attachment_id   FK "IMAGE only"
-        boolean         is_read
-        timestamptz     created_at
+        string id PK
+        string mission_id FK
+        string sender_id FK
+        string message_type
+        string message_text
+        string image_url
+        boolean is_read
+        datetime created_at
     }
 
     ratings {
-        uuid        id          PK
-        uuid        mission_id  FK "UNIQUE"
-        uuid        rater_id    FK "Victim"
-        uuid        ratee_id    FK "Volunteer profile"
-        int         score       "1-5"
-        text        comment
-        timestamptz created_at
+        string id PK
+        string mission_id FK
+        string rater_id FK
+        string ratee_id FK
+        int score
+        string comment
+        datetime created_at
     }
 
     notifications {
-        uuid                id                      PK
-        uuid                user_id                 FK
-        notification_type   notification_type
-        varchar             title
-        text                body
-        entity_type         related_entity_type
-        uuid                related_entity_id       "polymorphic FK"
-        boolean             is_read
-        timestamptz         created_at
+        string id PK
+        string user_id FK
+        string title
+        string body
+        string related_type
+        string related_id
+        boolean is_read
+        datetime created_at
     }
 
-
-    %% ═══════════════════════════════════════════════════════════
     %% RELATIONSHIPS
-    %% ═══════════════════════════════════════════════════════════
+    users ||--o{ refresh_tokens : ""
+    users ||--o| volunteer_profiles : ""
+    users ||--o| sponsor_profiles : ""
+    users ||--o{ hub_staff : ""
+    users ||--o{ sos_requests : ""
+    users ||--o{ aid_requests : ""
+    users ||--o{ donations : ""
+    users ||--o{ inventory_logs : ""
+    users ||--o{ chat_messages : ""
+    users ||--o{ ratings : ""
+    users ||--o{ notifications : ""
 
-    %% ── Auth ──
-    users                       ||--o{    otp_verifications            : "verifies via"
-    users                       ||--o{    refresh_tokens               : "authenticated by"
+    hubs ||--o{ hub_staff : ""
+    hubs ||--o{ hub_accepted_categories : ""
+    hubs ||--o{ hub_inventories : ""
+    hubs ||--o{ donations : ""
+    hubs ||--o{ missions : ""
 
-    %% ── Role Profiles ──
-    users                       ||--o|    volunteer_profiles           : "has profile"
-    users                       ||--o|    sponsor_profiles             : "has profile"
-    volunteer_profiles          ||--o{    volunteer_area_experiences   : "experienced in"
+    item_categories ||--o{ item_categories : ""
+    item_categories ||--o{ hub_accepted_categories : ""
+    item_categories ||--o{ hub_inventories : ""
+    item_categories ||--o{ aid_request_items : ""
+    item_categories ||--o{ donation_items : ""
 
-    %% ── Hub Infrastructure ──
-    hubs                        ||--o{    hub_staff                    : "staffed by"
-    users                       ||--o{    hub_staff                    : "assigned as staff"
-    hubs                        ||--o{    hub_accepted_categories      : "accepts categories"
-    item_categories             ||--o{    hub_accepted_categories      : "accepted at hubs"
+    hub_inventories ||--o{ inventory_logs : ""
 
-    %% ── Item Category Tree (self-referencing) ──
-    item_categories             ||--o{    item_categories              : "parent of"
+    aid_requests ||--o{ aid_request_items : ""
+    donations ||--o{ donation_items : ""
 
-    %% ── Inventory ──
-    hubs                        ||--o{    hub_inventories              : "stocks"
-    item_categories             ||--o{    hub_inventories              : "tracked at"
-    hub_inventories             ||--o{    inventory_logs               : "audited by"
-    users                       ||--o{    inventory_logs               : "performed by staff"
+    sos_requests ||--o| missions : ""
+    aid_requests ||--o| missions : ""
+    volunteer_profiles ||--o{ missions : ""
+    volunteer_profiles ||--o{ dispatch_attempts : ""
 
-    %% ── Attachments (polymorphic — no strict FK) ──
-    users                       ||--o{    attachments                  : "uploads"
-
-    %% ── Requests ──
-    users                       ||--o{    sos_requests                 : "submits"
-    users                       ||--o{    aid_requests                 : "submits"
-    aid_requests                ||--o{    aid_request_items            : "contains"
-    item_categories             ||--o{    aid_request_items            : "requested as"
-
-    %% ── Donations ──
-    users                       ||--o{    donations                    : "pledges"
-    hubs                        ||--o{    donations                    : "receives"
-    users                       ||--o{    donations                    : "processed by staff"
-    donations                   ||--o{    donation_items               : "contains"
-    item_categories             ||--o{    donation_items               : "donated as"
-
-    %% ── Missions ──
-    sos_requests                ||--o|    missions                     : "spawns RESCUE"
-    aid_requests                ||--o|    missions                     : "spawns DELIVERY"
-    volunteer_profiles          ||--o{    missions                     : "assigned to"
-    hubs                        ||--o{    missions                     : "pickup point"
-
-    %% ── Dispatch ──
-    missions                    ||--o{    dispatch_attempts            : "dispatches"
-    volunteer_profiles          ||--o{    dispatch_attempts            : "notified"
-
-    %% ── Communication ──
-    missions                    ||--o{    chat_messages                : "has chat"
-    users                       ||--o{    chat_messages                : "sends"
-    attachments                 ||--o{    chat_messages                : "image ref"
-    missions                    ||--o|    ratings                      : "rated once"
-    users                       ||--o{    ratings                      : "rater"
-    volunteer_profiles          ||--o{    ratings                      : "ratee"
-    users                       ||--o{    notifications                : "receives"
+    missions ||--o{ dispatch_attempts : ""
+    missions ||--o{ chat_messages : ""
+    missions ||--o| ratings : ""
 ```
 
 ---
 
-## Domain Sub-Diagrams
+## 3. Sub-Diagrams theo Domain
 
-For easier reading, here are focused diagrams per domain.
-
----
-
-### A · User & Auth
+### A — Auth & Profiles
 
 ```mermaid
 erDiagram
     users {
-        uuid      id            PK
-        varchar   email         UK
-        varchar   phone_number  UK
-        user_role role
-        boolean   is_verified
-        boolean   is_active
-        varchar   fcm_token
-    }
-    otp_verifications {
-        uuid        id        PK
-        uuid        user_id   FK
-        otp_type    otp_type
-        timestamptz expires_at
-        boolean     is_used
+        string id PK
+        string email
+        string phone_number
+        string role
+        boolean is_verified
+        boolean is_active
+        string otp_code
+        string otp_type
+        datetime otp_expires_at
     }
     refresh_tokens {
-        uuid    id          PK
-        uuid    user_id     FK
-        varchar token_hash  UK
+        string id PK
+        string user_id FK
+        string token_hash
         boolean is_revoked
+        datetime expires_at
     }
     volunteer_profiles {
-        uuid    id      PK
-        uuid    user_id FK "UNIQUE"
+        string id PK
+        string user_id FK
         boolean is_online
-        geometry current_location "Point"
-        decimal avg_rating
-        int     total_tasks_completed
+        double current_lat
+        double current_lng
+        int total_tasks_completed
+        double avg_rating
+        int avg_response_seconds
     }
     sponsor_profiles {
-        uuid        id          PK
-        uuid        user_id     FK "UNIQUE"
-        int         total_points
-        badge_level badge_level
+        string id PK
+        string user_id FK
+        int donation_count
+        string badge_level
     }
 
-    users ||--o{ otp_verifications   : "verifies via"
-    users ||--o{ refresh_tokens      : "sessions"
-    users ||--o| volunteer_profiles  : "profile"
-    users ||--o| sponsor_profiles    : "profile"
+    users ||--o{ refresh_tokens : ""
+    users ||--o| volunteer_profiles : ""
+    users ||--o| sponsor_profiles : ""
 ```
 
 ---
 
-### B · Hub, Inventory & Catalog
+### B — Infrastructure & Inventory
 
 ```mermaid
 erDiagram
     hubs {
-        uuid       id       PK
-        varchar    name
-        geometry   location "Point"
-        hub_status status
+        string id PK
+        string name
+        double lat
+        double lng
+        string status
     }
     hub_staff {
-        uuid        id            PK
-        uuid        hub_id        FK
-        uuid        user_id       FK
-        timestamptz unassigned_at "NULL = active"
+        string id PK
+        string hub_id FK
+        string user_id FK
+        boolean is_available
+        datetime unassigned_at
+    }
+    item_categories {
+        string id PK
+        string parent_id FK
+        string name
+        string unit
+        boolean is_leaf
     }
     hub_accepted_categories {
-        uuid hub_id           FK
-        uuid item_category_id FK
-    }
-    item_categories {
-        uuid    id        PK
-        uuid    parent_id FK "self-ref"
-        varchar name
-        boolean is_leaf
+        string hub_id PK
+        string item_category_id PK
     }
     hub_inventories {
-        uuid id                  PK
-        uuid hub_id              FK
-        uuid item_category_id    FK
-        int  current_quantity
-        int  low_stock_threshold
+        string id PK
+        string hub_id FK
+        string item_category_id FK
+        int current_quantity
+        int low_stock_threshold
     }
     inventory_logs {
-        uuid                     id               PK
-        uuid                     hub_inventory_id FK
-        inventory_change_type    change_type
-        int                      quantity_delta
-        inventory_reference_type reference_type
-        uuid                     reference_id     "DONATION or MISSION"
-        int                      quantity_after   "snapshot"
+        string id PK
+        string hub_inventory_id FK
+        string change_type
+        int quantity_delta
+        string reference_type
+        int quantity_after
     }
 
-    hubs              ||--o{  hub_staff                : "staffed by"
-    hubs              ||--o{  hub_accepted_categories  : "accepts"
-    item_categories   ||--o{  hub_accepted_categories  : "accepted at"
-    item_categories   ||--o{  item_categories          : "parent of"
-    hubs              ||--o{  hub_inventories          : "stocks"
-    item_categories   ||--o{  hub_inventories          : "tracked at"
-    hub_inventories   ||--o{  inventory_logs           : "audited by"
+    hubs ||--o{ hub_staff : ""
+    hubs ||--o{ hub_accepted_categories : ""
+    hubs ||--o{ hub_inventories : ""
+    item_categories ||--o{ item_categories : ""
+    item_categories ||--o{ hub_accepted_categories : ""
+    item_categories ||--o{ hub_inventories : ""
+    hub_inventories ||--o{ inventory_logs : ""
 ```
 
 ---
 
-### C · Requests & Donations
+### C — Requests & Donations
 
 ```mermaid
 erDiagram
     sos_requests {
-        uuid          id              PK
-        uuid          requester_id    FK "nullable"
-        geometry      victim_location "Point"
-        urgency_level urgency_level
-        sos_status    status
-        boolean       is_on_behalf
+        string id PK
+        string requester_id FK
+        double victim_lat
+        double victim_lng
+        string urgency_level
+        string status
+        string image_url
     }
     aid_requests {
-        uuid               id           PK
-        uuid               requester_id FK
-        geometry           location     "Point"
-        urgency_level      urgency_level
-        aid_request_status status
-        int                adults_count
-        int                elderly_count
-        int                children_count
+        string id PK
+        string requester_id FK
+        double lat
+        double lng
+        string urgency_level
+        string status
     }
     aid_request_items {
-        uuid id               PK
-        uuid aid_request_id   FK
-        uuid item_category_id FK
-        int  quantity
+        string id PK
+        string aid_request_id FK
+        string item_category_id FK
+        int quantity
     }
     donations {
-        uuid            id            PK
-        uuid            sponsor_id    FK
-        uuid            hub_id        FK
-        varchar         qr_code_token UK
-        donation_status status
+        string id PK
+        string sponsor_id FK
+        string hub_id FK
+        string qr_code_token
+        string status
     }
     donation_items {
-        uuid id               PK
-        uuid donation_id      FK
-        uuid item_category_id FK
-        int  quantity
-        date expiry_date
-    }
-    item_categories {
-        uuid    id   PK
-        varchar name
-        boolean is_leaf
+        string id PK
+        string donation_id FK
+        string item_category_id FK
+        int quantity
+        string image_url
     }
 
-    aid_requests      ||--o{  aid_request_items  : "contains"
-    item_categories   ||--o{  aid_request_items  : "requested as"
-    donations         ||--o{  donation_items     : "contains"
-    item_categories   ||--o{  donation_items     : "donated as"
+    aid_requests ||--o{ aid_request_items : ""
+    donations ||--o{ donation_items : ""
 ```
 
 ---
 
-### D · Mission & Dispatch
+### D — Missions & Dispatch
 
 ```mermaid
 erDiagram
     missions {
-        uuid           id             PK
-        mission_type   mission_type
-        uuid           sos_request_id FK "RESCUE only"
-        uuid           aid_request_id FK "DELIVERY only"
-        uuid           volunteer_id   FK
-        uuid           hub_id         FK "DELIVERY only"
-        mission_status status
-        varchar        qr_code_token  UK
-        decimal        priority_score "snapshot"
+        string id PK
+        string mission_type
+        string sos_request_id FK
+        string aid_request_id FK
+        string volunteer_id FK
+        string hub_id FK
+        string status
+        string qr_code_token
+        double priority_score
+        string cancellation_reason
     }
     dispatch_attempts {
-        uuid              id            PK
-        uuid              mission_id    FK
-        uuid              volunteer_id  FK
-        dispatch_type     dispatch_type
-        int               batch_number
-        decimal           radius_km
-        dispatch_response response
-    }
-    sos_requests {
-        uuid      id     PK
-        sos_status status
-    }
-    aid_requests {
-        uuid               id     PK
-        aid_request_status status
+        string id PK
+        string mission_id FK
+        string volunteer_id FK
+        string dispatch_type
+        int batch_number
+        double radius_km
+        string response
     }
     volunteer_profiles {
-        uuid    id       PK
+        string id PK
         boolean is_online
-        geometry current_location "Point"
-        decimal avg_rating
+        double current_lat
+        double current_lng
+        double avg_rating
     }
-    hubs {
-        uuid       id     PK
-        hub_status status
+    sos_requests {
+        string id PK
+        string status
+    }
+    aid_requests {
+        string id PK
+        string status
     }
 
-    sos_requests       ||--o|  missions            : "spawns RESCUE"
-    aid_requests       ||--o|  missions            : "spawns DELIVERY"
-    volunteer_profiles ||--o{  missions            : "assigned"
-    hubs               ||--o{  missions            : "pickup point"
-    missions           ||--o{  dispatch_attempts   : "dispatches"
-    volunteer_profiles ||--o{  dispatch_attempts   : "notified"
+    sos_requests ||--o| missions : ""
+    aid_requests ||--o| missions : ""
+    volunteer_profiles ||--o{ missions : ""
+    volunteer_profiles ||--o{ dispatch_attempts : ""
+    missions ||--o{ dispatch_attempts : ""
 ```
 
 ---
 
-### E · Communication
+### E — Communication
 
 ```mermaid
 erDiagram
     missions {
-        uuid           id     PK
-        mission_status status
+        string id PK
     }
     chat_messages {
-        uuid         id            PK
-        uuid         mission_id    FK
-        uuid         sender_id     FK
-        message_type message_type
-        text         message_text
-        uuid         attachment_id FK "IMAGE only"
-        boolean      is_read
-    }
-    attachments {
-        uuid        id          PK
-        entity_type entity_type "polymorphic"
-        uuid        entity_id   "polymorphic FK"
-        varchar     url
-        varchar     mime_type
+        string id PK
+        string mission_id FK
+        string sender_id FK
+        string message_type
+        string message_text
+        string image_url
+        boolean is_read
     }
     ratings {
-        uuid mission_id FK "UNIQUE"
-        uuid rater_id   FK
-        uuid ratee_id   FK
-        int  score      "1-5"
+        string id PK
+        string mission_id FK
+        string rater_id FK
+        string ratee_id FK
+        int score
     }
     notifications {
-        uuid              id                 PK
-        uuid              user_id            FK
-        notification_type notification_type
-        boolean           is_read
-        entity_type       related_entity_type
-        uuid              related_entity_id
+        string id PK
+        string user_id FK
+        string related_type
+        string related_id
+        boolean is_read
     }
     users {
-        uuid      id   PK
-        user_role role
-    }
-    volunteer_profiles {
-        uuid id PK
+        string id PK
     }
 
-    missions           ||--o{  chat_messages   : "has"
-    users              ||--o{  chat_messages   : "sends"
-    attachments        ||--o{  chat_messages   : "image ref"
-    missions           ||--o|  ratings         : "rated once"
-    users              ||--o{  ratings         : "rater (victim)"
-    volunteer_profiles ||--o{  ratings         : "ratee"
-    users              ||--o{  notifications   : "inbox"
+    missions ||--o{ chat_messages : ""
+    missions ||--o| ratings : ""
+    users ||--o{ chat_messages : ""
+    users ||--o{ notifications : ""
 ```
 
 ---
 
-## Cardinality Legend
+## 4. Cardinality Legend
 
-| Symbol | Meaning |
-|--------|---------|
-| `\|\|` | Exactly one |
-| `o\|` | Zero or one |
-| `\|\|--o{` | One-to-many (required on left) |
-| `o{` | Zero or many |
+| Ký hiệu Mermaid | Nghĩa |
+|-----------------|-------|
+| `\|\|--\|\|` | Exactly one — Exactly one (1:1 bắt buộc) |
+| `\|\|--o\|` | Exactly one — Zero or one (1:0-1) |
+| `\|\|--o{` | Exactly one — Zero or many (1:N) |
+| `o\|--o{` | Zero or one — Zero or many |
+| `}o--o{` | Zero or many — Zero or many (M:N) |
+
+---
+
+## 5. ENUM Reference
+
+| ENUM | Giá trị |
+|------|---------|
+| `user_role` | `VICTIM`, `VOLUNTEER`, `SPONSOR`, `STAFF`, `ADMIN` |
+| `hub_status` | `ACTIVE`, `INACTIVE`, `EMERGENCY` |
+| `urgency_level` | `CRITICAL`, `HIGH`, `MEDIUM`, `LOW` |
+| `sos_status` | `PENDING`, `DISPATCHING`, `ASSIGNED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED` |
+| `aid_status` | `PENDING`, `DISPATCHING`, `ASSIGNED`, `PICKED_UP`, `IN_TRANSIT`, `COMPLETED`, `CANCELLED` |
+| `donation_status` | `REGISTERED`, `QR_GENERATED`, `RECEIVED`, `REJECTED` |
+| `mission_type` | `RESCUE`, `DELIVERY` |
+| `mission_status` | `PENDING`, `DISPATCHING`, `ASSIGNED`, `PICKING_UP`, `PICKED_UP`, `IN_TRANSIT`, `COMPLETED`, `CANCELLED` |
+| `dispatch_response` | `PENDING`, `ACCEPTED`, `REJECTED`, `TIMEOUT` |
+| `badge_level` | `BRONZE`, `SILVER`, `GOLD`, `PLATINUM` |
+
+---
+
+## 6. Key Constraints Summary
+
+| Bảng | Constraint |
+|------|------------|
+| `users` | `CHECK (email IS NOT NULL OR phone_number IS NOT NULL)` |
+| `hub_staff` | `UNIQUE (hub_id, user_id) WHERE unassigned_at IS NULL` |
+| `hub_staff` | `CHECK role = 'STAFF'` |
+| `hub_inventories` | `UNIQUE (hub_id, item_category_id)` · `CHECK (current_quantity >= 0)` |
+| `inventory_logs` | `CHECK (quantity_delta > 0)` |
+| `shelters` | `CHECK (current_capacity <= max_capacity)` |
+| `sos_requests` | `CHECK (people_count > 0)` |
+| `aid_requests` | `CHECK (adults + elderly + children > 0)` |
+| `missions` | CHECK: RESCUE ↔ sos_request_id NOT NULL, aid_request_id NULL, hub_id NULL |
+| `missions` | CHECK: DELIVERY ↔ aid_request_id NOT NULL, sos_request_id NULL, hub_id NOT NULL |
+| `ratings` | `UNIQUE (mission_id)` · `CHECK (score BETWEEN 1 AND 5)` |
+| `chat_messages` | CHECK: TEXT XOR IMAGE (không được có cả hai hoặc không có gì) |
+| `donation_items` · `aid_request_items` | `CHECK (quantity > 0)` |
+
+---
+
+## 7. Changelog
+
+| Version | Thay đổi |
+|---------|---------|
+| **v3.0** | Redesign từ đầu: 22 bảng (bỏ `otp_verifications`, `volunteer_area_experiences`, `attachments`, `safe_paths`); OTP gộp vào `users`; GEOMETRY → lat/lng DECIMAL(9,6); image_url VARCHAR(500) trực tiếp trong bảng; thêm `hub_staff.is_available` |
+| **v2.x** | 26 bảng — thiết kế cũ (không còn dùng) |
