@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bottom_nav_menu.xml — BottomNavigationView menu for MainActivity.
+
+    Phase 2 — 2 tabs:
+    1. nav_home  — Trang chủ (icon người dùng): thông tin tài khoản + vai trò.
+    2. nav_map   — Bản đồ (Phase 3: Google Maps).
+
+    TODO PHASE 3: Bổ sung tab Cứu hộ (nav_sos) khi thiết kế SOS flow.
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_person"
+        android:title="@string/nav_home" />
+
+    <item
+        android:id="@+id/nav_map"
+        android:icon="@drawable/ic_map"
+        android:title="@string/nav_map" />
+
+</menu>

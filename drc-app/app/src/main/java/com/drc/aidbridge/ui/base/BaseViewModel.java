@@ -5,10 +5,17 @@ import androidx.lifecycle.ViewModel;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 
-public class BaseViewModel extends ViewModel {
+/**
+ * BaseViewModel — parent class for all ViewModels.
+ * Manages RxJava3 Disposables to prevent memory leaks for background streams (e.g., WebSocket).
+ */
+public abstract class BaseViewModel extends ViewModel {
 
-    protected final CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
+    /**
+     * Adds an RxJava Disposable to be automatically cleared when ViewModel dies.
+     */
     protected void addDisposable(Disposable disposable) {
         compositeDisposable.add(disposable);
     }

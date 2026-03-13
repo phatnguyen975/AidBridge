@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Spacing dimensions -->
+    <!-- === Spacing Dimensions === -->
     <dimen name="spacing_xs">4dp</dimen>
     <dimen name="spacing_sm">8dp</dimen>
     <dimen name="spacing_md">16dp</dimen>
@@ -8,9 +8,30 @@
     <dimen name="spacing_xl">32dp</dimen>
     <dimen name="spacing_xxl">48dp</dimen>
 
-    <!-- Corner radii -->
+    <!-- === Corner Radii === -->
     <dimen name="radius_sm">8dp</dimen>
     <dimen name="radius_md">12dp</dimen>
     <dimen name="radius_lg">16dp</dimen>
     <dimen name="radius_full">50dp</dimen>
+
+    <!-- === Component Sizes === -->
+    <dimen name="btn_height">52dp</dimen>
+    <dimen name="input_height">56dp</dimen>
+    <dimen name="sos_button_size">200dp</dimen>
+    <dimen name="otp_box_size">48dp</dimen>
+
+    <!-- === Text Sizes === -->
+    <dimen name="text_xs">11sp</dimen>
+    <dimen name="text_sm">13sp</dimen>
+    <dimen name="text_md">15sp</dimen>
+    <dimen name="text_lg">18sp</dimen>
+    <dimen name="text_xl">24sp</dimen>
+    <dimen name="text_xxl">32sp</dimen>
+
+    <!-- === Logo Sizes === -->
+    <dimen name="logo_size_splash">160dp</dimen>
+    <dimen name="logo_size_header">72dp</dimen>
+
+    <!-- === Bottom Nav === -->
+    <dimen name="bottom_nav_height">64dp</dimen>
 </resources>
