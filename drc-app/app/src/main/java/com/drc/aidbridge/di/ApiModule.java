@@ -1,6 +1,6 @@
 package com.drc.aidbridge.di;
 
-import com.drc.aidbridge.data.remote.AuthApiService;
+import com.drc.aidbridge.data.remote.api.AuthApiService;
 
 import javax.inject.Singleton;
 

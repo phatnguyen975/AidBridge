@@ -1,7 +1,7 @@
 package com.drc.aidbridge.data.remote.interceptor;
 
 import com.drc.aidbridge.data.remote.api.AuthApiService;
-import com.drc.aidbridge.data.remote.dto.AuthResponse;
+import com.drc.aidbridge.data.remote.dto.response.AuthResponse;
 import com.drc.aidbridge.utils.Constants;
 import com.drc.aidbridge.utils.TokenManager;
 

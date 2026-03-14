@@ -1,7 +1,7 @@
 package com.drc.aidbridge.di;
 
-import com.drc.aidbridge.data.remote.AuthInterceptor;
-import com.drc.aidbridge.data.remote.TokenRefreshInterceptor;
+import com.drc.aidbridge.data.remote.interceptor.AuthInterceptor;
+import com.drc.aidbridge.data.remote.interceptor.TokenRefreshInterceptor;
 import com.drc.aidbridge.utils.Constants;
 
 import java.util.concurrent.TimeUnit;

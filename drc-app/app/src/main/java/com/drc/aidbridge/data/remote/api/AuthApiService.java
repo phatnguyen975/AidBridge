@@ -1,11 +1,11 @@
 package com.drc.aidbridge.data.remote.api;
 
-import com.drc.aidbridge.data.remote.dto.AuthResponse;
-import com.drc.aidbridge.data.remote.dto.EmailRequest;
-import com.drc.aidbridge.data.remote.dto.LoginRequest;
-import com.drc.aidbridge.data.remote.dto.OtpVerifyRequest;
-import com.drc.aidbridge.data.remote.dto.RegisterRequest;
-import com.drc.aidbridge.data.remote.dto.ResetPasswordRequest;
+import com.drc.aidbridge.data.remote.dto.response.AuthResponse;
+import com.drc.aidbridge.data.remote.dto.request.ForgotPasswordRequest;
+import com.drc.aidbridge.data.remote.dto.request.LoginRequest;
+import com.drc.aidbridge.data.remote.dto.request.OtpVerifyRequest;
+import com.drc.aidbridge.data.remote.dto.request.RegisterRequest;
+import com.drc.aidbridge.data.remote.dto.request.ResetPasswordRequest;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -47,7 +47,7 @@ public interface AuthApiService {
     Call<Void> resendOtp(@Body OtpVerifyRequest request);
 
     @POST("auth/forgot-password")
-    Call<Void> forgotPassword(@Body EmailRequest request);
+    Call<Void> forgotPassword(@Body ForgotPasswordRequest request);
 
     @POST("auth/verify-reset-otp")
     Call<Void> verifyResetOtp(@Body OtpVerifyRequest request);
