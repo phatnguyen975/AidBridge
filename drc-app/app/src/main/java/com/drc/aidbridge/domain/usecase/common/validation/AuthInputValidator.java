@@ -13,7 +13,7 @@ import javax.inject.Inject;
 public class AuthInputValidator {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
-            "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,}$",
+            "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$",
             Pattern.CASE_INSENSITIVE
     );
     private static final Pattern OTP_PATTERN = Pattern.compile("^[0-9]+$");

@@ -1,13 +1,13 @@
 package com.drc.aidbridge.di;
 
+import com.drc.aidbridge.data.repository.AuthRepositoryImpl;
+import com.drc.aidbridge.domain.repository.AuthRepository;
+
 import dagger.Binds;
 import dagger.Module;
 import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
 import javax.inject.Singleton;
-
-import com.drc.aidbridge.data.repository.AuthRepositoryImpl;
-import com.drc.aidbridge.domain.repository.AuthRepository;
 
 /**
  * RepositoryModule — binds Repository interfaces to their concrete implementations.

@@ -32,7 +32,7 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        _binding = inflateBinding(inflater, container, false);
+        _binding = inflateBinding(inflater, container);
         binding = _binding;
         return binding.getRoot();
     }
@@ -51,7 +51,7 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
         binding = null;  // Prevent further access
     }
 
-    protected abstract VB inflateBinding(LayoutInflater inflater, @Nullable ViewGroup container, boolean attachToRoot);
+    protected abstract VB inflateBinding(LayoutInflater inflater, @Nullable ViewGroup container);
     protected abstract void setupViews();
     protected abstract void observeViewModel();
 

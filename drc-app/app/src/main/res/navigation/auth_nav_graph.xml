@@ -27,7 +27,7 @@
          ============================================================ -->
     <fragment
         android:id="@+id/guestFragment"
-        android:name="com.drc.aidbridge.ui.auth.GuestFragment"
+        android:name="com.drc.aidbridge.ui.auth.fragment.GuestFragment"
         android:label="GuestFragment">
 
         <!-- → Login -->
@@ -54,7 +54,7 @@
          ============================================================ -->
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.drc.aidbridge.ui.auth.LoginFragment"
+        android:name="com.drc.aidbridge.ui.auth.fragment.LoginFragment"
         android:label="LoginFragment">
 
         <!-- → Register (from "Đăng ký tài khoản mới" link) -->
@@ -90,8 +90,17 @@
          ============================================================ -->
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.drc.aidbridge.ui.auth.RegisterFragment"
+        android:name="com.drc.aidbridge.ui.auth.fragment.RegisterFragment"
         android:label="RegisterFragment">
+
+        <!-- → Login (from "Đăng nhập" link in register screen) -->
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
 
         <!-- → OTP (sau khi đăng ký thành công) -->
         <action
@@ -108,7 +117,7 @@
          ============================================================ -->
     <fragment
         android:id="@+id/otpFragment"
-        android:name="com.drc.aidbridge.ui.auth.OtpFragment"
+        android:name="com.drc.aidbridge.ui.auth.fragment.OtpFragment"
         android:label="OtpFragment">
 
         <!-- Receives the email string argument from RegisterFragment -->
@@ -116,6 +125,14 @@
             android:name="email"
             app:argType="string"
             android:defaultValue="" />
+
+        <!-- → Login after successful OTP verification in register flow. -->
+        <action
+            android:id="@+id/action_otpFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/registerFragment"
+            app:popUpToInclusive="true"
+            app:launchSingleTop="true" />
     </fragment>
 
     <!-- ============================================================
@@ -125,7 +142,7 @@
     <!-- Step 1: Enter email address -->
     <fragment
         android:id="@+id/forgotEmailFragment"
-        android:name="com.drc.aidbridge.ui.auth.ForgotEmailFragment"
+        android:name="com.drc.aidbridge.ui.auth.fragment.ForgotEmailFragment"
         android:label="ForgotEmailFragment">
 
         <!-- → Step 2: Enter OTP -->
@@ -141,7 +158,7 @@
     <!-- Step 2: OTP verification -->
     <fragment
         android:id="@+id/forgotOtpFragment"
-        android:name="com.drc.aidbridge.ui.auth.ForgotOtpFragment"
+        android:name="com.drc.aidbridge.ui.auth.fragment.ForgotOtpFragment"
         android:label="ForgotOtpFragment">
 
         <!-- Email passed from ForgotEmailFragment -->
@@ -163,7 +180,7 @@
     <!-- Step 3: Set new password -->
     <fragment
         android:id="@+id/forgotNewPasswordFragment"
-        android:name="com.drc.aidbridge.ui.auth.ForgotNewPasswordFragment"
+        android:name="com.drc.aidbridge.ui.auth.fragment.ForgotNewPasswordFragment"
         android:label="ForgotNewPasswordFragment">
 
         <!-- Email passed from ForgotOtpFragment -->

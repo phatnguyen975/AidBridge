@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
+import com.drc.aidbridge.utils.Constants;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.inject.Singleton;
@@ -13,11 +14,8 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 
-import com.drc.aidbridge.utils.Constants;
-
 /**
  * AppModule — provides application-level singletons.
- * 
  * This includes the application Context, EncryptedSharedPreferences for secure
  * JWT token storage, and any other context-dependent utilities.
  */

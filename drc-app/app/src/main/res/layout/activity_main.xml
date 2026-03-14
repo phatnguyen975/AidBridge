@@ -3,7 +3,7 @@
     activity_main.xml — Main container with BottomNavigationView.
 
     Structure:
-    - FrameLayout (container_main) fills all space above the bottom nav
+    - NavHostFragment (main_nav_host) fills all space above the bottom nav
     - BottomNavigationView at the bottom (2 tabs: Bản đồ / Cứu hộ)
 -->
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -13,11 +13,14 @@
     android:layout_height="match_parent"
     android:background="@color/bg_primary">
 
-    <!-- Fragment container occupies all space above bottom nav -->
-    <FrameLayout
-        android:id="@+id/container_main"
+    <!-- NavHost container occupies all space above bottom nav -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/main_nav_host"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:navGraph="@navigation/main_nav_graph"
+        app:defaultNavHost="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
         app:layout_constraintStart_toStartOf="parent"

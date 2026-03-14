@@ -21,19 +21,13 @@ public final class NetworkUtils {
      */
     public static boolean isConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm == null) {
-            return false;
-        }
+        if (cm == null) return false;
 
         Network activeNetwork = cm.getActiveNetwork();
-        if (activeNetwork == null) {
-            return false;
-        }
+        if (activeNetwork == null) return false;
 
         NetworkCapabilities capabilities = cm.getNetworkCapabilities(activeNetwork);
-        if (capabilities == null) {
-            return false;
-        }
+        if (capabilities == null) return false;
 
         return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
                 || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)

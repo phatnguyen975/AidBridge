@@ -21,18 +21,6 @@ android {
 
         // HiltTestRunner replaces default runner to support Hilt injection in instrumented tests
         testInstrumentationRunner "com.google.dagger.hilt.android.testing.HiltTestRunner"
-
-        // Load all key-value pairs from local.properties and generate corresponding BuildConfig fields
-        Properties props = new Properties()
-        def propFile = project.rootProject.file('local.properties')
-        if (propFile.exists()) {
-            props.load(new FileInputStream(propFile))
-            props.each { key, value ->
-                buildConfigField "String", key.toString(), "${value.toString()}"
-            }
-        } else {
-            println "local.properties file not found. No buildConfigFields will be generated."
-        }
     }
 
     buildTypes {
@@ -45,8 +33,6 @@ android {
     buildFeatures {
         // ViewBinding generates a binding class for each XML layout - replaces findViewById()
         viewBinding true
-        // BuildConfig generates a BuildConfig class with static fields for build constants
-        buildConfig true
     }
 
     compileOptions {

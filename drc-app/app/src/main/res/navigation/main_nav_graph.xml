@@ -17,13 +17,13 @@
     <!-- Trang chủ: hiển thị thông tin người dùng và nút đăng xuất -->
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.drc.aidbridge.ui.main.HomeFragment"
+        android:name="com.drc.aidbridge.ui.home.HomeFragment"
         android:label="HomeFragment" />
 
     <!-- Bản đồ (Phase 3: tích hợp Google Maps thật) -->
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.drc.aidbridge.ui.main.MapFragment"
+        android:name="com.drc.aidbridge.ui.map.MapFragment"
         android:label="MapFragment" />
 
 </navigation>

@@ -16,7 +16,6 @@ import dagger.hilt.components.SingletonComponent;
 
 /**
  * DatabaseModule — provides the Room AppDatabase singleton and all DAO instances.
- * 
  * Room operates on a background thread; DAOs are injected directly into Repositories.
  */
 @Module
