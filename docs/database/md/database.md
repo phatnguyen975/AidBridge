@@ -1,13 +1,14 @@
-# AidBridge — Database Design v3.0
+# AidBridge — Database Design v3.1
 
 > **Engine:** PostgreSQL 15+  ·  **Extension:** `uuid-ossp`
 > **Design principle:** 3NF cho tất cả bảng transactional; denorm có chủ ý cho read-heavy aggregates; query đơn giản và nhanh là ưu tiên hàng đầu.
+> **Logical ERD:** [erd_v2.md](./erd_v2.md) · **Physical Schema Diagram:** [physical_database.md](./physical_database.md)
 
 ---
 
 ## 1. Schema Overview
 
-**22 bảng · 10 kiểu ENUM · ~35 index**
+**23 bảng · 10 kiểu ENUM · ~38 index**
 
 | Group | Bảng |
 |-------|------|
@@ -15,10 +16,20 @@
 | **Profiles** | `volunteer_profiles`, `sponsor_profiles` |
 | **Infrastructure** | `hubs`, `hub_staff`, `shelters`, `system_config` |
 | **Catalog & Inventory** | `item_categories`, `hub_accepted_categories`, `hub_inventories`, `inventory_logs` |
-| **Requests** | `sos_requests`, `aid_requests`, `aid_request_items` |
+| **Requests** | `sos_requests`, `sos_request_details`\*, `aid_requests`, `aid_request_items` |
 | **Donations** | `donations`, `donation_items` |
 | **Missions** | `missions`, `dispatch_attempts` |
 | **Communication** | `chat_messages`, `ratings`, `notifications` |
+
+> \* `sos_request_details` — bảng mới (v3.1): vertical split từ `sos_requests`, chứa các cột TEXT ít truy vấn.
+
+**Thay đổi so với v3.0:**
+
+| Thay đổi | Lý do |
+|----------|-------|
+| Tách `sos_requests` → `sos_requests` + `sos_request_details` | Vertical split: hot columns (dispatch, heatmap) tách khỏi cold TEXT columns (description, ai_summary) |
+| Thêm `snapshot_*` columns vào `missions` | Denorm: Live Tracking & Mission Screen cần destination info liên tục, tránh JOIN sang sos/aid tables |
+| Thêm `hub_name` vào `donations` | Denorm: QR Screen cần hub name mà không JOIN |
 
 **Thay đổi so với v2 (26 bảng):**
 
@@ -28,6 +39,14 @@
 | `volunteer_area_experiences` | Quá phức tạp cho MVP; E-factor = 0 trong Priority Score lúc đầu |
 | `attachments` (polymorphic) | Thay bằng `image_url VARCHAR(500)` trực tiếp trên từng bảng cần |
 | `safe_paths` | Deferred to v3; hiện dùng Google Directions API trực tiếp |
+
+**Thay đổi so với v3.0 (22 bảng):**
+
+| Thay đổi | Loại | Lý do |
+|----------|------|-------|
+| Tách `sos_requests` → `sos_requests` + `sos_request_details` | Table Split | Dispatch & heatmap chỉ cần hot columns; TEXT columns kéo dài row size gây buffer waste |
+| `missions` + `snapshot_lat/lng/address/name/phone` | Denorm | Live Tracking poll 3-5s/lần; tránh double JOIN sang sos/aid tables |
+| `donations` + `hub_name` | Denorm | QR screen hiển thị hub name mà không JOIN |
 
 ---
 
@@ -308,28 +327,42 @@ CHECK (current_quantity >= 0)
 
 ### GROUP 5 — Requests
 
-#### `sos_requests`
+#### `sos_requests` — **HOT TABLE** (v3.1: Vertical Split)
+
+> **v3.1 thay đổi:** Các cột TEXT ít dùng đã được tách sang `sos_request_details`. Bảng này chỉ giữ các cột truy vấn nóng phục vụ dispatch algorithm và heatmap.
 
 | Column | Type | Constraint | Ghi chú |
 |--------|------|-----------|---------|
-| id | UUID | PK | |
+| id | UUID | PK | DEFAULT gen_random_uuid() |
 | requester_id | UUID | FK(users) nullable | NULL = Guest |
+| victim_lat | DECIMAL(9,6) | NOT NULL | hot: dispatch origin |
+| victim_lng | DECIMAL(9,6) | NOT NULL | hot: dispatch origin |
+| people_count | INT | CHECK > 0 | hot: urgency weighting |
+| is_on_behalf | BOOLEAN | DEFAULT FALSE | |
+| urgency_level | urgency_level | | AI-classified; hot: Priority Score |
+| status | sos_status | DEFAULT 'PENDING' | hot: dispatch & heatmap filter |
+| created_at | TIMESTAMP | DEFAULT NOW() | |
+| updated_at | TIMESTAMP | DEFAULT NOW() | |
+
+**Constraint:** `CHECK (people_count > 0)`
+
+---
+
+#### `sos_request_details` — **COLD TABLE** (v3.1: mới)
+
+> **Mục đích:** Lưu các cột TEXT lớn, ít dùng — chỉ JOIN khi cần hiển thị chi tiết (Volunteer mission screen, Admin dashboard). Quan hệ 1:1 bắt buộc với `sos_requests`.
+
+| Column | Type | Constraint | Ghi chú |
+|--------|------|-----------|---------|
+| sos_request_id | UUID | PK · FK(sos_requests) | 1:1 mandatory |
 | requester_name | VARCHAR(100) | NOT NULL | |
 | requester_phone | VARCHAR(20) | NOT NULL | |
 | victim_name | VARCHAR(100) | | khi `is_on_behalf=TRUE` |
-| victim_phone | VARCHAR(20) | | khi `is_on_behalf=TRUE` |
-| victim_lat | DECIMAL(9,6) | NOT NULL | |
-| victim_lng | DECIMAL(9,6) | NOT NULL | |
+| victim_phone | VARCHAR(20) | | |
 | victim_address | TEXT | | |
-| description | TEXT | NOT NULL | |
-| people_count | INT | CHECK > 0 | |
-| is_on_behalf | BOOLEAN | DEFAULT FALSE | |
-| urgency_level | urgency_level | | AI-classified |
-| ai_summary | TEXT | | AI-generated |
-| status | sos_status | DEFAULT 'PENDING' | |
+| description | TEXT | NOT NULL | raw text từ Victim |
+| ai_summary | TEXT | | AI-generated tóm tắt |
 | image_url | VARCHAR(500) | | ảnh đính kèm (optional) |
-| created_at | TIMESTAMP | | |
-| updated_at | TIMESTAMP | | |
 
 ---
 
@@ -371,21 +404,23 @@ CHECK (current_quantity >= 0)
 
 #### `donations`
 
-| Column | Type | Constraint |
-|--------|------|-----------|
-| id | UUID | PK |
-| sponsor_id | UUID | FK(users) |
-| hub_id | UUID | FK(hubs) |
-| estimated_delivery_at | DATE | |
-| qr_code_token | VARCHAR(255) | UNIQUE |
-| status | donation_status | DEFAULT 'REGISTERED' |
-| received_by | UUID | FK(users) nullable |
-| received_at | TIMESTAMP | |
-| rejection_reason | TEXT | |
-| created_at | TIMESTAMP | |
-| updated_at | TIMESTAMP | |
+| Column | Type | Constraint | Ghi chú |
+|--------|------|-----------|---------|
+| id | UUID | PK | |
+| sponsor_id | UUID | FK(users) | |
+| hub_id | UUID | FK(hubs) | |
+| hub_name | VARCHAR(100) | | **DENORM** — snapshot khi QR_GENERATED |
+| estimated_delivery_at | DATE | | |
+| qr_code_token | VARCHAR(255) | UNIQUE | |
+| status | donation_status | DEFAULT 'REGISTERED' | |
+| received_by | UUID | FK(users) nullable | |
+| received_at | TIMESTAMP | | |
+| rejection_reason | TEXT | | |
+| created_at | TIMESTAMP | | |
+| updated_at | TIMESTAMP | | |
 
-**Lifecycle:** `REGISTERED → QR_GENERATED → RECEIVED` (kho cộng) `| REJECTED` (lý do ghi log)
+> `hub_name`: Snapshot tên Hub tại thời điểm Sponsor chọn Hub (QR_GENERATED). QR Screen (§6.3) dùng trực tiếp mà không JOIN `hubs`.
+> **Lifecycle:** `REGISTERED → QR_GENERATED → RECEIVED` (kho cộng) `| REJECTED` (lý do ghi log)
 
 ---
 
@@ -419,6 +454,11 @@ CHECK (current_quantity >= 0)
 | status | mission_status | DEFAULT 'PENDING' | |
 | qr_code_token | VARCHAR(255) | UNIQUE | single-use |
 | priority_score | DECIMAL(8,4) | | snapshot tại thời điểm assign |
+| snapshot_lat | DECIMAL(9,6) | | **DENORM** — tọa độ đích tại accepted_at |
+| snapshot_lng | DECIMAL(9,6) | | **DENORM** |
+| snapshot_address | TEXT | | **DENORM** — địa chỉ đích để hiển thị |
+| snapshot_requester_name | VARCHAR(100) | | **DENORM** — tên nạn nhân/người gửi |
+| snapshot_requester_phone | VARCHAR(20) | | **DENORM** — SĐT liên lạc |
 | accepted_at | TIMESTAMP | | |
 | picked_up_at | TIMESTAMP | | DELIVERY only |
 | completed_at | TIMESTAMP | | |
@@ -427,6 +467,8 @@ CHECK (current_quantity >= 0)
 | confirmation_image_url | VARCHAR(500) | | ảnh xác nhận giao hàng |
 | created_at | TIMESTAMP | | |
 | updated_at | TIMESTAMP | | |
+
+> **Snapshot columns (DENORM):** Được populate **tại thời điểm** Volunteer accept (`accepted_at`). Phục vụ Live Tracking (§4.4) và Mission Screen (§5.3) poll liên tục mà không JOIN sang `sos_requests`/`aid_requests`.
 
 **CHECK constraints:**
 ```sql
@@ -524,8 +566,8 @@ CHECK (
 | Index | Column | Loại | Mục đích |
 |-------|--------|------|---------|
 | `idx_vol_online` | `volunteer_profiles(current_lat, current_lng)` WHERE `is_online=TRUE` | PARTIAL BTREE | `is_online` filter + bounding box distance pre-filter |
-| `idx_sos_location` | `sos_requests(victim_lat, victim_lng)` | BTREE | Heatmap + dispatch origin |
-| `idx_aid_location` | `aid_requests(lat, lng)` | BTREE | Heatmap + dispatch origin |
+| `idx_sos_location` | `sos_requests(victim_lat, victim_lng, status)` WHERE `status IN ('PENDING','DISPATCHING')` | PARTIAL BTREE | Heatmap + dispatch origin (hot table sau split) |
+| `idx_aid_location` | `aid_requests(lat, lng, status)` WHERE `status IN ('PENDING','DISPATCHING')` | PARTIAL BTREE | Heatmap + dispatch origin |
 | `idx_hubs_location` | `hubs(lat, lng)` WHERE `status='ACTIVE'` | PARTIAL BTREE | Smart Hub Selection |
 
 ### Read (frequent lookups)
@@ -537,11 +579,12 @@ CHECK (
 | `idx_missions_aid` | `missions(aid_request_id)` WHERE NOT NULL |
 | `idx_dispatch_pending` | `dispatch_attempts(mission_id)` WHERE `response='PENDING'` |
 | `idx_donations_sponsor` | `donations(sponsor_id, created_at DESC)` |
+| `idx_donations_hub_status` | `donations(hub_id, status)` |
 | `idx_inventory_hub` | `hub_inventories(hub_id)` |
-| `idx_inv_logs_ref` | `inventory_logs(reference_id, reference_type)` |
+| `idx_inv_low_stock` | `hub_inventories(hub_id, current_quantity)` WHERE `current_quantity <= low_stock_threshold` | PARTIAL |
+| `idx_inv_logs_ref` | `inventory_logs(reference_type, reference_id)` |
 | `idx_chat_mission` | `chat_messages(mission_id, created_at ASC)` |
 | `idx_notifications_user` | `notifications(user_id, created_at DESC)` WHERE `is_read=FALSE` |
-| `idx_inv_low_stock` | `hub_inventories WHERE current_quantity <= low_stock_threshold` | PARTIAL |
 
 ---
 
@@ -562,6 +605,8 @@ CHECK (
 | 1 active staff per hub per person | Partial UNIQUE index `(hub_id, user_id) WHERE unassigned_at IS NULL` |
 | Chỉ STAFF vào hub_staff | `CHECK role = 'STAFF'` |
 | Refresh token = hash only | Application-enforced |
+| `sos_request_details` bắt buộc với mỗi SOS | Application-enforced: INSERT 2 bảng trong cùng transaction |
+| `missions.snapshot_*` populated khi accept | Application-enforced: populate khi Volunteer accept, trước khi UPDATE status → ASSIGNED |
 | updated_at auto-maintain | Trigger `fn_set_updated_at` trên mọi bảng mutable |
 
 ---
