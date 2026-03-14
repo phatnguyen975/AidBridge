@@ -44,7 +44,7 @@ public interface AuthApiService {
      * Resends an OTP to the user's email/phone.
      */
     @POST("auth/resend-otp")
-    Call<Void> resendOtp(@Body OtpVerifyRequest request);
+    Call<Void> resendOtp(@Body ForgotPasswordRequest request);
 
     @POST("auth/forgot-password")
     Call<Void> forgotPassword(@Body ForgotPasswordRequest request);
