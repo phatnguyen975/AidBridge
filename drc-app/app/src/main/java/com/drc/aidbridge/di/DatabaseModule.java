@@ -2,15 +2,17 @@ package com.drc.aidbridge.di;
 
 import android.content.Context;
 import androidx.room.Room;
+
+import com.drc.aidbridge.data.local.AppDatabase;
+import com.drc.aidbridge.data.local.dao.AppSettingsDao;
+import com.drc.aidbridge.utils.Constants;
+
 import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
-
-import com.drc.aidbridge.data.local.AppDatabase;
-import com.drc.aidbridge.utils.Constants;
 
 /**
  * DatabaseModule — provides the Room AppDatabase singleton and all DAO instances.
@@ -34,5 +36,11 @@ public class DatabaseModule {
         return Room.databaseBuilder(context, AppDatabase.class, Constants.DB_NAME)
                 .fallbackToDestructiveMigration()
                 .build();
+    }
+
+    @Provides
+    @Singleton
+    public AppSettingsDao provideAppSettingsDao(AppDatabase database) {
+        return database.appSettingsDao();
     }
 }
