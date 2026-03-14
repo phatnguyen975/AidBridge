@@ -97,7 +97,7 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     private void navigateToNextScreen() {
         Intent intent;
 
-        if (tokenManager.isLoggedIn()) {
+        if (tokenManager.hasActiveSession()) {
             // Valid token present — user is authenticated
             intent = new Intent(this, MainActivity.class);
         } else {

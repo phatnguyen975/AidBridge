@@ -9,12 +9,7 @@ public final class Constants {
     }
 
     // === Network ===
-    /**
-     * TODO: Replace with actual Spring Boot server URL.
-     * Development (local): "http://10.0.2.2:8080/"   (Android emulator routes 10.0.2.2 → localhost)
-     * Production:          "https://api.aidbridge.vn/"
-     */
-    public static final String BASE_URL = "http://10.0.2.2:8080/";
+    public static final String BASE_URL = "http://10.0.2.2:8080/api/";
     public static final int CONNECT_TIMEOUT = 30;
     public static final int READ_TIMEOUT = 30;
     public static final int WRITE_TIMEOUT = 30;
@@ -25,18 +20,18 @@ public final class Constants {
 
     // === SharedPreferences / EncryptedSharedPreferences ===
     public static final String PREFS_NAME = "aidbridge_secure_prefs";
-    public static final String KEY_ACCESS_TOKEN  = "access_token";
+    public static final String KEY_ACCESS_TOKEN = "access_token";
     public static final String KEY_REFRESH_TOKEN = "refresh_token";
-    public static final String KEY_USER_ROLE     = "user_role";
-    public static final String KEY_USER_ID       = "user_id";
-    public static final String KEY_USER_NAME     = "user_name";
-    public static final String KEY_USER_EMAIL    = "user_email";
+    public static final String KEY_USER_ROLE = "user_role";
+    public static final String KEY_USER_ID = "user_id";
+    public static final String KEY_USER_NAME = "user_name";
+    public static final String KEY_USER_EMAIL = "user_email";
 
     // === Room Database ===
     public static final String DB_NAME = "aidbridge_db";
 
     // === OTP ===
-    public static final int OTP_LENGTH        = 6;
+    public static final int OTP_LENGTH = 6;
     public static final int OTP_COUNTDOWN_SEC = 60;
 
     // === Validation ===

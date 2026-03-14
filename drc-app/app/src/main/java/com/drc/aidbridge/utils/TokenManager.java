@@ -1,20 +1,13 @@
 package com.drc.aidbridge.utils;
 
 import android.content.SharedPreferences;
+import androidx.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
  * TokenManager — wrapper around EncryptedSharedPreferences for JWT token lifecycle management.
- *
- * Responsibilities:
- * - saveTokens():       Stores both access and refresh tokens after a successful login/register.
- * - getAccessToken():   Retrieves the current access token for outgoing HTTP requests.
- * - getRefreshToken():  Retrieves the refresh token when the access token has expired (401).
- * - saveUserInfo():     Caches basic user metadata (role, id, name, email) locally.
- * - clearAll():         Wipes all tokens and user data on logout.
- * - isLoggedIn():       Quick check if a valid token is present.
- *
+ * 
  * Injected via Hilt (@Singleton) — the SharedPreferences is an EncryptedSharedPreferences
  * instance provided by AppModule.
  */
@@ -28,47 +21,47 @@ public class TokenManager {
         this.prefs = prefs;
     }
 
-    /**
-     * Saves both JWT tokens after a successful authentication response.
-     *
-     * TODO API INTEGRATION: Call this inside AuthRepositoryImpl after parsing the real
-     * AuthResponse from the server.
-     */
-    public void saveTokens(String accessToken, String refreshToken) {
-        prefs.edit()
-                .putString(Constants.KEY_ACCESS_TOKEN, accessToken)
-                .putString(Constants.KEY_REFRESH_TOKEN, refreshToken)
-                .apply();
+    /** Saves both JWT tokens after a successful authentication response. */
+    public void saveTokens(@Nullable String accessToken, @Nullable String refreshToken) {
+        SharedPreferences.Editor editor = prefs.edit();
+
+        if (accessToken == null || accessToken.isBlank()) {
+            editor.remove(Constants.KEY_ACCESS_TOKEN);
+        } else {
+            editor.putString(Constants.KEY_ACCESS_TOKEN, accessToken);
+        }
+
+        if (refreshToken == null || refreshToken.isBlank()) {
+            editor.remove(Constants.KEY_REFRESH_TOKEN);
+        } else {
+            editor.putString(Constants.KEY_REFRESH_TOKEN, refreshToken);
+        }
+
+        editor.apply();
     }
 
     /** Returns the stored access token, or null if not logged in. */
+    @Nullable
     public String getAccessToken() {
         return prefs.getString(Constants.KEY_ACCESS_TOKEN, null);
     }
 
     /** Returns the stored refresh token, or null if none exists. */
+    @Nullable
     public String getRefreshToken() {
         return prefs.getString(Constants.KEY_REFRESH_TOKEN, null);
-    }
-
-    /** Returns true if a non-null access token is present (does NOT validate expiry). */
-    public boolean isLoggedIn() {
-        String token = getAccessToken();
-        return token != null && !token.isEmpty();
     }
 
     /**
      * Caches user metadata locally so Profile and Home screens can display data
      * without a network call on every launch.
-     *
-     * TODO API INTEGRATION: Call this with the UserDto data from the real AuthResponse.
      */
     public void saveUserInfo(String userId, String userName, String email, String role) {
         prefs.edit()
-                .putString(Constants.KEY_USER_ID,    userId)
-                .putString(Constants.KEY_USER_NAME,  userName)
+                .putString(Constants.KEY_USER_ID, userId)
+                .putString(Constants.KEY_USER_NAME, userName)
                 .putString(Constants.KEY_USER_EMAIL, email)
-                .putString(Constants.KEY_USER_ROLE,  role)
+                .putString(Constants.KEY_USER_ROLE, role)
                 .apply();
     }
 
@@ -77,7 +70,7 @@ public class TokenManager {
         return prefs.getString(Constants.KEY_USER_ROLE, null);
     }
 
-    /** Returns the cached user display name. */
+    /** Returns the cached user name. */
     public String getUserName() {
         return prefs.getString(Constants.KEY_USER_NAME, null);
     }
@@ -85,6 +78,24 @@ public class TokenManager {
     /** Returns the cached user email. */
     public String getUserEmail() {
         return prefs.getString(Constants.KEY_USER_EMAIL, null);
+    }
+
+    /** Returns true if a non-null, non-blank access token is present (does NOT validate expiry). */
+    public boolean hasActiveSession() {
+        String accessToken = getAccessToken();
+        String refreshToken = getRefreshToken();
+        return accessToken != null
+                && !accessToken.isBlank()
+                && refreshToken != null
+                && !refreshToken.isBlank();
+    }
+
+    /** Clears ALL stored tokens. */
+    public void clearTokens() {
+        prefs.edit()
+                .remove(Constants.KEY_ACCESS_TOKEN)
+                .remove(Constants.KEY_REFRESH_TOKEN)
+                .apply();
     }
 
     /**
