@@ -1,7 +1,7 @@
-# AidBridge — Physical Database Schema v3.1
+# AidBridge — Physical Database Schema
 
 > **Engine:** PostgreSQL 15+ · **Extension:** `uuid-ossp`
-> **23 bảng** (22 gốc + 1 bảng tách mới `sos_request_details`) · **10 ENUM** · ~38 index
+> **23 bảng** · **10 ENUM** · ~38 index
 > **Logical ERD:** Xem [erd_v2.md](./erd_v2.md)
 
 ---

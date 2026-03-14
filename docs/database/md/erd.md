@@ -1,4 +1,4 @@
-# AidBridge — ERD v2: Detailed Logical ERD
+# AidBridge — ERD: Detailed Logical ERD
 
 > **Mục đích:** Bản đồ dữ liệu nghiệp vụ thuần túy — dành cho Business Analyst & Developer hiểu luồng dữ liệu.
 > **Nguyên tắc:** KHÔNG có FK columns, KHÔNG có junction table thuần túy, KHÔNG có kiểu dữ liệu vật lý. Cardinality phản ánh đúng thực tế nghiệp vụ.

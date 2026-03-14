@@ -1,8 +1,7 @@
-# AidBridge — Database Design v3.1
+# AidBridge — Database Design
 
 > **Engine:** PostgreSQL 15+  ·  **Extension:** `uuid-ossp`
 > **Design principle:** 3NF cho tất cả bảng transactional; denorm có chủ ý cho read-heavy aggregates; query đơn giản và nhanh là ưu tiên hàng đầu.
-> **Logical ERD:** [erd_v2.md](./erd_v2.md) · **Physical Schema Diagram:** [physical_database.md](./physical_database.md)
 
 ---
 
@@ -23,32 +22,10 @@
 
 > \* `sos_request_details` — bảng mới (v3.1): vertical split từ `sos_requests`, chứa các cột TEXT ít truy vấn.
 
-**Thay đổi so với v3.0:**
 
-| Thay đổi | Lý do |
-|----------|-------|
-| Tách `sos_requests` → `sos_requests` + `sos_request_details` | Vertical split: hot columns (dispatch, heatmap) tách khỏi cold TEXT columns (description, ai_summary) |
-| Thêm `snapshot_*` columns vào `missions` | Denorm: Live Tracking & Mission Screen cần destination info liên tục, tránh JOIN sang sos/aid tables |
-| Thêm `hub_name` vào `donations` | Denorm: QR Screen cần hub name mà không JOIN |
 
-**Thay đổi so với v2 (26 bảng):**
 
-| Bỏ | Lý do |
-|----|-------|
-| `otp_verifications` | OTP fields gộp thẳng vào `users` — loại bỏ JOIN, đủ dùng cho MVP |
-| `volunteer_area_experiences` | Quá phức tạp cho MVP; E-factor = 0 trong Priority Score lúc đầu |
-| `attachments` (polymorphic) | Thay bằng `image_url VARCHAR(500)` trực tiếp trên từng bảng cần |
-| `safe_paths` | Deferred to v3; hiện dùng Google Directions API trực tiếp |
 
-**Thay đổi so với v3.0 (22 bảng):**
-
-| Thay đổi | Loại | Lý do |
-|----------|------|-------|
-| Tách `sos_requests` → `sos_requests` + `sos_request_details` | Table Split | Dispatch & heatmap chỉ cần hot columns; TEXT columns kéo dài row size gây buffer waste |
-| `missions` + `snapshot_lat/lng/address/name/phone` | Denorm | Live Tracking poll 3-5s/lần; tránh double JOIN sang sos/aid tables |
-| `donations` + `hub_name` | Denorm | QR screen hiển thị hub name mà không JOIN |
-
----
 
 ## 2. ENUM Types
 
