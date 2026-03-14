@@ -27,12 +27,13 @@ public class UserDto {
     public UserDto() {
     }
 
-    public UserDto(String id, String name, String email, String phone, String role) {
+    public UserDto(String id, String name, String email, String phone, String role, @Nullable String avatarUrl) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.role = role;
+        this.avatarUrl = avatarUrl;
     }
 
     public String getId() {

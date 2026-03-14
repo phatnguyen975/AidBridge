@@ -20,19 +20,13 @@ public class UserMapper implements BaseMapper<UserDto, User> {
             return null;
         }
 
-        UserRole role;
-        try {
-            role = UserRole.valueOf(dto.getRole());
-        } catch (IllegalArgumentException | NullPointerException e) {
-            role = UserRole.VICTIM;
-        }
-
         return new User(
                 dto.getId(),
                 dto.getName(),
                 dto.getEmail(),
                 dto.getPhone(),
-                role
+                UserRole.fromStringSafe(dto.getRole()),
+                dto.getAvatarUrl()
         );
     }
 
@@ -47,7 +41,8 @@ public class UserMapper implements BaseMapper<UserDto, User> {
                 domainModel.getName(),
                 domainModel.getEmail(),
                 domainModel.getPhone(),
-                domainModel.getRole().name()
+                domainModel.getRole().name(),
+                domainModel.getAvatarUrl()
         );
     }
 }
