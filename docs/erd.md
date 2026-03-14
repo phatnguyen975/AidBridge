@@ -1,6 +1,6 @@
 # AidBridge — ERD v3.0
 
-> **Engine:** PostgreSQL 15+  ·  **Extension:** `uuid-ossp`
+> **Engine:** PostgreSQL 15+ · **Extension:** `uuid-ossp`
 > **22 bảng · 10 ENUM · ~35 index**
 > **Nguyên tắc:** lat/lng DECIMAL(9,6) (không PostGIS), image_url VARCHAR trực tiếp trong bảng, OTP gộp vào `users`.
 
@@ -8,16 +8,16 @@
 
 ## 1. Schema Groups
 
-| Group | Bảng |
-|-------|------|
-| **Auth** | `users`, `refresh_tokens` |
-| **Profiles** | `volunteer_profiles`, `sponsor_profiles` |
-| **Infrastructure** | `hubs`, `hub_staff`, `shelters`, `system_config` |
+| Group                   | Bảng                                                                              |
+| ----------------------- | --------------------------------------------------------------------------------- |
+| **Auth**                | `users`, `refresh_tokens`                                                         |
+| **Profiles**            | `volunteer_profiles`, `sponsor_profiles`                                          |
+| **Infrastructure**      | `hubs`, `hub_staff`, `shelters`, `system_config`                                  |
 | **Catalog & Inventory** | `item_categories`, `hub_accepted_categories`, `hub_inventories`, `inventory_logs` |
-| **Requests** | `sos_requests`, `aid_requests`, `aid_request_items` |
-| **Donations** | `donations`, `donation_items` |
-| **Missions** | `missions`, `dispatch_attempts` |
-| **Communication** | `chat_messages`, `ratings`, `notifications` |
+| **Requests**            | `sos_requests`, `aid_requests`, `aid_request_items`                               |
+| **Donations**           | `donations`, `donation_items`                                                     |
+| **Missions**            | `missions`, `dispatch_attempts`                                                   |
+| **Communication**       | `chat_messages`, `ratings`, `notifications`                                       |
 
 ---
 
@@ -354,11 +354,7 @@ erDiagram
         string email
         string phone_number
         string role
-        boolean is_verified
         boolean is_active
-        string otp_code
-        string otp_type
-        datetime otp_expires_at
     }
     refresh_tokens {
         string id PK
@@ -374,19 +370,27 @@ erDiagram
         double current_lat
         double current_lng
         int total_tasks_completed
-        double avg_rating
-        int avg_response_seconds
     }
     sponsor_profiles {
         string id PK
         string user_id FK
         int donation_count
-        string badge_level
+    }
+    otp {
+        string id PK
+        string otp_code
+        datetime otp_expires_at
+    }
+    staff {
+        string id PK
+        datetime start_date
     }
 
     users ||--o{ refresh_tokens : ""
     users ||--o| volunteer_profiles : ""
     users ||--o| sponsor_profiles : ""
+    users ||--o{ otp : ""
+    users ||--o| staff : ""
 ```
 
 ---
@@ -589,56 +593,56 @@ erDiagram
 
 ## 4. Cardinality Legend
 
-| Ký hiệu Mermaid | Nghĩa |
-|-----------------|-------|
-| `\|\|--\|\|` | Exactly one — Exactly one (1:1 bắt buộc) |
-| `\|\|--o\|` | Exactly one — Zero or one (1:0-1) |
-| `\|\|--o{` | Exactly one — Zero or many (1:N) |
-| `o\|--o{` | Zero or one — Zero or many |
-| `}o--o{` | Zero or many — Zero or many (M:N) |
+| Ký hiệu Mermaid | Nghĩa                                    |
+| --------------- | ---------------------------------------- |
+| `\|\|--\|\|`    | Exactly one — Exactly one (1:1 bắt buộc) |
+| `\|\|--o\|`     | Exactly one — Zero or one (1:0-1)        |
+| `\|\|--o{`      | Exactly one — Zero or many (1:N)         |
+| `o\|--o{`       | Zero or one — Zero or many               |
+| `}o--o{`        | Zero or many — Zero or many (M:N)        |
 
 ---
 
 ## 5. ENUM Reference
 
-| ENUM | Giá trị |
-|------|---------|
-| `user_role` | `VICTIM`, `VOLUNTEER`, `SPONSOR`, `STAFF`, `ADMIN` |
-| `hub_status` | `ACTIVE`, `INACTIVE`, `EMERGENCY` |
-| `urgency_level` | `CRITICAL`, `HIGH`, `MEDIUM`, `LOW` |
-| `sos_status` | `PENDING`, `DISPATCHING`, `ASSIGNED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED` |
-| `aid_status` | `PENDING`, `DISPATCHING`, `ASSIGNED`, `PICKED_UP`, `IN_TRANSIT`, `COMPLETED`, `CANCELLED` |
-| `donation_status` | `REGISTERED`, `QR_GENERATED`, `RECEIVED`, `REJECTED` |
-| `mission_type` | `RESCUE`, `DELIVERY` |
-| `mission_status` | `PENDING`, `DISPATCHING`, `ASSIGNED`, `PICKING_UP`, `PICKED_UP`, `IN_TRANSIT`, `COMPLETED`, `CANCELLED` |
-| `dispatch_response` | `PENDING`, `ACCEPTED`, `REJECTED`, `TIMEOUT` |
-| `badge_level` | `BRONZE`, `SILVER`, `GOLD`, `PLATINUM` |
+| ENUM                | Giá trị                                                                                                 |
+| ------------------- | ------------------------------------------------------------------------------------------------------- |
+| `user_role`         | `VICTIM`, `VOLUNTEER`, `SPONSOR`, `STAFF`, `ADMIN`                                                      |
+| `hub_status`        | `ACTIVE`, `INACTIVE`, `EMERGENCY`                                                                       |
+| `urgency_level`     | `CRITICAL`, `HIGH`, `MEDIUM`, `LOW`                                                                     |
+| `sos_status`        | `PENDING`, `DISPATCHING`, `ASSIGNED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED`                           |
+| `aid_status`        | `PENDING`, `DISPATCHING`, `ASSIGNED`, `PICKED_UP`, `IN_TRANSIT`, `COMPLETED`, `CANCELLED`               |
+| `donation_status`   | `REGISTERED`, `QR_GENERATED`, `RECEIVED`, `REJECTED`                                                    |
+| `mission_type`      | `RESCUE`, `DELIVERY`                                                                                    |
+| `mission_status`    | `PENDING`, `DISPATCHING`, `ASSIGNED`, `PICKING_UP`, `PICKED_UP`, `IN_TRANSIT`, `COMPLETED`, `CANCELLED` |
+| `dispatch_response` | `PENDING`, `ACCEPTED`, `REJECTED`, `TIMEOUT`                                                            |
+| `badge_level`       | `BRONZE`, `SILVER`, `GOLD`, `PLATINUM`                                                                  |
 
 ---
 
 ## 6. Key Constraints Summary
 
-| Bảng | Constraint |
-|------|------------|
-| `users` | `CHECK (email IS NOT NULL OR phone_number IS NOT NULL)` |
-| `hub_staff` | `UNIQUE (hub_id, user_id) WHERE unassigned_at IS NULL` |
-| `hub_staff` | `CHECK role = 'STAFF'` |
-| `hub_inventories` | `UNIQUE (hub_id, item_category_id)` · `CHECK (current_quantity >= 0)` |
-| `inventory_logs` | `CHECK (quantity_delta > 0)` |
-| `shelters` | `CHECK (current_capacity <= max_capacity)` |
-| `sos_requests` | `CHECK (people_count > 0)` |
-| `aid_requests` | `CHECK (adults + elderly + children > 0)` |
-| `missions` | CHECK: RESCUE ↔ sos_request_id NOT NULL, aid_request_id NULL, hub_id NULL |
-| `missions` | CHECK: DELIVERY ↔ aid_request_id NOT NULL, sos_request_id NULL, hub_id NOT NULL |
-| `ratings` | `UNIQUE (mission_id)` · `CHECK (score BETWEEN 1 AND 5)` |
-| `chat_messages` | CHECK: TEXT XOR IMAGE (không được có cả hai hoặc không có gì) |
-| `donation_items` · `aid_request_items` | `CHECK (quantity > 0)` |
+| Bảng                                   | Constraint                                                                      |
+| -------------------------------------- | ------------------------------------------------------------------------------- |
+| `users`                                | `CHECK (email IS NOT NULL OR phone_number IS NOT NULL)`                         |
+| `hub_staff`                            | `UNIQUE (hub_id, user_id) WHERE unassigned_at IS NULL`                          |
+| `hub_staff`                            | `CHECK role = 'STAFF'`                                                          |
+| `hub_inventories`                      | `UNIQUE (hub_id, item_category_id)` · `CHECK (current_quantity >= 0)`           |
+| `inventory_logs`                       | `CHECK (quantity_delta > 0)`                                                    |
+| `shelters`                             | `CHECK (current_capacity <= max_capacity)`                                      |
+| `sos_requests`                         | `CHECK (people_count > 0)`                                                      |
+| `aid_requests`                         | `CHECK (adults + elderly + children > 0)`                                       |
+| `missions`                             | CHECK: RESCUE ↔ sos_request_id NOT NULL, aid_request_id NULL, hub_id NULL       |
+| `missions`                             | CHECK: DELIVERY ↔ aid_request_id NOT NULL, sos_request_id NULL, hub_id NOT NULL |
+| `ratings`                              | `UNIQUE (mission_id)` · `CHECK (score BETWEEN 1 AND 5)`                         |
+| `chat_messages`                        | CHECK: TEXT XOR IMAGE (không được có cả hai hoặc không có gì)                   |
+| `donation_items` · `aid_request_items` | `CHECK (quantity > 0)`                                                          |
 
 ---
 
 ## 7. Changelog
 
-| Version | Thay đổi |
-|---------|---------|
+| Version  | Thay đổi                                                                                                                                                                                                                                       |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **v3.0** | Redesign từ đầu: 22 bảng (bỏ `otp_verifications`, `volunteer_area_experiences`, `attachments`, `safe_paths`); OTP gộp vào `users`; GEOMETRY → lat/lng DECIMAL(9,6); image_url VARCHAR(500) trực tiếp trong bảng; thêm `hub_staff.is_available` |
-| **v2.x** | 26 bảng — thiết kế cũ (không còn dùng) |
+| **v2.x** | 26 bảng — thiết kế cũ (không còn dùng)                                                                                                                                                                                                         |
