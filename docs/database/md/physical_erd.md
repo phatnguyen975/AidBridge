@@ -12,322 +12,62 @@
 > `decimal_9_6` = DECIMAL(9,6) · `varchar_100` = VARCHAR(100) · `varchar_255` = VARCHAR(255) · `varchar_500` = VARCHAR(500)
 
 ```mermaid
+%%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
 erDiagram
     %% ================================================================
     %% GROUP: AUTH & SESSIONS
     %% ================================================================
-
-    users {
-        uuid           id             PK
-        varchar_100    full_name
-        varchar_255    email          UK
-        varchar_20     phone_number   UK
-        varchar_255    password_hash
-        user_role      role
-        boolean        is_verified
-        boolean        is_active
-        varchar_500    fcm_token
-        varchar_500    avatar_url
-        char_6         otp_code
-        varchar_20     otp_type
-        timestamp      otp_expires_at
-        timestamp      created_at
-        timestamp      updated_at
-    }
-
-    refresh_tokens {
-        uuid           id             PK
-        uuid           user_id        FK
-        varchar_64     token_hash     UK
-        text           device_info
-        timestamp      expires_at
-        boolean        is_revoked
-        timestamp      created_at
-    }
+    users {}
+    refresh_tokens {}
 
     %% ================================================================
     %% GROUP: PROFILES
     %% ================================================================
-
-    volunteer_profiles {
-        uuid           id                     PK
-        uuid           user_id                FK
-        boolean        is_online
-        decimal_9_6    current_lat
-        decimal_9_6    current_lng
-        varchar_50     vehicle_type
-        int            total_tasks_completed
-        decimal_3_2    avg_rating
-        int            avg_response_seconds
-        timestamp      created_at
-        timestamp      updated_at
-    }
-
-    sponsor_profiles {
-        uuid           id                   PK
-        uuid           user_id              FK
-        int            total_points
-        int            total_items_donated
-        int            donation_count
-        badge_level    badge_level
-        timestamp      created_at
-        timestamp      updated_at
-    }
+    volunteer_profiles {}
+    sponsor_profiles {}
 
     %% ================================================================
     %% GROUP: INFRASTRUCTURE
     %% ================================================================
-
-    hubs {
-        uuid           id             PK
-        varchar_100    name
-        text           address
-        decimal_9_6    lat
-        decimal_9_6    lng
-        hub_status     status
-        varchar_20     contact_phone
-        timestamp      created_at
-        timestamp      updated_at
-    }
-
-    hub_staff {
-        uuid           id             PK
-        uuid           hub_id         FK
-        uuid           user_id        FK
-        boolean        is_available
-        timestamp      assigned_at
-        timestamp      unassigned_at
-    }
-
-    shelters {
-        uuid           id               PK
-        varchar_100    name
-        text           address
-        decimal_9_6    lat
-        decimal_9_6    lng
-        int            current_capacity
-        int            max_capacity
-        boolean        has_electricity
-        boolean        has_clean_water
-        varchar_15     status
-        timestamp      created_at
-        timestamp      updated_at
-    }
-
-    system_config {
-        varchar_100    key            PK
-        text           value
-        text           description
-        timestamp      updated_at
-    }
+    hubs {}
+    hub_staff {}
+    shelters {}
+    system_config {}
 
     %% ================================================================
     %% GROUP: CATALOG & INVENTORY
     %% ================================================================
-
-    item_categories {
-        uuid           id           PK
-        uuid           parent_id    FK
-        varchar_100    name
-        varchar_100    name_vi
-        varchar_20     unit
-        boolean        is_leaf
-        timestamp      created_at
-    }
-
-    hub_accepted_categories {
-        uuid           hub_id              FK
-        uuid           item_category_id    FK
-    }
-
-    hub_inventories {
-        uuid           id                   PK
-        uuid           hub_id               FK
-        uuid           item_category_id     FK
-        int            current_quantity
-        int            low_stock_threshold
-        timestamp      updated_at
-    }
-
-    inventory_logs {
-        uuid           id                  PK
-        uuid           hub_inventory_id    FK
-        varchar_10     change_type
-        int            quantity_delta
-        varchar_10     reference_type
-        uuid           reference_id
-        uuid           performed_by        FK
-        int            quantity_after
-        text           notes
-        timestamp      created_at
-    }
+    item_categories {}
+    hub_accepted_categories {}
+    hub_inventories {}
+    inventory_logs {}
 
     %% ================================================================
     %% GROUP: REQUESTS
-    %% sos_requests — HOT TABLE (tách ra từ thiết kế gốc)
-    %% Chỉ giữ các cột truy vấn nóng: dispatch, heatmap, status check
     %% ================================================================
-
-    sos_requests {
-        uuid           id               PK
-        uuid           requester_id     FK
-        decimal_9_6    victim_lat
-        decimal_9_6    victim_lng
-        int            people_count
-        boolean        is_on_behalf
-        urgency_level  urgency_level
-        sos_status     status
-        timestamp      created_at
-        timestamp      updated_at
-    }
-
-    %% sos_request_details — COLD TABLE (tách ra từ sos_requests)
-    %% Lưu text lớn ít dùng trong dispatch; tải khi cần hiển thị chi tiết
-    sos_request_details {
-        uuid           sos_request_id    PK
-        varchar_100    requester_name
-        varchar_20     requester_phone
-        varchar_100    victim_name
-        varchar_20     victim_phone
-        text           victim_address
-        text           description
-        text           ai_summary
-        varchar_500    image_url
-    }
-
-    aid_requests {
-        uuid           id               PK
-        uuid           requester_id     FK
-        decimal_9_6    lat
-        decimal_9_6    lng
-        text           address
-        int            adults_count
-        int            elderly_count
-        int            children_count
-        text           notes
-        urgency_level  urgency_level
-        aid_status     status
-        timestamp      created_at
-        timestamp      updated_at
-    }
-
-    aid_request_items {
-        uuid           id                  PK
-        uuid           aid_request_id      FK
-        uuid           item_category_id    FK
-        int            quantity
-        timestamp      created_at
-    }
+    sos_requests {}
+    sos_request_details {}
+    aid_requests {}
+    aid_request_items {}
 
     %% ================================================================
     %% GROUP: DONATIONS
     %% ================================================================
-
-    donations {
-        uuid              id                      PK
-        uuid              sponsor_id              FK
-        uuid              hub_id                  FK
-        varchar_100       hub_name
-        date              estimated_delivery_at
-        varchar_255       qr_code_token           UK
-        donation_status   status
-        uuid              received_by             FK
-        timestamp         received_at
-        text              rejection_reason
-        timestamp         created_at
-        timestamp         updated_at
-    }
-
-    donation_items {
-        uuid           id                  PK
-        uuid           donation_id         FK
-        uuid           item_category_id    FK
-        int            quantity
-        date           expiry_date
-        text           condition_notes
-        varchar_500    image_url
-        timestamp      created_at
-    }
+    donations {}
+    donation_items {}
 
     %% ================================================================
     %% GROUP: MISSIONS
-    %% Denorm: snapshot_* columns — tránh JOIN sang sos/aid tables
-    %% khi màn hình Live Tracking và Mission Screen cần dữ liệu liên tục
     %% ================================================================
-
-    missions {
-        uuid              id                          PK
-        mission_type      mission_type
-        uuid              sos_request_id              FK
-        uuid              aid_request_id              FK
-        uuid              volunteer_id                FK
-        uuid              hub_id                      FK
-        mission_status    status
-        varchar_255       qr_code_token               UK
-        decimal_8_4       priority_score
-        decimal_9_6       snapshot_lat
-        decimal_9_6       snapshot_lng
-        text              snapshot_address
-        varchar_100       snapshot_requester_name
-        varchar_20        snapshot_requester_phone
-        timestamp         accepted_at
-        timestamp         picked_up_at
-        timestamp         completed_at
-        timestamp         cancelled_at
-        text              cancellation_reason
-        varchar_500       confirmation_image_url
-        timestamp         created_at
-        timestamp         updated_at
-    }
-
-    dispatch_attempts {
-        uuid               id               PK
-        uuid               mission_id       FK
-        uuid               volunteer_id     FK
-        varchar_15         dispatch_type
-        int                batch_number
-        decimal_5_2        radius_km
-        decimal_8_4        priority_score
-        timestamp          sent_at
-        dispatch_response  response
-        timestamp          responded_at
-    }
+    missions {}
+    dispatch_attempts {}
 
     %% ================================================================
     %% GROUP: COMMUNICATION
     %% ================================================================
-
-    chat_messages {
-        uuid           id              PK
-        uuid           mission_id      FK
-        uuid           sender_id       FK
-        varchar_5      message_type
-        text           message_text
-        varchar_500    image_url
-        boolean        is_read
-        timestamp      created_at
-    }
-
-    ratings {
-        uuid           id              PK
-        uuid           mission_id      FK
-        uuid           rater_id        FK
-        uuid           ratee_id        FK
-        smallint       score
-        text           comment
-        timestamp      created_at
-    }
-
-    notifications {
-        uuid           id              PK
-        uuid           user_id         FK
-        varchar_200    title
-        text           body
-        varchar_20     related_type
-        uuid           related_id
-        boolean        is_read
-        timestamp      created_at
-    }
+    chat_messages {}
+    ratings {}
+    notifications {}
 
     %% ================================================================
     %% FOREIGN KEY RELATIONSHIPS
@@ -348,7 +88,7 @@ erDiagram
 
     hubs               ||--o{ hub_inventories          : "hub_id"
     item_categories    ||--o{ hub_inventories          : "item_category_id"
-    item_categories    o|--o{ item_categories          : "parent_id (self-ref)"
+    item_categories     o|--o{ item_categories         : "parent_id (self-ref)"
     hub_inventories    ||--o{ inventory_logs           : "hub_inventory_id"
     users              ||--o{ inventory_logs           : "performed_by"
 
@@ -390,6 +130,7 @@ erDiagram
 ### A — Auth & Profiles (Physical)
 
 ```mermaid
+%%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
 erDiagram
     users {
         uuid        id              PK
@@ -454,6 +195,7 @@ erDiagram
 ### B — Infrastructure & Inventory (Physical)
 
 ```mermaid
+%%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
 erDiagram
     hubs {
         uuid        id              PK
@@ -527,6 +269,7 @@ erDiagram
 ### C — Requests (Physical + Table Split)
 
 ```mermaid
+%%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
 erDiagram
     sos_requests {
         uuid          id               PK
@@ -596,6 +339,7 @@ erDiagram
 ### D — Donations (Physical)
 
 ```mermaid
+%%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
 erDiagram
     donations {
         uuid            id                      PK
@@ -635,6 +379,7 @@ erDiagram
 ### E — Missions & Dispatch (Physical + Denorm)
 
 ```mermaid
+%%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
 erDiagram
     missions {
         uuid            id                          PK
@@ -697,6 +442,7 @@ erDiagram
 ### F — Communication (Physical)
 
 ```mermaid
+%%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
 erDiagram
     chat_messages {
         uuid        id              PK

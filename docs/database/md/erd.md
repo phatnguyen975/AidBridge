@@ -9,275 +9,64 @@
 ## Sơ đồ tổng thể (Full Logical ERD)
 
 ```mermaid
+%%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
 erDiagram
     %% ================================================================
     %% NHÓM: AUTH & SESSIONS
     %% ================================================================
-
-    users {
-        string id PK
-        string full_name
-        string email
-        string phone_number
-        string password_hash
-        user_role role
-        boolean is_verified
-        boolean is_active
-        string fcm_token
-        string avatar_url
-        string otp_code
-        string otp_type
-        datetime otp_expires_at
-        datetime created_at
-        datetime updated_at
-    }
-
-    refresh_tokens {
-        string id PK
-        string token_hash
-        string device_info
-        datetime expires_at
-        boolean is_revoked
-        datetime created_at
-    }
+    users {}
+    refresh_tokens {}
 
     %% ================================================================
     %% NHÓM: PROFILES (mở rộng theo vai trò)
     %% ================================================================
-
-    volunteer_profiles {
-        string id PK
-        boolean is_online
-        decimal current_lat
-        decimal current_lng
-        string vehicle_type
-        integer total_tasks_completed
-        decimal avg_rating
-        integer avg_response_seconds
-        datetime created_at
-        datetime updated_at
-    }
-
-    sponsor_profiles {
-        string id PK
-        integer total_points
-        integer total_items_donated
-        integer donation_count
-        badge_level badge_level
-        datetime created_at
-        datetime updated_at
-    }
+    volunteer_profiles {}
+    sponsor_profiles {}
 
     %% ================================================================
     %% NHÓM: HẠ TẦNG
     %% ================================================================
-
-    hubs {
-        string id PK
-        string name
-        string address
-        decimal lat
-        decimal lng
-        hub_status status
-        string contact_phone
-        datetime created_at
-        datetime updated_at
-    }
-
-    hub_staff {
-        string id PK
-        boolean is_available
-        datetime assigned_at
-        datetime unassigned_at
-    }
-
-    shelters {
-        string id PK
-        string name
-        string address
-        decimal lat
-        decimal lng
-        integer current_capacity
-        integer max_capacity
-        boolean has_electricity
-        boolean has_clean_water
-        string status
-        datetime created_at
-        datetime updated_at
-    }
-
-    system_config {
-        string key PK
-        string value
-        string description
-        datetime updated_at
-    }
+    hubs {}
+    hub_staff {}
+    shelters {}
+    system_config {}
 
     %% ================================================================
     %% NHÓM: DANH MỤC & KHO HÀNG
     %% ================================================================
-
-    item_categories {
-        string id PK
-        string name
-        string name_vi
-        string unit
-        boolean is_leaf
-        datetime created_at
-    }
-
-    hub_inventories {
-        string id PK
-        integer current_quantity
-        integer low_stock_threshold
-        datetime updated_at
-    }
-
-    inventory_logs {
-        string id PK
-        string change_type
-        integer quantity_delta
-        string reference_type
-        string reference_id
-        integer quantity_after
-        string notes
-        datetime created_at
-    }
+    item_categories {}
+    hub_inventories {}
+    inventory_logs {}
 
     %% ================================================================
     %% NHÓM: YÊU CẦU CỨU TRỢ
     %% ================================================================
-
-    sos_requests {
-        string id PK
-        string requester_name
-        string requester_phone
-        string victim_name
-        string victim_phone
-        decimal victim_lat
-        decimal victim_lng
-        string victim_address
-        string description
-        integer people_count
-        boolean is_on_behalf
-        urgency_level urgency_level
-        string ai_summary
-        sos_status status
-        string image_url
-        datetime created_at
-        datetime updated_at
-    }
-
-    aid_requests {
-        string id PK
-        decimal lat
-        decimal lng
-        string address
-        integer adults_count
-        integer elderly_count
-        integer children_count
-        string notes
-        urgency_level urgency_level
-        aid_status status
-        datetime created_at
-        datetime updated_at
-    }
-
-    aid_request_items {
-        string id PK
-        integer quantity
-        datetime created_at
-    }
+    sos_requests {}
+    aid_requests {}
+    aid_request_items {}
 
     %% ================================================================
     %% NHÓM: QUYÊN GÓP
     %% ================================================================
-
-    donations {
-        string id PK
-        date estimated_delivery_at
-        string qr_code_token
-        donation_status status
-        datetime received_at
-        string rejection_reason
-        datetime created_at
-        datetime updated_at
-    }
-
-    donation_items {
-        string id PK
-        integer quantity
-        date expiry_date
-        string condition_notes
-        string image_url
-        datetime created_at
-    }
+    donations {}
+    donation_items {}
 
     %% ================================================================
     %% NHÓM: NHIỆM VỤ
     %% ================================================================
-
-    missions {
-        string id PK
-        mission_type mission_type
-        mission_status status
-        string qr_code_token
-        decimal priority_score
-        datetime accepted_at
-        datetime picked_up_at
-        datetime completed_at
-        datetime cancelled_at
-        string cancellation_reason
-        string confirmation_image_url
-        datetime created_at
-        datetime updated_at
-    }
-
-    dispatch_attempts {
-        string id PK
-        string dispatch_type
-        integer batch_number
-        decimal radius_km
-        decimal priority_score
-        datetime sent_at
-        dispatch_response response
-        datetime responded_at
-    }
+    missions {}
+    dispatch_attempts {}
 
     %% ================================================================
     %% NHÓM: GIAO TIẾP
     %% ================================================================
-
-    chat_messages {
-        string id PK
-        string message_type
-        string message_text
-        string image_url
-        boolean is_read
-        datetime created_at
-    }
-
-    ratings {
-        string id PK
-        integer score
-        string comment
-        datetime created_at
-    }
-
-    notifications {
-        string id PK
-        string title
-        string body
-        string related_type
-        string related_id
-        boolean is_read
-        datetime created_at
-    }
+    chat_messages {}
+    ratings {}
+    notifications {}
 
     %% ================================================================
     %% QUAN HỆ: AUTH & PROFILES
     %% ================================================================
-
     users ||--o{ refresh_tokens          : "authenticates via"
     users ||--o| volunteer_profiles      : "has volunteer profile"
     users ||--o| sponsor_profiles        : "has sponsor profile"
@@ -285,42 +74,38 @@ erDiagram
     %% ================================================================
     %% QUAN HỆ: HẠ TẦNG & KHO
     %% ================================================================
-
-    users          ||--o{ hub_staff      : "is assigned as staff"
-    hubs           ||--o{ hub_staff      : "employs"
-    hubs           }o--o{ item_categories : "accepts category (M:N)"
-    hubs           ||--o{ hub_inventories : "tracks stock of"
-    item_categories o|--o{ item_categories : "is parent of"
+    users           ||--o{ hub_staff       : "is assigned as staff"
+    hubs            ||--o{ hub_staff       : "employs"
+    hubs            }o--o{ item_categories : "accepts category (M:N)"
+    hubs            ||--o{ hub_inventories : "tracks stock of"
+    item_categories  o|--o{ item_categories : "is parent of"
     item_categories ||--o{ hub_inventories : "stocked as"
     hub_inventories ||--o{ inventory_logs  : "change audited via"
 
     %% ================================================================
     %% QUAN HỆ: YÊU CẦU CỨU TRỢ
     %% ================================================================
-
-    users          o|--o{ sos_requests       : "submits (nullable for Guest)"
-    users          ||--o{ aid_requests        : "submits"
-    aid_requests   ||--|{ aid_request_items   : "details"
-    item_categories ||--o{ aid_request_items  : "categorises"
+    users           o|--o{ sos_requests      : "submits (nullable for Guest)"
+    users           ||--o{ aid_requests      : "submits"
+    aid_requests    ||--|{ aid_request_items : "details"
+    item_categories ||--o{ aid_request_items : "categorises"
 
     %% ================================================================
     %% QUAN HỆ: QUYÊN GÓP
     %% ================================================================
-
-    users     ||--o{ donations       : "sponsors"
-    hubs      ||--o{ donations       : "receives at"
-    users     ||--o{ inventory_logs  : "performs action"
-    donations ||--|{ donation_items  : "details"
+    users           ||--o{ donations      : "sponsors"
+    hubs            ||--o{ donations      : "receives at"
+    users           ||--o{ inventory_logs : "performs action"
+    donations       ||--|{ donation_items : "details"
     item_categories ||--o{ donation_items : "categorises"
 
     %% Inventory log nguồn (polymorphic reference)
-    donations ||--o{ inventory_logs  : "source of INBOUND log"
-    missions  ||--o{ inventory_logs  : "source of OUTBOUND log"
+    donations ||--o{ inventory_logs : "source of INBOUND log"
+    missions  ||--o{ inventory_logs : "source of OUTBOUND log"
 
     %% ================================================================
     %% QUAN HỆ: NHIỆM VỤ & PHÂN CÔNG
     %% ================================================================
-
     sos_requests       ||--o| missions          : "triggers RESCUE mission"
     aid_requests       ||--o| missions          : "triggers DELIVERY mission"
     volunteer_profiles ||--o{ missions          : "executes"
@@ -331,7 +116,6 @@ erDiagram
     %% ================================================================
     %% QUAN HỆ: GIAO TIẾP
     %% ================================================================
-
     missions ||--o{ chat_messages : "has conversation"
     users    ||--o{ chat_messages : "sends message"
     missions ||--o|  ratings      : "rated via"
@@ -347,6 +131,7 @@ erDiagram
 ### A — Auth & Profiles
 
 ```mermaid
+%%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
 erDiagram
     users {
         string id PK
@@ -399,6 +184,7 @@ erDiagram
 ### B — Infrastructure & Inventory
 
 ```mermaid
+%%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
 erDiagram
     hubs {
         string id PK
@@ -457,6 +243,7 @@ erDiagram
 ### C — Requests & Donations
 
 ```mermaid
+%%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
 erDiagram
     sos_requests {
         string id PK
@@ -533,6 +320,7 @@ erDiagram
 ### D — Missions & Dispatch
 
 ```mermaid
+%%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
 erDiagram
     sos_requests {
         string id PK
@@ -597,6 +385,7 @@ erDiagram
 ### E — Communication
 
 ```mermaid
+%%{init: {"er": {"layoutDirection": "TB", "diagramPadding": 20}}}%%
 erDiagram
     missions {
         string id PK
