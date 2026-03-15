@@ -117,7 +117,9 @@
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left" />
+            app:popExitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
 
         <!-- → OTP (sau khi đăng ký thành công) -->
         <action
@@ -205,6 +207,12 @@
             android:name="email"
             app:argType="string"
             android:defaultValue="" />
+        
+        <action
+            android:id="@+id/action_forgotNewPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <!-- ============================================================

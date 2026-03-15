@@ -61,6 +61,16 @@ public class AuthInputValidator {
         return ValidationResult.valid();
     }
 
+    public ValidationResult requirePasswordMatch(String password, String confirmPassword) {
+        if (confirmPassword.isEmpty()) {
+            return ValidationResult.invalid(ValidationResult.Field.CONFIRM_PASSWORD, "Vui lòng nhập lại mật khẩu.");
+        }
+        if (!password.equals(confirmPassword)) {
+            return ValidationResult.invalid(ValidationResult.Field.CONFIRM_PASSWORD, "Mật khẩu xác nhận không khớp.");
+        }
+        return ValidationResult.valid();
+    }
+
     public ValidationResult requireRole(UserRole role) {
         if (role == null) {
             return ValidationResult.invalid(ValidationResult.Field.ROLE, "Vui lòng chọn vai trò của bạn.");

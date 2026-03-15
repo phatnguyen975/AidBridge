@@ -16,6 +16,7 @@ import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.DialogOtpFailedBinding;
 import com.drc.aidbridge.databinding.DialogOtpSuccessBinding;
 import com.drc.aidbridge.databinding.FragmentOtpBinding;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.common.OtpInputController;
 import com.drc.aidbridge.ui.auth.viewmodel.OtpViewModel;
@@ -24,13 +25,15 @@ import java.util.Arrays;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
+/**
+ * OtpFragment — handles OTP input and verification for registration.
+ */
 @AndroidEntryPoint
 public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
 
     private OtpViewModel viewModel;
     private OtpInputController otpInputController;
 
-    @Nullable
     @Override
     protected FragmentOtpBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
         return FragmentOtpBinding.inflate(inflater, container, false);
@@ -39,6 +42,7 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
     @Override
     protected void setupViews() {
         viewModel = new ViewModelProvider(this).get(OtpViewModel.class);
+        binding.tvEmail.setText(viewModel.getEmail());
 
         otpInputController = new OtpInputController(
             Arrays.asList(
@@ -51,9 +55,8 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
             ),
             this::updateBoxBackground
         );
-
-        setupEmail();
         otpInputController.bind();
+
         setupClickListeners();
     }
 
@@ -74,22 +77,32 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
             }
         });
 
+        viewModel.getValidationError().observe(getViewLifecycleOwner(), validation -> {
+            if (validation == null || validation.isValid()) {
+                return;
+            }
+
+            if (validation.getErrorField() == ValidationResult.Field.OTP) {
+                otpInputController.clear();
+            } else {
+                showToast(validation.getErrorMessage());
+            }
+        });
+
         viewModel.getVerifyResult().observe(getViewLifecycleOwner(),
                 resultObserver(binding.btnVerify,
                         ignored -> showSuccessDialog(),
-                        message -> showFailedDialog()));
+                        this::showNetworkError));
 
         viewModel.getResendResult().observe(getViewLifecycleOwner(),
             resultObserver(binding.tvResend,
-                ignored -> showToast(getString(R.string.otp_resend_now)),
-                this::showToast));
+                ignored -> showResendSuccess(),
+                this::showNetworkError));
     }
 
-    private void setupEmail() {
-        String email = viewModel.getEmail();
-        if (email != null && !email.isEmpty()) {
-            binding.tvEmail.setText(email);
-        }
+    @Override
+    protected ProgressBar getLoadingView() {
+        return binding.progressBar;
     }
 
     private void setupClickListeners() {
@@ -102,11 +115,6 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
                 viewModel.resendOtp();
             }
         });
-    }
-
-    @Override
-    protected ProgressBar getLoadingView() {
-        return binding.progressBar;
     }
 
     private void attemptVerify() {
@@ -139,6 +147,18 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
 
         dialog.setCancelable(false);
         dialog.show();
+    }
+
+    private void showNetworkError(String message) {
+        if (message != null && !message.trim().isEmpty()) {
+            showToast(message);
+        } else {
+            showFailedDialog();
+        }
+    }
+
+    private void showResendSuccess() {
+        showToast(getString(R.string.otp_resend_now));
     }
 
     private Dialog buildDialog() {

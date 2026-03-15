@@ -5,7 +5,7 @@ package com.drc.aidbridge.domain.usecase.validation;
  */
 public final class ValidationResult {
 
-    public enum Field { EMAIL, PASSWORD, NAME, PHONE, OTP, ROLE, NONE }
+    public enum Field { EMAIL, PASSWORD, CONFIRM_PASSWORD, NAME, PHONE, OTP, ROLE, NONE }
 
     private final boolean valid;
     private final String errorMessage;

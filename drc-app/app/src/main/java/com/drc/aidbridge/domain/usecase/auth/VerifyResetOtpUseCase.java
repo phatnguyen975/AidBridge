@@ -11,7 +11,7 @@ import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import javax.inject.Inject;
 
 /**
- * Verifies reset-password OTP with strict OTP format checks.
+ * VerifyResetOtpUseCase — verifies reset-password OTP with strict OTP format checks.
  */
 public class VerifyResetOtpUseCase {
 

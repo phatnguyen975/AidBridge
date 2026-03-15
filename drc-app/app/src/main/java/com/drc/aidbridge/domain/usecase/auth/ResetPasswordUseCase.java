@@ -25,12 +25,16 @@ public class ResetPasswordUseCase {
         this.inputValidator = inputValidator;
     }
 
-    public ValidationResult validate(String email, String newPassword) {
+    public ValidationResult validate(String email, String newPassword, String confirmPassword) {
         ValidationResult emailValidation = inputValidator.requireValidEmail(email);
         if (!emailValidation.isValid()) {
             return emailValidation;
         }
-        return inputValidator.requirePassword(newPassword);
+        ValidationResult passwordValidation = inputValidator.requirePassword(newPassword);
+        if (!passwordValidation.isValid()) {
+            return passwordValidation;
+        }
+        return inputValidator.requirePasswordMatch(newPassword, confirmPassword);
     }
 
     public LiveData<NetworkResultWrapper<String>> execute(String email, String newPassword) {

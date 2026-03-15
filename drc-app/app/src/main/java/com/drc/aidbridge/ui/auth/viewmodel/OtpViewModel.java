@@ -4,8 +4,8 @@ import android.os.CountDownTimer;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
+import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.usecase.auth.ResendOtpUseCase;
@@ -19,11 +19,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
 /**
- * OtpViewModel — manages:
- * - Countdown timer (59 → 0)
- * - resendEnabled flag (true when countdown reaches 0)
- * - verifyResult LiveData (success / error)
- * - email argument received from RegisterFragment via SavedStateHandle
+ * OtpViewModel — manages the OTP verification in the registration flow.
  */
 @HiltViewModel
 public class OtpViewModel extends BaseViewModel {
@@ -32,19 +28,17 @@ public class OtpViewModel extends BaseViewModel {
     private final VerifyOtpUseCase verifyOtpUseCase;
     private final SavedStateHandle savedStateHandle;
 
-    /** Countdown seconds remaining */
     private final MutableLiveData<Integer> countdown =
             new MutableLiveData<>(Constants.OTP_COUNTDOWN_SEC);
 
-    /** Whether the "Gửi lại" button is enabled */
     private final MutableLiveData<Boolean> resendEnabled = new MutableLiveData<>(false);
 
-    /** Verify OTP result */
-    private final MutableLiveData<NetworkResultWrapper<String>> verifyResult =
-            new MutableLiveData<>();
+    private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
+    private final MutableLiveData<VerifyParams> verifyTrigger = new MutableLiveData<>();
+    private final MutableLiveData<ResendParams> resendTrigger = new MutableLiveData<>();
 
-        private final MutableLiveData<NetworkResultWrapper<Boolean>> resendResult =
-            new MutableLiveData<>();
+    private final LiveData<NetworkResultWrapper<String>> verifyResult;
+    private final LiveData<NetworkResultWrapper<Boolean>> resendResult;
 
     private CountDownTimer countDownTimer;
 
@@ -55,12 +49,18 @@ public class OtpViewModel extends BaseViewModel {
         this.resendOtpUseCase = resendOtpUseCase;
         this.verifyOtpUseCase = verifyOtpUseCase;
         this.savedStateHandle = savedStateHandle;
+
+        this.verifyResult = Transformations.switchMap(
+            verifyTrigger,
+            params -> this.verifyOtpUseCase.execute(params.email, params.otp)
+        );
+        this.resendResult = Transformations.switchMap(
+            resendTrigger,
+            params -> this.resendOtpUseCase.execute(params.email)
+        );
+
         startCountdown();
     }
-
-    // ------------------------------------------------------------------
-    // Exposed LiveData
-    // ------------------------------------------------------------------
 
     public LiveData<Integer> getCountdown() {
         return countdown;
@@ -74,6 +74,10 @@ public class OtpViewModel extends BaseViewModel {
         return verifyResult;
     }
 
+    public LiveData<ValidationResult> getValidationError() {
+        return validationError;
+    }
+
     public LiveData<NetworkResultWrapper<Boolean>> getResendResult() {
         return resendResult;
     }
@@ -83,79 +87,48 @@ public class OtpViewModel extends BaseViewModel {
         return email != null ? email : "";
     }
 
-    // ------------------------------------------------------------------
-    // OTP Verification
-    // ------------------------------------------------------------------
-
-    /**
-    * Verifies the entered OTP bằng API thông qua VerifyOtpUseCase.
-     */
     public void verify(String otp) {
-        // Validate format (6 digits)
         ValidationResult validation = verifyOtpUseCase.validate(otp);
         if (!validation.isValid()) {
-            verifyResult.setValue(NetworkResultWrapper.error(validation.getErrorMessage()));
+            validationError.setValue(validation);
             return;
         }
 
-        verifyResult.setValue(NetworkResultWrapper.loading());
-
-        LiveData<NetworkResultWrapper<String>> source =
-                verifyOtpUseCase.execute(getEmail(), otp);
-
-        // Self-removing observeForever: bridges source → verifyResult.
-        // Disconnects once a terminal (Success / Error) state arrives.
-        source.observeForever(new Observer<NetworkResultWrapper<String>>() {
-            @Override
-            public void onChanged(NetworkResultWrapper<String> result) {
-                if (result == null) return;
-                verifyResult.postValue(result);
-                if (!(result instanceof NetworkResultWrapper.Loading)) {
-                    source.removeObserver(this);
-                }
-            }
-        });
+        validationError.setValue(ValidationResult.valid());
+        verifyTrigger.setValue(new VerifyParams(getEmail(), otp));
     }
 
-    // ------------------------------------------------------------------
-    // Resend OTP
-    // ------------------------------------------------------------------
-
-    /**
-    * Triggered when user taps "Gửi lại".
-    * Resets countdown và gọi API gửi lại OTP.
-     */
     public void resendOtp() {
         if (Boolean.TRUE.equals(resendEnabled.getValue())) {
-            ValidationResult validation = resendOtpUseCase.validate(getEmail());
+            String email = getEmail();
+            ValidationResult validation = resendOtpUseCase.validate(email);
             if (!validation.isValid()) {
-                resendResult.setValue(NetworkResultWrapper.error(validation.getErrorMessage()));
+                validationError.setValue(validation);
                 return;
             }
 
+            validationError.setValue(ValidationResult.valid());
             resendEnabled.setValue(false);
             startCountdown();
-
-            resendResult.setValue(NetworkResultWrapper.loading());
-            LiveData<NetworkResultWrapper<Boolean>> source = resendOtpUseCase.execute(getEmail());
-            source.observeForever(new Observer<NetworkResultWrapper<Boolean>>() {
-                @Override
-                public void onChanged(NetworkResultWrapper<Boolean> result) {
-                    if (result == null) {
-                        return;
-                    }
-                    resendResult.postValue(result);
-                    if (!(result instanceof NetworkResultWrapper.Loading)) {
-                        source.removeObserver(this);
-                    }
-                }
-            });
+            resendTrigger.setValue(new ResendParams(email));
         }
     }
 
-    // ------------------------------------------------------------------
-    // Countdown
-    // ------------------------------------------------------------------
+    private static class VerifyParams {
+        final String email;
+        final String otp;
+        VerifyParams(String email, String otp) {
+            this.email = email;
+            this.otp = otp;
+        }
+    }
+
+    private static class ResendParams {
+        final String email;
+        ResendParams(String email) {
+            this.email = email;
+        }
+    }
 
     private void startCountdown() {
         cancelCountdown();

@@ -2,8 +2,8 @@ package com.drc.aidbridge.ui.auth.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
+import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.usecase.auth.VerifyResetOtpUseCase;
@@ -17,16 +17,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 /**
  * ForgotOtpViewModel — Step 2 of the forgot-password flow.
- *
- * Responsibilities:
- * - Holds the email forwarded from ForgotEmailFragment (via Navigation Safe Args /
- *   SavedStateHandle).
- * - Validates and submits the 6-digit OTP entered by the user.
- * - Exposes verifyResult as a typed NetworkResultWrapper LiveData stream.
- *
- * Triển khai hiện tại: gọi API thật qua AuthRepository.
- *   Endpoint: POST /auth/verify-reset-otp  { "email": "...", "otpCode": "..." }
- *   Response: 200 OK | 400 invalid OTP
  */
 @HiltViewModel
 public class ForgotOtpViewModel extends BaseViewModel {
@@ -35,15 +25,12 @@ public class ForgotOtpViewModel extends BaseViewModel {
     private final ResendOtpUseCase resendOtpUseCase;
     private final SavedStateHandle savedStateHandle;
 
-    /**
-     * Emits Loading while the request is in flight, then Success (message) or Error
-     * (user-facing error message).
-     */
-    private final MutableLiveData<NetworkResultWrapper<String>> verifyResult =
-            new MutableLiveData<>();
+    private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
+    private final MutableLiveData<VerifyParams> verifyTrigger = new MutableLiveData<>();
+    private final MutableLiveData<ResendParams> resendTrigger = new MutableLiveData<>();
 
-    private final MutableLiveData<NetworkResultWrapper<Boolean>> resendResult =
-            new MutableLiveData<>();
+    private final LiveData<NetworkResultWrapper<String>> verifyResult;
+    private final LiveData<NetworkResultWrapper<Boolean>> resendResult;
 
     @Inject
     public ForgotOtpViewModel(VerifyResetOtpUseCase verifyResetOtpUseCase,
@@ -52,9 +39,21 @@ public class ForgotOtpViewModel extends BaseViewModel {
         this.verifyResetOtpUseCase = verifyResetOtpUseCase;
         this.resendOtpUseCase = resendOtpUseCase;
         this.savedStateHandle = savedStateHandle;
+
+        this.verifyResult = Transformations.switchMap(
+            verifyTrigger,
+            params -> this.verifyResetOtpUseCase.execute(params.email, params.otp)
+        );
+        this.resendResult = Transformations.switchMap(
+            resendTrigger,
+            params -> this.resendOtpUseCase.execute(params.email)
+        );
     }
 
-    /** @return LiveData stream representing the OTP verification operation state. */
+    public LiveData<ValidationResult> getValidationError() {
+        return validationError;
+    }
+
     public LiveData<NetworkResultWrapper<String>> getVerifyResult() {
         return verifyResult;
     }
@@ -63,71 +62,50 @@ public class ForgotOtpViewModel extends BaseViewModel {
         return resendResult;
     }
 
-    /**
-     * Returns the email address passed from the previous screen via Navigation arguments.
-     * Safe to call before verify() — never null.
-     */
     public String getEmail() {
         String email = savedStateHandle.get("email");
         return email != null ? email : "";
     }
 
-    /**
-     * Validates and verifies the entered OTP.
-     *
-     * Posts an immediate Error if the OTP is not exactly 6 digits.
-     * Posts Loading while the async call is in flight.
-    * Posts Success hoặc Error theo phản hồi API từ server.
-     *
-     * @param otp The 6-character string collected from the OTP boxes.
-     */
     public void verify(String otp) {
-        ValidationResult validation =
-                verifyResetOtpUseCase.validate(getEmail(), otp);
+        String email = getEmail();
+        ValidationResult validation = verifyResetOtpUseCase.validate(email, otp);
+
         if (!validation.isValid()) {
-            verifyResult.setValue(NetworkResultWrapper.error(validation.getErrorMessage()));
+            validationError.setValue(validation);
             return;
         }
 
-        verifyResult.setValue(NetworkResultWrapper.loading());
-
-        LiveData<NetworkResultWrapper<String>> source =
-                verifyResetOtpUseCase.execute(getEmail(), otp);
-        source.observeForever(new Observer<NetworkResultWrapper<String>>() {
-            @Override
-            public void onChanged(NetworkResultWrapper<String> result) {
-                if (result == null) {
-                    return;
-                }
-                verifyResult.postValue(result);
-                if (!(result instanceof NetworkResultWrapper.Loading)) {
-                    source.removeObserver(this);
-                }
-            }
-        });
+        validationError.setValue(ValidationResult.valid());
+        verifyTrigger.setValue(new VerifyParams(email, otp));
     }
 
     public void resendOtp() {
-        ValidationResult validation = resendOtpUseCase.validate(getEmail());
+        String email = getEmail();
+        ValidationResult validation = resendOtpUseCase.validate(email);
+
         if (!validation.isValid()) {
-            resendResult.setValue(NetworkResultWrapper.error(validation.getErrorMessage()));
+            validationError.setValue(validation);
             return;
         }
 
-        resendResult.setValue(NetworkResultWrapper.loading());
+        validationError.setValue(ValidationResult.valid());
+        resendTrigger.setValue(new ResendParams(email));
+    }
 
-        LiveData<NetworkResultWrapper<Boolean>> source = resendOtpUseCase.execute(getEmail());
-        source.observeForever(new Observer<NetworkResultWrapper<Boolean>>() {
-            @Override
-            public void onChanged(NetworkResultWrapper<Boolean> result) {
-                if (result == null) {
-                    return;
-                }
-                resendResult.postValue(result);
-                if (!(result instanceof NetworkResultWrapper.Loading)) {
-                    source.removeObserver(this);
-                }
-            }
-        });
+    private static class VerifyParams {
+        final String email;
+        final String otp;
+        VerifyParams(String email, String otp) {
+            this.email = email;
+            this.otp = otp;
+        }
+    }
+
+    private static class ResendParams {
+        final String email;
+        ResendParams(String email) {
+            this.email = email;
+        }
     }
 }

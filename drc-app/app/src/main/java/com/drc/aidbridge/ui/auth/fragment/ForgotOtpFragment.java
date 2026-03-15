@@ -10,22 +10,24 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentForgotOtpBinding;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.common.OtpInputController;
-import com.google.android.material.snackbar.Snackbar;
 import com.drc.aidbridge.ui.auth.viewmodel.ForgotOtpViewModel;
 
 import java.util.Arrays;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
+/**
+ * ForgotOtpFragment — Forgot Password: Step 2 — Enter OTP.
+ */
 @AndroidEntryPoint
 public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
 
     private ForgotOtpViewModel viewModel;
     private OtpInputController otpInputController;
 
-    @Nullable
     @Override
     protected FragmentForgotOtpBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
         return FragmentForgotOtpBinding.inflate(inflater, container, false);
@@ -47,33 +49,34 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
             ),
             null
         );
-
         otpInputController.bind();
+
         setupClickListeners();
     }
 
     @Override
     protected void observeViewModel() {
+        viewModel.getValidationError().observe(getViewLifecycleOwner(), validation -> {
+            if (validation == null || validation.isValid()) {
+                return;
+            }
+
+            if (validation.getErrorField() == ValidationResult.Field.OTP) {
+                clearOtpBoxes();
+            } else {
+                showToast(validation.getErrorMessage());
+            }
+        });
+
         viewModel.getVerifyResult().observe(getViewLifecycleOwner(),
                 resultObserver(binding.btnVerify,
                         ignored -> navigateToNewPassword(),
-                        this::showOtpError));
+                        this::showNetworkError));
 
         viewModel.getResendResult().observe(getViewLifecycleOwner(),
             resultObserver(binding.tvResend,
-                ignored -> Snackbar.make(binding.getRoot(),
-                        R.string.otp_resend_now,
-                        Snackbar.LENGTH_SHORT)
-                    .show(),
-                this::showOtpError));
-    }
-
-    private void setupClickListeners() {
-        binding.btnBack.setOnClickListener(v -> popBackStackSafely());
-
-        binding.btnVerify.setOnClickListener(v -> attemptVerify());
-
-        binding.tvResend.setOnClickListener(v -> viewModel.resendOtp());
+                ignored -> showResendSuccess(),
+                this::showNetworkError));
     }
 
     @Override
@@ -81,16 +84,22 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
         return binding.progressBar;
     }
 
-    private void attemptVerify() {
+    private void setupClickListeners() {
+        binding.btnBack.setOnClickListener(v -> popBackStackSafely());
+        binding.btnVerify.setOnClickListener(v -> attemptVerifyOtp());
+        binding.tvResend.setOnClickListener(v -> viewModel.resendOtp());
+    }
+
+    private void attemptVerifyOtp() {
         viewModel.verify(otpInputController.collectOtp());
     }
 
-    private void showOtpError(String message) {
-        clearOtpBoxes();
-        Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG)
-                .setBackgroundTint(requireContext().getColor(R.color.sos_red))
-                .setTextColor(requireContext().getColor(R.color.white))
-                .show();
+    private void showNetworkError(String message) {
+        showToast(message);
+    }
+
+    private void showResendSuccess() {
+        showToast(getString(R.string.otp_resend_now));
     }
 
     private void clearOtpBoxes() {
