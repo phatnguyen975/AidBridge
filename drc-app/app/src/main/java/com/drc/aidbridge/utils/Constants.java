@@ -1,5 +1,7 @@
 package com.drc.aidbridge.utils;
 
+import java.util.regex.Pattern;
+
 /**
  * Constants — central file for all magic numbers, keys, and configuration values.
  */
@@ -14,7 +16,7 @@ public final class Constants {
     public static final int READ_TIMEOUT = 30;
     public static final int WRITE_TIMEOUT = 30;
 
-    // === Auth endpoints ===
+    // === Auth Endpoints ===
     public static final String AUTH_PATH_PREFIX = "/auth/";
     public static final String REFRESH_TOKEN_ENDPOINT = "auth/refresh-token";
 
@@ -30,16 +32,24 @@ public final class Constants {
     // === Room Database ===
     public static final String DB_NAME = "aidbridge_db";
 
-    // === OTP ===
-    public static final int OTP_LENGTH = 6;
-    public static final int OTP_COUNTDOWN_SEC = 60;
-
-    // === Validation ===
-    public static final int PASSWORD_MIN_LENGTH = 6;
-
     // === Splash ===
     public static final int SPLASH_DELAY_MS = 2000;
 
     // === Navigation ===
     public static final long NAVIGATE_DEBOUNCE_MS = 500L;
+
+    // === Auth Validation ===
+    public static final Pattern EMAIL_PATTERN = Pattern.compile(
+        "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+    );
+    public static final Pattern PASSWORD_PATTERN = Pattern.compile(
+        "^[A-Za-z0-9]{6,}$"
+    );
+    public static final Pattern PHONE_PATTERN = Pattern.compile(
+        "^\\d{10}$"
+    );
+    public static final Pattern OTP_PATTERN = Pattern.compile(
+        "^\\d{6}$"
+    );
+    public static final int OTP_COUNTDOWN_SEC = 60;
 }

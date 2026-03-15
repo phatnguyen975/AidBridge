@@ -10,7 +10,7 @@ import androidx.lifecycle.SavedStateHandle;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.usecase.auth.ResendOtpUseCase;
 import com.drc.aidbridge.domain.usecase.auth.VerifyOtpUseCase;
-import com.drc.aidbridge.domain.usecase.common.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 import com.drc.aidbridge.utils.Constants;
 

@@ -2,12 +2,12 @@ package com.drc.aidbridge.ui.auth.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.enums.UserRole;
 import com.drc.aidbridge.domain.usecase.auth.RegisterUseCase;
-import com.drc.aidbridge.domain.usecase.common.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
 import javax.inject.Inject;
@@ -20,17 +20,32 @@ public class RegisterViewModel extends BaseViewModel {
     private final RegisterUseCase registerUseCase;
 
     private final MutableLiveData<UserRole> selectedRole = new MutableLiveData<>(null);
+    private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
+    private final MutableLiveData<RegisterParams> registerTrigger = new MutableLiveData<>();
 
-    private final MutableLiveData<NetworkResultWrapper<String>> registerResult =
-            new MutableLiveData<>();
+    private final LiveData<NetworkResultWrapper<String>> registerResult;
 
     @Inject
     public RegisterViewModel(RegisterUseCase registerUseCase) {
         this.registerUseCase = registerUseCase;
+        this.registerResult = Transformations.switchMap(
+            registerTrigger,
+            params -> this.registerUseCase.execute(
+                params.name,
+                params.email,
+                params.phone,
+                params.password,
+                params.role
+            )
+        );
     }
 
     public LiveData<UserRole> getSelectedRole() {
         return selectedRole;
+    }
+
+    public LiveData<ValidationResult> getValidationError() {
+        return validationError;
     }
 
     public LiveData<NetworkResultWrapper<String>> getRegisterResult() {
@@ -44,31 +59,28 @@ public class RegisterViewModel extends BaseViewModel {
     public void register(String name, String email, String phone, String password) {
         UserRole role = selectedRole.getValue();
 
-        // Validate inputs via use case — returns error immediately if invalid
-        ValidationResult validation =
-                registerUseCase.validate(name, email, phone, password, role);
+        ValidationResult validation = registerUseCase.validate(name, email, phone, password, role);
         if (!validation.isValid()) {
-            registerResult.setValue(NetworkResultWrapper.error(validation.getErrorMessage()));
+            validationError.setValue(validation);
             return;
         }
 
-        registerResult.setValue(NetworkResultWrapper.loading());
+        validationError.setValue(ValidationResult.valid());
+        registerTrigger.setValue(new RegisterParams(name, email, phone, password, role));
+    }
 
-        LiveData<NetworkResultWrapper<String>> source =
-                registerUseCase.execute(name, email, phone, password, role);
-
-        // Self-removing observeForever: bridges source → registerResult.
-        // Disconnects once a terminal (Success / Error) state arrives.
-        source.observeForever(new Observer<NetworkResultWrapper<String>>() {
-            @Override
-            public void onChanged(NetworkResultWrapper<String> result) {
-                if (result == null) return;
-                registerResult.postValue(result);
-                if (!(result instanceof NetworkResultWrapper.Loading)) {
-                    source.removeObserver(this);
-                }
-            }
-        });
+    private static class RegisterParams {
+        final String name;
+        final String email;
+        final String phone;
+        final String password;
+        final UserRole role;
+        RegisterParams(String name, String email, String phone, String password, UserRole role) {
+            this.name = name;
+            this.email = email;
+            this.phone = phone;
+            this.password = password;
+            this.role = role;
+        }
     }
 }
-

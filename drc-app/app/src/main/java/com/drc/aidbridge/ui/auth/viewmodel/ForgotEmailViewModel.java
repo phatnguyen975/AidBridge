@@ -6,7 +6,7 @@ import androidx.lifecycle.Observer;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.usecase.auth.RequestResetOtpUseCase;
-import com.drc.aidbridge.domain.usecase.common.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
 import javax.inject.Inject;

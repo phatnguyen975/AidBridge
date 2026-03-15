@@ -12,6 +12,8 @@ package com.drc.aidbridge.data.remote;
  */
 public abstract class NetworkResultWrapper<T> {
 
+    private boolean hasBeenHandled = false;
+
     /** Operation is in progress. */
     public static class Loading<T> extends NetworkResultWrapper<T> {
     }
@@ -44,6 +46,28 @@ public abstract class NetworkResultWrapper<T> {
 
     public boolean isError() {
         return this instanceof Error;
+    }
+
+    public T getData() {
+        if (this instanceof Success) {
+            return ((Success<T>) this).data;
+        }
+        return null;
+    }
+
+    public String getMessage() {
+        if (this instanceof Error) {
+            return ((Error<T>) this).message;
+        }
+        return null;
+    }
+
+    public boolean hasBeenHandled() {
+        return hasBeenHandled;
+    }
+
+    public void markAsHandled() {
+        this.hasBeenHandled = true;
     }
 
     public static <T> Loading<T> loading() {

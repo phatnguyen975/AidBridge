@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.dto.request.ResetPasswordRequest;
 import com.drc.aidbridge.domain.repository.AuthRepository;
-import com.drc.aidbridge.domain.usecase.common.validation.AuthInputValidator;
-import com.drc.aidbridge.domain.usecase.common.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.AuthInputValidator;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 
 import javax.inject.Inject;
 

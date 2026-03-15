@@ -7,7 +7,7 @@ import androidx.lifecycle.SavedStateHandle;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.usecase.auth.ResetPasswordUseCase;
-import com.drc.aidbridge.domain.usecase.common.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
 import javax.inject.Inject;

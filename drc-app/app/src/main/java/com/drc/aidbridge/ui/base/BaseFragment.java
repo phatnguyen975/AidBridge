@@ -86,12 +86,16 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
                                                                    @NonNull OnSuccess<T> onSuccess,
                                                                    @NonNull OnError onError) {
         return result -> {
-            if (result == null || binding == null) {
+            if (result == null) {
                 return;
             }
 
-            ProgressBar loadingView = getLoadingView();
             boolean isLoading = result.isLoading();
+            ProgressBar loadingView = getLoadingView();
+
+            if (result.hasBeenHandled() && !isLoading) {
+                return;
+            }
 
             if (actionView != null) {
                 actionView.setEnabled(!isLoading);
@@ -101,9 +105,11 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
             }
 
             if (result.isSuccess()) {
+                result.markAsHandled();
                 T data = ((NetworkResultWrapper.Success<T>) result).data;
                 onSuccess.handle(data);
             } else if (result.isError()) {
+                result.markAsHandled();
                 String message = ((NetworkResultWrapper.Error<T>) result).message;
                 onError.handle(message != null ? message : "Có lỗi xảy ra");
             }

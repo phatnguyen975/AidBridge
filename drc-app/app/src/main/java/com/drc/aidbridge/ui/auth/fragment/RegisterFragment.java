@@ -13,11 +13,11 @@ import androidx.navigation.NavController;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentRegisterBinding;
 import com.drc.aidbridge.domain.enums.UserRole;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
-import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.snackbar.Snackbar;
-
 import com.drc.aidbridge.ui.auth.viewmodel.RegisterViewModel;
+
+import com.google.android.material.card.MaterialCardView;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -26,7 +26,6 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
 
     private RegisterViewModel viewModel;
 
-    @Nullable
     @Override
     protected FragmentRegisterBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
         return FragmentRegisterBinding.inflate(inflater, container, false);
@@ -43,10 +42,39 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
     protected void observeViewModel() {
         viewModel.getSelectedRole().observe(getViewLifecycleOwner(), this::updateRoleCardSelection);
 
+        viewModel.getValidationError().observe(getViewLifecycleOwner(), validation -> {
+            clearErrors();
+
+            if (validation == null || validation.isValid()) {
+                return;
+            }
+
+            if (validation.getErrorField() == ValidationResult.Field.NAME) {
+                binding.tilName.setError(validation.getErrorMessage());
+                binding.tilName.requestFocus();
+            } else if (validation.getErrorField() == ValidationResult.Field.EMAIL) {
+                binding.tilEmail.setError(validation.getErrorMessage());
+                binding.tilEmail.requestFocus();
+            } else if (validation.getErrorField() == ValidationResult.Field.PHONE) {
+                binding.tilPhone.setError(validation.getErrorMessage());
+                binding.tilPhone.requestFocus();
+            } else if (validation.getErrorField() == ValidationResult.Field.PASSWORD) {
+                binding.tilPassword.setError(validation.getErrorMessage());
+                binding.tilPassword.requestFocus();
+            } else {
+                showToast(validation.getErrorMessage());
+            }
+        });
+
         viewModel.getRegisterResult().observe(getViewLifecycleOwner(),
                 resultObserver(binding.btnRegister,
-                        ignored -> navigateToOtp(getEmail()),
-                        this::showInlineError));
+                        ignored -> navigateToOtp(getRawText(binding.tilEmail.getEditText())),
+                        this::showNetworkError));
+    }
+
+    @Override
+    protected ProgressBar getLoadingView() {
+        return binding.progressBar;
     }
 
     private void setupRoleCards() {
@@ -56,62 +84,44 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
     }
 
     private void setupClickListeners() {
-        binding.btnBack.setOnClickListener(v -> navigateToGuest());
-
+        binding.btnBack.setOnClickListener(v -> popBackStackSafely(R.id.guestShellFragment, false));
         binding.btnRegister.setOnClickListener(v -> attemptRegister());
 
-        binding.tvLoginLink.setOnClickListener(v -> navigateToLogin());
-    }
-
-    private void navigateToGuest() {
-        NavController navController = getViewNavController();
-        if (navController == null) {
-            return;
-        }
-
-        boolean popped = popBackStackSafely(navController, R.id.guestShellFragment, false);
-        if (!popped) {
-            navigateToDestinationSafely(navController, R.id.guestShellFragment);
-        }
-    }
-
-    private void navigateToLogin() {
-        NavController navController = getViewNavController();
-        if (navController == null) {
-            return;
-        }
-
-        boolean popped = popBackStackSafely(navController, R.id.loginFragment, false);
-        if (!popped) {
-            navigateSafely(navController, R.id.action_registerFragment_to_loginFragment);
-        }
+        binding.tvLoginLink.setOnClickListener(v -> 
+            navigateSafely(R.id.action_registerFragment_to_loginFragment)
+        );
     }
 
     private void attemptRegister() {
-        clearErrors();
-
-        String name = getTextOrEmpty(binding.tilName.getEditText());
-        String email = getEmail();
-        String phone = getTextOrEmpty(binding.tilPhone.getEditText());
-        String password = getTextOrEmpty(binding.tilPassword.getEditText());
-
-        if (!binding.cbTerms.isChecked()) {
-            binding.cbTerms.setError("Vui lòng đồng ý điều khoản");
-            return;
-        }
-
+        String name = getRawText(binding.tilName.getEditText());
+        String email = getRawText(binding.tilEmail.getEditText());
+        String phone = getRawText(binding.tilPhone.getEditText());
+        String password = getRawText(binding.tilPassword.getEditText());
         viewModel.register(name, email, phone, password);
     }
 
-    private String getEmail() {
-        return getTextOrEmpty(binding.tilEmail.getEditText());
-    }
-
-    private String getTextOrEmpty(@Nullable EditText et) {
+    private String getRawText(@Nullable EditText et) {
         if (et == null) {
             return "";
         }
-        return et.getText() != null ? et.getText().toString().trim() : "";
+        return et.getText() != null ? et.getText().toString() : "";
+    }
+
+    private void showNetworkError(String message) {
+        showToast(message);
+    }
+
+    private void clearErrors() {
+        binding.tilName.setError(null);
+        binding.tilEmail.setError(null);
+        binding.tilPhone.setError(null);
+        binding.tilPassword.setError(null);
+    }
+
+    private void navigateToOtp(String email) {
+        Bundle args = new Bundle();
+        args.putString("email", email);
+        navigateSafely(R.id.action_registerFragment_to_otpFragment, args);
     }
 
     private void updateRoleCardSelection(@Nullable UserRole role) {
@@ -158,56 +168,5 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
     private int dpToPx(int dp) {
         float density = requireContext().getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
-    }
-
-    private void showInlineError(String message) {
-        if (message == null) {
-            return;
-        }
-
-        String msg = message.toLowerCase();
-        if (msg.contains("họ") || msg.contains("tên")) {
-            binding.tilName.setError(message);
-            binding.tilName.requestFocus();
-            return;
-        }
-        if (msg.contains("email")) {
-            binding.tilEmail.setError(message);
-            binding.tilEmail.requestFocus();
-            return;
-        }
-        if (msg.contains("điện thoại") || msg.contains("phone")) {
-            binding.tilPhone.setError(message);
-            binding.tilPhone.requestFocus();
-            return;
-        }
-        if (msg.contains("mật khẩu") || msg.contains("khẩu")) {
-            binding.tilPassword.setError(message);
-            binding.tilPassword.requestFocus();
-            return;
-        }
-
-        Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG)
-                .setBackgroundTint(requireContext().getColor(R.color.sos_red))
-                .setTextColor(requireContext().getColor(R.color.white))
-                .show();
-    }
-
-    private void clearErrors() {
-        binding.tilName.setError(null);
-        binding.tilEmail.setError(null);
-        binding.tilPhone.setError(null);
-        binding.tilPassword.setError(null);
-    }
-
-    @Override
-    protected ProgressBar getLoadingView() {
-        return binding.progressBar;
-    }
-
-    private void navigateToOtp(String email) {
-        Bundle args = new Bundle();
-        args.putString("email", email);
-        navigateSafely(R.id.action_registerFragment_to_otpFragment, args);
     }
 }

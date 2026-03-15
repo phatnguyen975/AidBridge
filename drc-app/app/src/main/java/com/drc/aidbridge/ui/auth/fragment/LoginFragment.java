@@ -1,8 +1,8 @@
 package com.drc.aidbridge.ui.auth.fragment;
 
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import androidx.lifecycle.ViewModelProvider;
@@ -10,8 +10,9 @@ import androidx.navigation.NavController;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentLoginBinding;
-import com.drc.aidbridge.ui.base.BaseFragment;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.auth.viewmodel.LoginViewModel;
+import com.drc.aidbridge.ui.base.BaseFragment;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -31,28 +32,33 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
     @Override
     protected void setupViews() {
         viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
-
-        // Back arrow → always return to SOS Guest screen
-        binding.btnBack.setOnClickListener(v -> navigateToGuest());
-
-        // Login button — validates inputs before calling ViewModel
-        binding.btnLogin.setOnClickListener(v -> attemptLogin());
-
-        // "Quên mật khẩu?" → ForgotEmailFragment
-        binding.tvForgotPassword.setOnClickListener(v ->
-            navigateSafely(R.id.action_loginFragment_to_forgotEmailFragment));
-
-        // "Đăng ký ngay" → RegisterFragment
-        binding.tvRegisterLink.setOnClickListener(v ->
-            navigateSafely(R.id.action_loginFragment_to_registerFragment));
+        setupClickListeners();
     }
 
     @Override
     protected void observeViewModel() {
+        viewModel.getValidationError().observe(getViewLifecycleOwner(), validation -> {
+            clearErrors();
+
+            if (validation == null || validation.isValid()) {
+                return;
+            }
+
+            if (validation.getErrorField() == ValidationResult.Field.EMAIL) {
+                binding.tilEmail.setError(validation.getErrorMessage());
+                binding.tilEmail.requestFocus();
+            } else if (validation.getErrorField() == ValidationResult.Field.PASSWORD) {
+                binding.tilPassword.setError(validation.getErrorMessage());
+                binding.tilPassword.requestFocus();
+            } else {
+                showToast(validation.getErrorMessage());
+            }
+        });
+
         viewModel.getLoginResult().observe(getViewLifecycleOwner(),
                 resultObserver(binding.btnLogin,
                         ignored -> navigateToMain(),
-                        this::showLoginError));
+                        this::showNetworkError));
     }
 
     @Override
@@ -60,67 +66,39 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
         return binding.progressBar;
     }
 
-    private void attemptLogin() {
-        String email = getTextOrEmpty(binding.etEmail);
-        String password = getTextOrEmpty(binding.etPassword);
+    private void setupClickListeners() {
+        binding.btnBack.setOnClickListener(v -> popBackStackSafely(R.id.guestShellFragment, false));
+        binding.btnLogin.setOnClickListener(v -> attemptLogin());
 
+        binding.tvForgotPassword.setOnClickListener(v ->
+            navigateSafely(R.id.action_loginFragment_to_forgotEmailFragment));
+        binding.tvRegisterLink.setOnClickListener(v ->
+            navigateSafely(R.id.action_loginFragment_to_registerFragment));
+    }
+
+    private void attemptLogin() {
+        String email = getRawText(binding.etEmail);
+        String password = getRawText(binding.etPassword);
+        viewModel.login(email, password);
+    }
+
+    private String getRawText(EditText et) {
+        if (et == null) {
+            return "";
+        }
+        return et.getText() != null ? et.getText().toString() : "";
+    }
+
+    private void showNetworkError(String message) {
+        showToast(message);
+    }
+
+    private void clearErrors() {
         binding.tilEmail.setError(null);
         binding.tilPassword.setError(null);
-
-        boolean valid = true;
-        if (TextUtils.isEmpty(email)) {
-            binding.tilEmail.setError(getString(R.string.error_field_empty));
-            binding.tilEmail.requestFocus();
-            valid = false;
-        }
-        if (TextUtils.isEmpty(password)) {
-            binding.tilPassword.setError(getString(R.string.error_field_empty));
-            if (valid) binding.tilPassword.requestFocus();
-            valid = false;
-        }
-
-        if (valid) {
-            viewModel.login(email, password);
-        }
-    }
-
-    private String getTextOrEmpty(com.google.android.material.textfield.TextInputEditText et) {
-        return et.getText() != null ? et.getText().toString().trim() : "";
-    }
-
-    private void showLoginError(String message) {
-        if (message == null) {
-            return;
-        }
-
-        String lower = message.toLowerCase();
-        if (lower.contains("email")) {
-            binding.tilEmail.setError(message);
-            binding.tilEmail.requestFocus();
-            return;
-        }
-        if (lower.contains("mật khẩu") || lower.contains("password")) {
-            binding.tilPassword.setError(message);
-            binding.tilPassword.requestFocus();
-            return;
-        }
-
-        showToast(message);
     }
 
     private void navigateToMain() {
         navigateSafely(R.id.action_loginFragment_to_mainActivity);
-    }
-
-    private void navigateToGuest() {
-        NavController navController = getViewNavController();
-        if (navController == null) {
-            return;
-        }
-
-        boolean popped = popBackStackSafely(navController, R.id.guestShellFragment, false);
-        if (!popped) {
-            navigateToDestinationSafely(navController, R.id.guestShellFragment);
-        }
     }
 }
