@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     bottom_nav_guest_menu.xml — BottomNavigationView menu for the Guest (SOS) screen.
-    1. nav_rescue   — Cứu hộ (default selected)
-    2. nav_map_view — Bản đồ
+    1. nav_guest_rescue   — Cứu hộ (default selected)
+    2. nav_guest_map      — Bản đồ
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_rescue"
+        android:id="@+id/nav_guest_rescue"
         android:icon="@drawable/ic_sos_nav"
         android:title="@string/nav_rescue" />
     <item
-        android:id="@+id/nav_map_view"
+        android:id="@+id/nav_guest_map"
         android:icon="@drawable/ic_map"
         android:title="@string/nav_map" />
 </menu>

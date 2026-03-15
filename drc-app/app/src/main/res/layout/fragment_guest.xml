@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    fragment_guest.xml — Emergency / Guest screen with BottomNavigationView.
-
-    Layout:
-    ┌────────────────────────────────┐
-    │  [CỨU HỘ KHẨN CẤP]     [ⓘ]  │  ← top bar + info icon
-    │────────────────────────────────│  ← divider
-    │                                │
-    │       [ fl_content ]           │  ← tab content (swaps between rescue / map)
-    │                                │
-    ├────────────────────────────────┤
-    │  [🚨 Cứu hộ]  [🗺 Bản đồ]   │  ← BottomNavigationView
-    └────────────────────────────────┘
-
-    Tab "Cứu hộ" (default): SOS button, ĐĂNG NHẬP, Đăng ký, GPS badge
-    Tab "Bản đồ":            Map placeholder (Google Maps Phase 3)
+    fragment_guest.xml — Guest screen with BottomNavigationView.
+    - Tab 1: Cứu hộ (default) with big SOS button, GPS status badge, and login/register options
+    - Tab 2: Bản đồ
 -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -90,7 +78,7 @@
 
         <!-- TAB 1: Cứu hộ (default visible) -->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_rescue"
+            android:id="@+id/layout_guest_rescue"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="visible">
@@ -230,7 +218,7 @@
 
         <!-- TAB 2: Bản đồ (Phase 3 placeholder, hidden by default) -->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_map_view"
+            android:id="@+id/layout_guest_map"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone">

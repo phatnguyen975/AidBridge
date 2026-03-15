@@ -31,10 +31,6 @@ public class GuideFragment extends BaseFragment<FragmentGuideBinding> {
     }
 
     private void setupClickListeners() {
-        binding.btnBack.setOnClickListener(this::popBackStack);
-    }
-
-    private void popBackStack(View view) {
-        Navigation.findNavController(view).popBackStack();
+        binding.btnBack.setOnClickListener(v -> Navigation.findNavController(v).popBackStack());
     }
 }
