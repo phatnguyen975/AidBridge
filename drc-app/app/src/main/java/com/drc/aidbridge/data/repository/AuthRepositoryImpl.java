@@ -53,6 +53,8 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
         MutableLiveData<NetworkResultWrapper<User>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
+        // TODO: Re-enable actual API call once backend is ready.
+        /*
         authApiService.login(request).enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
@@ -78,6 +80,23 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 result.postValue(NetworkResultWrapper.error("Không thể kết nối máy chủ: " + safeMessage(t)));
             }
         });
+        */
+
+        User mockUser = new User(
+                "mock-user-id",
+                "Mock Victim",
+                request.getEmail(),
+                "0000000000",
+                UserRole.VICTIM,
+                null
+        );
+        tokenManager.saveUserInfo(
+                mockUser.getId(),
+                mockUser.getName(),
+                mockUser.getEmail(),
+                mockUser.getRole().name()
+        );
+        result.postValue(NetworkResultWrapper.success(mockUser));
 
         return result;
     }
@@ -87,6 +106,8 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
         MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
+        // TODO: Re-enable actual API call once backend is ready.
+        /*
         authApiService.register(request).enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
@@ -112,6 +133,9 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 result.postValue(NetworkResultWrapper.error("Đăng ký thất bại: " + safeMessage(t)));
             }
         });
+        */
+
+        result.postValue(NetworkResultWrapper.success(request.getEmail()));
 
         return result;
     }
@@ -121,6 +145,8 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
         MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
+        // TODO: Re-enable actual API call once backend is ready.
+        /*
         authApiService.verifyOtp(request).enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
@@ -146,6 +172,9 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 result.postValue(NetworkResultWrapper.error("Xác thực OTP thất bại: " + safeMessage(t)));
             }
         });
+        */
+
+        result.postValue(NetworkResultWrapper.success(request.getEmail()));
 
         return result;
     }
@@ -155,6 +184,8 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
         MutableLiveData<NetworkResultWrapper<Boolean>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
+        // TODO: Re-enable actual API call once backend is ready.
+        /*
         authApiService.resendOtp(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -170,6 +201,9 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 result.postValue(NetworkResultWrapper.error("Gửi lại OTP thất bại: " + safeMessage(t)));
             }
         });
+        */
+
+        result.postValue(NetworkResultWrapper.success(Boolean.TRUE));
 
         return result;
     }
@@ -179,6 +213,8 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
         MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
+        // TODO: Re-enable actual API call once backend is ready.
+        /*
         authApiService.forgotPassword(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -194,6 +230,9 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 result.postValue(NetworkResultWrapper.error("Không gửi được OTP: " + safeMessage(t)));
             }
         });
+        */
+
+        result.postValue(NetworkResultWrapper.success(request.getEmail()));
 
         return result;
     }
@@ -203,6 +242,8 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
         MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
+        // TODO: Re-enable actual API call once backend is ready.
+        /*
         authApiService.verifyResetOtp(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -218,6 +259,9 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 result.postValue(NetworkResultWrapper.error("Xác thực OTP thất bại: " + safeMessage(t)));
             }
         });
+        */
+
+        result.postValue(NetworkResultWrapper.success(request.getEmail()));
 
         return result;
     }
@@ -227,6 +271,8 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
         MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
+        // TODO: Re-enable actual API call once backend is ready.
+        /*
         authApiService.resetPassword(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -242,6 +288,9 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 result.postValue(NetworkResultWrapper.error("Đổi mật khẩu thất bại: " + safeMessage(t)));
             }
         });
+        */
+
+        result.postValue(NetworkResultWrapper.success("Đổi mật khẩu thành công"));
 
         return result;
     }

@@ -6,7 +6,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
@@ -53,7 +52,8 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
                 binding.etOtp5,
                 binding.etOtp6
             ),
-            this::updateBoxBackground
+            null,
+            otp -> attemptVerify()
         );
         otpInputController.bind();
 
@@ -118,7 +118,12 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
     }
 
     private void attemptVerify() {
-        viewModel.verify(otpInputController.collectOtp());
+        String otp = otpInputController.collectOtp();
+        if (otp.length() < 6) {
+            showToast(getString(R.string.error_otp_length));
+            return;
+        }
+        viewModel.verify(otp);
     }
 
     private void showSuccessDialog() {
@@ -168,10 +173,6 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
         return dialog;
-    }
-
-    private void updateBoxBackground(EditText box, boolean filled) {
-        box.setBackgroundResource(filled ? R.drawable.bg_otp_box_active : R.drawable.bg_otp_box);
     }
 
     private void navigateToLogin() {

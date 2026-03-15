@@ -8,6 +8,8 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.drc.aidbridge.R;
+
 import java.util.List;
 
 /**
@@ -19,19 +21,33 @@ public class OtpInputController {
         void onChanged(@NonNull EditText box, boolean filled);
     }
 
+    public interface OtpCompleteListener {
+        void onCompleted(@NonNull String otp);
+    }
+
     private final List<EditText> boxes;
     private final BoxStateListener boxStateListener;
+    private final OtpCompleteListener otpCompleteListener;
 
     public OtpInputController(@NonNull List<EditText> boxes,
                               @Nullable BoxStateListener boxStateListener) {
+        this(boxes, boxStateListener, null);
+    }
+
+    public OtpInputController(@NonNull List<EditText> boxes,
+                              @Nullable BoxStateListener boxStateListener,
+                              @Nullable OtpCompleteListener otpCompleteListener) {
         this.boxes = boxes;
         this.boxStateListener = boxStateListener;
+        this.otpCompleteListener = otpCompleteListener;
     }
 
     public void bind() {
         for (int i = 0; i < boxes.size(); i++) {
             final int index = i;
             final EditText box = boxes.get(i);
+
+            box.setOnFocusChangeListener((v, hasFocus) -> applyBoxVisualState(box));
 
             box.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -44,11 +60,16 @@ public class OtpInputController {
 
                 @Override
                 public void afterTextChanged(Editable s) {
+                    applyBoxVisualState(box);
                     if (boxStateListener != null) {
                         boxStateListener.onChanged(box, s.length() > 0);
                     }
                     if (s.length() == 1 && index < boxes.size() - 1) {
                         boxes.get(index + 1).requestFocus();
+                    }
+
+                    if (otpCompleteListener != null && isComplete()) {
+                        otpCompleteListener.onCompleted(collectOtp());
                     }
                 }
             });
@@ -64,6 +85,8 @@ public class OtpInputController {
                 }
                 return false;
             });
+
+            applyBoxVisualState(box);
         }
         focusFirst();
     }
@@ -91,5 +114,19 @@ public class OtpInputController {
             }
         }
         focusFirst();
+    }
+
+    private boolean isComplete() {
+        for (EditText box : boxes) {
+            if (box.getText() == null || box.getText().length() != 1) {
+                return false;
+            }
+        }
+        return !boxes.isEmpty();
+    }
+
+    private void applyBoxVisualState(@NonNull EditText box) {
+        boolean highlighted = box.hasFocus();
+        box.setBackgroundResource(highlighted ? R.drawable.bg_otp_box_active : R.drawable.bg_otp_box);
     }
 }

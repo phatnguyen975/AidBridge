@@ -1,18 +1,19 @@
 package com.drc.aidbridge.ui.auth.fragment;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentLoginBinding;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.auth.viewmodel.LoginViewModel;
 import com.drc.aidbridge.ui.base.BaseFragment;
+import com.drc.aidbridge.ui.main.MainActivity;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -99,6 +100,9 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
     }
 
     private void navigateToMain() {
-        navigateSafely(R.id.action_loginFragment_to_mainActivity);
+        Intent intent = new Intent(requireContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        requireActivity().finish();
     }
 }

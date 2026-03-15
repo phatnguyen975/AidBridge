@@ -47,7 +47,8 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
                 binding.etOtp5,
                 binding.etOtp6
             ),
-            null
+            null,
+            otp -> attemptVerifyOtp()
         );
         otpInputController.bind();
 
@@ -56,6 +57,21 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
 
     @Override
     protected void observeViewModel() {
+        viewModel.getCountdown().observe(getViewLifecycleOwner(), seconds -> {
+            if (seconds != null && seconds > 0) {
+                String text = getString(R.string.otp_resend_countdown_template, seconds);
+                binding.tvResend.setText(text);
+                binding.tvResend.setTextColor(requireContext().getColor(R.color.text_secondary));
+            }
+        });
+
+        viewModel.getResendEnabled().observe(getViewLifecycleOwner(), enabled -> {
+            if (Boolean.TRUE.equals(enabled)) {
+                binding.tvResend.setText(R.string.otp_resend_now);
+                binding.tvResend.setTextColor(requireContext().getColor(R.color.text_link));
+            }
+        });
+
         viewModel.getValidationError().observe(getViewLifecycleOwner(), validation -> {
             if (validation == null || validation.isValid()) {
                 return;
@@ -87,11 +103,20 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
     private void setupClickListeners() {
         binding.btnBack.setOnClickListener(v -> popBackStackSafely());
         binding.btnVerify.setOnClickListener(v -> attemptVerifyOtp());
-        binding.tvResend.setOnClickListener(v -> viewModel.resendOtp());
+        binding.tvResend.setOnClickListener(v -> {
+            if (Boolean.TRUE.equals(viewModel.getResendEnabled().getValue())) {
+                viewModel.resendOtp();
+            }
+        });
     }
 
     private void attemptVerifyOtp() {
-        viewModel.verify(otpInputController.collectOtp());
+        String otp = otpInputController.collectOtp();
+        if (otp.length() < 6) {
+            showToast(getString(R.string.error_otp_length));
+            return;
+        }
+        viewModel.verify(otp);
     }
 
     private void showNetworkError(String message) {

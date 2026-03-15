@@ -93,6 +93,11 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
     }
 
     private void attemptRegister() {
+        if (!binding.cbTerms.isChecked()) {
+            showToast(getString(R.string.error_terms_not_agreed));
+            return;
+        }
+
         String name = getRawText(binding.tilName.getEditText());
         String email = getRawText(binding.tilEmail.getEditText());
         String phone = getRawText(binding.tilPhone.getEditText());

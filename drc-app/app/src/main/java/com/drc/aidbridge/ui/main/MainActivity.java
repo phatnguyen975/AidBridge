@@ -73,8 +73,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void applyRoleShell() {
-        String roleStr = tokenManager.getUserRole();
-        UserRole role = UserRole.fromStringSafe(roleStr);
+        // TODO: Use actual role after backend integration
+        // String roleStr = tokenManager.getUserRole();
+        // UserRole role = UserRole.fromStringSafe(roleStr);
+        UserRole role = UserRole.VICTIM;
         RoleShellConfig config = resolveRoleShellConfig(role);
 
         binding.bottomNav.getMenu().clear();
@@ -104,7 +106,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     private static final class RoleShellConfig {
         final int menuResId;
         final int navGraphResId;
-
         RoleShellConfig(int menuResId, int navGraphResId) {
             this.menuResId = menuResId;
             this.navGraphResId = navGraphResId;

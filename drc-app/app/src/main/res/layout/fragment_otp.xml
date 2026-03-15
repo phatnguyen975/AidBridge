@@ -23,10 +23,10 @@
         android:id="@+id/btn_back"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@android:drawable/ic_media_previous"
+        android:src="@drawable/ic_arrow_back"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:tint="@color/text_primary"
-        android:contentDescription="Back"
+        android:contentDescription="Quay lại"
         android:layout_marginTop="@dimen/spacing_xl"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
