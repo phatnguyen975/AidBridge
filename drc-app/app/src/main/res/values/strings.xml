@@ -81,8 +81,10 @@
     <string name="error_otp_length">Vui lòng nhập đủ 6 chữ số.</string>
     <string name="error_login_failed">Email hoặc mật khẩu không đúng.</string>
 
-    <!-- === Bottom Navigation === -->    <string name="nav_home">TRANG CHỦ</string>    <string name="nav_map">BẢN ĐỒ</string>
-    <string name="nav_sos">Cứu hộ</string>
+    <!-- === Bottom Navigation === -->
+    <string name="nav_rescue">CỨU HỘ</string>
+    <string name="nav_map">BẢN ĐỒ</string>
+    <string name="nav_home">TRANG CHỦ</string>
 
     <!-- === Map Placeholder === -->
     <string name="map_placeholder">Map Screen</string>
@@ -93,9 +95,6 @@
     <!-- === Info Dialog === -->
     <string name="info_title">Về ứng dụng</string>
     <string name="info_message">AidBridge - Ứng dụng Điều phối Cứu trợ Thiên tai\nPhiên bản 1.0.0</string>
-
-    <!-- === Guest BottomNav (Cứu hộ tab) === -->
-    <string name="nav_rescue">Cứu hộ</string>
 
     <!-- === Home Screen === -->
     <string name="home_greeting">Xin chào,</string>
