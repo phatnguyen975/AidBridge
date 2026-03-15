@@ -47,7 +47,24 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+
+        <!-- → User guide -->
+        <action
+            android:id="@+id/action_guestFragment_to_guideFragment"
+            app:destination="@id/guideFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
+
+    <!-- ============================================================
+         User guide screen
+         ============================================================ -->
+    <fragment
+        android:id="@+id/guideFragment"
+        android:name="com.drc.aidbridge.ui.auth.fragment.GuideFragment"
+        android:label="GuideFragment" />
 
     <!-- ============================================================
          Login screen

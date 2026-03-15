@@ -1,6 +1,5 @@
 package com.drc.aidbridge.ui.auth.fragment;
 
-import android.content.Intent;
 import android.location.LocationManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +8,6 @@ import androidx.navigation.Navigation;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentGuestBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
-import com.drc.aidbridge.ui.guide.UserGuideActivity;
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
@@ -21,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  *
  * Key actions:
  *   - SOS button      → TODO Phase 3: Quick SOS flow
- *   - Info icon       → UserGuideActivity
+ *   - Info icon       → GuideFragment
  *   - ĐĂNG NHẬP      → LoginFragment
  *   - Đăng ký link   → RegisterFragment
  */
@@ -81,11 +79,10 @@ public class GuestFragment extends BaseFragment<FragmentGuestBinding> {
             showToast("Tính năng SOS Khẩn cấp sẽ được tích hợp ở Phase 3");
         });
 
-        // Info icon → UserGuideActivity
-        binding.ivInfo.setOnClickListener(v -> {
-            Intent intent = new Intent(requireActivity(), UserGuideActivity.class);
-            startActivity(intent);
-        });
+        // Info icon → GuideFragment
+        binding.ivInfo.setOnClickListener(v ->
+            Navigation.findNavController(v)
+                .navigate(R.id.action_guestFragment_to_guideFragment));
 
         // ĐĂNG NHẬP → LoginFragment
         binding.btnLogin.setOnClickListener(v ->

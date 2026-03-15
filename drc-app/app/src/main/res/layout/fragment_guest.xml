@@ -54,7 +54,7 @@
         app:layout_constraintStart_toEndOf="@id/gl_start"
         app:layout_constraintEnd_toStartOf="@+id/iv_info" />
 
-    <!-- Info icon: top right → opens UserGuideActivity -->
+    <!-- Info icon: top right → opens GuideFragment -->
     <ImageButton
         android:id="@+id/iv_info"
         android:layout_width="40dp"

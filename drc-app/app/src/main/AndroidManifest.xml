@@ -41,11 +41,6 @@
             android:exported="false"
             android:theme="@style/Theme.AidBridge" />
 
-        <activity
-            android:name=".ui.guide.UserGuideActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AidBridge" />
-
     </application>
 
 </manifest>
