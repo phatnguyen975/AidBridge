@@ -7,7 +7,6 @@ import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentForgotOtpBinding;
@@ -70,8 +69,7 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
     }
 
     private void setupClickListeners() {
-        binding.btnBack.setOnClickListener(v ->
-                Navigation.findNavController(requireView()).popBackStack());
+        binding.btnBack.setOnClickListener(v -> popBackStackSafely());
 
         binding.btnVerify.setOnClickListener(v -> attemptVerify());
 
@@ -102,7 +100,6 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
     private void navigateToNewPassword() {
         Bundle args = new Bundle();
         args.putString("email", viewModel.getEmail());
-        Navigation.findNavController(requireView())
-                .navigate(R.id.action_forgotOtpFragment_to_forgotNewPasswordFragment, args);
+        navigateSafely(R.id.action_forgotOtpFragment_to_forgotNewPasswordFragment, args);
     }
 }

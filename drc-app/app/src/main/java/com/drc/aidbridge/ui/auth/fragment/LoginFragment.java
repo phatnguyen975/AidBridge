@@ -7,7 +7,6 @@ import android.widget.ProgressBar;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentLoginBinding;
@@ -41,13 +40,11 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
 
         // "Quên mật khẩu?" → ForgotEmailFragment
         binding.tvForgotPassword.setOnClickListener(v ->
-                Navigation.findNavController(v)
-                        .navigate(R.id.action_loginFragment_to_forgotEmailFragment));
+            navigateSafely(R.id.action_loginFragment_to_forgotEmailFragment));
 
         // "Đăng ký ngay" → RegisterFragment
         binding.tvRegisterLink.setOnClickListener(v ->
-                Navigation.findNavController(v)
-                        .navigate(R.id.action_loginFragment_to_registerFragment));
+            navigateSafely(R.id.action_loginFragment_to_registerFragment));
     }
 
     @Override
@@ -112,15 +109,18 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
     }
 
     private void navigateToMain() {
-        Navigation.findNavController(requireView())
-            .navigate(R.id.action_loginFragment_to_mainActivity);
+        navigateSafely(R.id.action_loginFragment_to_mainActivity);
     }
 
     private void navigateToGuest() {
-        NavController navController = Navigation.findNavController(requireView());
-        boolean popped = navController.popBackStack(R.id.guestFragment, false);
+        NavController navController = getViewNavController();
+        if (navController == null) {
+            return;
+        }
+
+        boolean popped = popBackStackSafely(navController, R.id.guestShellFragment, false);
         if (!popped) {
-            navController.navigate(R.id.guestFragment);
+            navigateToDestinationSafely(navController, R.id.guestShellFragment);
         }
     }
 }

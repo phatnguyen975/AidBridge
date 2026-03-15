@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentForgotNewPasswordBinding;
@@ -47,8 +46,7 @@ public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPas
     // ------------------------------------------------------------------
 
     private void setupClickListeners() {
-        binding.btnBack.setOnClickListener(v ->
-                Navigation.findNavController(requireView()).popBackStack());
+        binding.btnBack.setOnClickListener(v -> popBackStackSafely());
 
         binding.btnChangePassword.setOnClickListener(v -> attemptChangePassword());
     }
@@ -117,8 +115,7 @@ public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPas
                 .setTextColor(requireContext().getColor(R.color.white))
                 .show();
 
-        Navigation.findNavController(requireView())
-                .popBackStack(R.id.loginFragment, false);
+        popBackStackSafely(R.id.loginFragment, false);
     }
 
     // ------------------------------------------------------------------

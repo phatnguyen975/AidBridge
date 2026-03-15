@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- fragment_guest_rescue.xml — Guest rescue content only. -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary">
+
+    <!-- Responsive vertical guidelines (5% horizontal margin) -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <!-- Top bar: Screen title (centered) -->
+    <TextView
+        android:id="@+id/tv_screen_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/screen_title_emergency"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_lg"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingTop="@dimen/spacing_xl"
+        android:paddingBottom="@dimen/spacing_md"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/gl_start"
+        app:layout_constraintEnd_toStartOf="@+id/iv_info" />
+
+    <!-- Info icon: top right → opens UserGuideFragment -->
+    <ImageButton
+        android:id="@+id/iv_info"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_info"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:tint="@color/text_secondary"
+        android:contentDescription="Hướng dẫn sử dụng"
+        android:layout_marginEnd="@dimen/spacing_md"
+        app:layout_constraintTop_toTopOf="@id/tv_screen_title"
+        app:layout_constraintBottom_toBottomOf="@id/tv_screen_title"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Horizontal divider below top bar -->
+    <View
+        android:id="@+id/divider_top"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/border_default"
+        app:layout_constraintTop_toBottomOf="@id/tv_screen_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Rescue content fills remaining screen area -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_guest_rescue"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/divider_top"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_inner_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.08" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_inner_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.92" />
+
+        <!-- Big red SOS button (vertically centered, biased upward) -->
+        <FrameLayout
+            android:id="@+id/btn_sos"
+            android:layout_width="@dimen/sos_button_size"
+            android:layout_height="@dimen/sos_button_size"
+            android:background="@drawable/bg_sos_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/tv_emergency_label"
+            app:layout_constraintVertical_bias="0.4">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="!"
+                    android:textColor="@color/white"
+                    android:textSize="42sp"
+                    android:textStyle="bold"
+                    android:lineSpacingExtra="-8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sos_button_label"
+                    android:textColor="@color/white"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- "CỨU HỘ KHẨN CẤP" label below SOS button -->
+        <TextView
+            android:id="@+id/tv_emergency_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/screen_title_emergency"
+            android:textColor="@color/color_primary"
+            android:textSize="@dimen/text_xl"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_sos" />
+
+        <!-- "ĐĂNG NHẬP" ghost button -->
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/btn_height"
+            android:text="@string/btn_login"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold"
+            android:background="@drawable/bg_button_ghost"
+            android:layout_marginTop="@dimen/spacing_xl"
+            app:layout_constraintStart_toEndOf="@id/gl_inner_start"
+            app:layout_constraintEnd_toStartOf="@id/gl_inner_end"
+            app:layout_constraintTop_toBottomOf="@id/tv_emergency_label" />
+
+        <!-- "Đăng ký tài khoản mới" link text -->
+        <TextView
+            android:id="@+id/tv_register_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/link_register"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_md"
+            android:padding="@dimen/spacing_sm"
+            android:layout_marginTop="@dimen/spacing_sm"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_login" />
+
+        <!-- GPS status badge — bottom center -->
+        <LinearLayout
+            android:id="@+id/badge_gps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_gps_badge"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_marginBottom="@dimen/spacing_lg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:src="@drawable/ic_gps_dot"
+                android:contentDescription="GPS"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/tv_gps_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gps_active"
+                android:textColor="@color/safe_green"
+                android:textSize="@dimen/text_xs"
+                android:textStyle="bold"
+                android:letterSpacing="0.06" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

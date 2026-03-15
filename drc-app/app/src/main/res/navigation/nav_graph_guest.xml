@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    auth_nav_graph.xml — Navigation graph for the authentication flow.
+    nav_graph_guest.xml — Navigation graph for the guest/authentication flow.
 
     Flow:
-      GuestFragment (start)
-          ├─ action_guestFragment_to_loginFragment    → LoginFragment
-          └─ action_guestFragment_to_registerFragment → RegisterFragment
+      GuestShellFragment (start)
+          ├─ action_guestShellFragment_to_loginFragment    → LoginFragment
+          └─ action_guestShellFragment_to_registerFragment → RegisterFragment
 
       LoginFragment
           └─ action_loginFragment_to_registerFragment → RegisterFragment
@@ -19,20 +19,20 @@
 <navigation
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/auth_nav_graph"
-    app:startDestination="@id/guestFragment">
+    android:id="@+id/nav_graph_guest"
+    app:startDestination="@id/guestShellFragment">
 
     <!-- ============================================================
-         Guest / SOS screen (start destination)
+         Guest shell (rescue + map tabs)
          ============================================================ -->
     <fragment
-        android:id="@+id/guestFragment"
-        android:name="com.drc.aidbridge.ui.auth.fragment.GuestFragment"
-        android:label="GuestFragment">
+        android:id="@+id/guestShellFragment"
+        android:name="com.drc.aidbridge.ui.auth.fragment.GuestShellFragment"
+        android:label="GuestShellFragment">
 
         <!-- → Login -->
         <action
-            android:id="@+id/action_guestFragment_to_loginFragment"
+            android:id="@+id/action_guestShellFragment_to_loginFragment"
             app:destination="@id/loginFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -41,7 +41,7 @@
 
         <!-- → Register -->
         <action
-            android:id="@+id/action_guestFragment_to_registerFragment"
+            android:id="@+id/action_guestShellFragment_to_registerFragment"
             app:destination="@id/registerFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -50,8 +50,8 @@
 
         <!-- → User guide -->
         <action
-            android:id="@+id/action_guestFragment_to_guideFragment"
-            app:destination="@id/guideFragment"
+            android:id="@+id/action_guestShellFragment_to_userGuideFragment"
+            app:destination="@id/userGuideFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -62,9 +62,9 @@
          User guide screen
          ============================================================ -->
     <fragment
-        android:id="@+id/guideFragment"
-        android:name="com.drc.aidbridge.ui.auth.fragment.GuideFragment"
-        android:label="GuideFragment" />
+        android:id="@+id/userGuideFragment"
+        android:name="com.drc.aidbridge.ui.auth.fragment.UserGuideFragment"
+        android:label="UserGuideFragment" />
 
     <!-- ============================================================
          Login screen
@@ -93,12 +93,12 @@
             app:popExitAnim="@anim/slide_out_right" />
 
         <!-- → MainActivity sau khi đăng nhập thành công.
-             popUpTo auth_nav_graph + popUpToInclusive=true → xóa sạch toàn bộ
+             popUpTo nav_graph_guest + popUpToInclusive=true → xóa sạch toàn bộ
              Fragment back stack (Guest, Login) để người dùng không thể Back về màn đăng nhập. -->
         <action
             android:id="@+id/action_loginFragment_to_mainActivity"
             app:destination="@id/mainActivity"
-            app:popUpTo="@id/auth_nav_graph"
+            app:popUpTo="@id/nav_graph_guest"
             app:popUpToInclusive="true" />
     </fragment>
 

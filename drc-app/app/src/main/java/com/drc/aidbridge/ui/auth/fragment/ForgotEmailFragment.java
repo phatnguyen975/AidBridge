@@ -6,7 +6,6 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentForgotEmailBinding;
@@ -45,8 +44,7 @@ public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding
     // ------------------------------------------------------------------
 
     private void setupClickListeners() {
-        binding.btnBack.setOnClickListener(v ->
-                Navigation.findNavController(requireView()).popBackStack());
+        binding.btnBack.setOnClickListener(v -> popBackStackSafely());
 
         binding.btnSendOtp.setOnClickListener(v -> attemptSendOtp());
     }
@@ -91,8 +89,7 @@ public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding
     private void navigateToOtp(String email) {
         Bundle args = new Bundle();
         args.putString("email", email);
-        Navigation.findNavController(requireView())
-                .navigate(R.id.action_forgotEmailFragment_to_forgotOtpFragment, args);
+        navigateSafely(R.id.action_forgotEmailFragment_to_forgotOtpFragment, args);
     }
 
     // ------------------------------------------------------------------

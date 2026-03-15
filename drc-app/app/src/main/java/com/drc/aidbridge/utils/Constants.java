@@ -39,4 +39,7 @@ public final class Constants {
 
     // === Splash ===
     public static final int SPLASH_DELAY_MS = 2000;
+
+    // === Navigation ===
+    public static final long NAVIGATE_DEBOUNCE_MS = 500L;
 }

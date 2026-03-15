@@ -9,7 +9,6 @@ import android.widget.ProgressBar;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentRegisterBinding;
@@ -65,18 +64,26 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
     }
 
     private void navigateToGuest() {
-        NavController navController = Navigation.findNavController(requireView());
-        boolean popped = navController.popBackStack(R.id.guestFragment, false);
+        NavController navController = getViewNavController();
+        if (navController == null) {
+            return;
+        }
+
+        boolean popped = popBackStackSafely(navController, R.id.guestShellFragment, false);
         if (!popped) {
-            navController.navigate(R.id.guestFragment);
+            navigateToDestinationSafely(navController, R.id.guestShellFragment);
         }
     }
 
     private void navigateToLogin() {
-        NavController navController = Navigation.findNavController(requireView());
-        boolean popped = navController.popBackStack(R.id.loginFragment, false);
+        NavController navController = getViewNavController();
+        if (navController == null) {
+            return;
+        }
+
+        boolean popped = popBackStackSafely(navController, R.id.loginFragment, false);
         if (!popped) {
-            navController.navigate(R.id.action_registerFragment_to_loginFragment);
+            navigateSafely(navController, R.id.action_registerFragment_to_loginFragment);
         }
     }
 
@@ -201,7 +208,6 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
     private void navigateToOtp(String email) {
         Bundle args = new Bundle();
         args.putString("email", email);
-        Navigation.findNavController(requireView())
-                .navigate(R.id.action_registerFragment_to_otpFragment, args);
+        navigateSafely(R.id.action_registerFragment_to_otpFragment, args);
     }
 }

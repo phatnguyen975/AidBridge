@@ -11,7 +11,6 @@ import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.DialogOtpFailedBinding;
@@ -94,8 +93,7 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
     }
 
     private void setupClickListeners() {
-        binding.btnBack.setOnClickListener(v ->
-                Navigation.findNavController(requireView()).popBackStack());
+        binding.btnBack.setOnClickListener(v -> popBackStackSafely());
 
         binding.btnVerify.setOnClickListener(v -> attemptVerify());
 
@@ -157,7 +155,6 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
     }
 
     private void navigateToLogin() {
-        Navigation.findNavController(requireView())
-                .navigate(R.id.action_otpFragment_to_loginFragment);
+        navigateSafely(R.id.action_otpFragment_to_loginFragment);
     }
 }

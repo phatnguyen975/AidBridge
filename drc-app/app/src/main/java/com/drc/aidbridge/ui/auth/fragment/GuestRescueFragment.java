@@ -2,30 +2,28 @@ package com.drc.aidbridge.ui.auth.fragment;
 
 import android.location.LocationManager;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import androidx.navigation.Navigation;
+import androidx.navigation.NavController;
 
 import com.drc.aidbridge.R;
-import com.drc.aidbridge.databinding.FragmentGuestBinding;
+import com.drc.aidbridge.databinding.FragmentGuestRescueBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * GuestFragment — the landing screen visible to unauthenticated users.
+ * GuestRescueFragment — guest rescue entry screen.
  */
 @AndroidEntryPoint
-public class GuestFragment extends BaseFragment<FragmentGuestBinding> {
+public class GuestRescueFragment extends BaseFragment<FragmentGuestRescueBinding> {
 
     @Override
-    protected FragmentGuestBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
-        return FragmentGuestBinding.inflate(inflater, container, false);
+    protected FragmentGuestRescueBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
+        return FragmentGuestRescueBinding.inflate(inflater, container, false);
     }
 
     @Override
     protected void setupViews() {
-        setupBottomNav();
         setupClickListeners();
     }
 
@@ -39,44 +37,29 @@ public class GuestFragment extends BaseFragment<FragmentGuestBinding> {
         updateGpsStatus();
     }
 
-    private void setupBottomNav() {
-        binding.bottomNavGuest.setSelectedItemId(R.id.nav_guest_rescue);
-
-        binding.bottomNavGuest.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_guest_rescue) {
-                binding.layoutGuestRescue.setVisibility(View.VISIBLE);
-                binding.layoutGuestMap.setVisibility(View.GONE);
-                return true;
-            } else if (id == R.id.nav_guest_map) {
-                binding.layoutGuestRescue.setVisibility(View.GONE);
-                binding.layoutGuestMap.setVisibility(View.VISIBLE);
-                return true;
-            }
-            return false;
-        });
-    }
-
     private void setupClickListeners() {
         // TODO: Wire up Quick SOS flow with location permission
         binding.btnSos.setOnClickListener(v -> {
             showToast("Tính năng SOS sẽ được tích hợp sau");
         });
 
-        // Info icon → GuideFragment
+        // Use the auth host controller (parent graph), not the nested guest-tabs controller.
+        NavController parentNavController = getHostNavController(R.id.auth_nav_host);
+        if (parentNavController == null) {
+            return;
+        }
+
+        // Info icon → UserGuideFragment
         binding.ivInfo.setOnClickListener(v ->
-            Navigation.findNavController(v)
-                .navigate(R.id.action_guestFragment_to_guideFragment));
+                navigateSafely(parentNavController, R.id.action_guestShellFragment_to_userGuideFragment));
 
         // ĐĂNG NHẬP → LoginFragment
         binding.btnLogin.setOnClickListener(v ->
-                Navigation.findNavController(v)
-                        .navigate(R.id.action_guestFragment_to_loginFragment));
+                navigateSafely(parentNavController, R.id.action_guestShellFragment_to_loginFragment));
 
         // ĐĂNG KÝ → RegisterFragment
         binding.tvRegisterLink.setOnClickListener(v ->
-                Navigation.findNavController(v)
-                        .navigate(R.id.action_guestFragment_to_registerFragment));
+                navigateSafely(parentNavController, R.id.action_guestShellFragment_to_registerFragment));
     }
 
     private void updateGpsStatus() {
