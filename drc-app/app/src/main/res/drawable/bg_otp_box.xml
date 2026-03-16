@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- OTP digit box: square-ish with rounded corners, dark fill -->
+<!-- OTP digit box default state: rounded corners, dark fill, light border -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <corners android:radius="8dp" />

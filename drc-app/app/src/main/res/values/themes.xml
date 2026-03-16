@@ -1,13 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-
-    <!-- === Base Application Theme (forced dark) === -->
+    <!-- Base application theme (forced dark) -->
     <style name="Base.Theme.AidBridge" parent="Theme.Material3.Dark.NoActionBar">
-        <!-- Primary brand color used for buttons, links, highlights -->
+        <!-- Primary color -->
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryVariant">@color/color_primary_variant</item>
         <item name="colorOnPrimary">@color/white</item>
 
-        <!-- App dark background -->
+        <!-- App background -->
         <item name="android:windowBackground">@color/bg_primary</item>
         <item name="colorSurface">@color/bg_surface</item>
         <item name="colorOnSurface">@color/text_primary</item>
@@ -17,7 +16,7 @@
         <item name="colorSecondary">@color/color_primary</item>
         <item name="colorOnSecondary">@color/white</item>
 
-        <!-- TextInputLayout styling (outlined inputs) -->
+        <!-- Text input -->
         <item name="textInputStyle">@style/Widget.AidBridge.TextInputLayout</item>
 
         <!-- Status bar -->
@@ -25,12 +24,22 @@
         <item name="android:navigationBarColor">@color/bg_primary</item>
     </style>
 
+    <!-- Main application theme -->
     <style name="Theme.AidBridge" parent="Base.Theme.AidBridge" />
 
-    <!-- Also keep legacy name for compatibility (existing build.gradle references) -->
-    <style name="Theme.DRCApp" parent="Theme.AidBridge" />
+    <!-- Splash theme -->
+    <style name="Theme.AidBridge.Splash" parent="Theme.AidBridge">
+        <item name="android:windowFullscreen">true</item>
+    </style>
 
-    <!-- === TextInputLayout custom style === -->
+    <!-- Dialog theme -->
+    <style name="Theme.AidBridge.Dialog" parent="ThemeOverlay.Material3.Dialog">
+        <item name="android:windowBackground">@drawable/bg_dialog_rounded</item>
+        <item name="colorSurface">@color/bg_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+    </style>
+
+    <!-- Text input style -->
     <style name="Widget.AidBridge.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">@color/bg_input</item>
         <item name="boxStrokeColor">@color/border_input</item>
@@ -43,58 +52,29 @@
         <item name="android:textColorHint">@color/text_hint</item>
     </style>
 
-    <!-- === Splash Screen style === -->
-    <style name="Theme.AidBridge.Splash" parent="Theme.AidBridge">
-        <item name="android:windowFullscreen">true</item>
-    </style>
-
-    <!-- === Button styles === -->
-    <!-- Primary action button (blue fill) -->
+    <!-- Primary button style -->
     <style name="Widget.AidBridge.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
         <item name="backgroundTint">@color/color_primary</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textStyle">bold</item>
         <item name="cornerRadius">12dp</item>
     </style>
 
-    <!-- Ghost/outline button (dark with border) -->
+    <!-- Ghost button style -->
     <style name="Widget.AidBridge.Button.Ghost" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="strokeColor">@color/border_default</item>
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textStyle">bold</item>
-        <item name="cornerRadius">12dp</item>
         <item name="backgroundTint">@color/bg_surface_elevated</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/border_default</item>
     </style>
 
-    <!-- OTP confirm button -->
-    <style name="Widget.AidBridge.Button.OtpConfirm" parent="Widget.AidBridge.Button.Primary">
-        <item name="cornerRadius">8dp</item>
-    </style>
-
-    <!-- === OTP digit box === -->
-    <style name="Widget.AidBridge.OtpBox" parent="Widget.Material3.TextInputEditText.OutlinedBox">
-        <item name="android:textColor">@color/text_primary</item>
-        <item name="android:textSize">24sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:gravity">center</item>
-        <item name="android:inputType">number</item>
-        <item name="android:maxLength">1</item>
-        <item name="android:background">@drawable/bg_otp_box</item>
-        <item name="android:padding">0dp</item>
-    </style>
-
-    <!-- === Role selection card style === -->
-    <style name="Widget.AidBridge.RoleCard" parent="Widget.Material3.CardView.Elevated">
+    <!-- Card selection style -->
+    <style name="Widget.AidBridge.Card" parent="Widget.Material3.CardView.Elevated">
         <item name="cardBackgroundColor">@color/bg_card</item>
         <item name="strokeWidth">1.5dp</item>
         <item name="strokeColor">@color/border_default</item>
         <item name="cardCornerRadius">12dp</item>
-    </style>
-
-    <!-- === Dialog theme === -->
-    <style name="Theme.AidBridge.Dialog" parent="ThemeOverlay.Material3.Dialog">
-        <item name="android:windowBackground">@drawable/bg_dialog_rounded</item>
-        <item name="colorSurface">@color/bg_surface</item>
-        <item name="colorOnSurface">@color/text_primary</item>
     </style>
 </resources>

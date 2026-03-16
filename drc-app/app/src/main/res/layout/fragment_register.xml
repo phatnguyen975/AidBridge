@@ -261,15 +261,12 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_victim"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="120dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="6dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="@color/bg_card"
-                app:strokeWidth="1.5dp"
-                app:strokeColor="@color/border_default"
-                app:cardCornerRadius="12dp"
+                style="@style/Widget.AidBridge.Card"
                 app:cardElevation="0dp">
 
                 <LinearLayout
@@ -302,15 +299,12 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_volunteer"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="120dp"
                 android:layout_weight="1"
                 android:layout_marginHorizontal="3dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="@color/bg_card"
-                app:strokeWidth="1.5dp"
-                app:strokeColor="@color/border_default"
-                app:cardCornerRadius="12dp"
+                style="@style/Widget.AidBridge.Card"
                 app:cardElevation="0dp">
 
                 <LinearLayout
@@ -343,16 +337,12 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_sponsor"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="120dp"
                 android:layout_weight="1"
                 android:layout_marginStart="6dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="@color/bg_card"
-                app:strokeWidth="1.5dp"
-                app:strokeColor="@color/border_default"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp">
+                style="@style/Widget.AidBridge.Card">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -431,9 +421,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/btn_height"
             android:text="@string/btn_register"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:background="@drawable/bg_button_primary"
+            style="@style/Widget.AidBridge.Button.Primary"
             android:layout_marginTop="@dimen/spacing_lg"
             app:layout_constraintTop_toBottomOf="@+id/ll_terms"
             app:layout_constraintStart_toStartOf="parent"

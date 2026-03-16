@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AidBridge</string>
 
-    <!-- === Common / Global === -->
+    <!-- Global -->
     <string name="loading">Đang tải...</string>
     <string name="error_network">Không có kết nối mạng. Vui lòng thử lại.</string>
     <string name="error_generic">Đã xảy ra lỗi. Vui lòng thử lại.</string>
@@ -10,10 +10,10 @@
     <string name="btn_retry">Thử lại</string>
     <string name="btn_close">Đóng</string>
 
-    <!-- === Splash === -->
+    <!-- Splash Screen -->
     <string name="tagline">Ứng dụng Điều phối Cứu trợ Thiên tai</string>
 
-    <!-- === Guest / SOS Screen === -->
+    <!-- SOS Screen -->
     <string name="screen_title_emergency">CỨU HỘ KHẨN CẤP</string>
     <string name="sos_button_label">SOS</string>
     <string name="btn_login">ĐĂNG NHẬP</string>
@@ -21,7 +21,7 @@
     <string name="gps_active">GPS ĐANG HOẠT ĐỘNG</string>
     <string name="gps_inactive">GPS KHÔNG HOẠT ĐỘNG</string>
 
-    <!-- === Login Screen === -->
+    <!-- Login Screen -->
     <string name="screen_title_login">Đăng nhập</string>
     <string name="subtitle_login">Ứng dụng Điều phối Cứu trợ Thiên tai (DRC)</string>
     <string name="hint_email">Nhập email của bạn</string>
@@ -33,7 +33,7 @@
     <string name="link_no_account">Chưa có tài khoản? </string>
     <string name="link_register_now">Đăng ký ngay</string>
 
-    <!-- === Register Screen === -->
+    <!-- Register Screen -->
     <string name="screen_title_register">Đăng ký tài khoản</string>
     <string name="label_full_name">Họ và tên</string>
     <string name="hint_full_name">Nhập họ và tên đầy đủ</string>
@@ -52,7 +52,7 @@
     <string name="link_have_account">Đã có tài khoản? </string>
     <string name="link_login_now">Đăng nhập</string>
 
-    <!-- === OTP Screen === -->
+    <!-- OTP Screen -->
     <string name="screen_title_otp">Xác thực OTP</string>
     <string name="otp_title">Nhập mã OTP</string>
     <string name="otp_description">Vui lòng nhập mã OTP 6 chữ số vừa được gửi đến</string>
@@ -63,7 +63,7 @@
     <string name="otp_resend_now">Gửi lại ngay</string>
     <string name="btn_verify_otp">XÁC NHẬN</string>
 
-    <!-- === OTP Result Dialogs === -->
+    <!-- OTP Result Dialogs -->
     <string name="otp_success_title">Xác thực thành công!</string>
     <string name="otp_success_message">Tài khoản của bạn đã được xác minh. Chào mừng bạn đến với AidBridge!</string>
     <string name="otp_failed_title">Mã OTP không đúng</string>
@@ -71,7 +71,7 @@
     <string name="btn_continue">TIẾP TỤC</string>
     <string name="btn_try_again">THỬ LẠI</string>
 
-    <!-- === Validation messages === -->
+    <!-- Validation Messages -->
     <string name="error_field_empty">Trường này không được để trống.</string>
     <string name="error_email_invalid">Địa chỉ email không hợp lệ.</string>
     <string name="error_password_short">Mật khẩu phải có ít nhất 6 ký tự.</string>
@@ -81,28 +81,22 @@
     <string name="error_otp_length">Vui lòng nhập đủ 6 chữ số.</string>
     <string name="error_login_failed">Email hoặc mật khẩu không đúng.</string>
 
-    <!-- === Bottom Navigation === -->
+    <!-- Bottom Navigation -->
     <string name="nav_rescue">CỨU HỘ</string>
     <string name="nav_map">BẢN ĐỒ</string>
     <string name="nav_home">TRANG CHỦ</string>
 
-    <!-- === Map Placeholder === -->
-    <string name="map_placeholder">Map Screen</string>
-    <string name="map_coming_soon">Google Maps sẽ được tích hợp ở Phase 3</string>
-    <string name="map_placeholder_title">Bản đồ</string>
-    <string name="map_placeholder_subtitle">Google Maps sẽ được tích hợp ở Phase 3</string>
-
-    <!-- === Info Dialog === -->
+    <!-- Info Dialog -->
     <string name="info_title">Về ứng dụng</string>
     <string name="info_message">AidBridge - Ứng dụng Điều phối Cứu trợ Thiên tai\nPhiên bản 1.0.0</string>
 
-    <!-- === Home Screen === -->
+    <!-- Home Screen -->
     <string name="home_greeting">Xin chào,</string>
     <string name="home_email_label">EMAIL</string>
     <string name="home_role_label">VAI TRÒ</string>
     <string name="btn_logout">ĐĂNG XUẤT</string>
 
-    <!-- === User Guide Screen === -->
+    <!-- User Guide Screen -->
     <string name="guide_title">Hướng dẫn sử dụng</string>
     <string name="guide_section_sos_title">1. Gửi SOS Khẩn cấp</string>
     <string name="guide_sos_step1">Mở ứng dụng → Màn hình chính hiển thị nút SOS đỏ lớn.</string>
@@ -123,7 +117,7 @@
     <string name="guide_role_volunteer">Tình nguyện viên: Nhận nhiệm vụ cứu trợ, cập nhật trạng thái hỗ trợ thực địa.</string>
     <string name="guide_role_sponsor">Mạnh thường quân: Đăng ký tài trợ vật phẩm, theo dõi đóng góp.</string>
 
-    <!-- === Forgot Password Flow === -->
+    <!-- Forgot Password Flow -->
     <string name="forgot_title">Quên mật khẩu</string>
     <string name="forgot_subtitle">Nhập email đã đăng ký, chúng tôi sẽ gửi mã OTP để đặt lại mật khẩu.</string>
     <string name="forgot_btn_send_otp">GỬI MÃ OTP</string>
