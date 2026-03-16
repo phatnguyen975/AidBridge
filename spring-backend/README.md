@@ -39,7 +39,7 @@ spring-backend/
 ## Setup Instructions
 
 1. **Prerequisites:**
-   - Java 17 installed
+   - Java 25 installed
    - PostgreSQL with PostGIS extension
 
 2. **Database Setup:**
@@ -90,8 +90,8 @@ spring-backend/
 
 ## Technologies Used
 
-- **Spring Boot 3.4.1** - Framework
-- **Java 17** - Language
+- **Spring Boot 4.0.3** - Framework
+- **Java 25** - Language
 - **PostgreSQL + PostGIS** - Geospatial database
 - **Spring Security + JWT** - Authentication
 - **Spring WebSocket + STOMP** - Real-time communication

@@ -1,10 +1,10 @@
 -- ============================================================
--- AidBridge: Database Schema v3.1
+-- AidBridge: Database Schema
 -- Engine      : PostgreSQL 15+  |  Optimized for Supabase
 -- Extensions  : uuid-ossp, postgis  (run 01_init_postgis.sql first)
 -- Tables      : 23  |  ENUMs: 10  |  Indexes: ~38
 -- ============================================================
--- SAFE TO RE-RUN: tất cả objects đều bị DROP trước khi tạo lại.
+-- SAFE TO RE-RUN: all DROP statements use IF EXISTS + CASCADE to handle dependencies
 -- Execution order:
 --   1. 01_init_postgis.sql   (extensions, run once)
 --   2. schema.sql            (this file)
@@ -1350,7 +1350,7 @@ COMMENT ON TABLE ratings IS
 
 COMMENT ON COLUMN ratings.rater_id IS 'Người đánh giá — thường là Victim.';
 COMMENT ON COLUMN ratings.ratee_id IS 'Người được đánh giá — thường là Volunteer user.';
-COMMENT ON COLUMN ratings.score    IS '1–5 sao. Cập nhật volunteer_profiles.avg_rating sau INSERT.';
+COMMENT ON COLUMN ratings.score    IS '1-5 sao. Cập nhật volunteer_profiles.avg_rating sau INSERT.';
 
 -- ---------------------- notifications ------------------------
 COMMENT ON TABLE notifications IS

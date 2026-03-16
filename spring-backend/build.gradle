@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.1'
+    id 'org.springframework.boot' version '4.0.3'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -9,8 +9,9 @@ version = '0.0.1-SNAPSHOT'
 description = 'Disaster Relief Coordinator'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
 }
 
 configurations {
@@ -81,14 +82,6 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
 
     // ===========================
-    // Lombok (Boilerplate Reduction)
-    // ===========================
-    // Lombok compile-only - provides @Data, @Builder, @Slf4j, etc. annotations
-    compileOnly 'org.projectlombok:lombok'
-    // Lombok annotation processor - must run BEFORE MapStruct to expose generated accessors
-    annotationProcessor 'org.projectlombok:lombok'
-
-    // ===========================
     // DTO Mapping
     // ===========================
     // MapStruct - compile-time code generator for Entity <-> DTO mapping (zero reflection)
@@ -96,6 +89,20 @@ dependencies {
     // MapStruct Processor - generates mapping implementation classes at compile time
     // Must be declared AFTER Lombok processor so Lombok-generated getters/setters are visible
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+
+    // ===========================
+    // Development Tools
+    // ===========================
+    // Spring DevTools - enables automatic restart and LiveReload during local development
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // ===========================
+    // Lombok (Boilerplate Reduction)
+    // ===========================
+    // Lombok compile-only - provides @Data, @Builder, @Slf4j, etc. annotations
+    compileOnly 'org.projectlombok:lombok'
+    // Lombok annotation processor - must run BEFORE MapStruct to expose generated accessors
+    annotationProcessor 'org.projectlombok:lombok'
 
     // ===========================
     // Testing
