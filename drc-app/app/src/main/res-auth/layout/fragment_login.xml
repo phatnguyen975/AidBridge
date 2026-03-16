@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- fragment_login.xml — Login screen layout. -->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_surface"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/spacing_lg"
+        android:paddingBottom="@dimen/spacing_xl">
+
+        <!-- Back arrow — Material Design standard arrow_back -->
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/btn_back"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_back"
+            android:textSize="@dimen/text_md"
+            android:textColor="@color/text_primary"
+            android:layout_marginStart="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_back"
+            app:layout_constraintStart_toEndOf="@+id/btn_back"
+            app:layout_constraintTop_toTopOf="@+id/btn_back" />
+
+        <!-- App logo: medium size, centered -->
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="@dimen/logo_size_header"
+            android:layout_height="@dimen/logo_size_header"
+            android:contentDescription="@string/app_logo"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/ic_launcher"
+            android:layout_marginTop="@dimen/spacing_lg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_back" />
+
+        <!-- "Đăng nhập" title -->
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/screen_title_login"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_xxl"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/spacing_lg"
+            app:layout_constraintTop_toBottomOf="@+id/iv_logo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Subtitle -->
+        <TextView
+            android:id="@+id/tv_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/subtitle_login"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_sm"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/spacing_sm"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- EMAIL label -->
+        <TextView
+            android:id="@+id/label_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/label_email"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_xs"
+            android:textStyle="bold"
+            android:letterSpacing="0.12"
+            android:layout_marginTop="@dimen/spacing_xl"
+            app:layout_constraintTop_toBottomOf="@+id/tv_subtitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Email input field with envelope icon -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            app:startIconDrawable="@drawable/ic_email"
+            app:startIconTint="@color/text_hint"
+            app:boxBackgroundColor="@color/bg_surface_elevated"
+            app:boxStrokeColor="@color/border_input"
+            app:boxStrokeWidth="1dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:hintTextColor="@color/text_hint"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:layout_constraintTop_toBottomOf="@+id/label_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_email"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"
+                android:textSize="@dimen/text_md" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- MẬT KHẨU label -->
+        <TextView
+            android:id="@+id/label_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/label_password"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_xs"
+            android:textStyle="bold"
+            android:letterSpacing="0.12"
+            android:layout_marginTop="@dimen/spacing_md"
+            app:layout_constraintTop_toBottomOf="@+id/til_email"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Password input with lock icon + eye toggle -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            app:startIconDrawable="@drawable/ic_lock"
+            app:startIconTint="@color/text_hint"
+            app:endIconMode="password_toggle"
+            app:endIconTint="@color/text_hint"
+            app:boxBackgroundColor="@color/bg_surface_elevated"
+            app:boxStrokeColor="@color/border_input"
+            app:boxStrokeWidth="1dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:hintTextColor="@color/text_hint"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            app:layout_constraintTop_toBottomOf="@+id/label_password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_password"
+                android:inputType="textPassword"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"
+                android:textSize="@dimen/text_md" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- "Quên mật khẩu?" right-aligned link -->
+        <TextView
+            android:id="@+id/tv_forgot_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/link_forgot_password"
+            android:textColor="@color/text_link"
+            android:textSize="@dimen/text_sm"
+            android:layout_marginTop="@dimen/spacing_sm"
+            app:layout_constraintTop_toBottomOf="@+id/til_password"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- "ĐĂNG NHẬP →" primary blue button -->
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/spacing_md"
+            android:text="@string/btn_login_action"
+            style="@style/Widget.AidBridge.Button.Primary"
+            android:layout_marginTop="@dimen/spacing_xl"
+            app:layout_constraintTop_toBottomOf="@+id/tv_forgot_password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Loading indicator (ProgressBar) — hidden by default -->
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:indeterminateTint="@color/color_primary"
+            app:layout_constraintTop_toBottomOf="@+id/btn_login"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- "Chưa có tài khoản? Đăng ký ngay" bottom text -->
+        <LinearLayout
+            android:id="@+id/ll_register_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/spacing_xl"
+            app:layout_constraintTop_toBottomOf="@+id/progress_bar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/link_no_account"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/text_sm" />
+
+            <TextView
+                android:id="@+id/tv_register_link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/link_register_now"
+                android:textColor="@color/text_link"
+                android:textSize="@dimen/text_sm"
+                android:textStyle="bold"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

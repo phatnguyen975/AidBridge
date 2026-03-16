@@ -20,7 +20,7 @@ When generating code or answering questions related to the `spring-backend/` dir
 - When implementing new features or endpoints, consider the overall user experience and how it fits into the existing architecture. Ensure that new code integrates well with existing components and follows the established design patterns and conventions of the project.
 - When writing database queries, especially for geospatial data, ensure that they are optimized for performance. Use indexes on spatial columns and consider the use of pagination for queries that may return large datasets. Avoid N+1 query problems by using appropriate fetching strategies in JPA.
 
-4. **Context Awareness:** Before implementing an endpoint or logic, always refer to `AidBridge/docs/requirements.md` for business rules, `AidBridge/docs/tech_stack.md` for tool constraints, and `AidBridge/docs/project_structure.md` for architectural decisions.
+4. **Context Awareness:** Before implementing an endpoint or logic, always refer to `AidBridge/docs/main/requirements.md` for business rules, `AidBridge/docs/main/tech_stack.md` for tool constraints, and `AidBridge/docs/main/project_structure.md` for architectural decisions.
 5. **Explanation:** Provide brief, clear explanations in Vietnamese for the generated code.
 6. **Testing:** Include unit tests for Services using JUnit and Mockito.
 7. **Error Handling:** Implement proper error handling with custom exceptions and global exception handlers.

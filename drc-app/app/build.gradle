@@ -39,6 +39,23 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
+    sourceSets {
+        main {
+            res.srcDirs = [
+                    'src/main/res',
+                    'src/main/res-core',
+                    'src/main/res-auth',
+                    'src/main/res-guest',
+                    'src/main/res-role-victim',
+                    'src/main/res-role-volunteer',
+                    'src/main/res-role-sponsor',
+                    'src/main/res-role-staff',
+                    'src/main/res-role-admin',
+                    'src/main/res-common-ui'
+            ]
+        }
+    }
 }
 
 dependencies {

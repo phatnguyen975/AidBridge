@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GPS dot indicator: active (blue dot) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="10dp"
+    android:height="10dp"
+    android:viewportWidth="10"
+    android:viewportHeight="10">
+    <path
+        android:fillColor="#288DFA"
+        android:pathData="M5,5 m-4,0 a4,4 0,1,1 8,0 a4,4 0,1,1 -8,0" />
+</vector>

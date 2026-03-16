@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phone icon for phone number input field -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M6.6,10.8 C7.6,12.75 9.25,14.39 11.2,15.4 L12.74,13.86 C12.93,13.67 13.22,13.6 13.48,13.67 C14.32,13.95 15.22,14.1 16.15,14.1 C16.7,14.1 17.15,14.55 17.15,15.1 L17.15,17.66 C17.15,18.21 16.7,18.66 16.15,18.66 C9.44,18.66 4,13.22 4,6.51 C4,5.96 4.45,5.51 5,5.51 L7.57,5.51 C8.12,5.51 8.57,5.96 8.57,6.51 C8.57,7.45 8.72,8.35 9,9.19 C9.06,9.44 9,9.74 8.8,9.93 L6.6,10.8 Z"
+        android:strokeColor="#64748B"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

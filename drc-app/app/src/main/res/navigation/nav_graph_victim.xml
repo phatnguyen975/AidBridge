@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_victim"
+    app:startDestination="@id/victimHomeFragment">
+
+    <fragment
+        android:id="@+id/victimHomeFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.victim.VictimHomeFragment"
+        android:label="VictimHomeFragment" />
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.drc.aidbridge.ui.map.fragment.VictimMapFragment"
+        android:label="MapFragment" />
+</navigation>

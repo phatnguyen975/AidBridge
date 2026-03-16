@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_staff"
+    app:startDestination="@id/staffDashboardFragment">
+
+    <fragment
+        android:id="@+id/staffDashboardFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffDashboardFragment"
+        android:label="StaffDashboardFragment" />
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.drc.aidbridge.ui.map.fragment.StaffMapFragment"
+        android:label="MapFragment" />
+</navigation>

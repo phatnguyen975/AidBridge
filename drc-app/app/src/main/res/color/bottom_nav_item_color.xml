@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bottom_nav_item_color.xml — Color state list for BottomNavigationView icons and labels.
+    Active (checked / selected): color_primary (#288DFA)
+    Inactive: text_secondary (#94A3B8)
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/color_primary" android:state_checked="true" />
+    <item android:color="@color/text_secondary" />
+</selector>
