@@ -1,4 +1,4 @@
-# AidBridge Frontend Guide (`drc-app`)
+# AidBridge - Frontend Guide
 
 ## 1. Project Overview & Tech Stack
 

@@ -1,4 +1,4 @@
-# AidBridge Android Frontend Plan (Rebased Roadmap)
+# AidBridge - Frontend Plan
 
 > Scope: `drc-app` Android app  
 > Language/UI constraints: Java 17 + XML only  
