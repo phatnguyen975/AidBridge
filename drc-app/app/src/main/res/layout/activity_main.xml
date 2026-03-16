@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    activity_main.xml — Main container with BottomNavigationView.
-
-    Structure:
-    - NavHostFragment (main_nav_host) fills all space above the bottom nav
-    - BottomNavigationView at the bottom (2 tabs: Bản đồ / Cứu hộ)
--->
+<!-- activity_main.xml — Container for the authenticated user flow. -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@color/bg_primary">
 
-    <!-- NavHost container occupies all space above bottom nav -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/main_nav_host"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -25,11 +18,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- BottomNavigationView pinned to bottom -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="0dp"
-        android:layout_height="@dimen/bottom_nav_height"
+        android:layout_height="wrap_content"
         android:background="@color/bg_surface_elevated"
         app:itemIconTint="@color/bottom_nav_item_color"
         app:itemTextColor="@color/bottom_nav_item_color"

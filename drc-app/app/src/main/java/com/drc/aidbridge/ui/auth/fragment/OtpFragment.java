@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
@@ -138,6 +139,7 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
 
         dialog.setCancelable(false);
         dialog.show();
+        setupDialogWindow(dialog);
     }
 
     private void showFailedDialog() {
@@ -152,6 +154,18 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
 
         dialog.setCancelable(false);
         dialog.show();
+        setupDialogWindow(dialog);
+    }
+
+    private void setupDialogWindow(Dialog dialog) {
+        Window window = dialog.getWindow();
+        if (window != null) {
+            WindowManager.LayoutParams params = window.getAttributes();
+            // Thiết lập chiều rộng bằng 90% màn hình
+            params.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.9);
+            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            window.setAttributes(params);
+        }
     }
 
     private void showNetworkError(String message) {

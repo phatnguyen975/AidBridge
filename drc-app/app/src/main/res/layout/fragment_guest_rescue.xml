@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- fragment_guest_rescue.xml — Guest rescue content only. -->
+<!-- fragment_guest_rescue.xml — Guest rescue content. -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -22,41 +22,40 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.95" />
 
-    <!-- Top bar: Screen title (centered) -->
+    <!-- Screen title -->
     <TextView
         android:id="@+id/tv_screen_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/screen_title_emergency"
+        android:gravity="center"
+        android:paddingVertical="@dimen/spacing_md"
+        android:text="@string/sos_screen_title"
         android:textColor="@color/text_primary"
         android:textSize="@dimen/text_lg"
         android:textStyle="bold"
-        android:gravity="center"
-        android:paddingTop="@dimen/spacing_xl"
-        android:paddingBottom="@dimen/spacing_md"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/gl_start"
-        app:layout_constraintEnd_toStartOf="@+id/iv_info" />
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Info icon: top right → opens UserGuideFragment -->
+    <!-- Info icon -->
     <ImageButton
         android:id="@+id/iv_info"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/ic_info"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:tint="@color/text_secondary"
-        android:contentDescription="Hướng dẫn sử dụng"
-        android:layout_marginEnd="@dimen/spacing_md"
+        android:layout_marginEnd="@dimen/spacing_sm"
+        android:contentDescription="@string/sos_user_guide"
+        android:src="@drawable/ic_info"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_screen_title"
-        app:layout_constraintBottom_toBottomOf="@id/tv_screen_title"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/tv_screen_title"
+        app:tint="@color/text_secondary" />
 
     <!-- Horizontal divider below top bar -->
     <View
         android:id="@+id/divider_top"
         android:layout_width="0dp"
-        android:layout_height="1dp"
+        android:layout_height="1.5dp"
         android:background="@color/border_default"
         app:layout_constraintTop_toBottomOf="@id/tv_screen_title"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,6 +71,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Responsive vertical guidelines (8% horizontal margin) -->
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_inner_start"
             android:layout_width="wrap_content"
@@ -92,6 +92,7 @@
             android:layout_width="@dimen/sos_button_size"
             android:layout_height="@dimen/sos_button_size"
             android:background="@drawable/bg_sos_button"
+            android:layout_marginTop="@dimen/spacing_xxl"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackgroundBorderless"
@@ -120,9 +121,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/sos_button_label"
+                    android:text="@string/sos_btn_label"
                     android:textColor="@color/white"
-                    android:textSize="26sp"
+                    android:textSize="32sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.1" />
             </LinearLayout>
@@ -133,7 +134,7 @@
             android:id="@+id/tv_emergency_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/screen_title_emergency"
+            android:text="@string/sos_screen_title"
             android:textColor="@color/color_primary"
             android:textSize="@dimen/text_xl"
             android:textStyle="bold"
@@ -147,9 +148,10 @@
         <Button
             android:id="@+id/btn_login"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_height"
-            android:text="@string/btn_login"
+            android:layout_height="wrap_content"
+            android:text="@string/sos_btn_login"
             style="@style/Widget.AidBridge.Button.Ghost"
+            android:paddingVertical="@dimen/spacing_md"
             android:layout_marginTop="@dimen/spacing_xl"
             app:layout_constraintStart_toEndOf="@id/gl_inner_start"
             app:layout_constraintEnd_toStartOf="@id/gl_inner_end"
@@ -160,7 +162,7 @@
             android:id="@+id/tv_register_link"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/link_register"
+            android:text="@string/sos_register_link"
             android:textColor="@color/text_secondary"
             android:textSize="@dimen/text_md"
             android:padding="@dimen/spacing_sm"
@@ -178,7 +180,7 @@
             android:gravity="center_vertical"
             android:background="@drawable/bg_gps_badge"
             android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp"
+            android:paddingVertical="10dp"
             android:layout_marginBottom="@dimen/spacing_lg"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -188,7 +190,7 @@
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:src="@drawable/ic_gps_dot"
-                android:contentDescription="GPS"
+                android:contentDescription="@string/gps_badge"
                 android:layout_marginEnd="6dp" />
 
             <TextView

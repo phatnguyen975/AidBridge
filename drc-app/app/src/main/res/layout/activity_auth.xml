@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    activity_auth.xml — Container activity for the authentication flow.
-    Hosts the Navigation Component fragment back-stack for:
-    Guest → Login / Register → OTP → [Navigate to MainActivity]
-
-    This is intentionally minimal — all content is rendered inside fragments.
--->
+<!-- activity_auth.xml — Container for the authentication flow. -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@color/bg_primary">
 
-    <!-- NavHostFragment renders each auth screen fragment here -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/auth_nav_host"
         android:name="androidx.navigation.fragment.NavHostFragment"

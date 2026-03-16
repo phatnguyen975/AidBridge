@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    dialog_otp_failed.xml — shown when user enters wrong OTP code.
-
-    Design: rounded dark dialog, red circle + X icon, fail title + message, "THỬ LẠI" button.
--->
+<!-- dialog_otp_failed.xml — Dialog for displaying OTP failure message. -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,7 +9,6 @@
     android:paddingHorizontal="@dimen/spacing_xl"
     android:paddingVertical="@dimen/spacing_xl">
 
-    <!-- Red circle icon -->
     <FrameLayout
         android:id="@+id/frame_icon"
         android:layout_width="80dp"
@@ -27,11 +22,10 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_close"
-            android:contentDescription="Failed" />
+            android:contentDescription="@string/otp_icon_failed"
+            android:src="@drawable/ic_close" />
     </FrameLayout>
 
-    <!-- "Mã OTP không đúng" -->
     <TextView
         android:id="@+id/tv_failed_title"
         android:layout_width="0dp"
@@ -46,7 +40,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Subtitle -->
     <TextView
         android:id="@+id/tv_failed_message"
         android:layout_width="0dp"
@@ -60,13 +53,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- "THỬ LẠI" button -->
     <Button
         android:id="@+id/btn_retry"
         android:layout_width="0dp"
-        android:layout_height="@dimen/btn_height"
+        android:layout_height="wrap_content"
         android:text="@string/btn_retry"
         style="@style/Widget.AidBridge.Button.Primary"
+        android:paddingVertical="@dimen/spacing_md"
         android:layout_marginTop="@dimen/spacing_xl"
         app:layout_constraintTop_toBottomOf="@+id/tv_failed_message"
         app:layout_constraintStart_toStartOf="parent"

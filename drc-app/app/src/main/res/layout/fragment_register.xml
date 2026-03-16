@@ -26,28 +26,40 @@
         <!-- Back arrow — Material Design standard arrow_back -->
         <ImageButton
             android:id="@+id/btn_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:tint="@color/text_primary"
-            android:contentDescription="Quay lại"
+            android:contentDescription="@string/btn_back"
             android:layout_marginTop="@dimen/spacing_xl"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="@color/text_primary" />
 
         <!-- DRC Logo at top center -->
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_back"
+            android:textSize="@dimen/text_md"
+            android:textColor="@color/text_primary"
+            android:layout_marginStart="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_back"
+            app:layout_constraintStart_toEndOf="@+id/btn_back"
+            app:layout_constraintTop_toTopOf="@+id/btn_back" />
+
         <ImageView
             android:id="@+id/iv_logo"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@mipmap/ic_launcher"
+            android:contentDescription="@string/app_logo"
             android:scaleType="fitCenter"
-            android:contentDescription="AidBridge Logo"
-            app:layout_constraintTop_toTopOf="@+id/btn_back"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_back"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_back" />
 
         <!-- Screen title: "Đăng ký tài khoản" -->
         <TextView
@@ -56,12 +68,12 @@
             android:layout_height="wrap_content"
             android:text="@string/screen_title_register"
             android:textColor="@color/text_primary"
-            android:textSize="@dimen/text_xxl"
-            android:textStyle="bold"
+            android:textSize="@dimen/text_xl"
             android:layout_marginTop="@dimen/spacing_lg"
-            app:layout_constraintTop_toBottomOf="@+id/btn_back"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/iv_logo" />
 
         <!-- FORM FIELDS -->
 
@@ -140,7 +152,7 @@
                 android:id="@+id/et_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_email_example"
+                android:hint="@string/hint_email"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_hint"
@@ -193,7 +205,7 @@
             android:id="@+id/label_password"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/label_password_register"
+            android:text="@string/label_password"
             android:textColor="@color/text_secondary"
             android:textSize="@dimen/text_sm"
             android:layout_marginTop="@dimen/spacing_md"
@@ -224,7 +236,7 @@
                 android:id="@+id/et_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="········"
+                android:hint="@string/hint_password"
                 android:inputType="textPassword"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_hint"
@@ -375,54 +387,50 @@
 
         <LinearLayout
             android:id="@+id/ll_terms"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
             android:layout_marginTop="@dimen/spacing_lg"
-            app:layout_constraintTop_toBottomOf="@+id/ll_roles"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/ll_roles">
 
             <CheckBox
                 android:id="@+id/cb_terms"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/cb_tint"
-                android:layout_marginEnd="@dimen/spacing_sm" />
+                android:buttonTint="@color/cb_tint" />
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:text="@string/terms_prefix"
                 android:textColor="@color/text_secondary"
+                android:layout_marginEnd="4dp"
                 android:textSize="@dimen/text_sm" />
 
             <TextView
                 android:id="@+id/tv_terms_link"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:text="@string/terms_link"
                 android:textColor="@color/text_link"
                 android:textSize="@dimen/text_sm"
                 android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/terms_suffix"
-                android:textColor="@color/text_secondary"
-                android:textSize="@dimen/text_sm" />
         </LinearLayout>
 
         <!-- "ĐĂNG KÝ NGAY →" button -->
         <Button
             android:id="@+id/btn_register"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_height"
+            android:layout_height="wrap_content"
             android:text="@string/btn_register"
             style="@style/Widget.AidBridge.Button.Primary"
             android:layout_marginTop="@dimen/spacing_lg"
+            android:paddingVertical="@dimen/spacing_md"
             app:layout_constraintTop_toBottomOf="@+id/ll_terms"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -463,6 +471,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/link_login_now"
+                android:layout_marginStart="4dp"
                 android:textColor="@color/text_link"
                 android:textSize="@dimen/text_sm"
                 android:textStyle="bold" />

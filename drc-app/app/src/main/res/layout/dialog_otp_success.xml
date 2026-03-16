@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    dialog_otp_success.xml — shown when user enters correct OTP ("111111").
-
-    Design: rounded dark dialog, green circle + checkmark, success title + message, "TIẾP TỤC" button.
--->
+<!-- dialog_otp_success.xml — Dialog for displaying OTP success message. -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,7 +9,6 @@
     android:paddingHorizontal="@dimen/spacing_xl"
     android:paddingVertical="@dimen/spacing_xl">
 
-    <!-- Green circle icon -->
     <FrameLayout
         android:id="@+id/frame_icon"
         android:layout_width="80dp"
@@ -28,10 +23,9 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_check"
-            android:contentDescription="Success" />
+            android:contentDescription="@string/otp_icon_success" />
     </FrameLayout>
 
-    <!-- "Xác thực thành công!" -->
     <TextView
         android:id="@+id/tv_success_title"
         android:layout_width="0dp"
@@ -46,7 +40,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Subtitle -->
     <TextView
         android:id="@+id/tv_success_message"
         android:layout_width="0dp"
@@ -60,13 +53,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- "TIẾP TỤC" button -->
     <Button
         android:id="@+id/btn_continue"
         android:layout_width="0dp"
-        android:layout_height="@dimen/btn_height"
+        android:layout_height="wrap_content"
         android:text="@string/btn_continue"
         style="@style/Widget.AidBridge.Button.Primary"
+        android:paddingVertical="@dimen/spacing_md"
         android:layout_marginTop="@dimen/spacing_xl"
         app:layout_constraintTop_toBottomOf="@+id/tv_success_message"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    activity_user_guide.xml — User Guide screen layout.
-    Provides information about SOS features, map, registration, and user roles.
-    Content derived from requirements.md (AidBridge DRC project).
--->
+<!-- fragment_user_guide.xml — Fragment for displaying user guide content. -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/bg_primary">
 
-    <!-- Collapsing toolbar with title -->
+    <!-- App Bar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -21,7 +17,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp">
+            android:layout_height="68dp">
 
             <ImageButton
                 android:id="@+id/btn_back"
@@ -29,9 +25,9 @@
                 android:layout_height="40dp"
                 android:src="@drawable/ic_arrow_back"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:tint="@color/text_primary"
-                android:contentDescription="Quay lại"
-                android:layout_marginStart="@dimen/spacing_md"
+                app:tint="@color/text_primary"
+                android:contentDescription="@string/guide_back_icon"
+                android:layout_marginStart="@dimen/spacing_sm"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -39,15 +35,15 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="@string/guide_title"
                 android:textColor="@color/text_primary"
                 android:textSize="@dimen/text_lg"
                 android:textStyle="bold"
-                android:gravity="center"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/btn_back"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -72,7 +68,7 @@
             android:paddingTop="@dimen/spacing_lg"
             android:paddingBottom="@dimen/spacing_xl">
 
-            <!-- SECTION 1: SOS Khẩn cấp -->
+            <!-- SECTION 1 -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -104,10 +100,10 @@
                         android:text="@string/guide_sos_step1"
                         android:textColor="@color/text_primary"
                         android:textSize="@dimen/text_md"
-                        android:drawableStart="@drawable/ic_sos_nav"
-                        android:drawableTint="@color/sos_red"
                         android:drawablePadding="@dimen/spacing_sm"
-                        android:layout_marginBottom="@dimen/spacing_md" />
+                        android:layout_marginBottom="@dimen/spacing_md"
+                        app:drawableStartCompat="@drawable/ic_rescue"
+                        app:drawableTint="@color/sos_red" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -135,7 +131,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- SECTION 2: Bản đồ cứu trợ -->
+            <!-- SECTION 2 -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -194,7 +190,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- SECTION 3: Đăng ký / Đăng nhập -->
+            <!-- SECTION 3 -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -245,7 +241,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- SECTION 4: Vai trò người dùng -->
+            <!-- SECTION 4 -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    activity_splash.xml — Splash screen layout.
-    Design: Centered DRC logo on a full dark background (#0F172A).
-    The logo + tagline fades in using the SplashActivity's animation.
--->
+<!-- activity_splash.xml — Splash screen layout. -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,14 +8,14 @@
     android:layout_height="match_parent"
     android:background="@color/bg_primary">
 
-    <!-- DRC Logo: centered vertically slightly above middle -->
+    <!-- App logo -->
     <ImageView
         android:id="@+id/iv_logo"
         android:layout_width="@dimen/logo_size_splash"
         android:layout_height="@dimen/logo_size_splash"
         android:src="@mipmap/ic_launcher"
         android:scaleType="fitCenter"
-        android:contentDescription="AidBridge Logo"
+        android:contentDescription="@string/app_logo"
         android:alpha="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,7 +24,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintVertical_bias="0.42" />
 
-    <!-- App name below logo -->
+    <!-- App name -->
     <TextView
         android:id="@+id/tv_app_name"
         android:layout_width="wrap_content"

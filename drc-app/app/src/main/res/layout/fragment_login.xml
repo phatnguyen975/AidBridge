@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    fragment_login.xml — Login screen layout.
-
-    Design (matches Figma):
-    - Back arrow at top left
-    - DRC logo centered (medium size)
-    - "Đăng nhập" title + subtitle
-    - EMAIL label + outlined input field with envelope icon
-    - MẬT KHẨU label + password field with lock icon + eye toggle
-    - "Quên mật khẩu?" right-aligned link
-    - "ĐĂNG NHẬP →" primary blue button
-    - "Chưa có tài khoản? Đăng ký ngay" bottom link
--->
+<!-- fragment_login.xml — Login screen layout. -->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -29,28 +17,40 @@
         <!-- Back arrow — Material Design standard arrow_back -->
         <ImageButton
             android:id="@+id/btn_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_arrow_back"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:tint="@color/text_primary"
-            android:contentDescription="Quay lại"
-            android:layout_marginTop="@dimen/spacing_xl"
+            android:contentDescription="@string/btn_back"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:tint="@color/text_primary" />
 
-        <!-- DRC logo: medium size, centered -->
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_back"
+            android:textSize="@dimen/text_md"
+            android:textColor="@color/text_primary"
+            android:layout_marginStart="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_back"
+            app:layout_constraintStart_toEndOf="@+id/btn_back"
+            app:layout_constraintTop_toTopOf="@+id/btn_back" />
+
+        <!-- App logo: medium size, centered -->
         <ImageView
             android:id="@+id/iv_logo"
             android:layout_width="@dimen/logo_size_header"
             android:layout_height="@dimen/logo_size_header"
-            android:src="@mipmap/ic_launcher"
+            android:contentDescription="@string/app_logo"
             android:scaleType="fitCenter"
-            android:contentDescription="AidBridge Logo"
+            android:src="@mipmap/ic_launcher"
             android:layout_marginTop="@dimen/spacing_lg"
-            app:layout_constraintTop_toBottomOf="@+id/btn_back"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_back" />
 
         <!-- "Đăng nhập" title -->
         <TextView
@@ -192,7 +192,8 @@
         <Button
             android:id="@+id/btn_login"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_height"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/spacing_md"
             android:text="@string/btn_login_action"
             style="@style/Widget.AidBridge.Button.Primary"
             android:layout_marginTop="@dimen/spacing_xl"
@@ -237,7 +238,8 @@
                 android:text="@string/link_register_now"
                 android:textColor="@color/text_link"
                 android:textSize="@dimen/text_sm"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginStart="4dp"/>
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

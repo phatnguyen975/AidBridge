@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     fragment_forgot_email.xml — Forgot Password step 1: Enter email.
-    User enters their registered email to receive an OTP for password reset.
-    Inherits the same dark design as Login/Register screens.
 -->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -36,17 +34,29 @@
         <!-- Back button -->
         <ImageButton
             android:id="@+id/btn_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:tint="@color/text_primary"
-            android:contentDescription="Quay lại"
+            android:contentDescription="@string/btn_back"
             android:layout_marginTop="@dimen/spacing_xl"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="@color/text_primary" />
 
         <!-- Title -->
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_back"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_md"
+            android:layout_marginStart="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_back"
+            app:layout_constraintStart_toEndOf="@+id/btn_back"
+            app:layout_constraintTop_toTopOf="@+id/btn_back" />
+
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
@@ -55,6 +65,7 @@
             android:textColor="@color/text_primary"
             android:textSize="@dimen/text_xxl"
             android:textStyle="bold"
+            android:gravity="center"
             android:layout_marginTop="@dimen/spacing_xl"
             app:layout_constraintTop_toBottomOf="@id/btn_back"
             app:layout_constraintStart_toStartOf="parent"
@@ -123,10 +134,11 @@
         <Button
             android:id="@+id/btn_send_otp"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_height"
+            android:layout_height="wrap_content"
             android:text="@string/forgot_btn_send_otp"
             style="@style/Widget.AidBridge.Button.Primary"
             android:layout_marginTop="@dimen/spacing_xl"
+            android:paddingVertical="@dimen/spacing_md"
             app:layout_constraintTop_toBottomOf="@id/til_email"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

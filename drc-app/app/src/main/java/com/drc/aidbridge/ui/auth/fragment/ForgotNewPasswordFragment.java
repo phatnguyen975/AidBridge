@@ -67,7 +67,6 @@ public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPas
     }
 
     private void setupClickListeners() {
-        binding.btnBack.setOnClickListener(v -> popBackStackSafely());
         binding.btnChangePassword.setOnClickListener(v -> attemptChangePassword());
     }
 
