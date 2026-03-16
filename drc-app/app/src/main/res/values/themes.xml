@@ -1,9 +1,80 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.DRCApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <!-- Base application theme (forced dark) -->
+    <style name="Base.Theme.AidBridge" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primary color -->
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryVariant">@color/color_primary_variant</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- App background -->
+        <item name="android:windowBackground">@color/bg_primary</item>
+        <item name="colorSurface">@color/bg_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+
+        <!-- Secondary accent -->
+        <item name="colorSecondary">@color/color_primary</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Text input -->
+        <item name="textInputStyle">@style/Widget.AidBridge.TextInputLayout</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@color/bg_primary</item>
+        <item name="android:navigationBarColor">@color/bg_primary</item>
     </style>
 
-    <style name="Theme.DRCApp" parent="Base.Theme.DRCApp" />
+    <!-- Main application theme -->
+    <style name="Theme.AidBridge" parent="Base.Theme.AidBridge" />
+
+    <!-- Splash theme -->
+    <style name="Theme.AidBridge.Splash" parent="Theme.AidBridge">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <!-- Dialog theme -->
+    <style name="Theme.AidBridge.Dialog" parent="ThemeOverlay.Material3.Dialog">
+        <item name="android:windowBackground">@drawable/bg_dialog_rounded</item>
+        <item name="colorSurface">@color/bg_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+    </style>
+
+    <!-- Text input style -->
+    <style name="Widget.AidBridge.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/bg_input</item>
+        <item name="boxStrokeColor">@color/border_input</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="hintTextColor">@color/text_hint</item>
+        <item name="android:textColorHint">@color/text_hint</item>
+    </style>
+
+    <!-- Primary button style -->
+    <style name="Widget.AidBridge.Button.Primary" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="backgroundTint">@color/color_primary</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+    <!-- Ghost button style -->
+    <style name="Widget.AidBridge.Button.Ghost" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="backgroundTint">@color/bg_surface_elevated</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/border_default</item>
+    </style>
+
+    <!-- Card selection style -->
+    <style name="Widget.AidBridge.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/bg_card</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="strokeColor">@color/border_default</item>
+        <item name="cardCornerRadius">12dp</item>
+    </style>
 </resources>

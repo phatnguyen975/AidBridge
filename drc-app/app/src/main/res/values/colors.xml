@@ -1,5 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Background colors -->
+    <color name="bg_primary">#0F172A</color>
+    <color name="bg_surface">#1E293B</color>
+    <color name="bg_surface_elevated">#263248</color>
+    <color name="bg_card">#1E2D3D</color>
+    <color name="bg_input">#1E293B</color>
+
+    <!-- Primary colors -->
+    <color name="color_primary">#288DFA</color>
+    <color name="color_primary_variant">#1565C0</color>
+
+    <!-- Status colors -->
+    <color name="sos_red">#EF4444</color>
+    <color name="safe_green">#34D399</color>
+    <color name="warning_orange">#F59E0B</color>
+    <color name="hub_blue">#288DFA</color>
+
+    <!-- Text colors -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#94A3B8</color>
+    <color name="text_hint">#64748B</color>
+    <color name="text_link">#288DFA</color>
+
+    <!-- Border colors -->
+    <color name="border_default">#334155</color>
+    <color name="border_input">#475569</color>
+    <color name="border_selected">#288DFA</color>
 </resources>

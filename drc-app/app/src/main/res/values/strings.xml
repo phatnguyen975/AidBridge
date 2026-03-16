@@ -1,3 +1,114 @@
 <resources>
-    <string name="app_name">DRC App</string>
+    <!--  Application  -->
+    <string name="app_name">AidBridge</string>
+    <string name="app_logo">AidBridge Logo</string>
+
+    <!-- Global -->
+    <string name="loading">Đang tải…</string>
+    <string name="error_network">Không có kết nối mạng. Vui lòng thử lại.</string>
+    <string name="error_generic">Đã xảy ra lỗi. Vui lòng thử lại.</string>
+    <string name="btn_confirm">XÁC NHẬN</string>
+    <string name="btn_cancel">HỦY</string>
+    <string name="btn_continue">TIẾP TỤC</string>
+    <string name="btn_retry">THỬ LẠI</string>
+    <string name="btn_back">QUAY LẠI</string>
+
+    <!-- Splash Screen -->
+    <string name="tagline">Ứng dụng Điều phối Cứu trợ Thiên tai</string>
+
+    <!-- SOS Screen -->
+    <string name="sos_screen_title">CỨU HỘ KHẨN CẤP</string>
+    <string name="sos_user_guide">Hướng dẫn</string>
+    <string name="sos_btn_label">SOS</string>
+    <string name="sos_btn_login">ĐĂNG NHẬP</string>
+    <string name="sos_register_link">Đăng ký tài khoản</string>
+    <string name="gps_badge">GPS</string>
+    <string name="gps_active">GPS ĐANG HOẠT ĐỘNG</string>
+    <string name="gps_inactive">GPS KHÔNG HOẠT ĐỘNG</string>
+
+    <!-- Login Screen -->
+    <string name="screen_title_login">Đăng nhập</string>
+    <string name="subtitle_login">Ứng dụng Điều phối Cứu trợ Thiên tai</string>
+    <string name="hint_email">Nhập email</string>
+    <string name="hint_password">Nhập mật khẩu</string>
+    <string name="label_email">EMAIL</string>
+    <string name="label_password">MẬT KHẨU</string>
+    <string name="btn_login_action">ĐĂNG NHẬP</string>
+    <string name="link_forgot_password">Quên mật khẩu?</string>
+    <string name="link_no_account">Chưa có tài khoản?</string>
+    <string name="link_register_now">Đăng ký ngay</string>
+
+    <!-- Register Screen -->
+    <string name="screen_title_register">Đăng ký tài khoản</string>
+    <string name="label_full_name">HỌ VÀ TÊN</string>
+    <string name="hint_full_name">Nhập họ và tên</string>
+    <string name="label_phone">SỐ ĐIỆN THOẠI</string>
+    <string name="hint_phone">Nhập số điện thoại</string>
+    <string name="role_selection_title">Bạn tham gia với vai trò nào?</string>
+    <string name="role_victim">Nạn nhân</string>
+    <string name="role_volunteer">Tình nguyện viên</string>
+    <string name="role_sponsor">Mạnh thường quân</string>
+    <string name="terms_prefix">Tôi đồng ý với các</string>
+    <string name="terms_link">Điều khoản</string>
+    <string name="btn_register">ĐĂNG KÝ NGAY</string>
+    <string name="link_have_account">Đã có tài khoản? </string>
+    <string name="link_login_now">Đăng nhập</string>
+    <string name="error_terms_not_agreed">Bạn phải đồng ý với điều khoản để tiếp tục.</string>
+
+    <!-- OTP Screen -->
+    <string name="screen_title_otp">Xác thực OTP</string>
+    <string name="otp_title">Nhập mã OTP</string>
+    <string name="otp_description">Vui lòng nhập mã OTP 6 chữ số vừa được gửi đến</string>
+    <string name="otp_resend_countdown">Chưa nhận được mã? Gửi lại (59s)</string>
+    <string name="otp_resend_countdown_template">Chưa nhận được mã? Gửi lại (%ds)</string>
+    <string name="otp_resend_now">Gửi lại ngay</string>
+
+    <!-- OTP Result Dialogs -->
+    <string name="otp_icon_failed">Thất bại</string>
+    <string name="otp_failed_title">Xác thực thất bại</string>
+    <string name="otp_failed_message">Mã OTP bạn nhập không chính xác. Vui lòng kiểm tra lại hoặc gửi mã mới.</string>
+    <string name="otp_icon_success">Thành công</string>
+    <string name="otp_success_title">Xác thực thành công</string>
+    <string name="otp_success_message">Tài khoản của bạn đã được xác minh. Chào mừng bạn đến với AidBridge.</string>
+    <string name="error_otp_length">Vui lòng nhập đủ 6 chữ số.</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_rescue">CỨU HỘ</string>
+    <string name="nav_map">BẢN ĐỒ</string>
+
+    <!-- User Guide Screen -->
+    <string name="guide_title">HƯỚNG DẪN SỬ DỤNG</string>
+    <string name="guide_back_icon">Quay lại</string>
+    <string name="guide_section_sos_title">1. Gửi SOS Khẩn cấp</string>
+    <string name="guide_sos_step1">Mở ứng dụng » Màn hình hiển thị nút SOS.</string>
+    <string name="guide_sos_step2">Nhấn nút SOS » Ứng dụng tự động lấy vị trí GPS của bạn.</string>
+    <string name="guide_sos_step3">Xác nhận gửi » Tín hiệu cứu hộ được gửi đến đội cứu trợ gần nhất.</string>
+    <string name="guide_sos_note">Lưu ý: Bạn không cần đăng nhập để gửi SOS khẩn cấp.</string>
+    <string name="guide_section_map_title">2. Bản đồ Cứu trợ</string>
+    <string name="guide_map_hub">Trung tâm cứu trợ: Vị trí các điểm phát lương thực và y tế.</string>
+    <string name="guide_map_shelter">Nơi trú ẩn: Các địa điểm an toàn được đánh dấu trên bản đồ.</string>
+    <string name="guide_map_safe_path">Đường di chuyển an toàn: Tuyến đường được khuyến nghị tránh vùng nguy hiểm.</string>
+    <string name="guide_map_heatmap">Bản đồ nhiệt: Hiển thị mật độ nạn nhân và khu vực cần hỗ trợ gấp.</string>
+    <string name="guide_section_auth_title">3. Đăng ký &amp; Đăng nhập</string>
+    <string name="guide_auth_register">Đăng ký tài khoản với email, số điện thoại và chọn vai trò phù hợp.</string>
+    <string name="guide_auth_otp">Xác thực OTP được gửi qua email để kích hoạt tài khoản.</string>
+    <string name="guide_auth_login">Đăng nhập để truy cập đầy đủ tính năng theo vai trò của bạn.</string>
+    <string name="guide_section_roles_title">4. Các Vai trò trong Hệ thống</string>
+    <string name="guide_role_victim">Nạn nhân: Gửi SOS, xem bản đồ hỗ trợ, nhận thông báo cứu trợ.</string>
+    <string name="guide_role_volunteer">Tình nguyện viên: Nhận nhiệm vụ cứu trợ, cập nhật trạng thái hỗ trợ thực địa.</string>
+    <string name="guide_role_sponsor">Mạnh thường quân: Đăng ký tài trợ vật phẩm, theo dõi đóng góp.</string>
+
+    <!-- Forgot Password Flow -->
+    <string name="forgot_title">Quên mật khẩu</string>
+    <string name="forgot_subtitle">Nhập email đã đăng ký, chúng tôi sẽ gửi mã OTP để đặt lại mật khẩu.</string>
+    <string name="forgot_btn_send_otp">GỬI MÃ OTP</string>
+    <string name="forgot_otp_description">Nhập mã OTP 6 chữ số đã được gửi đến email của bạn:</string>
+    <string name="forgot_new_password_title">Tạo mật khẩu mới</string>
+    <string name="forgot_new_password_subtitle">Nhập mật khẩu mới cho tài khoản của bạn.</string>
+    <string name="label_new_password">MẬT KHẨU MỚI</string>
+    <string name="hint_new_password">Nhập mật khẩu mới</string>
+    <string name="label_confirm_password">XÁC NHẬN MẬT KHẨU</string>
+    <string name="hint_confirm_password">Nhập lại mật khẩu mới</string>
+    <string name="forgot_btn_change_password">ĐỔI MẬT KHẨU</string>
+    <string name="forgot_success_message">Đổi mật khẩu thành công. Vui lòng đăng nhập lại.</string>
 </resources>
