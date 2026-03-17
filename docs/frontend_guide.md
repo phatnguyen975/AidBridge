@@ -195,7 +195,8 @@ Use this checklist whenever adding a new feature screen.
 ### A. New Screen UI
 
 - `Fragment.java`:
-  - Place in `app/src/main/java/com/drc/aidbridge/ui/<feature>/fragment/`
+  - Role-based screens: place in `app/src/main/java/com/drc/aidbridge/ui/main/fragment/<role_name>/`
+  - Non-role feature screens (auth/guest/common): place in `app/src/main/java/com/drc/aidbridge/ui/<feature>/fragment/`
 - `fragment_<name>.xml`:
   - Place in feature resource set:
     - Auth screens: `app/src/main/res-auth/layout/`
@@ -206,7 +207,8 @@ Use this checklist whenever adding a new feature screen.
 ### B. Screen State and Logic
 
 - `ViewModel.java`:
-  - Place in `app/src/main/java/com/drc/aidbridge/ui/<feature>/viewmodel/`
+  - Role-based screens: place in `app/src/main/java/com/drc/aidbridge/ui/main/viewmodel/<role_name>/`
+  - Non-role feature screens (auth/guest/common): place in `app/src/main/java/com/drc/aidbridge/ui/<feature>/viewmodel/`
 - `UseCase.java`:
   - Place in `app/src/main/java/com/drc/aidbridge/domain/usecase/<feature>/`
 - Input validators:
