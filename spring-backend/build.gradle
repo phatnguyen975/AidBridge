@@ -56,6 +56,8 @@ dependencies {
     // ===========================
     // Spring Data Redis - caches OTP codes, JWT blacklist, dispatch state, and pub/sub for WebSocket
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // Jackson - JSON serialization for Redis schemas
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
 
     // ===========================
     // Email Service
@@ -116,4 +118,8 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+bootRun {
+    jvmArgs = ['-Djava.net.preferIPv4Stack=true']
 }
