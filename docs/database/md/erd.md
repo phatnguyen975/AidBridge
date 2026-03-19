@@ -4,6 +4,8 @@
 > **Nguyên tắc:** KHÔNG có FK columns, KHÔNG có junction table thuần túy, KHÔNG có kiểu dữ liệu vật lý. Cardinality phản ánh đúng thực tế nghiệp vụ.
 > **Physical Schema:** Xem [physical_database.md](./physical_database.md)
 
+<div style="page-break-after: always"></div>
+
 ---
 
 ## Sơ đồ tổng thể (Full Logical ERD)
