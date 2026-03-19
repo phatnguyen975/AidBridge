@@ -94,9 +94,9 @@
 | updated_at | TIMESTAMP | DEFAULT NOW() | |
 
 **Constraints:**
-```sql
+````sql
 CHECK (email IS NOT NULL OR phone_number IS NOT NULL)
-```
+````
 
 > **Tại sao gộp OTP vào `users`:** OTP là single-use, short-TTL (10 phút), chỉ 1 OTP active per user tại một thời điểm. Gộp vào loại bỏ JOIN khi verify. Redis mirror OTP cho O(1) lookup; cột này là durable fallback.
 
