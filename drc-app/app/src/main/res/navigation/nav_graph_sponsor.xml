@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_sponsor"
+    app:startDestination="@id/sponsorHomeFragment">
+
+    <fragment
+        android:id="@+id/sponsorHomeFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorHomeFragment"
+        android:label="SponsorHomeFragment" />
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.drc.aidbridge.ui.map.fragment.SponsorMapFragment"
+        android:label="MapFragment" />
+</navigation>
