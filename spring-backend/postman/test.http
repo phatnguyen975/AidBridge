@@ -1,0 +1,49 @@
+### 1. Register
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "test@example.com",
+  "phone": "0901234567",
+  "password": "password123",
+  "role": "VICTIM"
+}
+
+### 2. Login
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+###
+
+### 3. Create SOS (❗ DÁN TOKEN VÀO ĐÂY)
+POST http://localhost:8080/api/victim/sos-requests
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1Mjk0OWVhNS0yNTU3LTQ0NDItYTU5YS02ZDhhY2E1OGNmNDQiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6IjNjOTg3M2M4LTA0OGYtNGM0OC04ZjQwLWY0MTkxNTE5YTMzZSIsImlhdCI6MTc3NDAxMjEzNCwiZXhwIjoxNzc0MDEzMDM0fQ.BXx72VHJgKKikbRSyBA2spnS_vRzLM6Q5GDcdTHDEA9DiCkzVAssPHLMVsrevaku9DYnYtIRNVy1QwhB8nGVxcL4W6rN7QyozC1Nvv1g_DaCxB6sIr4SRmc4OIVcRPD3LfpKYKBKxE6H_FlkqyO1fgzfL2gYdnXUegY8DuFCPXD0YvSS86yGcuqeOF2DRrrjYAz8DviaKUbuddNewRl6vYrnV7UxbhXXakqENQmzKIQhz8JQcve4EjlYqBuQb_IODKklKKd5AM0f8teg_CRSXrOJvEBp6t8E7ALbmcC_o9I5qUVO7uHA8v6lD6wXYRPx5IHiuI6docoAhnIketgdTA
+
+{
+  "requesterName": "Test User",
+  "requesterPhone": "0901234567",
+  "victimLat": 10.123456,
+  "victimLng": 106.123456,
+  "description": "Help needed",
+  "peopleCount": 2
+}
+
+###
+
+### 4. Get list SOS
+GET http://localhost:8080/api/victim/sos-requests
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1Mjk0OWVhNS0yNTU3LTQ0NDItYTU5YS02ZDhhY2E1OGNmNDQiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6IjAyZDhhNTBjLTVhMjMtNGM3Zi05OWI0LWRiZjUyMWFmZjZmNCIsImlhdCI6MTc3NDAwNDUxOSwiZXhwIjoxNzc0MDA1NDE5fQ.Q6WJGIPH1y5vlXlIA93kCr4BX7I1Wzsf95-W4c3zwiighV5-GxG_5lzps6ff7GnwNX3Sua24qIavf0IW5zS0r1JhV_KHq5BIs_C8vAjjLxIlf85F3kx7iwnXkJdOW46ytvMFRCGyQ6tWpLTEe6K_hgcUMqmychsH-PGZi9zrZtWQcOP82UKnBJaCRVnTJwXXsz1O4Hn_W9kzpAMu9VzaYMb75z9sGJH0ZuHe4k57cSeQxIPwlieWNqp9RSr5rCyYByDOoAX9v93kU-Xnqq1NOSW-fGS_If_gPjGvqEkbdDIlF1TlsdHVnULW1ZxGAz7sZD43jEZXKdrxxST60qUAyw
+
+###
+
+### 5. Test public endpoint
+GET http://localhost:8080/api/health
+
+###
