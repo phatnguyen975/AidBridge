@@ -8,10 +8,38 @@
     <fragment
         android:id="@+id/victimProfileFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.victim.VictimProfileFragment"
-        android:label="VictimProfileFragment" />
+        android:label="VictimProfileFragment">
+
+        <action
+            android:id="@+id/action_profile_to_map"
+            app:destination="@id/victimMapFragment" />
+
+        <action
+            android:id="@+id/action_profile_to_history"
+            app:destination="@id/victimHistoryFragment" />
+
+        <action
+            android:id="@+id/action_profile_to_personalInfo"
+            app:destination="@id/victimPersonalInfoFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/victimMapFragment"
         android:name="com.drc.aidbridge.ui.map.fragment.VictimMapFragment"
-        android:label="VictimMapFragment" />
+        android:label="VictimMapFragment">
+
+        <action
+            android:id="@+id/action_map_to_profile"
+            app:destination="@id/victimProfileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/victimHistoryFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.victim.VictimProfileFragment"
+        android:label="VictimHistoryFragment" />
+
+    <fragment
+        android:id="@+id/victimPersonalInfoFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.victim.VictimProfileFragment"
+        android:label="VictimPersonalInfoFragment" />
 </navigation>

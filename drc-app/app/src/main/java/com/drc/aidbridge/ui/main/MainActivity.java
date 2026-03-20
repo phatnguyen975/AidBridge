@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.ActivityMainBinding;
@@ -59,14 +58,33 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         applyRoleShell();
 
         binding.bottomNav.setOnItemSelectedListener(item -> {
+            int destinationId = item.getItemId();
+            if (navController.getCurrentDestination() != null
+                    && navController.getCurrentDestination().getId() == destinationId) {
+                return true;
+            }
+
             try {
-                return NavigationUI.onNavDestinationSelected(item, navController);
+                navController.navigate(destinationId);
+                return true;
             } catch (IllegalArgumentException | IllegalStateException ignored) {
                 return false;
             }
         });
         binding.bottomNav.setOnItemReselectedListener(item -> {
             // Ignore reselect to avoid unnecessary duplicate navigation.
+        });
+
+        // Keep BottomNavigation checked state in sync when navigation happens from in-screen actions.
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (binding == null) {
+                return;
+            }
+            if (binding.bottomNav.getMenu().findItem(destination.getId()) != null) {
+                if (binding.bottomNav.getSelectedItemId() != destination.getId()) {
+                    binding.bottomNav.setSelectedItemId(destination.getId());
+                }
+            }
         });
 
         binding.bottomNav.setSelectedItemId(navController.getGraph().getStartDestinationId());

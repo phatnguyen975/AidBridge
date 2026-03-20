@@ -16,6 +16,11 @@
     <!-- Splash Screen -->
     <string name="tagline">Ứng dụng Điều phối Cứu trợ Thiên tai</string>
 
+    <!-- Bottom Navigation -->
+    <string name="nav_rescue">CỨU HỘ</string>
+    <string name="nav_map">BẢN ĐỒ</string>
+    <string name="nav_profile">CÁ NHÂN</string>
+
     <!-- SOS Screen -->
     <string name="sos_screen_title">CỨU HỘ KHẨN CẤP</string>
     <string name="sos_user_guide">Hướng dẫn</string>
@@ -51,7 +56,7 @@
     <string name="terms_prefix">Tôi đồng ý với các</string>
     <string name="terms_link">Điều khoản</string>
     <string name="btn_register">ĐĂNG KÝ NGAY</string>
-    <string name="link_have_account">Đã có tài khoản? </string>
+    <string name="link_have_account">Đã có tài khoản?</string>
     <string name="link_login_now">Đăng nhập</string>
     <string name="error_terms_not_agreed">Bạn phải đồng ý với điều khoản để tiếp tục.</string>
 
@@ -71,11 +76,6 @@
     <string name="otp_success_title">Xác thực thành công</string>
     <string name="otp_success_message">Tài khoản của bạn đã được xác minh. Chào mừng bạn đến với AidBridge.</string>
     <string name="error_otp_length">Vui lòng nhập đủ 6 chữ số.</string>
-
-    <!-- Bottom Navigation -->
-    <string name="nav_rescue">CỨU HỘ</string>
-    <string name="nav_map">BẢN ĐỒ</string>
-    <string name="nav_profile">CÁ NHÂN</string>
 
     <!-- User Guide Screen -->
     <string name="guide_title">HƯỚNG DẪN SỬ DỤNG</string>
@@ -112,4 +112,24 @@
     <string name="hint_confirm_password">Nhập lại mật khẩu mới</string>
     <string name="forgot_btn_change_password">ĐỔI MẬT KHẨU</string>
     <string name="forgot_success_message">Đổi mật khẩu thành công. Vui lòng đăng nhập lại.</string>
+
+    <!-- Victim Profile Screen -->
+    <string name="victim_profile_title">CÁ NHÂN</string>
+    <string name="victim_profile_name_placeholder">Nguyễn Văn A</string>
+    <string name="victim_profile_phone_placeholder">0901234567</string>
+    <string name="victim_profile_track_title">Theo dõi tiến độ</string>
+    <string name="victim_profile_track_subtitle">Xem vị trí xe cứu trợ đang tới</string>
+    <string name="victim_profile_history_title">Lịch sử yêu cầu</string>
+    <string name="victim_profile_history_subtitle">Danh sách các yêu cầu đã gửi</string>
+    <string name="victim_profile_account_settings">Cài đặt tài khoản</string>
+    <string name="victim_profile_personal_info">Thông tin cá nhân</string>
+    <string name="victim_profile_logout">Đăng xuất</string>
+
+    <string name="victim_profile_avatar_desc">Ảnh đại diện nạn nhân</string>
+    <string name="victim_profile_edit_avatar_desc">Chỉnh sửa ảnh đại diện</string>
+    <string name="victim_profile_track_icon_desc">Biểu tượng theo dõi tiến độ</string>
+    <string name="victim_profile_history_icon_desc">Biểu tượng lịch sử yêu cầu</string>
+    <string name="victim_profile_personal_info_icon_desc">Biểu tượng thông tin cá nhân</string>
+    <string name="victim_profile_logout_icon_desc">Biểu tượng đăng xuất</string>
+    <string name="victim_profile_navigate_next_desc">Đi tới màn hình tiếp theo</string>
 </resources>
