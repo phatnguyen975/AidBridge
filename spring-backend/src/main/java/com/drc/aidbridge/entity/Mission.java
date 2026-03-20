@@ -36,6 +36,9 @@ public class Mission {
     @Column(name = "aid_request_id")
     private UUID aidRequestId;
 
+    @Column(name = "help_request_id")
+    private UUID helpRequestId;
+
     @Column(name = "volunteer_id")
     private UUID volunteerId;
 
@@ -53,11 +56,20 @@ public class Mission {
     @Column(name = "priority_score", precision = 5, scale = 2)
     private BigDecimal priorityScore;
 
+    @Column(name = "victim_lat", precision = 9, scale = 6)
+    private BigDecimal victimLat;
+
+    @Column(name = "victim_lng", precision = 9, scale = 6)
+    private BigDecimal victimLng;
+
     @Column(name = "accepted_at")
     private Instant acceptedAt;
 
     @Column(name = "picked_up_at")
     private Instant pickedUpAt;
+
+    @Column(name = "started_at")
+    private Instant startedAt;
 
     @Column(name = "completed_at")
     private Instant completedAt;
@@ -71,11 +83,11 @@ public class Mission {
     @Column(name = "confirmation_image_url", length = 500)
     private String confirmationImageUrl;
 
-    @Column(name = "lat", precision = 9, scale = 6)
-    private BigDecimal lat;
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
 
-    @Column(name = "lng", precision = 9, scale = 6)
-    private BigDecimal lng;
+    @Column(name = "comment", columnDefinition = "text")
+    private String comment;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

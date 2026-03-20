@@ -34,16 +34,11 @@ public class SosService {
 
         SosRequest sosRequest = SosRequest.builder()
                 .requesterId(requester.getId())
-                .requesterName(createDto.getRequesterName())
-                .requesterPhone(createDto.getRequesterPhone())
-                .victimName(createDto.getVictimName())
-                .victimPhone(createDto.getVictimPhone())
-                .victimLat(createDto.getVictimLat())
-                .victimLng(createDto.getVictimLng())
-                .victimAddress(createDto.getVictimAddress())
+                .lat(createDto.getLat())
+                .lng(createDto.getLng())
+                .address(createDto.getAddress())
                 .description(createDto.getDescription())
                 .peopleCount(createDto.getPeopleCount() != null ? createDto.getPeopleCount() : 1)
-                .isOnBehalf(createDto.getIsOnBehalf() != null ? createDto.getIsOnBehalf() : false)
                 .urgencyLevel(createDto.getUrgencyLevel() != null ? createDto.getUrgencyLevel() : com.drc.aidbridge.entity.enums.UrgencyLevel.MEDIUM)
                 .imageUrl(createDto.getImageUrl())
                 .status(SosStatus.PENDING)
@@ -55,6 +50,8 @@ public class SosService {
                 Mission.builder()
                         .missionType(MissionType.RESCUE)
                         .sosRequest(savedSos)
+                        .victimLat(java.math.BigDecimal.valueOf(savedSos.getLat()))
+                        .victimLng(java.math.BigDecimal.valueOf(savedSos.getLng()))
                         .status(com.drc.aidbridge.entity.enums.MissionStatus.PENDING)
                         .build());
 
@@ -67,7 +64,7 @@ public class SosService {
         Mission mission = missionRepository.findBySosRequestId(sos.getId()).orElse(null);
         return mapToResponse(sos, mission);
 
-        
+
     }
 
     public List<SosRequestResponseDto> listSosRequests() {
@@ -83,18 +80,12 @@ public class SosService {
         SosRequestResponseDto.SosRequestResponseDtoBuilder builder = SosRequestResponseDto.builder()
                 .id(sos.getId())
                 .requesterId(sos.getRequesterId())
-                .requesterName(sos.getRequesterName())
-                .requesterPhone(sos.getRequesterPhone())
-                .victimName(sos.getVictimName())
-                .victimPhone(sos.getVictimPhone())
-                .victimLat(sos.getVictimLat())
-                .victimLng(sos.getVictimLng())
-                .victimAddress(sos.getVictimAddress())
+                .lat(sos.getLat())
+                .lng(sos.getLng())
+                .address(sos.getAddress())
                 .description(sos.getDescription())
                 .peopleCount(sos.getPeopleCount())
-                .isOnBehalf(sos.getIsOnBehalf())
                 .urgencyLevel(sos.getUrgencyLevel())
-                .aiSummary(sos.getAiSummary())
                 .status(sos.getStatus())
                 .imageUrl(sos.getImageUrl())
                 .createdAt(sos.getCreatedAt())

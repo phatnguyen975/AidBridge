@@ -10,39 +10,23 @@ import lombok.*;
 @AllArgsConstructor
 public class CreateSosRequestDto {
 
-    @NotBlank
-    @Size(max = 100)
-    private String requesterName;
-
-    @NotBlank
-    @Size(max = 15)
-    private String requesterPhone;
-
-    @Size(max = 100)
-    private String victimName;
-
-    @Size(max = 15)
-    private String victimPhone;
-
     @NotNull
     @DecimalMin("-90.0")
     @DecimalMax("90.0")
-    private Double victimLat;
+    private Double lat;
 
     @NotNull
     @DecimalMin("-180.0")
     @DecimalMax("180.0")
-    private Double victimLng;
+    private Double lng;
 
-    @Size(max = 255)
-    private String victimAddress;
+    @Size(max = 500)
+    private String address;
 
     private String description;
 
-    @Min(1)
+    @Min(value = 1)
     private Integer peopleCount = 1;
-
-    private Boolean isOnBehalf = false;
 
     private UrgencyLevel urgencyLevel = UrgencyLevel.MEDIUM;
 

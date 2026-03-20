@@ -17,18 +17,12 @@ public class SosRequestResponseDto {
 
     private UUID id;
     private UUID requesterId;
-    private String requesterName;
-    private String requesterPhone;
-    private String victimName;
-    private String victimPhone;
-    private Double victimLat;
-    private Double victimLng;
-    private String victimAddress;
+    private Double lat;
+    private Double lng;
+    private String address;
     private String description;
     private Integer peopleCount;
-    private Boolean isOnBehalf;
     private UrgencyLevel urgencyLevel;
-    private String aiSummary;
     private SosStatus status;
     private String imageUrl;
     private Instant createdAt;

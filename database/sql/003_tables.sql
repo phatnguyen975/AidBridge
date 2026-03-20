@@ -179,18 +179,12 @@ CREATE TABLE inventory_logs (
 CREATE TABLE sos_requests (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     requester_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    requester_name VARCHAR(100) NOT NULL,
-    requester_phone VARCHAR(15) NOT NULL,
-    victim_name VARCHAR(100),
-    victim_phone VARCHAR(15),
-    victim_lat DECIMAL(9, 6) NOT NULL,
-    victim_lng DECIMAL(9, 6) NOT NULL,
-    victim_address VARCHAR(255),
+    lat DECIMAL(9, 6) NOT NULL,
+    lng DECIMAL(9, 6) NOT NULL,
+    address VARCHAR(500),
     description TEXT,
     people_count INTEGER NOT NULL DEFAULT 1,
-    is_on_behalf BOOLEAN NOT NULL DEFAULT FALSE,
     urgency_level urgency_level NOT NULL DEFAULT 'MEDIUM',
-    ai_summary TEXT,
     status sos_status NOT NULL DEFAULT 'PENDING',
     image_url VARCHAR(500),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -262,43 +256,42 @@ CREATE TABLE donation_items (
 CREATE TABLE missions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     mission_type mission_type NOT NULL,
-    sos_request_id UUID REFERENCES sos_requests(id) ON DELETE
-    SET NULL,
-        aid_request_id UUID REFERENCES aid_requests(id) ON DELETE
-    SET NULL,
-        volunteer_id UUID REFERENCES users(id) ON DELETE
-    SET NULL,
-        hub_id UUID REFERENCES hubs(id) ON DELETE
-    SET NULL,
-        status mission_status NOT NULL DEFAULT 'PENDING',
-        qr_code_token VARCHAR(100) UNIQUE,
-        priority_score DECIMAL(5, 2) DEFAULT 0.00,
-        accepted_at TIMESTAMPTZ,
-        picked_up_at TIMESTAMPTZ,
-        completed_at TIMESTAMPTZ,
-        cancelled_at TIMESTAMPTZ,
-        cancellation_reason TEXT,
-        confirmation_image_url VARCHAR(500),
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        -- RESCUE: must have sos_request_id, no aid_request_id, no hub_id
-        -- DELIVERY: must have aid_request_id and hub_id, no sos_request_id
-        CONSTRAINT chk_mission_rescue CHECK (
-            mission_type != 'RESCUE'
-            OR (
-                sos_request_id IS NOT NULL
-                AND aid_request_id IS NULL
-                AND hub_id IS NULL
-            )
-        ),
-        CONSTRAINT chk_mission_delivery CHECK (
-            mission_type != 'DELIVERY'
-            OR (
-                aid_request_id IS NOT NULL
-                AND hub_id IS NOT NULL
-                AND sos_request_id IS NULL
-            )
+    sos_request_id UUID REFERENCES sos_requests(id) ON DELETE SET NULL,
+    aid_request_id UUID REFERENCES aid_requests(id) ON DELETE SET NULL,
+    help_request_id UUID REFERENCES help_requests(id) ON DELETE SET NULL,
+    volunteer_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    hub_id UUID REFERENCES hubs(id) ON DELETE SET NULL,
+    status mission_status NOT NULL DEFAULT 'PENDING',
+    qr_code_token VARCHAR(100) UNIQUE,
+    priority_score DECIMAL(5, 2) DEFAULT 0.00,
+    victim_lat DECIMAL(9, 6),
+    victim_lng DECIMAL(9, 6),
+    cancellation_reason TEXT,
+    image_url VARCHAR(500),
+    comment TEXT,
+    started_at TIMESTAMPTZ,
+    accepted_at TIMESTAMPTZ,
+    completed_at TIMESTAMPTZ,
+    picked_up_at TIMESTAMPTZ,
+    cancelled_at TIMESTAMPTZ,
+    confirmation_image_url VARCHAR(500),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT chk_missions_type_rescue CHECK (
+        mission_type != 'RESCUE'
+        OR (
+            sos_request_id IS NOT NULL
+            AND aid_request_id IS NULL
         )
+    ),
+    CONSTRAINT chk_missions_type_delivery CHECK (
+        mission_type != 'DELIVERY'
+        OR (
+            aid_request_id IS NOT NULL
+            AND sos_request_id IS NULL
+            AND hub_id IS NOT NULL
+        )
+    )
 );
 -- Dispatch attempts - tracking volunteer dispatch attempts
 CREATE TABLE dispatch_attempts (

@@ -27,26 +27,14 @@ public class SosRequest {
     @Column(name = "requester_id", nullable = false)
     private UUID requesterId;
 
-    @Column(name = "requester_name", nullable = false, length = 100)
-    private String requesterName;
+    @Column(name = "lat", nullable = false)
+    private Double lat;
 
-    @Column(name = "requester_phone", nullable = false, length = 15)
-    private String requesterPhone;
+    @Column(name = "lng", nullable = false)
+    private Double lng;
 
-    @Column(name = "victim_name", length = 100)
-    private String victimName;
-
-    @Column(name = "victim_phone", length = 15)
-    private String victimPhone;
-
-   @Column(name = "victim_lat", nullable = false)
-    private Double victimLat;
-
-    @Column(name = "victim_lng", nullable = false)
-    private Double victimLng;
-
-    @Column(name = "victim_address", length = 255)
-    private String victimAddress;
+    @Column(name = "address", length = 500)
+    private String address;
 
     @Column(columnDefinition = "text")
     private String description;
@@ -55,17 +43,10 @@ public class SosRequest {
     @Builder.Default
     private Integer peopleCount = 1;
 
-    @Column(name = "is_on_behalf", nullable = false)
-    @Builder.Default
-    private Boolean isOnBehalf = false;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "urgency_level", nullable = false)
     @Builder.Default
     private UrgencyLevel urgencyLevel = UrgencyLevel.MEDIUM;
-
-    @Column(name = "ai_summary", columnDefinition = "text")
-    private String aiSummary;
 
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "status", nullable = false)
