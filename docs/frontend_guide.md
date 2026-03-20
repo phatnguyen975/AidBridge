@@ -126,6 +126,18 @@ app/src/
   - Use base safe navigation helpers to avoid stale-destination crashes.
   - Respect debounce policy before navigating.
 
+### Standardized Network Parsing (DTO vs Wrapper)
+
+To handle the Backend's standardized JSON response format, we strictly separate the parsing layer from the UI state layer:
+
+1. **`BaseResponse<T>` (Data Layer):** - All Retrofit API calls MUST return `Call<BaseResponse<T>>`.
+   - This wrapper handles the outer JSON layer (`success`, `message`, `data`).
+   - It is strictly used for Gson parsing and must NOT leak into the Domain or UI layers.
+
+2. **`NetworkResultWrapper<T>` (UI/Presentation Layer):**
+   - The UI only understands `NetworkResultWrapper` (`LOADING`, `SUCCESS`, `ERROR`).
+   - The Repository is responsible for unwrapping `BaseResponse`, mapping the inner DTO to a Domain Model, and packing it into `NetworkResultWrapper` to post to the ViewModel.
+
 ## 4. Detailed Flow Walkthrough (The Authentication Flow)
 
 Golden path: `LoginFragment -> LoginViewModel -> LoginUseCase -> AuthInputValidator -> AuthRepositoryImpl`
