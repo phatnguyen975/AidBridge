@@ -3,15 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_victim"
-    app:startDestination="@id/victimHomeFragment">
+    app:startDestination="@id/victimProfileFragment">
 
     <fragment
-        android:id="@+id/victimHomeFragment"
-        android:name="com.drc.aidbridge.ui.main.fragment.victim.VictimHomeFragment"
-        android:label="VictimHomeFragment" />
+        android:id="@+id/victimProfileFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.victim.VictimProfileFragment"
+        android:label="VictimProfileFragment" />
 
     <fragment
-        android:id="@+id/mapFragment"
+        android:id="@+id/victimMapFragment"
         android:name="com.drc.aidbridge.ui.map.fragment.VictimMapFragment"
-        android:label="MapFragment" />
+        android:label="VictimMapFragment" />
 </navigation>

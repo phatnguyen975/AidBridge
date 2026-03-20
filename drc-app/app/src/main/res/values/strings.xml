@@ -75,6 +75,7 @@
     <!-- Bottom Navigation -->
     <string name="nav_rescue">CỨU HỘ</string>
     <string name="nav_map">BẢN ĐỒ</string>
+    <string name="nav_profile">CÁ NHÂN</string>
 
     <!-- User Guide Screen -->
     <string name="guide_title">HƯỚNG DẪN SỬ DỤNG</string>

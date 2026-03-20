@@ -3,15 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_guest_tabs"
-    app:startDestination="@id/nav_guest_rescue">
+    app:startDestination="@id/guestRescueFragment">
 
     <fragment
-        android:id="@id/nav_guest_rescue"
+        android:id="@id/guestRescueFragment"
         android:name="com.drc.aidbridge.ui.auth.fragment.GuestRescueFragment"
         android:label="GuestRescueFragment" />
 
     <fragment
-        android:id="@id/nav_guest_map"
+        android:id="@id/guestMapFragment"
         android:name="com.drc.aidbridge.ui.map.fragment.GuestMapFragment"
         android:label="GuestMapFragment" />
 </navigation>

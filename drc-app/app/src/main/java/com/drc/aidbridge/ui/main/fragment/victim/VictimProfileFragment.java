@@ -5,18 +5,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 
-import com.drc.aidbridge.databinding.FragmentVictimHomeBinding;
+import com.drc.aidbridge.databinding.FragmentVictimProfileBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class VictimHomeFragment extends BaseFragment<FragmentVictimHomeBinding> {
+public class VictimProfileFragment extends BaseFragment<FragmentVictimProfileBinding> {
 
     @Nullable
     @Override
-    protected FragmentVictimHomeBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
-        return FragmentVictimHomeBinding.inflate(inflater, container, false);
+    protected FragmentVictimProfileBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
+        return FragmentVictimProfileBinding.inflate(inflater, container, false);
     }
 
     @Override
