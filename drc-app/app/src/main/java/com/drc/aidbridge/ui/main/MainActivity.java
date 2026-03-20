@@ -76,7 +76,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         // TODO: Use actual role after backend integration
         // String roleStr = tokenManager.getUserRole();
         // UserRole role = UserRole.fromStringSafe(roleStr);
-        UserRole role = UserRole.VICTIM;
+        UserRole role = UserRole.VOLUNTEER;
         RoleShellConfig config = resolveRoleShellConfig(role);
 
         binding.bottomNav.getMenu().clear();
