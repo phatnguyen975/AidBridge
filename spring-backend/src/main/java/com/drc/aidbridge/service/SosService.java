@@ -66,6 +66,8 @@ public class SosService {
                 .orElseThrow(() -> new ResourceNotFoundException("SOS request not found: " + id));
         Mission mission = missionRepository.findBySosRequestId(sos.getId()).orElse(null);
         return mapToResponse(sos, mission);
+
+        
     }
 
     public List<SosRequestResponseDto> listSosRequests() {
