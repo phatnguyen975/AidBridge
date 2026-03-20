@@ -1,6 +1,15 @@
 server:
   port: 8080
 
+jwt:
+  rsa:
+    public-key: classpath:certs/public.pem
+    private-key: classpath:certs/private.pem
+  access-token:
+    expiration-ms: 900000
+  refresh-token:
+    expiration-ms: 604800000
+
 spring:
   application:
     name: spring-backend
