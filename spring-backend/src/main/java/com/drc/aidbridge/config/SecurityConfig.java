@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/ws/**").permitAll() // WebSocket handshake
-
+                        .requestMatchers("/api/sos").permitAll()
                         // Role-based endpoint authorization
                         // ADMIN - full system access
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

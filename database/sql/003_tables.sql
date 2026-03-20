@@ -178,7 +178,7 @@ CREATE TABLE inventory_logs (
 -- SOS requests - emergency rescue requests
 CREATE TABLE sos_requests (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    requester_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    requester_id UUID REFERENCES users(id) ON DELETE SET NULL,
     lat DECIMAL(9, 6) NOT NULL,
     lng DECIMAL(9, 6) NOT NULL,
     address VARCHAR(500),

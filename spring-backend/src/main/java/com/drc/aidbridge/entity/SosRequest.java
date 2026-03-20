@@ -24,7 +24,7 @@ public class SosRequest {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "requester_id", nullable = false)
+    @Column(name = "requester_id")
     private UUID requesterId;
 
     @Column(name = "lat", nullable = false)

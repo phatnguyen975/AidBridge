@@ -1,6 +1,7 @@
 package com.drc.aidbridge.service;
 
 import com.drc.aidbridge.dto.request.CreateSosRequestDto;
+import com.drc.aidbridge.dto.request.CreateGuestSosRequestDto;
 import com.drc.aidbridge.dto.response.SosRequestResponseDto;
 import com.drc.aidbridge.entity.Mission;
 import com.drc.aidbridge.entity.SosRequest;
@@ -74,6 +75,35 @@ public class SosService {
                         .map(m -> mapToResponse(req, m))
                         .orElseGet(() -> mapToResponse(req, null)))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public SosRequestResponseDto createGuestSosRequest(CreateGuestSosRequestDto createDto) {
+        // Create guest SOS request without requiring authenticated user
+        SosRequest sosRequest = SosRequest.builder()
+                .requesterId(null)  // Guest user - no requester
+                .lat(createDto.getLat())
+                .lng(createDto.getLng())
+                .address(createDto.getAddress())
+                .description(createDto.getDescription())
+                .peopleCount(createDto.getPeopleCount() != null ? createDto.getPeopleCount() : 1)
+                .urgencyLevel(createDto.getUrgencyLevel() != null ? createDto.getUrgencyLevel() : com.drc.aidbridge.entity.enums.UrgencyLevel.MEDIUM)
+                .imageUrl(createDto.getImageUrl())
+                .status(SosStatus.PENDING)
+                .build();
+
+        SosRequest savedSos = sosRequestRepository.save(sosRequest);
+
+        Mission savedMission = missionRepository.save(
+                Mission.builder()
+                        .missionType(MissionType.RESCUE)
+                        .sosRequest(savedSos)
+                        .victimLat(java.math.BigDecimal.valueOf(savedSos.getLat()))
+                        .victimLng(java.math.BigDecimal.valueOf(savedSos.getLng()))
+                        .status(com.drc.aidbridge.entity.enums.MissionStatus.PENDING)
+                        .build());
+
+        return mapToResponse(savedSos, savedMission);
     }
 
     private SosRequestResponseDto mapToResponse(SosRequest sos, Mission mission) {

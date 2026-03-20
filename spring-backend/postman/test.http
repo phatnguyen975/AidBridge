@@ -45,3 +45,14 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1Mjk0OWVhN
 GET http://localhost:8080/api/health
 
 ###
+
+
+POST http://localhost:8080/api/sos
+Content-Type: application/json
+
+{
+  "lat": 10.7769,
+  "lng": 106.6826,
+  "address": "Quận 1",
+  "description": "Cần giúp đỡ"
+}
