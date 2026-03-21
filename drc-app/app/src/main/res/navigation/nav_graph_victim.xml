@@ -40,6 +40,6 @@
 
     <fragment
         android:id="@+id/victimPersonalInfoFragment"
-        android:name="com.drc.aidbridge.ui.main.fragment.victim.VictimProfileFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.victim.VictimPersonalInfoFragment"
         android:label="VictimPersonalInfoFragment" />
 </navigation>

@@ -78,7 +78,7 @@
                         android:layout_height="match_parent"
                         android:contentDescription="@string/victim_profile_avatar_desc"
                         android:scaleType="centerCrop"
-                        android:src="@mipmap/ic_avatar_round" />
+                        android:src="@drawable/ic_avatar" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
@@ -281,7 +281,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:contentDescription="@string/victim_profile_personal_info_icon_desc"
+                    android:contentDescription="@string/victim_profile_account_security_icon_desc"
                     android:src="@drawable/ic_person"
                     app:tint="@color/text_secondary" />
 
@@ -290,7 +290,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/spacing_md"
                     android:layout_weight="1"
-                    android:text="@string/victim_profile_personal_info"
+                    android:text="@string/victim_profile_account_security"
                     android:textColor="@color/text_primary"
                     android:textSize="@dimen/text_lg" />
 
