@@ -25,29 +25,35 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
 
     @Override
     protected void setupViews() {
-        viewModel = new ViewModelProvider(this).get(VolunteerDashboardViewModel.class);
-        
-        binding.switchOnlineStatus.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            viewModel.toggleOnlineStatus(isChecked);
-        });
+        // Online Status (Online by default - Test UI)
+        updateStatusUI(true);
+        binding.switchOnlineStatus.setChecked(true);
 
-        binding.btnLogout.setOnClickListener(v -> {
-            // Logic đăng xuất
-            showToast("Đang đăng xuất...");
-        });
+        setupClickListeners();
     }
 
     @Override
     protected void observeViewModel() {
-        viewModel.isOnline().observe(getViewLifecycleOwner(), isOnline -> {
-            updateStatusUI(isOnline);
+        // TODO: Observe ViewModel state once use cases are implemented
+    }
+
+    private void setupClickListeners() {
+        binding.switchOnlineStatus.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            updateStatusUI(isChecked);
+            showToast(isChecked ? "Chế độ: Sẵn sàng" : "Chế độ: Ngoại tuyến");
         });
 
-        viewModel.getUpdateStatusResult().observe(getViewLifecycleOwner(), 
-            resultObserver(binding.switchOnlineStatus, isOnline -> {
-                // Thành công
-            })
-        );
+        binding.cardUserInfo.setOnClickListener(v -> showToast("Xem hồ sơ cá nhân"));
+
+        binding.cardCurrentMission.setOnClickListener(v -> showToast("Mở danh sách nhiệm vụ hiện tại"));
+
+        binding.cardCompleted.setOnClickListener(v -> showToast("Xem lịch sử nhiệm vụ đã hoàn thành"));
+
+        binding.tvSeeAll.setOnClickListener(v -> showToast("Xem tất cả thông báo"));
+
+        binding.btnDetails.setOnClickListener(v -> showToast("Xem chi tiết nhiệm vụ cứu hộ"));
+
+        binding.btnLogout.setOnClickListener(v -> showToast("Xử lý đăng xuất"));
     }
 
     private void updateStatusUI(boolean isOnline) {
