@@ -81,4 +81,25 @@
     <string name="victim_sos_tab_supply">TIẾP TẾ</string>
     <string name="victim_sos_for_self">Cho bản thân</string>
     <string name="victim_sos_for_relative">Cho người thân</string>
+
+    <!-- Victim Rescue Tab -->
+    <string-array name="sos_severity_levels">
+        <item>Nguy kịch</item>
+        <item>Nghiêm trọng</item>
+        <item>Trung bình</item>
+        <item>Nhẹ</item>
+    </string-array>
+    <string name="victim_rescue_sos_button">!&#10;SOS</string>
+    <string name="victim_rescue_sos_hint">Nhấn để gửi tín hiệu khẩn cấp</string>
+    <string name="victim_rescue_info_title">Thông tin cứu hộ</string>
+    <string name="victim_rescue_full_name_hint">Họ và tên</string>
+    <string name="victim_rescue_default_name">Nguyễn Văn A</string>
+    <string name="victim_rescue_people_count_hint">Số người</string>
+    <string name="victim_rescue_severity_hint">Tình trạng</string>
+    <string name="victim_rescue_health_detail_hint">Chi tiết sức khỏe</string>
+    <string name="victim_rescue_images_title">Hình ảnh hiện trường</string>
+    <string name="victim_rescue_upload_label">Tải ảnh lên hoặc chụp mới</string>
+    <string name="victim_rescue_upload_icon_desc">Biểu tượng tải ảnh hiện trường</string>
+    <string name="victim_rescue_image_desc">Ảnh hiện trường</string>
+    <string name="victim_rescue_remove_image_desc">Xóa ảnh khỏi danh sách</string>
 </resources>
