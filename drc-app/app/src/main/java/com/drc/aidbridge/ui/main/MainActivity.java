@@ -196,13 +196,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         if (isSelected) {
             background.setColor(ContextCompat.getColor(this, R.color.bg_surface));
             background.setStroke(
-                    getResources().getDimensionPixelSize(R.dimen.victim_sos_divider_height),
+                    getResources().getDimensionPixelSize(R.dimen.victim_sos_popup_divider_height),
                     ContextCompat.getColor(this, R.color.color_primary)
             );
         } else {
             background.setColor(Color.TRANSPARENT);
             background.setStroke(
-                    getResources().getDimensionPixelSize(R.dimen.victim_sos_divider_height),
+                    getResources().getDimensionPixelSize(R.dimen.victim_sos_popup_divider_height),
                     Color.TRANSPARENT
             );
         }

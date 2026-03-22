@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Victim SOS Selection -->
+    <dimen name="victim_sos_popup_item_width">150dp</dimen>
+    <dimen name="victim_sos_popup_divider_height">1dp</dimen>
+</resources>

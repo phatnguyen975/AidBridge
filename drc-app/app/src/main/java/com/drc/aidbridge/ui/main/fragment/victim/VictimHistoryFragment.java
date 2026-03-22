@@ -1,7 +1,5 @@
 package com.drc.aidbridge.ui.main.fragment.victim;
 
-import android.widget.ArrayAdapter;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,10 +32,18 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
 
     @Override
     protected void setupViews() {
+        resetScreenState();
         setupToolbar();
         setupRecyclerView();
         setupFilterDropdown();
         loadData();
+    }
+
+    private void resetScreenState() {
+        currentPage = 1;
+        currentFilter = "1H";
+        isLoading = false;
+        isLastPage = false;
     }
 
     @Override
@@ -128,24 +134,9 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
     }
 
     private void setupFilterDropdown() {
-        String[] filterItems = new String[]{
-                getString(R.string.victim_history_filter_1h),
-                getString(R.string.victim_history_filter_24h),
-                getString(R.string.victim_history_filter_7d),
-                getString(R.string.victim_history_filter_1m),
-                getString(R.string.victim_history_filter_all)
-        };
+        binding.actTimeFilter.setText(getString(R.string.victim_history_filter_1h), false);
 
-        ArrayAdapter<String> filterAdapter = new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_list_item_1,
-                filterItems
-        );
-
-        binding.actvFilter.setAdapter(filterAdapter);
-        binding.actvFilter.setText(getString(R.string.victim_history_filter_1h), false);
-
-        binding.actvFilter.setOnItemClickListener((parent, view, position, id) -> {
+        binding.actTimeFilter.setOnItemClickListener((parent, view, position, id) -> {
             adapter.clear();
             currentPage = 1;
             isLastPage = false;

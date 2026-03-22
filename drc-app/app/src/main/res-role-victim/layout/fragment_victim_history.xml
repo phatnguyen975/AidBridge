@@ -67,12 +67,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbarDivider">
 
-        <AutoCompleteTextView
-            android:id="@+id/actvFilter"
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/act_time_filter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none"
-            android:text="@string/victim_history_filter_1h"
+            app:simpleItems="@array/victim_history_time_filters"
             android:textColor="@color/text_primary"
             android:textColorHint="@color/text_hint" />
     </com.google.android.material.textfield.TextInputLayout>
