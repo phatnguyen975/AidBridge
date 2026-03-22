@@ -39,6 +39,16 @@
         android:label="VictimHistoryFragment" />
 
     <fragment
+        android:id="@+id/victimSosSelfFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.victim.VictimSosSelfFragment"
+        android:label="VictimSosSelfFragment" />
+
+    <fragment
+        android:id="@+id/victimSosRelativeFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.victim.VictimSosRelativeFragment"
+        android:label="VictimSosRelativeFragment" />
+
+    <fragment
         android:id="@+id/victimPersonalInfoFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.victim.VictimPersonalInfoFragment"
         android:label="VictimPersonalInfoFragment" />

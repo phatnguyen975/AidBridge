@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/bg_popup_rounded"
+    android:padding="@dimen/spacing_sm">
+
+    <LinearLayout
+        android:id="@+id/btn_sos_self"
+        android:layout_width="@dimen/victim_sos_popup_item_width"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:padding="@dimen/spacing_md">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/victim_sos_for_self"
+            android:src="@drawable/ic_person"
+            app:tint="@color/color_primary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:text="@string/victim_sos_for_self"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_sm"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:layout_marginBottom="@dimen/spacing_sm"
+        android:background="@color/border_input" />
+
+    <LinearLayout
+        android:id="@+id/btn_sos_relative"
+        android:layout_width="@dimen/victim_sos_popup_item_width"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:padding="@dimen/spacing_md">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/victim_sos_for_relative"
+            android:src="@drawable/ic_relative_support"
+            app:tint="@color/color_primary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:text="@string/victim_sos_for_relative"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_sm"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

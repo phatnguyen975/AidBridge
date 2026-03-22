@@ -177,6 +177,11 @@
     <string name="victim_history_title_supply">Yêu cầu hỗ trợ lương thực</string>
     <string name="victim_history_title_sos_relative">Yêu cầu SOS cho người thân</string>
 
+    <!-- Victim History detail bottom sheet -->
+    <string name="victim_history_detail_title">Chi tiết yêu cầu</string>
+    <string name="victim_history_detail_section_request">Thông tin yêu cầu</string>
+    <string name="victim_history_detail_dummy_content">Mã yêu cầu: REQ-001\nTrạng thái: Đang xử lý\nĐịa chỉ: Khu vực hỗ trợ gần nhất\nGhi chú: Đội cứu trợ đang điều phối xe tiếp cận vị trí của bạn.</string>
+
     <!-- Victim History dummy dates -->
     <string name="victim_history_dummy_date_1">21/05/2025 - 11:02</string>
     <string name="victim_history_dummy_date_2">21/05/2025 - 10:20</string>
@@ -191,8 +196,10 @@
     <string name="victim_history_dummy_location_4">Khu vực D, bộ lọc %1$s</string>
     <string name="victim_history_dummy_location_5">Khu vực E, bộ lọc %1$s</string>
 
-    <!-- Victim History detail bottom sheet -->
-    <string name="victim_history_detail_title">Chi tiết yêu cầu</string>
-    <string name="victim_history_detail_section_request">Thông tin yêu cầu</string>
-    <string name="victim_history_detail_dummy_content">Mã yêu cầu: REQ-001\nTrạng thái: Đang xử lý\nĐịa chỉ: Khu vực hỗ trợ gần nhất\nGhi chú: Đội cứu trợ đang điều phối xe tiếp cận vị trí của bạn.</string>
+    <!-- Victim SOS Container -->
+    <string name="victim_sos_title">YÊU CẦU HỖ TRỢ</string>
+    <string name="victim_sos_tab_rescue">CỨU HỘ</string>
+    <string name="victim_sos_tab_supply">TIẾP TẾ</string>
+    <string name="victim_sos_for_self">Cho bản thân</string>
+    <string name="victim_sos_for_relative">Cho người thân</string>
 </resources>

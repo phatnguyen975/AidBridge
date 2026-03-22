@@ -29,4 +29,8 @@
     <!-- Logo sizes -->
     <dimen name="logo_size_splash">160dp</dimen>
     <dimen name="logo_size_header">72dp</dimen>
+
+    <!-- Victim SOS popup sizes -->
+    <dimen name="victim_sos_popup_item_width">150dp</dimen>
+    <dimen name="victim_sos_divider_height">1dp</dimen>
 </resources>

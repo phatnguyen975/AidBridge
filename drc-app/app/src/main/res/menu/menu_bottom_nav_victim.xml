@@ -2,14 +2,18 @@
 <!--
     menu_bottom_nav_victim.xml — BottomNavigationView menu for the Victim (Cá nhân) screen.
     1. victimProfileFragment   — Cá nhân (default selected)
-    2. victimMapFragment       — Bản đồ
+    2. victimSosFragment       — Cứu hộ
+    3. victimMapFragment       — Bản đồ
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/victimProfileFragment"
         android:icon="@drawable/ic_person"
         android:title="@string/nav_profile" />
-
+    <item
+        android:id="@+id/victimSosFragment"
+        android:icon="@drawable/ic_rescue"
+        android:title="@string/nav_rescue" />
     <item
         android:id="@+id/victimMapFragment"
         android:icon="@drawable/ic_map"
