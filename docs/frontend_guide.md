@@ -251,8 +251,11 @@ Use this checklist whenever adding a new feature screen.
 
 ### E. Theme, Colors, Icons, and Shared UI Assets
 
-- Colors, strings, dimensions, theme:
+- Global/shared colors, strings, dimensions, theme:
   - `app/src/main/res/values/`
+- Role-specific strings and dimensions:
+  - `app/src/main/res-role-<role>/values/strings_<role>.xml`
+  - `app/src/main/res-role-<role>/values/dimens_<role>.xml`
 - Night theme overrides:
   - `app/src/main/res/values-night/`
 - Shared icons/drawables:

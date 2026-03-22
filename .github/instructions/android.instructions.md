@@ -43,8 +43,13 @@ Do not hardcode anything in XML or Java files.
   - Always use colors defined in `colors.xml` (e.g., `@color/color_primary`, `@color/text_secondary`) or create new ones as needed.
   - Reuse predefined styles from `themes.xml` (e.g., `style="@style/Widget.AidBridge.Button.Primary"`) or create new ones as needed.
 - **Strings & Typography:**
-  - NEVER hardcode text strings in UI or Toasts. Always extract them to `strings.xml`, but need to comment them appropriately.
-- **Dimensions:** - Use `dimens.xml` for margins, padding, and text sizes. (e.g., `@dimen/margin_large`, `@dimen/text_title`).
+  - NEVER hardcode text strings in UI or Toasts.
+  - Role-specific strings MUST be placed in `res-role-<role>/values/strings_<role>.xml` (example: `res-role-victim/values/strings_victim.xml`).
+  - Only truly global/shared strings may remain in `res/values/strings.xml`.
+- **Dimensions:**
+  - NEVER hardcode dimensions in XML/Java.
+  - Role-specific dimensions MUST be placed in `res-role-<role>/values/dimens_<role>.xml` (example: `res-role-victim/values/dimens_victim.xml`).
+  - Only truly global/shared dimensions may remain in `res/values/dimens.xml`.
 
 ## 5. File Placement & Project Structure
 
@@ -52,6 +57,11 @@ The project uses feature-based resource sets. You must place files in their exac
 
 - **Java code:** Follow the `ui/<feature>`, `domain/usecase/<feature>`, `data/repository` structure.
 - **XML Layouts & Drawables:** Place them in the specific `res-*` directories (`res-auth`, `res-guest`, `res-role-victim`, `res-common-ui`), NOT just the default `res` folder.
+- **Role Values Files (MANDATORY):**
+  - Role-specific values files MUST be stored inside the role resource set, for example:
+    - `res-role-victim/values/strings_victim.xml`
+    - `res-role-victim/values/dimens_victim.xml`
+  - Do NOT place role-specific strings/dimens in global `res/values/`.
 
 ## 6. Context & Documentation Awareness
 

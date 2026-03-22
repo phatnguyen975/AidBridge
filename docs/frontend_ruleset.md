@@ -88,6 +88,8 @@ Role-based implementation must be physically separated in code, layouts, and nav
 
 - Hardcoded user-facing text in Java/XML is banned.
 - Use @string/... in XML and getString(...) in Java.
+- Role-specific strings must be placed in app/src/main/res-role-<role>/values/strings_<role>.xml.
+- Placing role-specific strings in app/src/main/res/values/strings.xml is prohibited.
 
 ### 4.3 Icons
 
