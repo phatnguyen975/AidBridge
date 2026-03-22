@@ -35,7 +35,7 @@
 
     <fragment
         android:id="@+id/victimHistoryFragment"
-        android:name="com.drc.aidbridge.ui.main.fragment.victim.VictimProfileFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.victim.VictimHistoryFragment"
         android:label="VictimHistoryFragment" />
 
     <fragment

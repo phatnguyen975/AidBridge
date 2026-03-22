@@ -154,4 +154,45 @@
     <string name="victim_personal_info_btn_change_password">ĐỔI MẬT KHẨU</string>
     <string name="victim_personal_info_toast_update_success">Cập nhật thông tin thành công</string>
     <string name="victim_personal_info_toast_change_password_success">Đổi mật khẩu thành công</string>
+
+    <!-- Victim History Screen -->
+    <string name="victim_history_title">Lịch sử yêu cầu</string>
+    <string name="victim_history_back_desc">Quay lại lịch sử</string>
+    <string name="victim_history_filter_hint">Bộ lọc thời gian</string>
+    <string name="victim_history_filter_1h">1 giờ gần nhất</string>
+    <string name="victim_history_filter_24h">24 giờ gần nhất</string>
+    <string name="victim_history_filter_7d">7 ngày gần nhất</string>
+    <string name="victim_history_filter_1m">1 tháng gần nhất</string>
+    <string name="victim_history_filter_all">Tất cả</string>
+    <string name="victim_history_item_icon_desc">Biểu tượng loại yêu cầu</string>
+    <string name="victim_history_detail_button">CHI TIẾT</string>
+
+    <!-- Victim History statuses -->
+    <string name="victim_history_status_pending">Đang chờ xử lý</string>
+    <string name="victim_history_status_processing">Đang xử lý</string>
+    <string name="victim_history_status_completed">Hoàn thành</string>
+
+    <!-- Victim History titles -->
+    <string name="victim_history_title_sos_self">Yêu cầu SOS cho bản thân</string>
+    <string name="victim_history_title_supply">Yêu cầu hỗ trợ lương thực</string>
+    <string name="victim_history_title_sos_relative">Yêu cầu SOS cho người thân</string>
+
+    <!-- Victim History dummy dates -->
+    <string name="victim_history_dummy_date_1">21/05/2025 - 11:02</string>
+    <string name="victim_history_dummy_date_2">21/05/2025 - 10:20</string>
+    <string name="victim_history_dummy_date_3">20/05/2025 - 19:35</string>
+    <string name="victim_history_dummy_date_4">20/05/2025 - 14:10</string>
+    <string name="victim_history_dummy_date_5">19/05/2025 - 22:47</string>
+
+    <!-- Victim History dummy locations -->
+    <string name="victim_history_dummy_location_1">Khu vực A, bộ lọc %1$s</string>
+    <string name="victim_history_dummy_location_2">Khu vực B, bộ lọc %1$s</string>
+    <string name="victim_history_dummy_location_3">Khu vực C, bộ lọc %1$s</string>
+    <string name="victim_history_dummy_location_4">Khu vực D, bộ lọc %1$s</string>
+    <string name="victim_history_dummy_location_5">Khu vực E, bộ lọc %1$s</string>
+
+    <!-- Victim History detail bottom sheet -->
+    <string name="victim_history_detail_title">Chi tiết yêu cầu</string>
+    <string name="victim_history_detail_section_request">Thông tin yêu cầu</string>
+    <string name="victim_history_detail_dummy_content">Mã yêu cầu: REQ-001\nTrạng thái: Đang xử lý\nĐịa chỉ: Khu vực hỗ trợ gần nhất\nGhi chú: Đội cứu trợ đang điều phối xe tiếp cận vị trí của bạn.</string>
 </resources>
