@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    fragment_register.xml — Registration form screen.
-
-    Design (matches Figma):
-    - Scrollable form: Họ và tên, Email, SĐT, Mật khẩu
-    - Role selection: 3 MaterialCardView horizontally (Nạn nhân / Tình nguyện viên / Mạnh thường quân)
-    - Checkbox + terms text
-    - "ĐĂNG KÝ NGAY →" blue button
-    - "Đã có tài khoản? Đăng nhập" bottom link
--->
+<!-- fragment_register.xml — Registration form screen. -->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_surface"
+    android:background="@color/bg_primary"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -399,8 +390,7 @@
             <CheckBox
                 android:id="@+id/cb_terms"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/cb_tint" />
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:layout_width="wrap_content"

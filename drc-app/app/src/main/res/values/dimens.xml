@@ -14,10 +14,6 @@
     <dimen name="radius_lg">16dp</dimen>
     <dimen name="radius_full">50dp</dimen>
 
-    <!-- Component sizes -->
-    <dimen name="sos_button_size">180dp</dimen>
-    <dimen name="otp_box_size">48dp</dimen>
-
     <!-- Text sizes -->
     <dimen name="text_xs">11sp</dimen>
     <dimen name="text_sm">13sp</dimen>
