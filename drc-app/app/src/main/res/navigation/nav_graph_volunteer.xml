@@ -3,15 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_volunteer"
-    app:startDestination="@id/volunteerMissionFragment">
+    app:startDestination="@id/volunteerDashboardFragment">
 
     <fragment
-        android:id="@+id/volunteerMissionFragment"
+        android:id="@+id/volunteerDashboardFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerDashboardFragment"
+        android:label="Volunteer Dashboard" />
+
+    <fragment
+        android:id="@+id/volunteerMissionListFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerMissionFragment"
-        android:label="VolunteerMissionFragment" />
+        android:label="Volunteer Missions" />
 
+    <!-- Placeholder for Map Fragment - make sure the ID matches menu -->
     <fragment
-        android:id="@+id/mapFragment"
-        android:name="com.drc.aidbridge.ui.map.fragment.VolunteerMapFragment"
-        android:label="MapFragment" />
+        android:id="@+id/volunteerMapFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerMissionFragment"
+        android:label="Volunteer Map" />
+
 </navigation>
