@@ -1,10 +1,309 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_primary">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_md">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_category_header"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/spacing_sm">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <View
+                android:layout_width="@dimen/victim_supply_section_line_width"
+                android:layout_height="@dimen/victim_supply_section_line_height"
+                android:background="@drawable/bg_blue_line_title" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:text="@string/victim_supply_section_request"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_lg"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/container_categories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:orientation="vertical" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:background="@drawable/bg_category_header"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/spacing_sm">
+
+            <View
+                android:layout_width="@dimen/victim_supply_section_line_width"
+                android:layout_height="@dimen/victim_supply_section_line_height"
+                android:background="@drawable/bg_blue_line_title" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:text="@string/victim_supply_section_notes"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_lg"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:hint="@string/victim_supply_notes_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|start"
+                android:inputType="textMultiLine"
+                android:minLines="4"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_voice_toggle"
+                style="@style/Widget.MaterialComponents.Button.Icon"
+                android:layout_width="@dimen/victim_supply_voice_button_size"
+                android:layout_height="@dimen/victim_supply_voice_button_size"
+                android:gravity="center"
+                android:padding="0dp"
+                android:contentDescription="@string/victim_supply_voice_icon_desc"
+                app:backgroundTint="@color/color_primary"
+                app:cornerRadius="@dimen/victim_supply_voice_button_radius"
+                app:icon="@drawable/ic_mic"
+                app:iconGravity="textTop"
+                app:iconPadding="0dp" />
+
+            <TextView
+                android:id="@+id/tv_voice_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:text="@string/victim_supply_voice_idle"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/text_md" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:background="@drawable/bg_category_header"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/spacing_sm">
+
+            <View
+                android:layout_width="@dimen/victim_supply_section_line_width"
+                android:layout_height="@dimen/victim_supply_section_line_height"
+                android:background="@drawable/bg_blue_line_title" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:text="@string/victim_supply_section_people"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_lg"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/spacing_xs">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/victim_supply_people_adult"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_md" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_minus_adult"
+                    android:layout_width="@dimen/victim_supply_stepper_button_size"
+                    android:layout_height="@dimen/victim_supply_stepper_button_size"
+                    android:contentDescription="@string/victim_supply_stepper_decrease_desc"
+                    app:backgroundTint="@color/border_default"
+                    app:cornerRadius="@dimen/radius_sm"
+                    app:icon="@drawable/ic_minus"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp" />
+
+                <TextView
+                    android:id="@+id/tv_count_adult"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/spacing_md"
+                    android:text="@string/victim_supply_count_default"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_md"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_plus_adult"
+                    android:layout_width="@dimen/victim_supply_stepper_button_size"
+                    android:layout_height="@dimen/victim_supply_stepper_button_size"
+                    android:contentDescription="@string/victim_supply_stepper_increase_desc"
+                    app:backgroundTint="@color/color_primary"
+                    app:cornerRadius="@dimen/radius_sm"
+                    app:icon="@drawable/ic_plus"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/spacing_xs">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/victim_supply_people_elderly"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_md" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_minus_elderly"
+                    android:layout_width="@dimen/victim_supply_stepper_button_size"
+                    android:layout_height="@dimen/victim_supply_stepper_button_size"
+                    android:contentDescription="@string/victim_supply_stepper_decrease_desc"
+                    app:backgroundTint="@color/border_default"
+                    app:cornerRadius="@dimen/radius_sm"
+                    app:icon="@drawable/ic_minus"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp" />
+
+                <TextView
+                    android:id="@+id/tv_count_elderly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/spacing_md"
+                    android:text="@string/victim_supply_count_default"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_md"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_plus_elderly"
+                    android:layout_width="@dimen/victim_supply_stepper_button_size"
+                    android:layout_height="@dimen/victim_supply_stepper_button_size"
+                    android:contentDescription="@string/victim_supply_stepper_increase_desc"
+                    app:backgroundTint="@color/color_primary"
+                    app:cornerRadius="@dimen/radius_sm"
+                    app:icon="@drawable/ic_plus"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/spacing_xs">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/victim_supply_people_child"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_md" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_minus_child"
+                    android:layout_width="@dimen/victim_supply_stepper_button_size"
+                    android:layout_height="@dimen/victim_supply_stepper_button_size"
+                    android:contentDescription="@string/victim_supply_stepper_decrease_desc"
+                    app:backgroundTint="@color/border_default"
+                    app:cornerRadius="@dimen/radius_sm"
+                    app:icon="@drawable/ic_minus"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp" />
+
+                <TextView
+                    android:id="@+id/tv_count_child"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/spacing_md"
+                    android:text="@string/victim_supply_count_default"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_md"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_plus_child"
+                    android:layout_width="@dimen/victim_supply_stepper_button_size"
+                    android:layout_height="@dimen/victim_supply_stepper_button_size"
+                    android:contentDescription="@string/victim_supply_stepper_increase_desc"
+                    app:backgroundTint="@color/color_primary"
+                    app:cornerRadius="@dimen/radius_sm"
+                    app:icon="@drawable/ic_plus"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_submit_supply"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/spacing_md"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:layout_marginBottom="@dimen/spacing_md"
+            android:text="@string/victim_supply_submit"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_md"
+            android:textStyle="bold"
+            app:backgroundTint="@color/color_primary"
+            app:cornerRadius="@dimen/radius_md" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

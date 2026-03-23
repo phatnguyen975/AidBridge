@@ -64,7 +64,7 @@ public class VictimRescueTabFragment extends BaseFragment<FragmentVictimRescueTa
     private void extractDataAndSubmit() {
         RescueFormInput rawInput = collectRawInput();
         // TODO: Call ViewModel method to submit the rescue request with the collected input. Handle loading state and API response.
-        Toast.makeText(requireContext(), "Đang gửi API...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), "Đang gửi yêu cầu...", Toast.LENGTH_SHORT).show();
     }
 
     @Nullable
