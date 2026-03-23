@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Victim Profile Screen -->
+    <string name="victim_profile_title">CÁ NHÂN</string>
+    <string name="victim_profile_name_placeholder">Nguyễn Văn A</string>
+    <string name="victim_profile_phone_placeholder">0901234567</string>
+    <string name="victim_profile_track_title">Theo dõi tiến độ</string>
+    <string name="victim_profile_track_subtitle">Xem vị trí xe cứu trợ đang tới</string>
+    <string name="victim_profile_history_title">Lịch sử yêu cầu</string>
+    <string name="victim_profile_history_subtitle">Danh sách các yêu cầu đã gửi</string>
+    <string name="victim_profile_account_settings">Cài đặt tài khoản</string>
+    <string name="victim_profile_account_security">Tài khoản &amp; Bảo mật</string>
+    <string name="victim_profile_logout">Đăng xuất</string>
+    <string name="victim_profile_avatar_desc">Ảnh đại diện nạn nhân</string>
+    <string name="victim_profile_edit_avatar_desc">Chỉnh sửa ảnh đại diện</string>
+    <string name="victim_profile_track_icon_desc">Biểu tượng theo dõi tiến độ</string>
+    <string name="victim_profile_history_icon_desc">Biểu tượng lịch sử yêu cầu</string>
+    <string name="victim_profile_account_security_icon_desc">Biểu tượng tài khoản &amp; bảo mật</string>
+    <string name="victim_profile_logout_icon_desc">Biểu tượng đăng xuất</string>
+    <string name="victim_profile_navigate_next_desc">Đi tới màn hình tiếp theo</string>
+
+    <!-- Victim Personal Info Screen -->
+    <string name="victim_personal_info_screen_title">Cài đặt tài khoản</string>
+    <string name="victim_personal_info_back_desc">Quay lại</string>
+    <string name="victim_personal_info_card_title">Thông tin cá nhân</string>
+    <string name="victim_personal_info_avatar_desc">Ảnh đại diện cá nhân</string>
+    <string name="victim_personal_info_edit_avatar_desc">Chỉnh sửa ảnh đại diện</string>
+    <string name="victim_personal_info_hint_full_name">Họ và tên</string>
+    <string name="victim_personal_info_hint_phone">Số điện thoại</string>
+    <string name="victim_personal_info_hint_email">Email</string>
+    <string name="victim_personal_info_hint_address">Địa chỉ thường trú</string>
+    <string name="victim_personal_info_default_full_name">Nguyễn Văn A</string>
+    <string name="victim_personal_info_default_phone">0901234567</string>
+    <string name="victim_personal_info_default_email">nguyenvana@gmail.com</string>
+    <string name="victim_personal_info_btn_update">CẬP NHẬT THÔNG TIN</string>
+    <string name="victim_personal_info_password_card_title">Đổi mật khẩu</string>
+    <string name="victim_personal_info_hint_current_password">Mật khẩu hiện tại</string>
+    <string name="victim_personal_info_hint_new_password">Mật khẩu mới</string>
+    <string name="victim_personal_info_hint_confirm_new_password">Nhập lại mật khẩu mới</string>
+    <string name="victim_personal_info_btn_change_password">ĐỔI MẬT KHẨU</string>
+    <string name="victim_personal_info_toast_update_success">Cập nhật thông tin thành công</string>
+    <string name="victim_personal_info_toast_change_password_success">Đổi mật khẩu thành công</string>
+
+    <!-- Victim History Screen -->
+    <string name="victim_history_title">Lịch sử yêu cầu</string>
+    <string name="victim_history_back_desc">Quay lại lịch sử</string>
+    <string name="victim_history_filter_hint">Thời gian</string>
+    <string name="victim_history_filter_1h">1 giờ gần nhất</string>
+    <string-array name="victim_history_time_filters">
+        <item>1 giờ gần nhất</item>
+        <item>24 giờ gần nhất</item>
+        <item>7 ngày gần nhất</item>
+        <item>1 tháng gần nhất</item>
+        <item>Tất cả</item>
+    </string-array>
+    <string name="victim_history_item_icon_desc">Biểu tượng loại yêu cầu</string>
+    <string name="victim_history_detail_button">CHI TIẾT</string>
+    <string name="victim_history_status_pending">Đang chờ xử lý</string>
+    <string name="victim_history_status_processing">Đang xử lý</string>
+    <string name="victim_history_status_completed">Hoàn thành</string>
+    <string name="victim_history_title_sos_self">Yêu cầu SOS cho bản thân</string>
+    <string name="victim_history_title_supply">Yêu cầu hỗ trợ lương thực</string>
+    <string name="victim_history_title_sos_relative">Yêu cầu SOS cho người thân</string>
+    <string name="victim_history_detail_title">Chi tiết yêu cầu</string>
+    <string name="victim_history_detail_section_request">Thông tin yêu cầu</string>
+    <string name="victim_history_detail_dummy_content">Mã yêu cầu: REQ-001\nTrạng thái: Đang xử lý\nĐịa chỉ: Khu vực hỗ trợ gần nhất\nGhi chú: Đội cứu trợ đang điều phối xe tiếp cận vị trí của bạn.</string>
+    <string name="victim_history_dummy_date_1">21/05/2025 - 11:02</string>
+    <string name="victim_history_dummy_date_2">21/05/2025 - 10:20</string>
+    <string name="victim_history_dummy_date_3">20/05/2025 - 19:35</string>
+    <string name="victim_history_dummy_date_4">20/05/2025 - 14:10</string>
+    <string name="victim_history_dummy_date_5">19/05/2025 - 22:47</string>
+    <string name="victim_history_dummy_location_1">Khu vực A, bộ lọc %1$s</string>
+    <string name="victim_history_dummy_location_2">Khu vực B, bộ lọc %1$s</string>
+    <string name="victim_history_dummy_location_3">Khu vực C, bộ lọc %1$s</string>
+    <string name="victim_history_dummy_location_4">Khu vực D, bộ lọc %1$s</string>
+    <string name="victim_history_dummy_location_5">Khu vực E, bộ lọc %1$s</string>
+
+    <!-- Victim SOS Selection -->
+    <string name="victim_sos_title">YÊU CẦU HỖ TRỢ</string>
+    <string name="victim_sos_tab_rescue">CỨU HỘ</string>
+    <string name="victim_sos_tab_supply">TIẾP TẾ</string>
+    <string name="victim_sos_for_self">Cho bản thân</string>
+    <string name="victim_sos_for_relative">Cho người thân</string>
+
+    <!-- Victim Rescue Tab -->
+    <string-array name="sos_severity_levels">
+        <item>Nguy kịch</item>
+        <item>Nghiêm trọng</item>
+        <item>Trung bình</item>
+        <item>Nhẹ</item>
+    </string-array>
+    <string name="victim_rescue_sos_button">!\nSOS</string>
+    <string name="victim_rescue_sos_hint">Nhấn để gửi tín hiệu khẩn cấp</string>
+    <string name="victim_rescue_info_title">Thông tin cứu hộ</string>
+    <string name="victim_rescue_full_name_hint">Họ và tên</string>
+    <string name="victim_rescue_default_name">Nguyễn Văn A</string>
+    <string name="victim_rescue_people_count_hint">Số người</string>
+    <string name="victim_rescue_severity_hint">Tình trạng</string>
+    <string name="victim_rescue_health_detail_hint">Chi tiết sức khỏe</string>
+    <string name="victim_rescue_images_title">Hình ảnh hiện trường</string>
+    <string name="victim_rescue_upload_label">Tải ảnh lên hoặc chụp mới</string>
+    <string name="victim_rescue_upload_icon_desc">Biểu tượng tải ảnh hiện trường</string>
+    <string name="victim_rescue_image_desc">Ảnh hiện trường</string>
+    <string name="victim_rescue_remove_image_desc">Xóa ảnh khỏi danh sách</string>
+
+    <!-- Victim Supply Tab -->
+    <string name="victim_supply_section_request">Yêu cầu tiếp tế</string>
+    <string name="victim_supply_category_food">Thức ăn</string>
+    <string name="victim_supply_category_water">Nước uống</string>
+    <string name="victim_supply_item_rice">Gạo</string>
+    <string name="victim_supply_item_noodles">Mì tôm</string>
+    <string name="victim_supply_item_canned">Đồ hộp</string>
+    <string name="victim_supply_item_water">Nước lọc</string>
+    <string name="victim_supply_item_milk">Sữa</string>
+    <string name="victim_supply_item_electrolyte">Nước điện giải</string>
+    <string name="victim_supply_section_notes">Ghi chú &amp; Mô tả chi tiết</string>
+    <string name="victim_supply_notes_hint">Nhập mô tả chi tiết...</string>
+    <string name="victim_supply_voice_idle">Nhấn để nói...</string>
+    <string name="victim_supply_voice_recording">Đang ghi âm...</string>
+    <string name="victim_supply_voice_icon_desc">Biểu tượng ghi âm giọng nói</string>
+    <string name="victim_supply_section_people">Số lượng người</string>
+    <string name="victim_supply_people_adult">Người lớn</string>
+    <string name="victim_supply_people_elderly">Người già</string>
+    <string name="victim_supply_people_child">Trẻ em</string>
+    <string name="victim_supply_stepper_decrease_desc">Giảm số lượng</string>
+    <string name="victim_supply_stepper_increase_desc">Tăng số lượng</string>
+    <string name="victim_supply_count_default">0</string>
+    <string name="victim_supply_selected_count_initial">\t(0)</string>
+    <string name="victim_supply_selected_count_format">\t(%1$d)</string>
+    <string name="victim_supply_submit">GỬI YÊU CẦU</string>
+    <string name="victim_supply_list_expand_desc">Mở rộng danh sách</string>
+    <string name="victim_supply_list_collapse_desc">Thu gọn danh sách</string>
+
+    <!-- Victim SOS Relative -->
+    <string name="victim_relative_sos_title">HỖ TRỢ NGƯỜI THÂN</string>
+    <string name="victim_relative_sos_map_desc">Ảnh bản đồ mô phỏng vị trí người cần hỗ trợ</string>
+    <string name="victim_relative_sos_map_hint">Kéo bản đồ để đặt ghim chính xác vị trí</string>
+    <string name="victim_relative_sos_info_icon_desc">Biểu tượng hướng dẫn vị trí</string>
+    <string name="victim_relative_sos_section_info">Thông tin người thân</string>
+    <string name="victim_relative_sos_name_label">Họ và tên</string>
+    <string name="victim_relative_sos_name_hint">Nhập họ và tên người thân</string>
+    <string name="victim_relative_sos_address_label">Địa chỉ / Mô tả vị trí</string>
+    <string name="victim_relative_sos_address_hint">Số nhà, tên đường, khu vực, ...</string>
+    <string name="victim_relative_sos_phone_label">Số điện thoại liên lạc (nếu có)</string>
+    <string name="victim_relative_sos_phone_hint">0xxx xxx xxx</string>
+    <string name="victim_relative_sos_severity_label">Mô tả tình trạng</string>
+    <string name="victim_relative_sos_severity_hint">Chọn tình trạng khẩn cấp</string>
+    <string name="victim_relative_sos_submit">GỬI YÊU CẦU</string>
+    <string name="victim_relative_sos_disclaimer">Bằng việc gửi yêu cầu, bạn cam kết các thông tin trên là chính xác để lực lượng cứu hộ có thể tiếp cận nhanh nhất</string>
+</resources>

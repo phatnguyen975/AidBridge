@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Volunteer Dashboard -->
+    <string name="volunteer_dashboard_user_name_placeholder">Nguyễn Văn A</string>
+    <string name="volunteer_dashboard_user_role_placeholder">Tình nguyện viên cấp cao</string>
+    <string name="volunteer_dashboard_status_title">Trạng thái hoạt động</string>
+    <string name="volunteer_dashboard_status_online_placeholder">Sẵn sàng nhận nhiệm vụ mới</string>
+    <string name="volunteer_dashboard_status_offline_placeholder">Bạn đang ngoại tuyến</string>
+    <string name="volunteer_dashboard_btn_ready">Sẵn sàng</string>
+    <string name="volunteer_dashboard_btn_offline">Ngoại tuyến</string>
+    <string name="volunteer_dashboard_current_mission_title">Nhiệm vụ&#10;hiện tại</string>
+    <string name="volunteer_dashboard_completed_label">Hoàn thành</string>
+    <string name="volunteer_dashboard_completed_count_placeholder">128</string>
+    <string name="volunteer_dashboard_notif_title">Thông báo mới</string>
+    <string name="volunteer_dashboard_see_all">Xem tất cả</string>
+    <string name="volunteer_dashboard_emergency_title">Cứu hộ khẩn cấp!</string>
+    <string name="volunteer_dashboard_emergency_details_placeholder">Quận 1 - Cách bạn 1.2km</string>
+    <string name="volunteer_dashboard_btn_details">Xem chi tiết</string>
+    <string name="volunteer_dashboard_btn_logout">Đăng xuất</string>
+
+    <!-- Volunteer Dashboard Toasts -->
+    <string name="volunteer_dashboard_toast_mode_ready">Chế độ: Sẵn sàng</string>
+    <string name="volunteer_dashboard_toast_mode_offline">Chế độ: Ngoại tuyến</string>
+    <string name="volunteer_dashboard_toast_view_profile">Xem hồ sơ cá nhân</string>
+    <string name="volunteer_dashboard_toast_open_current_missions">Mở danh sách nhiệm vụ hiện tại</string>
+    <string name="volunteer_dashboard_toast_open_completed_missions">Xem lịch sử nhiệm vụ đã hoàn thành</string>
+    <string name="volunteer_dashboard_toast_see_all_notifications">Xem tất cả thông báo</string>
+    <string name="volunteer_dashboard_toast_view_mission_detail">Xem chi tiết nhiệm vụ cứu hộ</string>
+    <string name="volunteer_dashboard_toast_logout">Xử lý đăng xuất</string>
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Victim SOS Selection -->
+    <dimen name="victim_sos_popup_item_width">150dp</dimen>
+    <dimen name="victim_sos_popup_divider_height">1dp</dimen>
+
+    <!-- Victim Rescue Tab -->
+    <dimen name="victim_rescue_sos_button_size">160dp</dimen>
+    <dimen name="victim_rescue_sos_button_corner_radius">120dp</dimen>
+    <dimen name="victim_rescue_sos_text_size">32sp</dimen>
+    <dimen name="victim_rescue_title_line_width">4dp</dimen>
+    <dimen name="victim_rescue_title_line_height">24dp</dimen>
+    <dimen name="victim_rescue_upload_min_height">120dp</dimen>
+    <dimen name="victim_rescue_image_item_size">90dp</dimen>
+    <dimen name="victim_rescue_remove_button_size">24dp</dimen>
+
+    <!-- Victim Supply Tab -->
+    <dimen name="victim_supply_section_line_width">4dp</dimen>
+    <dimen name="victim_supply_section_line_height">24dp</dimen>
+    <dimen name="victim_supply_category_padding">12dp</dimen>
+    <dimen name="victim_supply_category_content_padding_start">16dp</dimen>
+    <dimen name="victim_supply_voice_button_size">48dp</dimen>
+    <dimen name="victim_supply_voice_button_radius">48dp</dimen>
+    <dimen name="victim_supply_stepper_button_size">36dp</dimen>
+    <dimen name="victim_supply_category_item_margin_top">8dp</dimen>
+</resources>

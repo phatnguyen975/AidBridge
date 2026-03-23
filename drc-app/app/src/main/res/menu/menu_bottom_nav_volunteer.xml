@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/volunteerMissionFragment"
-        android:icon="@drawable/ic_volunteer"
-        android:title="Missions" />
+        android:id="@+id/volunteerDashboardFragment"
+        android:icon="@drawable/ic_person"
+        android:title="@string/nav_profile" />
     <item
-        android:id="@+id/mapFragment"
+        android:id="@+id/volunteerMissionListFragment"
+        android:icon="@drawable/ic_mission"
+        android:title="@string/nav_mission" />
+    <item
+        android:id="@+id/volunteerMapFragment"
         android:icon="@drawable/ic_map"
-        android:title="Map" />
+        android:title="@string/nav_map" />
 </menu>
