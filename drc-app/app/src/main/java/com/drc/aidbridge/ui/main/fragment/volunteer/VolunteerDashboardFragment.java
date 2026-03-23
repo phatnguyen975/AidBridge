@@ -40,30 +40,32 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
     private void setupClickListeners() {
         binding.switchOnlineStatus.setOnCheckedChangeListener((buttonView, isChecked) -> {
             updateStatusUI(isChecked);
-            showToast(isChecked ? "Chế độ: Sẵn sàng" : "Chế độ: Ngoại tuyến");
+            showToast(getString(isChecked
+                    ? com.drc.aidbridge.R.string.volunteer_dashboard_toast_mode_ready
+                    : com.drc.aidbridge.R.string.volunteer_dashboard_toast_mode_offline));
         });
 
-        binding.cardUserInfo.setOnClickListener(v -> showToast("Xem hồ sơ cá nhân"));
+        binding.cardUserInfo.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_view_profile)));
 
-        binding.cardCurrentMission.setOnClickListener(v -> showToast("Mở danh sách nhiệm vụ hiện tại"));
+        binding.cardCurrentMission.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_open_current_missions)));
 
-        binding.cardCompleted.setOnClickListener(v -> showToast("Xem lịch sử nhiệm vụ đã hoàn thành"));
+        binding.cardCompleted.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_open_completed_missions)));
 
-        binding.tvSeeAll.setOnClickListener(v -> showToast("Xem tất cả thông báo"));
+        binding.tvSeeAll.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_see_all_notifications)));
 
-        binding.btnDetails.setOnClickListener(v -> showToast("Xem chi tiết nhiệm vụ cứu hộ"));
+        binding.btnDetails.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_view_mission_detail)));
 
-        binding.btnLogout.setOnClickListener(v -> showToast("Xử lý đăng xuất"));
+        binding.btnLogout.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_logout)));
     }
 
     private void updateStatusUI(boolean isOnline) {
         if (isOnline) {
-            binding.tvStatusDescription.setText("Sẵn sàng nhận nhiệm vụ mới");
+            binding.tvStatusDescription.setText(com.drc.aidbridge.R.string.volunteer_dashboard_status_online_placeholder);
             binding.viewStatusIndicator.setBackgroundResource(com.drc.aidbridge.R.drawable.bg_circle_status_online);
             binding.btnReady.setAlpha(1.0f);
             binding.btnOffline.setAlpha(0.5f);
         } else {
-            binding.tvStatusDescription.setText("Bạn đang ngoại tuyến");
+            binding.tvStatusDescription.setText(com.drc.aidbridge.R.string.volunteer_dashboard_status_offline_placeholder);
             binding.viewStatusIndicator.setBackgroundResource(com.drc.aidbridge.R.drawable.bg_circle_status_offline);
             binding.btnReady.setAlpha(0.5f);
             binding.btnOffline.setAlpha(1.0f);

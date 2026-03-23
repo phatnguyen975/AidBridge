@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/volunteerMapFragment"
-        android:icon="@drawable/ic_map"
-        android:title="Bản đồ" />
+        android:id="@+id/volunteerDashboardFragment"
+        android:icon="@drawable/ic_person"
+        android:title="@string/nav_profile" />
     <item
         android:id="@+id/volunteerMissionListFragment"
         android:icon="@drawable/ic_mission"
-        android:title="Nhiệm vụ" />
+        android:title="@string/nav_mission" />
     <item
-        android:id="@+id/volunteerDashboardFragment"
-        android:icon="@drawable/ic_person"
-        android:title="Cá nhân" />
+        android:id="@+id/volunteerMapFragment"
+        android:icon="@drawable/ic_map"
+        android:title="@string/nav_map" />
 </menu>

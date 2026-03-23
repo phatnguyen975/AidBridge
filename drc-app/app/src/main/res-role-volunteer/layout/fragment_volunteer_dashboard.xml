@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="@dimen/volunteer_dashboard_padding">
 
         <!-- User Info Card -->
         <com.google.android.material.card.MaterialCardView
@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/bg_surface"
-            app:cardCornerRadius="16dp"
+            app:cardCornerRadius="@dimen/volunteer_dashboard_card_corner_radius"
             app:cardElevation="0dp"
             app:layout_constraintTop_toTopOf="parent"
             app:strokeWidth="0dp">
@@ -26,12 +26,12 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:padding="@dimen/volunteer_dashboard_padding">
 
                 <FrameLayout
                     android:id="@+id/frameAvatar"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="@dimen/volunteer_dashboard_avatar_size"
+                    android:layout_height="@dimen/volunteer_dashboard_avatar_size"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -40,20 +40,20 @@
                         android:id="@+id/ivAvatar"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:padding="2dp"
+                        android:padding="@dimen/volunteer_dashboard_avatar_inner_padding"
                         android:scaleType="centerCrop"
                         android:src="@drawable/ic_launcher_background"
                         app:shapeAppearanceOverlay="@style/CircleAppearance"
                         app:strokeColor="@color/white"
-                        app:strokeWidth="2dp" />
+                        app:strokeWidth="@dimen/volunteer_dashboard_avatar_stroke_width" />
 
                     <View
                         android:id="@+id/viewStatusIndicator"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
+                        android:layout_width="@dimen/volunteer_dashboard_status_indicator_size"
+                        android:layout_height="@dimen/volunteer_dashboard_status_indicator_size"
                         android:layout_gravity="bottom|end"
-                        android:layout_marginEnd="4dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginEnd="@dimen/volunteer_dashboard_status_indicator_margin"
+                        android:layout_marginBottom="@dimen/volunteer_dashboard_status_indicator_margin"
                         android:background="@drawable/bg_circle_status_online" />
                 </FrameLayout>
 
@@ -61,10 +61,10 @@
                     android:id="@+id/tvUserName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/volunteer_dashboard_padding"
                     android:text="@string/volunteer_dashboard_user_name_placeholder"
                     android:textColor="@color/text_primary"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/volunteer_dashboard_text_user_name_size"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toTopOf="@id/tvUserRole"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -76,11 +76,11 @@
                     android:id="@+id/tvUserRole"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginStart="@dimen/volunteer_dashboard_padding"
+                    android:layout_marginTop="@dimen/volunteer_dashboard_status_indicator_margin"
                     android:text="@string/volunteer_dashboard_user_role_placeholder"
                     android:textColor="@color/text_secondary"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/volunteer_dashboard_text_user_role_size"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/frameAvatar"
@@ -94,9 +94,9 @@
             android:id="@+id/cardStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/volunteer_dashboard_padding"
             app:cardBackgroundColor="@color/bg_surface"
-            app:cardCornerRadius="16dp"
+            app:cardCornerRadius="@dimen/volunteer_dashboard_card_corner_radius"
             app:cardElevation="0dp"
             app:layout_constraintTop_toBottomOf="@id/cardUserInfo"
             app:strokeWidth="0dp">
@@ -104,7 +104,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:padding="@dimen/volunteer_dashboard_padding">
 
                 <TextView
                     android:id="@+id/tvStatusTitle"
@@ -112,7 +112,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/volunteer_dashboard_status_title"
                     android:textColor="@color/text_primary"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/volunteer_dashboard_section_title_size"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -121,10 +121,10 @@
                     android:id="@+id/tvStatusDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="@dimen/volunteer_dashboard_status_indicator_margin"
                     android:text="@string/volunteer_dashboard_status_online_placeholder"
                     android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/volunteer_dashboard_status_desc_size"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvStatusTitle" />
 
@@ -140,7 +140,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/volunteer_dashboard_padding"
                     android:orientation="horizontal"
                     app:layout_constraintTop_toBottomOf="@id/tvStatusDescription">
 
@@ -149,13 +149,13 @@
                         style="@style/Widget.MaterialComponents.Button.Icon"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="@dimen/spacing_sm"
                         android:layout_weight="1"
-                        android:backgroundTint="#154B30"
+                        android:backgroundTint="@color/bg_surface_elevated"
                         android:text="@string/volunteer_dashboard_btn_ready"
                         android:textAllCaps="false"
                         android:textColor="@color/safe_green"
-                        app:cornerRadius="8dp"
+                        app:cornerRadius="@dimen/volunteer_dashboard_button_corner_radius"
                         app:icon="@drawable/ic_check_circle"
                         app:iconTint="@color/safe_green" />
 
@@ -164,13 +164,13 @@
                         style="@style/Widget.MaterialComponents.Button.Icon"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="@dimen/spacing_sm"
                         android:layout_weight="1"
                         android:backgroundTint="@color/bg_surface_elevated"
                         android:text="@string/volunteer_dashboard_btn_offline"
                         android:textAllCaps="false"
                         android:textColor="@color/text_secondary"
-                        app:cornerRadius="8dp"
+                        app:cornerRadius="@dimen/volunteer_dashboard_button_corner_radius"
                         app:icon="@drawable/bg_circle_status_offline"
                         app:iconTint="@color/text_secondary" />
                 </LinearLayout>
@@ -182,8 +182,8 @@
         <LinearLayout
             android:id="@+id/layoutStats"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_marginTop="16dp"
+            android:layout_height="@dimen/volunteer_dashboard_stats_row_height"
+            android:layout_marginTop="@dimen/volunteer_dashboard_padding"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/cardStatus">
 
@@ -191,29 +191,29 @@
                 android:id="@+id/cardCurrentMission"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="@dimen/spacing_sm"
                 android:layout_weight="1"
                 app:cardBackgroundColor="@color/color_primary_variant"
-                app:cardCornerRadius="16dp"
+                app:cardCornerRadius="@dimen/volunteer_dashboard_card_corner_radius"
                 app:cardElevation="0dp"
                 app:strokeWidth="0dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="16dp">
+                    android:padding="@dimen/volunteer_dashboard_padding">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/volunteer_dashboard_current_mission_title"
                         android:textColor="@color/text_primary"
-                        android:textSize="20sp"
+                        android:textSize="@dimen/volunteer_dashboard_text_user_name_size"
                         android:textStyle="bold" />
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="@dimen/volunteer_dashboard_icon_size"
+                        android:layout_height="@dimen/volunteer_dashboard_icon_size"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentBottom="true"
                         android:alpha="0.5"
@@ -225,17 +225,17 @@
                 android:id="@+id/cardCompleted"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/spacing_sm"
                 android:layout_weight="1"
                 app:cardBackgroundColor="@color/bg_surface"
-                app:cardCornerRadius="16dp"
+                app:cardCornerRadius="@dimen/volunteer_dashboard_card_corner_radius"
                 app:cardElevation="0dp"
                 app:strokeWidth="0dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="16dp">
+                    android:padding="@dimen/volunteer_dashboard_padding">
 
                     <TextView
                         android:id="@+id/tvCompletedLabel"
@@ -243,7 +243,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/volunteer_dashboard_completed_label"
                         android:textColor="@color/safe_green"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/volunteer_dashboard_status_desc_size"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -253,14 +253,14 @@
                         android:layout_height="wrap_content"
                         android:text="@string/volunteer_dashboard_completed_count_placeholder"
                         android:textColor="@color/text_primary"
-                        android:textSize="32sp"
+                        android:textSize="@dimen/volunteer_dashboard_completed_count_size"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="@dimen/volunteer_dashboard_icon_size"
+                        android:layout_height="@dimen/volunteer_dashboard_icon_size"
                         android:src="@drawable/ic_check_circle"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -274,10 +274,10 @@
             android:id="@+id/tvNotifTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/spacing_lg"
             android:text="@string/volunteer_dashboard_notif_title"
             android:textColor="@color/text_primary"
-            android:textSize="18sp"
+            android:textSize="@dimen/volunteer_dashboard_section_title_size"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layoutStats" />
@@ -288,7 +288,7 @@
             android:layout_height="wrap_content"
             android:text="@string/volunteer_dashboard_see_all"
             android:textColor="@color/text_link"
-            android:textSize="12sp"
+            android:textSize="@dimen/volunteer_dashboard_status_desc_size"
             app:layout_constraintBottom_toBottomOf="@id/tvNotifTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tvNotifTitle" />
@@ -298,9 +298,9 @@
             android:id="@+id/cardEmergency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/volunteer_dashboard_padding"
             app:cardBackgroundColor="@color/color_primary_variant"
-            app:cardCornerRadius="16dp"
+            app:cardCornerRadius="@dimen/volunteer_dashboard_card_corner_radius"
             app:cardElevation="0dp"
             app:layout_constraintTop_toBottomOf="@id/tvNotifTitle"
             app:strokeWidth="0dp">
@@ -308,14 +308,14 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:padding="@dimen/volunteer_dashboard_padding">
 
                 <ImageView
                     android:id="@+id/ivNotifIcon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="@dimen/volunteer_dashboard_notification_icon_size"
+                    android:layout_height="@dimen/volunteer_dashboard_notification_icon_size"
                     android:background="@drawable/bg_circle_icon"
-                    android:padding="8dp"
+                    android:padding="@dimen/volunteer_dashboard_notification_icon_padding"
                     android:src="@drawable/ic_wifi_tethering"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -325,10 +325,10 @@
                     android:id="@+id/tvEmergencyTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/volunteer_dashboard_padding"
                     android:text="@string/volunteer_dashboard_emergency_title"
                     android:textColor="@color/sos_red"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/volunteer_dashboard_section_title_size"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/ivNotifIcon"
@@ -338,11 +338,11 @@
                     android:id="@+id/tvEmergencyDetails"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginStart="@dimen/volunteer_dashboard_padding"
+                    android:layout_marginTop="@dimen/volunteer_dashboard_status_indicator_margin"
                     android:text="@string/volunteer_dashboard_emergency_details_placeholder"
                     android:textColor="@color/text_primary"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/volunteer_dashboard_text_user_role_size"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/ivNotifIcon"
                     app:layout_constraintTop_toBottomOf="@id/tvEmergencyTitle" />
@@ -351,17 +351,17 @@
                     android:id="@+id/btnDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/volunteer_dashboard_padding"
                     android:backgroundTint="@color/white"
                     android:text="@string/volunteer_dashboard_btn_details"
                     android:textAllCaps="false"
                     android:textColor="@color/color_primary_variant"
-                    app:cornerRadius="8dp"
+                    app:cornerRadius="@dimen/volunteer_dashboard_button_corner_radius"
                     app:layout_constraintTop_toBottomOf="@id/tvEmergencyDetails" />
 
                 <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="@dimen/volunteer_dashboard_notification_overlay_icon_size"
+                    android:layout_height="@dimen/volunteer_dashboard_notification_overlay_icon_size"
                     android:alpha="0.1"
                     android:rotation="-15"
                     android:src="@drawable/ic_campaign"
@@ -377,7 +377,7 @@
             style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="@dimen/spacing_xl"
             android:text="@string/volunteer_dashboard_btn_logout"
             android:textAllCaps="false"
             android:textColor="@color/sos_red"
