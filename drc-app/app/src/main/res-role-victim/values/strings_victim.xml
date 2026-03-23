@@ -130,4 +130,21 @@
     <string name="victim_supply_submit">GỬI YÊU CẦU</string>
     <string name="victim_supply_list_expand_desc">Mở rộng danh sách</string>
     <string name="victim_supply_list_collapse_desc">Thu gọn danh sách</string>
+
+    <!-- Victim SOS Relative -->
+    <string name="victim_relative_sos_title">HỖ TRỢ NGƯỜI THÂN</string>
+    <string name="victim_relative_sos_map_desc">Ảnh bản đồ mô phỏng vị trí người cần hỗ trợ</string>
+    <string name="victim_relative_sos_map_hint">Kéo bản đồ để đặt ghim chính xác vị trí</string>
+    <string name="victim_relative_sos_info_icon_desc">Biểu tượng hướng dẫn vị trí</string>
+    <string name="victim_relative_sos_section_info">Thông tin người thân</string>
+    <string name="victim_relative_sos_name_label">Họ và tên</string>
+    <string name="victim_relative_sos_name_hint">Nhập họ và tên người thân</string>
+    <string name="victim_relative_sos_address_label">Địa chỉ / Mô tả vị trí</string>
+    <string name="victim_relative_sos_address_hint">Số nhà, tên đường, khu vực, ...</string>
+    <string name="victim_relative_sos_phone_label">Số điện thoại liên lạc (nếu có)</string>
+    <string name="victim_relative_sos_phone_hint">0xxx xxx xxx</string>
+    <string name="victim_relative_sos_severity_label">Mô tả tình trạng</string>
+    <string name="victim_relative_sos_severity_hint">Chọn tình trạng khẩn cấp</string>
+    <string name="victim_relative_sos_submit">GỬI YÊU CẦU</string>
+    <string name="victim_relative_sos_disclaimer">Bằng việc gửi yêu cầu, bạn cam kết các thông tin trên là chính xác để lực lượng cứu hộ có thể tiếp cận nhanh nhất</string>
 </resources>
