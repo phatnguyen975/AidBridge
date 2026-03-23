@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- SOS Screen -->
+    <string name="sos_screen_title">CỨU HỘ KHẨN CẤP</string>
+    <string name="sos_user_guide">Hướng dẫn</string>
+    <string name="sos_btn_label">SOS</string>
+    <string name="sos_btn_login">ĐĂNG NHẬP</string>
+    <string name="sos_register_link">Đăng ký tài khoản</string>
+    <string name="gps_badge">GPS</string>
+    <string name="gps_active">GPS ĐANG HOẠT ĐỘNG</string>
+    <string name="gps_inactive">GPS KHÔNG HOẠT ĐỘNG</string>
+
+    <!-- User Guide Screen -->
+    <string name="guide_title">HƯỚNG DẪN SỬ DỤNG</string>
+    <string name="guide_back_icon">Quay lại</string>
+    <string name="guide_section_sos_title">1. Gửi SOS Khẩn cấp</string>
+    <string name="guide_sos_step1">Mở ứng dụng » Màn hình hiển thị nút SOS.</string>
+    <string name="guide_sos_step2">Nhấn nút SOS » Ứng dụng tự động lấy vị trí GPS của bạn.</string>
+    <string name="guide_sos_step3">Xác nhận gửi » Tín hiệu cứu hộ được gửi đến đội cứu trợ gần nhất.</string>
+    <string name="guide_sos_note">Lưu ý: Bạn không cần đăng nhập để gửi SOS khẩn cấp.</string>
+    <string name="guide_section_map_title">2. Bản đồ Cứu trợ</string>
+    <string name="guide_map_hub">Trung tâm cứu trợ: Vị trí các điểm phát lương thực và y tế.</string>
+    <string name="guide_map_shelter">Nơi trú ẩn: Các địa điểm an toàn được đánh dấu trên bản đồ.</string>
+    <string name="guide_map_safe_path">Đường di chuyển an toàn: Tuyến đường được khuyến nghị tránh vùng nguy hiểm.</string>
+    <string name="guide_map_heatmap">Bản đồ nhiệt: Hiển thị mật độ nạn nhân và khu vực cần hỗ trợ gấp.</string>
+    <string name="guide_section_auth_title">3. Đăng ký &amp; Đăng nhập</string>
+    <string name="guide_auth_register">Đăng ký tài khoản với email, số điện thoại và chọn vai trò phù hợp.</string>
+    <string name="guide_auth_otp">Xác thực OTP được gửi qua email để kích hoạt tài khoản.</string>
+    <string name="guide_auth_login">Đăng nhập để truy cập đầy đủ tính năng theo vai trò của bạn.</string>
+    <string name="guide_section_roles_title">4. Các Vai trò trong Hệ thống</string>
+    <string name="guide_role_victim">Nạn nhân: Gửi SOS, xem bản đồ hỗ trợ, nhận thông báo cứu trợ.</string>
+    <string name="guide_role_volunteer">Tình nguyện viên: Nhận nhiệm vụ cứu trợ, cập nhật trạng thái hỗ trợ thực địa.</string>
+    <string name="guide_role_sponsor">Mạnh thường quân: Đăng ký tài trợ vật phẩm, theo dõi đóng góp.</string>
+</resources>

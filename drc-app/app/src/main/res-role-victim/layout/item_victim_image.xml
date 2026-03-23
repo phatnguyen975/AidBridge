@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/victim_rescue_image_item_size"
+    android:layout_height="@dimen/victim_rescue_image_item_size"
+    android:layout_marginEnd="@dimen/spacing_sm">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardBackgroundColor="@color/bg_surface"
+        app:cardCornerRadius="@dimen/radius_sm"
+        app:strokeColor="@color/border_default"
+        app:strokeWidth="1dp">
+
+        <ImageView
+            android:id="@+id/ivImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/victim_rescue_image_desc"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_rescue" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <ImageButton
+        android:id="@+id/btnRemove"
+        android:layout_width="@dimen/victim_rescue_remove_button_size"
+        android:layout_height="@dimen/victim_rescue_remove_button_size"
+        android:layout_gravity="top|end"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/victim_rescue_remove_image_desc"
+        android:padding="@dimen/spacing_xs"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        app:tint="@color/white" />
+
+</FrameLayout>
