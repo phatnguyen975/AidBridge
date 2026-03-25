@@ -8,10 +8,34 @@
     <fragment
         android:id="@+id/sponsorDashboardFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorDashboardFragment"
-        android:label="SponsorDashboardFragment" />
+        android:label="SponsorDashboardFragment">
+
+        <action
+            android:id="@+id/action_sponsor_dashboard_to_donate"
+            app:destination="@id/sponsorDonateFragment" />
+
+        <action
+            android:id="@+id/action_sponsor_dashboard_to_history"
+            app:destination="@id/sponsorHistoryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/sponsorDonateFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorDonateFragment"
+        android:label="SponsorDonateFragment" />
 
     <fragment
         android:id="@+id/sponsorMapFragment"
         android:name="com.drc.aidbridge.ui.map.fragment.SponsorMapFragment"
         android:label="SponsorMapFragment" />
+
+    <fragment
+        android:id="@+id/sponsorProfileFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorProfileFragment"
+        android:label="SponsorProfileFragment" />
+
+    <fragment
+        android:id="@+id/sponsorHistoryFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorHistoryFragment"
+        android:label="SponsorHistoryFragment" />
 </navigation>

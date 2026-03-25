@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dashboard Screen -->
+    <string name="sponsor_dashboard_title">TRANG CHỦ</string>
+    <string name="sponsor_dashboard_register_donation">Đăng ký đóng góp</string>
+    <string name="sponsor_dashboard_history">Lịch sử đóng góp</string>
+    <string name="sponsor_dashboard_stats_title">THỐNG KÊ CÁ NHÂN</string>
+    <string name="sponsor_dashboard_total_contributions_label">Tổng số lần đóng góp</string>
+    <string name="sponsor_dashboard_total_contributions_value">24</string>
+    <string name="sponsor_dashboard_total_items_label">Tổng vật phẩm</string>
+    <string name="sponsor_dashboard_total_items_value">1.260</string>
+    <string name="sponsor_dashboard_reward_points_label">Điểm tích lũy</string>
+    <string name="sponsor_dashboard_reward_points_value">3.450</string>
+    <string name="sponsor_dashboard_recent_title">ĐÓNG GÓP GẦN NHẤT</string>
+
+    <!-- Recent Item -->
+    <string name="sponsor_recent_details">Chi tiết</string>
+    <string name="sponsor_recent_thumbnail_desc">Hình minh họa đóng góp</string>
+    <string name="sponsor_recent_status_stocked">Đã nhập kho</string>
+    <string name="sponsor_recent_status_shipping">Đang vận chuyển</string>
+    <string name="sponsor_recent_date_1">26/03/2026</string>
+    <string name="sponsor_recent_date_2">25/03/2026</string>
+    <string name="sponsor_recent_category_food">Thực phẩm</string>
+    <string name="sponsor_recent_category_clothes">Quần áo</string>
+    <string name="sponsor_recent_quantity_food">120 thùng mì gói</string>
+    <string name="sponsor_recent_quantity_clothes">200 bộ quần áo</string>
+</resources>

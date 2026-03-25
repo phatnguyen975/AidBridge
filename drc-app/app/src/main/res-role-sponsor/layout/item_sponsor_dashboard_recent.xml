@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/sponsor_recent_item_bottom_margin"
+    app:cardBackgroundColor="@color/bg_surface"
+    app:cardCornerRadius="@dimen/sponsor_recent_item_radius"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/border_default"
+    app:strokeWidth="@dimen/sponsor_recent_item_stroke_width">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/sponsor_recent_item_min_height"
+        android:orientation="vertical"
+        android:padding="@dimen/sponsor_recent_item_padding">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_top_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/sponsor_recent_thumbnail_size">
+
+            <LinearLayout
+                android:id="@+id/layout_left_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/sponsor_recent_text_end_margin"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_thumbnail"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/sponsor_recent_date_text_size" />
+
+                <TextView
+                    android:id="@+id/tv_primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sponsor_recent_middle_top_margin"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/sponsor_recent_primary_text_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sponsor_recent_middle_top_margin"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/sponsor_recent_secondary_text_size" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_thumbnail"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@string/sponsor_recent_thumbnail_desc"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/ic_launcher"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sponsor_recent_bottom_top_margin">
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_status_chip"
+                android:paddingStart="@dimen/sponsor_recent_status_chip_horizontal_padding"
+                android:paddingTop="@dimen/sponsor_recent_status_chip_vertical_padding"
+                android:paddingEnd="@dimen/sponsor_recent_status_chip_horizontal_padding"
+                android:paddingBottom="@dimen/sponsor_recent_status_chip_vertical_padding"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sponsor_recent_status_text_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/layout_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sponsor_recent_details"
+                    android:textColor="@color/text_link"
+                    android:textSize="@dimen/sponsor_recent_detail_text_size"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="@dimen/sponsor_recent_chevron_size"
+                    android:layout_height="@dimen/sponsor_recent_chevron_size"
+                    android:contentDescription="@string/sponsor_recent_details"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/text_link" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

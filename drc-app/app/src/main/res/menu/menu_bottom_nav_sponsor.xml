@@ -5,7 +5,15 @@
         android:icon="@drawable/ic_dashboard"
         android:title="@string/nav_dashboard" />
     <item
+        android:id="@+id/sponsorDonateFragment"
+        android:icon="@drawable/ic_hand_heart"
+        android:title="@string/nav_donate" />
+    <item
         android:id="@+id/sponsorMapFragment"
         android:icon="@drawable/ic_map"
         android:title="@string/nav_map" />
+    <item
+        android:id="@+id/sponsorProfileFragment"
+        android:icon="@drawable/ic_person"
+        android:title="@string/nav_profile" />
 </menu>

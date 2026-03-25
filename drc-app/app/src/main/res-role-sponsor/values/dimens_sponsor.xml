@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dashboard screen -->
+    <dimen name="sponsor_dashboard_screen_padding">16dp</dimen>
+    <dimen name="sponsor_dashboard_toolbar_height">56dp</dimen>
+    <dimen name="sponsor_dashboard_logo_size">36dp</dimen>
+    <dimen name="sponsor_dashboard_title_text_size">18sp</dimen>
+
+    <!-- Section spacing -->
+    <dimen name="sponsor_dashboard_section_spacing">16dp</dimen>
+    <dimen name="sponsor_dashboard_heading_top_margin">24dp</dimen>
+    <dimen name="sponsor_dashboard_card_top_margin">12dp</dimen>
+    <dimen name="sponsor_dashboard_card_gap">8dp</dimen>
+
+    <!-- Card -->
+    <dimen name="sponsor_dashboard_card_radius">16dp</dimen>
+    <dimen name="sponsor_dashboard_card_stroke_width">1dp</dimen>
+    <dimen name="sponsor_dashboard_card_inner_padding">16dp</dimen>
+
+    <!-- Quick actions -->
+    <dimen name="sponsor_dashboard_quick_action_height">108dp</dimen>
+    <dimen name="sponsor_dashboard_quick_action_icon_size">24dp</dimen>
+    <dimen name="sponsor_dashboard_quick_action_text_size">13sp</dimen>
+    <dimen name="sponsor_dashboard_quick_action_text_top_margin">8dp</dimen>
+
+    <!-- Stats -->
+    <dimen name="sponsor_dashboard_heading_text_size">14sp</dimen>
+    <dimen name="sponsor_dashboard_stat_label_text_size">13sp</dimen>
+    <dimen name="sponsor_dashboard_stat_primary_value_text_size">34sp</dimen>
+    <dimen name="sponsor_dashboard_stat_secondary_value_text_size">24sp</dimen>
+    <dimen name="sponsor_dashboard_value_top_margin">6dp</dimen>
+    <dimen name="sponsor_dashboard_stat_icon_size">20dp</dimen>
+    <dimen name="sponsor_dashboard_stat_icon_label_spacing">8dp</dimen>
+
+    <!-- Recent item -->
+    <dimen name="sponsor_recent_item_bottom_margin">12dp</dimen>
+    <dimen name="sponsor_recent_item_min_height">116dp</dimen>
+    <dimen name="sponsor_recent_item_padding">12dp</dimen>
+    <dimen name="sponsor_recent_item_radius">14dp</dimen>
+    <dimen name="sponsor_recent_item_stroke_width">1dp</dimen>
+    <dimen name="sponsor_recent_thumbnail_size">64dp</dimen>
+    <dimen name="sponsor_recent_text_end_margin">12dp</dimen>
+    <dimen name="sponsor_recent_date_text_size">11sp</dimen>
+    <dimen name="sponsor_recent_primary_text_size">16sp</dimen>
+    <dimen name="sponsor_recent_secondary_text_size">13sp</dimen>
+    <dimen name="sponsor_recent_status_text_size">12sp</dimen>
+    <dimen name="sponsor_recent_detail_text_size">12sp</dimen>
+    <dimen name="sponsor_recent_status_chip_horizontal_padding">10dp</dimen>
+    <dimen name="sponsor_recent_status_chip_vertical_padding">4dp</dimen>
+    <dimen name="sponsor_recent_chevron_size">16dp</dimen>
+    <dimen name="sponsor_recent_middle_top_margin">4dp</dimen>
+    <dimen name="sponsor_recent_bottom_top_margin">8dp</dimen>
+    <dimen name="sponsor_recent_status_chip_stroke_width">1dp</dimen>
+</resources>
