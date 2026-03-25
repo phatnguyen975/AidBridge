@@ -5,18 +5,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 
-import com.drc.aidbridge.databinding.FragmentSponsorHomeBinding;
+import com.drc.aidbridge.databinding.FragmentSponsorDashboardBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class SponsorHomeFragment extends BaseFragment<FragmentSponsorHomeBinding> {
+public class SponsorDashboardFragment extends BaseFragment<FragmentSponsorDashboardBinding> {
 
     @Nullable
     @Override
-    protected FragmentSponsorHomeBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
-        return FragmentSponsorHomeBinding.inflate(inflater, container, false);
+    protected FragmentSponsorDashboardBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
+        return FragmentSponsorDashboardBinding.inflate(inflater, container, false);
     }
 
     @Override

@@ -3,15 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_sponsor"
-    app:startDestination="@id/sponsorHomeFragment">
+    app:startDestination="@id/sponsorDashboardFragment">
 
     <fragment
-        android:id="@+id/sponsorHomeFragment"
-        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorHomeFragment"
-        android:label="SponsorHomeFragment" />
+        android:id="@+id/sponsorDashboardFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorDashboardFragment"
+        android:label="SponsorDashboardFragment" />
 
     <fragment
-        android:id="@+id/mapFragment"
+        android:id="@+id/sponsorMapFragment"
         android:name="com.drc.aidbridge.ui.map.fragment.SponsorMapFragment"
-        android:label="MapFragment" />
+        android:label="SponsorMapFragment" />
 </navigation>
