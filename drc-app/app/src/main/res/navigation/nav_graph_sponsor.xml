@@ -45,6 +45,16 @@
         android:label="SponsorProfileFragment" />
 
     <fragment
+        android:id="@+id/sponsorEditProfileFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorEditProfileFragment"
+        android:label="SponsorEditProfileFragment" />
+
+    <fragment
+        android:id="@+id/sponsorChangePasswordFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorChangePasswordFragment"
+        android:label="SponsorChangePasswordFragment" />
+
+    <fragment
         android:id="@+id/sponsorHistoryFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorHistoryFragment"
         android:label="SponsorHistoryFragment" />

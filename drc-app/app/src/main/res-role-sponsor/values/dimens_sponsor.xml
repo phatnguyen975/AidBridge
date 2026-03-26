@@ -130,4 +130,35 @@
     <dimen name="sponsor_qr_button_margin_top">20dp</dimen>
     <dimen name="sponsor_qr_button_margin_bottom">24dp</dimen>
     <dimen name="sponsor_qr_button_radius">14dp</dimen>
+
+    <!-- Sponsor Profile -->
+    <dimen name="sponsor_profile_content_padding">16dp</dimen>
+    <dimen name="sponsor_profile_toolbar_height">56dp</dimen>
+    <dimen name="sponsor_profile_toolbar_title_text_size">18sp</dimen>
+    <dimen name="sponsor_profile_divider_thickness">1dp</dimen>
+    <dimen name="sponsor_profile_card_radius">16dp</dimen>
+    <dimen name="sponsor_profile_card_padding">16dp</dimen>
+    <dimen name="sponsor_profile_card_margin_top">16dp</dimen>
+    <dimen name="sponsor_profile_avatar_size">112dp</dimen>
+    <dimen name="sponsor_profile_avatar_stroke">3dp</dimen>
+    <dimen name="sponsor_profile_avatar_inner_padding">2dp</dimen>
+    <dimen name="sponsor_profile_avatar_edit_size">28dp</dimen>
+    <dimen name="sponsor_profile_avatar_edit_icon_size">14dp</dimen>
+    <dimen name="sponsor_profile_name_margin_top">12dp</dimen>
+    <dimen name="sponsor_profile_name_text_size">20sp</dimen>
+    <dimen name="sponsor_profile_badge_margin_top">8dp</dimen>
+    <dimen name="sponsor_profile_badge_text_size">12sp</dimen>
+    <dimen name="sponsor_profile_badge_icon_size">14dp</dimen>
+    <dimen name="sponsor_profile_badge_stroke_width">1.5dp</dimen>
+    <dimen name="sponsor_profile_menu_row_height">56dp</dimen>
+    <dimen name="sponsor_profile_menu_icon_size">20dp</dimen>
+    <dimen name="sponsor_profile_menu_text_size">15sp</dimen>
+    <dimen name="sponsor_profile_menu_icon_gap">8dp</dimen>
+    <dimen name="sponsor_profile_logout_margin_top">24dp</dimen>
+    <dimen name="sponsor_profile_button_radius">14dp</dimen>
+
+    <!-- Sponsor Edit Profile -->
+    <dimen name="sponsor_profile_form_label_margin_bottom">8dp</dimen>
+    <dimen name="sponsor_profile_form_field_margin_bottom">16dp</dimen>
+    <dimen name="sponsor_profile_action_margin_top">16dp</dimen>
 </resources>
