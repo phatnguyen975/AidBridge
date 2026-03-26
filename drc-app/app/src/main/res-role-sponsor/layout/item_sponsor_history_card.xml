@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/sponsor_history_item_margin_bottom"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@color/bg_surface_elevated"
+    app:cardCornerRadius="@dimen/sponsor_history_item_radius"
+    app:cardElevation="2dp"
+    app:strokeColor="@color/border_default"
+    app:strokeWidth="@dimen/sponsor_hub_item_stroke_width">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/sponsor_history_item_padding">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_thumbnail"
+            android:layout_width="@dimen/sponsor_history_thumbnail_size"
+            android:layout_height="@dimen/sponsor_history_thumbnail_size"
+            android:contentDescription="@string/sponsor_history_thumbnail_desc"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearance="@style/ShapeAppearance.Material3.SmallComponent" />
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/sponsor_history_text_end_margin"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/sponsor_history_date_text_size"
+            app:layout_constraintEnd_toStartOf="@id/iv_thumbnail"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_category"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/sponsor_history_text_end_margin"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/sponsor_history_category_text_size"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/iv_thumbnail"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_date" />
+
+        <TextView
+            android:id="@+id/tv_quantity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/sponsor_history_text_end_margin"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/sponsor_history_quantity_text_size"
+            app:layout_constraintEnd_toStartOf="@id/iv_thumbnail"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_category" />
+
+        <LinearLayout
+            android:id="@+id/layout_hub"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sponsor_history_hub_margin_top"
+            android:layout_marginEnd="@dimen/sponsor_history_text_end_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toStartOf="@id/iv_thumbnail"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_quantity">
+
+            <ImageView
+                android:layout_width="@dimen/sponsor_history_hub_icon_size"
+                android:layout_height="@dimen/sponsor_history_hub_icon_size"
+                android:contentDescription="@string/sponsor_history_hub_icon_desc"
+                android:src="@drawable/ic_map_pin"
+                app:tint="@color/text_secondary" />
+
+            <TextView
+                android:id="@+id/tv_hub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_xs"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/sponsor_history_hub_text_size" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sponsor_history_chip_margin_top"
+            android:background="@drawable/bg_status_chip"
+            android:paddingStart="@dimen/sponsor_history_chip_horizontal_padding"
+            android:paddingTop="@dimen/sponsor_history_chip_vertical_padding"
+            android:paddingEnd="@dimen/sponsor_history_chip_horizontal_padding"
+            android:paddingBottom="@dimen/sponsor_history_chip_vertical_padding"
+            android:textColor="@color/hub_blue"
+            android:textSize="@dimen/sponsor_history_chip_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_hub" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

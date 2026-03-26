@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dashboard screen -->
+    <!-- Dashboard -->
     <dimen name="sponsor_dashboard_screen_padding">16dp</dimen>
     <dimen name="sponsor_dashboard_toolbar_height">56dp</dimen>
     <dimen name="sponsor_dashboard_logo_size">36dp</dimen>
@@ -161,4 +161,24 @@
     <dimen name="sponsor_profile_form_label_margin_bottom">8dp</dimen>
     <dimen name="sponsor_profile_form_field_margin_bottom">16dp</dimen>
     <dimen name="sponsor_profile_action_margin_top">16dp</dimen>
+
+    <!-- Sponsor History -->
+    <dimen name="sponsor_history_toolbar_height">56dp</dimen>
+    <dimen name="sponsor_history_toolbar_title_text_size">18sp</dimen>
+    <dimen name="sponsor_history_content_padding">16dp</dimen>
+    <dimen name="sponsor_history_item_margin_bottom">12dp</dimen>
+    <dimen name="sponsor_history_item_padding">16dp</dimen>
+    <dimen name="sponsor_history_item_radius">16dp</dimen>
+    <dimen name="sponsor_history_thumbnail_size">90dp</dimen>
+    <dimen name="sponsor_history_text_end_margin">12dp</dimen>
+    <dimen name="sponsor_history_date_text_size">12sp</dimen>
+    <dimen name="sponsor_history_category_text_size">18sp</dimen>
+    <dimen name="sponsor_history_quantity_text_size">14sp</dimen>
+    <dimen name="sponsor_history_hub_text_size">13sp</dimen>
+    <dimen name="sponsor_history_hub_icon_size">14dp</dimen>
+    <dimen name="sponsor_history_hub_margin_top">6dp</dimen>
+    <dimen name="sponsor_history_chip_margin_top">8dp</dimen>
+    <dimen name="sponsor_history_chip_text_size">12sp</dimen>
+    <dimen name="sponsor_history_chip_horizontal_padding">12dp</dimen>
+    <dimen name="sponsor_history_chip_vertical_padding">4dp</dimen>
 </resources>
