@@ -82,14 +82,8 @@ public class SponsorHistoryFragment extends BaseFragment<FragmentSponsorHistoryB
 
     private void onHistoryItemClicked(@NonNull SponsorHistoryAdapter.HistoryItem item) {
         if (item.status.equals(getString(R.string.sponsor_history_status_pending))) {
-            boolean navigated = navigateSafely(R.id.sponsorQrCodeFragment);
-            if (!navigated) {
-                navigateToDestinationSafely(R.id.sponsorQrCodeFragment);
-            }
-            return;
+            navigateToDestinationSafely(R.id.sponsorQrCodeFragment);
         }
-
-        showToast(getString(R.string.sponsor_history_detail_toast));
     }
 
     private void loadMockData() {

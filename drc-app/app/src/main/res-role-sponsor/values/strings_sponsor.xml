@@ -112,7 +112,6 @@
     <string name="sponsor_history_status_shipping">Đang vận chuyển</string>
     <string name="sponsor_history_status_arrived">Đã đến nơi</string>
     <string name="sponsor_history_quantity_prefix">Số lượng:</string>
-    <string name="sponsor_history_detail_toast">Chi tiết đơn hàng</string>
     <string name="sponsor_history_thumbnail_desc">Ảnh vật phẩm đóng góp</string>
     <string name="sponsor_history_hub_icon_desc">Biểu tượng trạm nhận</string>
 </resources>
