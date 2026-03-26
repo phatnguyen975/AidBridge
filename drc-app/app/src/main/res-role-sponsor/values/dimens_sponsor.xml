@@ -76,4 +76,58 @@
     <dimen name="sponsor_donate_dashed_border_dash_gap">4dp</dimen>
     <dimen name="sponsor_donate_dropdown_option_padding_start">20dp</dimen>
     <dimen name="sponsor_donate_dropdown_option_padding_vertical">12dp</dimen>
+
+    <!-- Sponsor Hub Selection -->
+    <dimen name="sponsor_hub_sheet_corner_radius">24dp</dimen>
+    <dimen name="sponsor_hub_sheet_padding_horizontal">16dp</dimen>
+    <dimen name="sponsor_hub_sheet_padding_top">12dp</dimen>
+    <dimen name="sponsor_hub_sheet_padding_bottom">16dp</dimen>
+    <dimen name="sponsor_hub_drag_handle_width">48dp</dimen>
+    <dimen name="sponsor_hub_drag_handle_height">5dp</dimen>
+    <dimen name="sponsor_hub_drag_handle_radius">100dp</dimen>
+    <dimen name="sponsor_hub_drag_handle_margin_bottom">12dp</dimen>
+    <dimen name="sponsor_hub_title_text_size">20sp</dimen>
+    <dimen name="sponsor_hub_title_margin_bottom">16dp</dimen>
+    <dimen name="sponsor_hub_item_margin_bottom">8dp</dimen>
+    <dimen name="sponsor_hub_item_radius">14dp</dimen>
+    <dimen name="sponsor_hub_item_stroke_width">1dp</dimen>
+    <dimen name="sponsor_hub_item_selected_stroke_width">2dp</dimen>
+    <dimen name="sponsor_hub_item_padding">14dp</dimen>
+    <dimen name="sponsor_hub_icon_size">24dp</dimen>
+    <dimen name="sponsor_hub_name_text_size">16sp</dimen>
+    <dimen name="sponsor_hub_distance_text_size">13sp</dimen>
+    <dimen name="sponsor_hub_pin_icon_size">14dp</dimen>
+    <dimen name="sponsor_hub_distance_top_margin">5dp</dimen>
+    <dimen name="sponsor_hub_badge_top_margin">8dp</dimen>
+    <dimen name="sponsor_hub_badge_text_size">11sp</dimen>
+    <dimen name="sponsor_hub_badge_padding_horizontal">10dp</dimen>
+    <dimen name="sponsor_hub_badge_padding_vertical">8dp</dimen>
+    <dimen name="sponsor_hub_badge_min_height">24dp</dimen>
+    <dimen name="sponsor_hub_button_radius">14dp</dimen>
+
+    <!-- Sponsor QR Screen -->
+    <dimen name="sponsor_qr_toolbar_height">56dp</dimen>
+    <dimen name="sponsor_qr_toolbar_title_text_size">18sp</dimen>
+    <dimen name="sponsor_qr_toolbar_icon_size">24dp</dimen>
+    <dimen name="sponsor_qr_section_padding_horizontal">16dp</dimen>
+    <dimen name="sponsor_qr_title_text_size">24sp</dimen>
+    <dimen name="sponsor_qr_title_margin_top">24dp</dimen>
+    <dimen name="sponsor_qr_title_margin_bottom">20dp</dimen>
+    <dimen name="sponsor_qr_card_size">200dp</dimen>
+    <dimen name="sponsor_qr_image_size">150dp</dimen>
+    <dimen name="sponsor_qr_card_inner_padding">2dp</dimen>
+    <dimen name="sponsor_qr_toolbar_logo_size">36dp</dimen>
+    <dimen name="sponsor_qr_instruction_margin_top">20dp</dimen>
+    <dimen name="sponsor_qr_instruction_padding">12dp</dimen>
+    <dimen name="sponsor_qr_summary_margin_top">16dp</dimen>
+    <dimen name="sponsor_qr_summary_radius">14dp</dimen>
+    <dimen name="sponsor_qr_summary_padding_horizontal">14dp</dimen>
+    <dimen name="sponsor_qr_summary_padding_vertical">12dp</dimen>
+    <dimen name="sponsor_qr_row_label_text_size">14sp</dimen>
+    <dimen name="sponsor_qr_row_value_text_size">14sp</dimen>
+    <dimen name="sponsor_qr_row_spacing">10dp</dimen>
+    <dimen name="sponsor_qr_divider_margin_vertical">8dp</dimen>
+    <dimen name="sponsor_qr_button_margin_top">20dp</dimen>
+    <dimen name="sponsor_qr_button_margin_bottom">24dp</dimen>
+    <dimen name="sponsor_qr_button_radius">14dp</dimen>
 </resources>

@@ -22,7 +22,17 @@
     <fragment
         android:id="@+id/sponsorDonateFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorDonateFragment"
-        android:label="SponsorDonateFragment" />
+        android:label="SponsorDonateFragment">
+
+        <action
+            android:id="@+id/action_sponsor_donate_to_qr"
+            app:destination="@id/sponsorQrCodeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/sponsorQrCodeFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorQrCodeFragment"
+        android:label="SponsorQrCodeFragment" />
 
     <fragment
         android:id="@+id/sponsorMapFragment"

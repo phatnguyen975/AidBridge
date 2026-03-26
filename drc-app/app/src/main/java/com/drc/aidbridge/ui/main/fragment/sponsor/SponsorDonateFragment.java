@@ -9,7 +9,6 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.navigation.NavController;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentSponsorDonateBinding;
@@ -28,12 +27,7 @@ public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBin
 
     @Override
     protected void setupViews() {
-        binding.ivBack.setOnClickListener(v -> {
-            NavController navController = getViewNavController();
-            if (navController != null) {
-                navController.popBackStack();
-            }
-        });
+        binding.ivBack.setOnClickListener(v -> popBackStackSafely());
 
         setupCategoryDropdown();
 
@@ -47,7 +41,7 @@ public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBin
 
         binding.btnSubmitDonate.setOnClickListener(v -> {
             showToast("Đang xử lý...");
-            navigateToSponsorHubSelectionBottomSheet();
+            openSponsorHubSelectionBottomSheet();
         });
     }
 
@@ -74,15 +68,13 @@ public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBin
         binding.tvCategoryDropdown.setAdapter(adapter);
     }
 
-    private void navigateToSponsorHubSelectionBottomSheet() {
-        int destinationId = requireContext().getResources().getIdentifier(
-                "sponsorHubSelectionBottomSheet",
-                "id",
-                requireContext().getPackageName()
-        );
-
-        if (destinationId != 0) {
-            navigateToDestinationSafely(destinationId);
+    private void openSponsorHubSelectionBottomSheet() {
+        if (!isAdded()) {
+            return;
+        }
+        if (getChildFragmentManager().findFragmentByTag(SponsorHubSelectionBottomSheet.class.getSimpleName()) == null) {
+            new SponsorHubSelectionBottomSheet()
+                    .show(getChildFragmentManager(), SponsorHubSelectionBottomSheet.class.getSimpleName());
         }
     }
 

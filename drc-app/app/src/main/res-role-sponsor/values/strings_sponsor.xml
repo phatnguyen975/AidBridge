@@ -51,4 +51,32 @@
     <string name="sponsor_donate_placeholder_description">Ghi chú về tình trạng, hạn sử dụng...</string>
     <string name="sponsor_donate_placeholder_expected_time">Chọn ngày giờ dự kiến</string>
     <string name="sponsor_donate_upload_subtext">PNG, JPG tối đa 5MB</string>
+
+    <!-- Sponsor Hub Selection & QR Flow -->
+    <string name="sponsor_hub_selection_title">Chọn trạm tập kết</string>
+    <string name="sponsor_hub_urgency_badge">Đang thiếu hụt</string>
+    <string name="sponsor_hub_confirm_generate_qr">XÁC NHẬN &amp; TẠO MÃ QR</string>
+
+    <string name="sponsor_qr_toolbar_title">QUYÊN GÓP</string>
+    <string name="sponsor_qr_title">MÃ QR CỦA BẠN</string>
+    <string name="sponsor_qr_instruction">Vui lòng đưa mã này cho nhân viên trạm để xác nhận quyên góp</string>
+    <string name="sponsor_qr_donation_code_label">Mã quyên góp</string>
+    <string name="sponsor_qr_save_button">LƯU MÃ QR</string>
+
+    <string name="sponsor_hub_name_1">Trạm tập kết Quận 1</string>
+    <string name="sponsor_hub_name_2">Trạm tập kết Bình Thạnh</string>
+    <string name="sponsor_hub_name_3">Trạm tập kết Thủ Đức</string>
+    <string name="sponsor_hub_distance_1">Cách bạn 2.5 km</string>
+    <string name="sponsor_hub_distance_2">Cách bạn 4.1 km</string>
+    <string name="sponsor_hub_distance_3">Cách bạn 5.8 km</string>
+
+    <string name="sponsor_qr_mock_donation_code">#DON-99281</string>
+    <string name="sponsor_qr_mock_item_type">Thực phẩm</string>
+    <string name="sponsor_qr_mock_quantity">50 Thùng</string>
+
+    <string name="sponsor_hub_icon_desc">Biểu tượng trạm tập kết</string>
+    <string name="sponsor_hub_pin_icon_desc">Biểu tượng khoảng cách</string>
+    <string name="sponsor_qr_close_desc">Đóng màn hình QR</string>
+    <string name="sponsor_qr_download_icon_desc">Tải mã QR</string>
+    <string name="sponsor_hub_drag_handle_desc">Thanh kéo BottomSheet</string>
 </resources>
