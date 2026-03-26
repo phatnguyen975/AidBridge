@@ -51,4 +51,29 @@
     <dimen name="sponsor_recent_middle_top_margin">4dp</dimen>
     <dimen name="sponsor_recent_bottom_top_margin">8dp</dimen>
     <dimen name="sponsor_recent_status_chip_stroke_width">1dp</dimen>
+
+    <!-- Donate form -->
+    <dimen name="sponsor_donate_content_padding">16dp</dimen>
+    <dimen name="sponsor_donate_form_padding">16dp</dimen>
+    <dimen name="sponsor_donate_toolbar_bottom_margin">24dp</dimen>
+    <dimen name="sponsor_donate_field_margin_bottom">16dp</dimen>
+    <dimen name="sponsor_donate_double_field_gap">8dp</dimen>
+    <dimen name="sponsor_donate_upload_padding">24dp</dimen>
+    <dimen name="sponsor_donate_upload_padding_large">32dp</dimen>
+    <dimen name="sponsor_donate_upload_icon_size">24dp</dimen>
+    <dimen name="sponsor_donate_info_icon_size">16dp</dimen>
+    <dimen name="sponsor_donate_info_text_start_margin">8dp</dimen>
+    <dimen name="sponsor_donate_expected_margin_bottom">32dp</dimen>
+    <dimen name="sponsor_donate_preview_item_size">80dp</dimen>
+    <dimen name="sponsor_donate_preview_item_corner">12dp</dimen>
+    <dimen name="sponsor_donate_preview_item_stroke">1dp</dimen>
+    <dimen name="sponsor_donate_preview_item_gap">8dp</dimen>
+    <dimen name="sponsor_donate_preview_close_size">20dp</dimen>
+    <dimen name="sponsor_donate_preview_close_icon_size">14dp</dimen>
+    <dimen name="sponsor_donate_divider_thickness">1dp</dimen>
+    <dimen name="sponsor_donate_dashed_border_width">1dp</dimen>
+    <dimen name="sponsor_donate_dashed_border_dash_width">6dp</dimen>
+    <dimen name="sponsor_donate_dashed_border_dash_gap">4dp</dimen>
+    <dimen name="sponsor_donate_dropdown_option_padding_start">20dp</dimen>
+    <dimen name="sponsor_donate_dropdown_option_padding_vertical">12dp</dimen>
 </resources>

@@ -24,4 +24,31 @@
     <string name="sponsor_recent_category_clothes">Quần áo</string>
     <string name="sponsor_recent_quantity_food">120 thùng mì gói</string>
     <string name="sponsor_recent_quantity_clothes">200 bộ quần áo</string>
+
+    <!-- Donate Form -->
+    <string name="sponsor_donate_title">ĐĂNG KÝ ĐÓNG GÓP</string>
+    <string name="sponsor_donate_category_label">Loại vật phẩm</string>
+    <string name="sponsor_donate_quantity_label">Số lượng</string>
+    <string name="sponsor_donate_unit_label">Đơn vị tính</string>
+    <string name="sponsor_donate_description_label">Mô tả chi tiết</string>
+    <string name="sponsor_donate_upload_label">Tải ảnh lên hoặc chụp mới</string>
+    <string name="sponsor_donate_upload_hint">Giúp nhân viên trạm dễ dàng xác nhận</string>
+    <string name="sponsor_donate_expected_time_label">Thời gian giao hàng</string>
+    <string name="sponsor_donate_submit">GỬI ĐĂNG KÝ</string>
+
+    <string name="sponsor_donate_category_food">Thực phẩm</string>
+    <string name="sponsor_donate_category_water">Nước uống</string>
+    <string name="sponsor_donate_category_medicine">Thuốc men</string>
+    <string name="sponsor_donate_category_clothes">Quần áo</string>
+
+    <string name="sponsor_donate_preview_thumbnail_desc">Ảnh minh họa vật phẩm</string>
+    <string name="sponsor_donate_close_preview_desc">Xóa ảnh</string>
+
+    <string name="sponsor_donate_image_real_label">Ảnh thực tế</string>
+    <string name="sponsor_donate_placeholder_category">Chọn loại vật phẩm</string>
+    <string name="sponsor_donate_placeholder_quantity">VD: 100</string>
+    <string name="sponsor_donate_placeholder_unit">VD: Thùng</string>
+    <string name="sponsor_donate_placeholder_description">Ghi chú về tình trạng, hạn sử dụng...</string>
+    <string name="sponsor_donate_placeholder_expected_time">Chọn ngày giờ dự kiến</string>
+    <string name="sponsor_donate_upload_subtext">PNG, JPG tối đa 5MB</string>
 </resources>

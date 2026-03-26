@@ -1,13 +1,321 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_primary">
+    android:background="@color/bg_primary"
+    android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="SPONSOR DONATE SCREEN"
-        android:textColor="@color/text_primary" />
-</FrameLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sponsor_dashboard_toolbar_height"
+        android:paddingStart="@dimen/sponsor_donate_content_padding"
+        android:paddingEnd="@dimen/sponsor_donate_content_padding">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="@dimen/sponsor_dashboard_quick_action_icon_size"
+            android:layout_height="@dimen/sponsor_dashboard_quick_action_icon_size"
+            android:contentDescription="@string/btn_back"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/text_primary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sponsor_donate_title"
+            android:textAllCaps="true"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/sponsor_dashboard_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sponsor_donate_divider_thickness"
+        android:background="@color/border_default"
+        app:dividerColor="@color/border_default"
+        app:dividerThickness="@dimen/sponsor_donate_divider_thickness" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/sponsor_donate_form_padding"
+            android:paddingTop="@dimen/sponsor_donate_toolbar_bottom_margin"
+            android:paddingEnd="@dimen/sponsor_donate_form_padding"
+            android:paddingBottom="@dimen/sponsor_donate_form_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/sponsor_donate_double_field_gap"
+                android:text="@string/sponsor_donate_category_label"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/sponsor_dashboard_stat_label_text_size"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:id="@+id/tilCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/sponsor_donate_field_margin_bottom">
+
+                <AutoCompleteTextView
+                    android:id="@+id/tvCategoryDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:hint="@string/sponsor_donate_placeholder_category"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/sponsor_donate_field_margin_bottom"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/sponsor_donate_double_field_gap"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/sponsor_donate_double_field_gap"
+                        android:text="@string/sponsor_donate_quantity_label"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/sponsor_dashboard_stat_label_text_size"
+                        android:textStyle="bold" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:id="@+id/tilQuantity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etQuantity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/sponsor_donate_placeholder_quantity"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sponsor_donate_double_field_gap"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/sponsor_donate_double_field_gap"
+                        android:text="@string/sponsor_donate_unit_label"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/sponsor_dashboard_stat_label_text_size"
+                        android:textStyle="bold" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:id="@+id/tilUnit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etUnit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/sponsor_donate_placeholder_unit" />
+                </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/sponsor_donate_double_field_gap"
+                android:text="@string/sponsor_donate_description_label"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/sponsor_dashboard_stat_label_text_size"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:id="@+id/tilDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/sponsor_donate_field_margin_bottom">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:hint="@string/sponsor_donate_placeholder_description"
+                    android:minLines="3" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/sponsor_donate_double_field_gap"
+                android:text="@string/sponsor_donate_image_real_label"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/sponsor_dashboard_stat_label_text_size"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/sponsor_donate_field_margin_bottom"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ll_image_preview_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/sponsor_donate_double_field_gap"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/sponsor_donate_double_field_gap"
+                    android:visibility="gone" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_dashed_border">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardImageUpload"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/sponsor_donate_dashed_border_width"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:alpha="0.88"
+                        app:cardBackgroundColor="@color/bg_surface_elevated"
+                        app:cardCornerRadius="@dimen/sponsor_dashboard_card_radius"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="@dimen/sponsor_donate_upload_padding">
+
+                            <ImageView
+                                android:layout_width="@dimen/sponsor_donate_upload_icon_size"
+                                android:layout_height="@dimen/sponsor_donate_upload_icon_size"
+                                android:contentDescription="@string/sponsor_donate_upload_label"
+                                android:src="@drawable/ic_upload"
+                                app:tint="@color/color_primary" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/sponsor_donate_double_field_gap"
+                                android:text="@string/sponsor_donate_upload_label"
+                                android:textColor="@color/text_primary"
+                                android:textSize="@dimen/sponsor_dashboard_stat_label_text_size" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_xs"
+                                android:text="@string/sponsor_donate_upload_subtext"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/text_sm" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sponsor_donate_double_field_gap"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/sponsor_donate_info_icon_size"
+                        android:layout_height="@dimen/sponsor_donate_info_icon_size"
+                        android:contentDescription="@string/sponsor_donate_upload_hint"
+                        android:src="@drawable/ic_info"
+                        app:tint="@color/text_secondary" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sponsor_donate_info_text_start_margin"
+                        android:layout_weight="1"
+                        android:text="@string/sponsor_donate_upload_hint"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/sponsor_dashboard_stat_label_text_size" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/sponsor_donate_double_field_gap"
+                android:text="@string/sponsor_donate_expected_time_label"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/sponsor_dashboard_stat_label_text_size"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:id="@+id/tilExpectedTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/sponsor_donate_expected_margin_bottom"
+                app:endIconDrawable="@drawable/ic_calendar"
+                app:endIconMode="custom">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etExpectedTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/sponsor_donate_placeholder_expected_time"
+                    android:focusable="false"
+                    android:clickable="false" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSubmitDonate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="@dimen/spacing_md"
+                android:text="@string/sponsor_donate_submit"
+                android:textAllCaps="false" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

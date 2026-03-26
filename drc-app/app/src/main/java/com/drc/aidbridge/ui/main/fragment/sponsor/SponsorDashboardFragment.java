@@ -29,10 +29,10 @@ public class SponsorDashboardFragment extends BaseFragment<FragmentSponsorDashbo
 
     @Override
     protected void setupViews() {
-        binding.cardRegisterDonation.setOnClickListener(v -> navigateSafely(R.id.sponsorDonateFragment));
-        binding.cardDonationHistory.setOnClickListener(v -> navigateSafely(R.id.sponsorHistoryFragment));
+        binding.cardRegisterDonation.setOnClickListener(v -> navigateToDestinationSafely(R.id.sponsorDonateFragment));
+        binding.cardDonationHistory.setOnClickListener(v -> navigateToDestinationSafely(R.id.sponsorHistoryFragment));
 
-        sponsorRecentAdapter = new SponsorRecentAdapter(item -> navigateSafely(R.id.sponsorHistoryFragment));
+        sponsorRecentAdapter = new SponsorRecentAdapter(item -> navigateToDestinationSafely(R.id.sponsorHistoryFragment));
         binding.rvRecentDonations.setAdapter(sponsorRecentAdapter);
 
         loadMockRecentData();
