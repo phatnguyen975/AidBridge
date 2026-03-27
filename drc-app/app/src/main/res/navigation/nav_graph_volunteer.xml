@@ -14,6 +14,10 @@
             android:id="@+id/action_dashboard_to_history"
             app:destination="@id/volunteerMissionHistoryFragment" />
 
+        <action
+            android:id="@+id/action_dashboard_to_sos_acceptance"
+            app:destination="@id/volunteerSosMissionFragment" />
+
     </fragment>
 
     <fragment
@@ -30,5 +34,10 @@
         android:id="@+id/volunteerMissionHistoryFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerHistoryFragment"
         android:label="Volunteer Mission History" />
+
+    <fragment
+        android:id="@+id/volunteerSosMissionFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerSosAcceptanceFragment"
+        android:label="Volunteer Sos Acceptance" />
 
 </navigation>

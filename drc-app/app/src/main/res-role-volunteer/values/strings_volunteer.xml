@@ -63,4 +63,29 @@
     <string name="volunteer_mission_dummy_time_4">Trang %1$d • 02:10 chiều</string>
     <string name="volunteer_mission_dummy_time_5">Trang %1$d • 05:00 chiều</string>
     <string name="volunteer_mission_dummy_time_6">Trang %1$d • 08:20 tối</string>
+
+    <!-- Volunteer SOS Acceptance -->
+    <string name="volunteer_sos_acceptance_title">Nhiệm vụ mới</string>
+    <string name="volunteer_sos_acceptance_timer_minutes_value">00</string>
+    <string name="volunteer_sos_acceptance_timer_seconds_value">60</string>
+    <string name="volunteer_sos_acceptance_timer_minutes_label">Phút</string>
+    <string name="volunteer_sos_acceptance_timer_seconds_label">Giây</string>
+    <string name="volunteer_sos_acceptance_timer_description">Thời gian xác nhận còn lại</string>
+    <string name="volunteer_sos_acceptance_map_placeholder">Map Placeholder</string>
+    <string name="volunteer_sos_acceptance_distance">1.5 km</string>
+    <string name="volunteer_sos_acceptance_mission_badge">Khẩn cấp</string>
+    <string name="volunteer_sos_acceptance_mission_id">ID: #DRC-2024</string>
+    <string name="volunteer_sos_acceptance_mission_title">Nhiệm vụ cứu hộ</string>
+    <string name="volunteer_sos_acceptance_victim_label">Nạn nhân</string>
+    <string name="volunteer_sos_acceptance_victim_name">Nguyễn Văn A</string>
+    <string name="volunteer_sos_acceptance_note_label">Ghi chú vị trí</string>
+    <string name="volunteer_sos_acceptance_note_value">&quot;Nhà cổng xanh, đối diện tiệm thuốc&quot;</string>
+    <string name="volunteer_sos_acceptance_btn_accept">Chấp nhận nhiệm vụ</string>
+    <string name="volunteer_sos_acceptance_btn_decline">Từ chối</string>
+    <string name="volunteer_sos_acceptance_mission_badge_supply">Tiếp tế</string>
+    <string name="volunteer_sos_acceptance_mission_title_supply">Tiếp tế nhu yếu phẩm</string>
+    <string name="volunteer_sos_acceptance_toast_accept_success">Bạn đã chấp nhận nhiệm vụ thành công</string>
+    <string name="volunteer_sos_acceptance_icon_desc">Biểu tượng thông tin nhiệm vụ</string>
+    <string name="volunteer_sos_acceptance_accept_icon_desc">Biểu tượng chấp nhận nhiệm vụ</string>
+    <string name="volunteer_sos_acceptance_decline_icon_desc">Biểu tượng từ chối nhiệm vụ</string>
 </resources>

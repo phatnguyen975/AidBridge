@@ -26,4 +26,38 @@
     <dimen name="volunteer_mission_history_badge_text_size">11sp</dimen>
     <dimen name="volunteer_mission_history_location_text_size">16sp</dimen>
     <dimen name="volunteer_mission_history_datetime_text_size">13sp</dimen>
+
+    <!-- Volunteer SOS Acceptance Dimensions -->
+    <dimen name="volunteer_sos_acceptance_horizontal_padding">20dp</dimen>
+    <dimen name="volunteer_sos_acceptance_header_top_margin">16dp</dimen>
+    <dimen name="volunteer_sos_acceptance_title_text_size">28sp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_section_top_margin">18dp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_card_size">72dp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_gap">14dp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_card_radius">16dp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_value_size">34sp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_unit_size">12sp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_desc_size">16sp</dimen>
+    <dimen name="volunteer_sos_acceptance_map_top_margin">18dp</dimen>
+    <dimen name="volunteer_sos_acceptance_map_height">190dp</dimen>
+    <dimen name="volunteer_sos_acceptance_map_radius">16dp</dimen>
+    <dimen name="volunteer_sos_acceptance_map_placeholder_size">16sp</dimen>
+    <dimen name="volunteer_sos_acceptance_distance_badge_radius">18dp</dimen>
+    <dimen name="volunteer_sos_acceptance_distance_text_size">14sp</dimen>
+    <dimen name="volunteer_sos_acceptance_card_top_margin">14dp</dimen>
+    <dimen name="volunteer_sos_acceptance_card_radius">18dp</dimen>
+    <dimen name="volunteer_sos_acceptance_card_padding">16dp</dimen>
+    <dimen name="volunteer_sos_acceptance_mission_badge_text_size">12sp</dimen>
+    <dimen name="volunteer_sos_acceptance_mission_title_size">16sp</dimen>
+    <dimen name="volunteer_sos_acceptance_mission_id_size">12sp</dimen>
+    <dimen name="volunteer_sos_acceptance_info_box_radius">14dp</dimen>
+    <dimen name="volunteer_sos_acceptance_info_box_padding">12dp</dimen>
+    <dimen name="volunteer_sos_acceptance_icon_size">20dp</dimen>
+    <dimen name="volunteer_sos_acceptance_label_text_size">14sp</dimen>
+    <dimen name="volunteer_sos_acceptance_value_text_size">20sp</dimen>
+    <dimen name="volunteer_sos_acceptance_note_value_text_size">15sp</dimen>
+    <dimen name="volunteer_sos_acceptance_button_height">56dp</dimen>
+    <dimen name="volunteer_sos_acceptance_button_radius">12dp</dimen>
+    <dimen name="volunteer_sos_acceptance_button_text_size">16sp</dimen>
+    <dimen name="volunteer_sos_acceptance_button_icon_size">18dp</dimen>
 </resources>

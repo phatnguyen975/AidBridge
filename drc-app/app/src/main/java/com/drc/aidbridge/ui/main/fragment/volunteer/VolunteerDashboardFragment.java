@@ -1,5 +1,6 @@
 package com.drc.aidbridge.ui.main.fragment.volunteer;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -39,6 +40,8 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
     }
 
     private void setupClickListeners() {
+        String mockNotiType = "RESCUE";
+
         binding.switchOnlineStatus.setOnCheckedChangeListener((buttonView, isChecked) -> {
             updateStatusUI(isChecked);
             showToast(getString(isChecked
@@ -46,28 +49,39 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
                     : com.drc.aidbridge.R.string.volunteer_dashboard_toast_mode_offline));
         });
 
-        binding.cardUserInfo.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_view_profile)));
+        binding.cardUserInfo.setOnClickListener(
+                v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_view_profile)));
 
-        binding.cardCurrentMission.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_open_current_missions)));
+        binding.cardCurrentMission.setOnClickListener(
+                v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_open_current_missions)));
 
-        //binding.cardCompleted.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_open_completed_missions)));
+        // binding.cardCompleted.setOnClickListener(v ->
+        // showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_open_completed_missions)));
         binding.cardCompleted.setOnClickListener(v -> navigateSafely(R.id.action_dashboard_to_history));
 
-        binding.tvSeeAll.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_see_all_notifications)));
+        binding.tvSeeAll.setOnClickListener(
+                v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_see_all_notifications)));
 
-        binding.btnDetails.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_view_mission_detail)));
+        binding.btnDetails.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("missionType", mockNotiType);
+            navigateSafely(R.id.action_dashboard_to_sos_acceptance, bundle);
+        });
 
-        binding.btnLogout.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_logout)));
+        binding.btnLogout.setOnClickListener(
+                v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_logout)));
     }
 
     private void updateStatusUI(boolean isOnline) {
         if (isOnline) {
-            binding.tvStatusDescription.setText(com.drc.aidbridge.R.string.volunteer_dashboard_status_online_placeholder);
+            binding.tvStatusDescription
+                    .setText(com.drc.aidbridge.R.string.volunteer_dashboard_status_online_placeholder);
             binding.viewStatusIndicator.setBackgroundResource(com.drc.aidbridge.R.drawable.bg_circle_status_online);
             binding.btnReady.setAlpha(1.0f);
             binding.btnOffline.setAlpha(0.5f);
         } else {
-            binding.tvStatusDescription.setText(com.drc.aidbridge.R.string.volunteer_dashboard_status_offline_placeholder);
+            binding.tvStatusDescription
+                    .setText(com.drc.aidbridge.R.string.volunteer_dashboard_status_offline_placeholder);
             binding.viewStatusIndicator.setBackgroundResource(com.drc.aidbridge.R.drawable.bg_circle_status_offline);
             binding.btnReady.setAlpha(0.5f);
             binding.btnOffline.setAlpha(1.0f);
