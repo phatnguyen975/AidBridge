@@ -1,19 +1,18 @@
 package com.drc.aidbridge.ui.main.fragment.volunteer;
 
+import android.view.View;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVolunteerHistoryBinding;
-import com.drc.aidbridge.databinding.ItemVolunteerMissionHistoryBinding;
+import com.drc.aidbridge.ui.main.adapter.volunteer.VolunteerMissionHistoryAdapter;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.google.android.material.chip.Chip;
 
@@ -21,13 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import javax.inject.Inject;
 
 @AndroidEntryPoint
 public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHistoryBinding> {
 
     private static final String TAG = "VolunteerHistory";
-    private static final String TYPE_RESCUE = "rescue";
-    private static final String TYPE_DELIVERY = "delivery";
+
+    private int currentPage = 1;
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
+    private String currentFilter = "";
+
+    @Inject
+    VolunteerMissionHistoryAdapter volunteerMissionHistoryAdapter;
 
     @Override
     protected FragmentVolunteerHistoryBinding inflateBinding(LayoutInflater inflater, @Nullable ViewGroup container) {
@@ -36,8 +42,8 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
 
     @Override
     protected void setupViews() {
+        onInitUI();
         setupToolbar();
-        setupRecyclerView();
         setupFilterLogging();
     }
 
@@ -46,13 +52,50 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
         // TODO: Inject ViewModel và observe LiveData cho danh sách lịch sử từ UseCase
     }
 
-    private void setupToolbar() {
-        binding.toolbarVolunteerHistory.setNavigationOnClickListener(v -> popBackStackSafely());
+    private void onInitUI() {
+        resetScreenState();
+        binding.rvHistory.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvHistory.setAdapter(volunteerMissionHistoryAdapter);
+        setupRecyclerViewScrollListener();
+        currentFilter = getString(R.string.volunteer_history_filter_all);
+        loadData();
     }
 
-    private void setupRecyclerView() {
-        binding.rvVolunteerMissionHistory.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.rvVolunteerMissionHistory.setAdapter(new MissionHistoryAdapter(createDemoData()));
+    private void resetScreenState() {
+        currentPage = 1;
+        isLoading = false;
+        isLastPage = false;
+        currentFilter = getString(R.string.volunteer_history_filter_all);
+    }
+
+    private void setupRecyclerViewScrollListener() {
+        binding.rvHistory.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy <= 0 || isLoading || isLastPage) {
+                    return;
+                }
+
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (layoutManager == null) {
+                    return;
+                }
+
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
+                    currentPage++;
+                    loadData();
+                }
+            }
+        });
+    }
+
+    private void setupToolbar() {
+        binding.toolbarVolunteerHistory.setNavigationOnClickListener(v -> popBackStackSafely());
     }
 
     private void setupFilterLogging() {
@@ -66,134 +109,99 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
             Chip selectedChip = group.findViewById(selectedId);
             String selectedText = selectedChip != null ? selectedChip.getText().toString() : "unknown";
             Log.d(TAG, "Filter selected: " + selectedText + " (id=" + selectedId + ")");
+
+            volunteerMissionHistoryAdapter.clear();
+            currentPage = 1;
+            isLastPage = false;
+            currentFilter = selectedText;
+            loadData();
+
+            // TODO: Gọi viewModel.fetchHistory(type) và observe dữ liệu để cập nhật vào
+            // volunteerMissionHistoryAdapter.setMissionList()
         });
     }
 
-    private List<MissionHistory> createDemoData() {
-        List<MissionHistory> missions = new ArrayList<>();
+    private void loadData() {
+        if (isLoading || isLastPage) {
+            return;
+        }
 
-        missions.add(new MissionHistory(
-                TYPE_RESCUE,
-                getString(R.string.volunteer_mission_history_location_placeholder),
-                getString(R.string.volunteer_mission_history_datetime_placeholder),
+        isLoading = true;
+        binding.paginationProgress.setVisibility(View.VISIBLE);
+
+        List<VolunteerMissionHistoryAdapter.MissionHistoryModel> pageData = generateDummyData(currentPage,
+                currentFilter);
+        if (pageData.isEmpty()) {
+            isLastPage = true;
+        } else {
+            volunteerMissionHistoryAdapter.addItems(pageData);
+            if (currentPage >= 4) {
+                isLastPage = true;
+            }
+        }
+
+        isLoading = false;
+        binding.paginationProgress.setVisibility(View.GONE);
+    }
+
+    private List<VolunteerMissionHistoryAdapter.MissionHistoryModel> generateDummyData(int page,
+            @NonNull String filter) {
+        List<VolunteerMissionHistoryAdapter.MissionHistoryModel> allItems = new ArrayList<>();
+
+        String typeRescue = getString(R.string.volunteer_mission_type_rescue);
+        String typeDelivery = getString(R.string.volunteer_mission_type_delivery);
+
+        allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
+                typeRescue,
+                getString(R.string.volunteer_mission_dummy_location_1),
+                getString(R.string.volunteer_mission_dummy_time_1, page),
                 "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be"));
 
-        missions.add(new MissionHistory(
-                TYPE_DELIVERY,
-                getString(R.string.volunteer_mission_history_location_placeholder_second),
-                getString(R.string.volunteer_mission_history_datetime_placeholder_second),
+        allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
+                typeDelivery,
+                getString(R.string.volunteer_mission_dummy_location_2),
+                getString(R.string.volunteer_mission_dummy_time_2, page),
                 "https://images.unsplash.com/photo-1469474968028-56623f02e42e"));
 
-        missions.add(new MissionHistory(
-                TYPE_RESCUE,
-                getString(R.string.volunteer_mission_history_location_placeholder_third),
-                getString(R.string.volunteer_mission_history_datetime_placeholder_third),
+        allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
+                typeRescue,
+                getString(R.string.volunteer_mission_dummy_location_3),
+                getString(R.string.volunteer_mission_dummy_time_3, page),
                 "https://images.unsplash.com/photo-1506744038136-46273834b3fb"));
 
-        return missions;
-    }
+        allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
+                typeDelivery,
+                getString(R.string.volunteer_mission_dummy_location_4),
+                getString(R.string.volunteer_mission_dummy_time_4, page),
+                "https://images.unsplash.com/photo-1509099836639-18ba1795216d"));
 
-    /**
-     * Lightweight UI model for presenting volunteer mission history items.
-     */
-    public static class MissionHistory {
-        private final String type;
-        private final String location;
-        private final String time;
-        private final String imageUrl;
+        allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
+                typeRescue,
+                getString(R.string.volunteer_mission_dummy_location_5),
+                getString(R.string.volunteer_mission_dummy_time_5, page),
+                "https://images.unsplash.com/photo-1618477202872-4984f4bf49ea"));
 
-        public MissionHistory(@NonNull String type,
-                @NonNull String location,
-                @NonNull String time,
-                @NonNull String imageUrl) {
-            this.type = type;
-            this.location = location;
-            this.time = time;
-            this.imageUrl = imageUrl;
+        allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
+                typeDelivery,
+                getString(R.string.volunteer_mission_dummy_location_6),
+                getString(R.string.volunteer_mission_dummy_time_6, page),
+                "https://images.unsplash.com/photo-1446776877081-d282a0f896e2"));
+
+        if (filter.equalsIgnoreCase(getString(R.string.volunteer_history_filter_all))) {
+            return allItems;
         }
 
-        @NonNull
-        public String getType() {
-            return type;
-        }
-
-        @NonNull
-        public String getLocation() {
-            return location;
-        }
-
-        @NonNull
-        public String getTime() {
-            return time;
-        }
-
-        @NonNull
-        public String getImageUrl() {
-            return imageUrl;
-        }
-    }
-
-    /**
-     * Temporary adapter for rendering mission history cards in this fragment.
-     */
-    private class MissionHistoryAdapter extends RecyclerView.Adapter<MissionHistoryAdapter.MissionHistoryViewHolder> {
-
-        private final List<MissionHistory> items;
-
-        MissionHistoryAdapter(@NonNull List<MissionHistory> items) {
-            this.items = items;
-        }
-
-        @NonNull
-        @Override
-        public MissionHistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            ItemVolunteerMissionHistoryBinding itemBinding = ItemVolunteerMissionHistoryBinding.inflate(
-                    LayoutInflater.from(parent.getContext()),
-                    parent,
-                    false);
-            return new MissionHistoryViewHolder(itemBinding);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull MissionHistoryViewHolder holder, int position) {
-            holder.bind(items.get(position));
-        }
-
-        @Override
-        public int getItemCount() {
-            return items.size();
-        }
-
-        class MissionHistoryViewHolder extends RecyclerView.ViewHolder {
-
-            private final ItemVolunteerMissionHistoryBinding itemBinding;
-
-            MissionHistoryViewHolder(@NonNull ItemVolunteerMissionHistoryBinding itemBinding) {
-                super(itemBinding.getRoot());
-                this.itemBinding = itemBinding;
-            }
-
-            void bind(@NonNull MissionHistory mission) {
-                itemBinding.tvMissionLocation.setText(mission.getLocation());
-                itemBinding.tvMissionDateTime.setText(mission.getTime());
-
-                if (TYPE_RESCUE.equalsIgnoreCase(mission.getType())) {
-                    itemBinding.tvMissionCategory.setText(R.string.volunteer_mission_history_category_emergency);
-                    itemBinding.cardMissionCategoryBadge.setCardBackgroundColor(
-                            ContextCompat.getColor(requireContext(), R.color.sos_red));
-                } else {
-                    itemBinding.tvMissionCategory.setText(R.string.volunteer_mission_history_category_supply);
-                    itemBinding.cardMissionCategoryBadge.setCardBackgroundColor(
-                            ContextCompat.getColor(requireContext(), R.color.hub_blue));
-                }
-
-                Glide.with(itemBinding.ivMissionPhoto)
-                        .load(mission.getImageUrl())
-                        .placeholder(android.R.drawable.ic_menu_gallery)
-                        .error(android.R.drawable.ic_menu_report_image)
-                        .centerCrop()
-                        .into(itemBinding.ivMissionPhoto);
+        List<VolunteerMissionHistoryAdapter.MissionHistoryModel> filteredItems = new ArrayList<>();
+        for (VolunteerMissionHistoryAdapter.MissionHistoryModel item : allItems) {
+            if (filter.equalsIgnoreCase(getString(R.string.volunteer_history_filter_rescue))
+                    && item.getType().equalsIgnoreCase(typeRescue)) {
+                filteredItems.add(item);
+            } else if (filter.equalsIgnoreCase(getString(R.string.volunteer_history_filter_delivery))
+                    && item.getType().equalsIgnoreCase(typeDelivery)) {
+                filteredItems.add(item);
             }
         }
+
+        return filteredItems;
     }
 }

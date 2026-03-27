@@ -47,4 +47,20 @@
     <string name="volunteer_history_filter_rescue">Cứu hộ</string>
     <string name="volunteer_history_filter_delivery">Giao hàng</string>
     <string name="volunteer_history_completed_label">Nhiệm vụ đã hoàn thành</string>
+
+    <!-- Volunteer History Mock Data -->
+    <string name="volunteer_mission_type_rescue">Cứu hộ</string>
+    <string name="volunteer_mission_type_delivery">Giao hàng</string>
+    <string name="volunteer_mission_dummy_location_1">12 Nguyen Hue, Ben Nghe, Quan 1</string>
+    <string name="volunteer_mission_dummy_location_2">45 Le Loi, Ben Thanh, Quan 1</string>
+    <string name="volunteer_mission_dummy_location_3">88 Hai Ba Trung, Da Kao, Quan 1</string>
+    <string name="volunteer_mission_dummy_location_4">120 Pasteur, Ben Nghe, Quan 1</string>
+    <string name="volunteer_mission_dummy_location_5">22 Vo Thi Sau, Da Kao, Quan 3</string>
+    <string name="volunteer_mission_dummy_location_6">35 Nguyen Thi Minh Khai, Ben Thanh, Quan 1</string>
+    <string name="volunteer_mission_dummy_time_1">Trang %1$d • 07:30 sáng</string>
+    <string name="volunteer_mission_dummy_time_2">Trang %1$d • 09:15 sáng</string>
+    <string name="volunteer_mission_dummy_time_3">Trang %1$d • 11:40 trưa</string>
+    <string name="volunteer_mission_dummy_time_4">Trang %1$d • 02:10 chiều</string>
+    <string name="volunteer_mission_dummy_time_5">Trang %1$d • 05:00 chiều</string>
+    <string name="volunteer_mission_dummy_time_6">Trang %1$d • 08:20 tối</string>
 </resources>
