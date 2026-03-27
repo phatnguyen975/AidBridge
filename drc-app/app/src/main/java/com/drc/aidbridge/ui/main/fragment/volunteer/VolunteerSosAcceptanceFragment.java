@@ -87,7 +87,10 @@ public class VolunteerSosAcceptanceFragment extends BaseFragment<FragmentVolunte
     }
 
     private void setupClickListeners() {
-        binding.btnDecline.setOnClickListener(v -> popBackStackSafely());
+        binding.btnDecline.setOnClickListener(v -> {
+            showToast(getString(R.string.volunteer_sos_acceptance_toast_decline_success));
+            popBackStackSafely();
+        });
 
         binding.btnAccept.setOnClickListener(v -> {
             showToast(getString(R.string.volunteer_sos_acceptance_toast_accept_success));

@@ -52,7 +52,8 @@
     <dimen name="volunteer_sos_acceptance_mission_id_size">12sp</dimen>
     <dimen name="volunteer_sos_acceptance_info_box_radius">14dp</dimen>
     <dimen name="volunteer_sos_acceptance_info_box_padding">12dp</dimen>
-    <dimen name="volunteer_sos_acceptance_icon_size">20dp</dimen>
+    <dimen name="volunteer_sos_acceptance_avatar_size">48dp</dimen>
+    <dimen name="volunteer_sos_acceptance_icon_size">48dp</dimen>
     <dimen name="volunteer_sos_acceptance_label_text_size">14sp</dimen>
     <dimen name="volunteer_sos_acceptance_value_text_size">20sp</dimen>
     <dimen name="volunteer_sos_acceptance_note_value_text_size">15sp</dimen>

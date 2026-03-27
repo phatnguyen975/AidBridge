@@ -78,6 +78,8 @@
     <string name="volunteer_sos_acceptance_mission_title">Nhiệm vụ cứu hộ</string>
     <string name="volunteer_sos_acceptance_victim_label">Nạn nhân</string>
     <string name="volunteer_sos_acceptance_victim_name">Nguyễn Văn A</string>
+    <string name="volunteer_sos_acceptance_address_label">Địa chỉ</string>
+    <string name="volunteer_sos_acceptance_address_value">123 Đường ABC, Quận XYZ</string>
     <string name="volunteer_sos_acceptance_note_label">Ghi chú vị trí</string>
     <string name="volunteer_sos_acceptance_note_value">&quot;Nhà cổng xanh, đối diện tiệm thuốc&quot;</string>
     <string name="volunteer_sos_acceptance_btn_accept">Chấp nhận nhiệm vụ</string>
@@ -85,6 +87,7 @@
     <string name="volunteer_sos_acceptance_mission_badge_supply">Tiếp tế</string>
     <string name="volunteer_sos_acceptance_mission_title_supply">Tiếp tế nhu yếu phẩm</string>
     <string name="volunteer_sos_acceptance_toast_accept_success">Bạn đã chấp nhận nhiệm vụ thành công</string>
+    <string name="volunteer_sos_acceptance_toast_decline_success">Bạn đã từ chối nhiệm vụ thành công</string>
     <string name="volunteer_sos_acceptance_icon_desc">Biểu tượng thông tin nhiệm vụ</string>
     <string name="volunteer_sos_acceptance_accept_icon_desc">Biểu tượng chấp nhận nhiệm vụ</string>
     <string name="volunteer_sos_acceptance_decline_icon_desc">Biểu tượng từ chối nhiệm vụ</string>
