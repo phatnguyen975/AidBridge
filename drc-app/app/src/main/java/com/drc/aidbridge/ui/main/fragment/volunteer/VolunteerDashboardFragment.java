@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVolunteerDashboardBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerDashboardViewModel;
@@ -49,7 +50,8 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
 
         binding.cardCurrentMission.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_open_current_missions)));
 
-        binding.cardCompleted.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_open_completed_missions)));
+        //binding.cardCompleted.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_open_completed_missions)));
+        binding.cardCompleted.setOnClickListener(v -> navigateSafely(R.id.action_dashboard_to_history));
 
         binding.tvSeeAll.setOnClickListener(v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_see_all_notifications)));
 
