@@ -1,0 +1,58 @@
+### 1. Register
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "test@example.com",
+  "phone": "0901234567",
+  "password": "password123",
+  "role": "VICTIM"
+}
+
+### 2. Login
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+###
+
+### 3. Create SOS (❗ DÁN TOKEN VÀO ĐÂY)
+POST http://localhost:8080/api/victim/sos-requests
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwNDcyNDFmOS0wNWZmLTRlMzktYjI5NS1mZDY4MzZjY2RmNTUiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6IjA1ZDBmYTg4LTc2M2ItNDEzOC05YzY5LWRjZGU0ZWVhYzlkZCIsImlhdCI6MTc3NDAyMDU5MSwiZXhwIjoxNzc0MDIxNDkxfQ.VvKqgENlwktStwSwbYgpOgPSoSlb0An7IV4MmUcM1GnUbPEz-Spr8CU5qI32mauEUYIKbshM_158rEZqBHqE3dHpqm-XpXIfDn5nRDPcQYxILGjxiWo4PVDRCRWCq34vhJTO6wuA0JVfD3A9Zz3kniGuL96CKG8XpM4fmpMDK2ldADu_A7HNCRDPqevYVJh3PozsX66EtbBhQlw7P4qUBkc6PkEkiVVyrO77eHK6TJTUrCz-Ged3v5tPTbIPkpp9jBvvAmlPAV4IGDIFNCHaAdJyszBdLvl4xKBnW075CNtbdiquhPrbVa6jmWhFdyuerNMtFANk2xTULHtki0a0Xg
+
+{
+  "lat": 10.123456,
+  "lng": 106.123456,
+  "description": "Help needed",
+  "peopleCount": 2
+}
+
+###
+
+### 4. Get list SOS
+GET http://localhost:8080/api/victim/sos-requests
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1Mjk0OWVhNS0yNTU3LTQ0NDItYTU5YS02ZDhhY2E1OGNmNDQiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6IjdmNmYxN2NkLTIwNTktNDM4Ni05N2UxLThkMDFiYTQ3MzM1NCIsImlhdCI6MTc3NDAxMjk2NSwiZXhwIjoxNzc0MDEzODY1fQ.LAg7Yzf0Jgdb0QWTlcw595IxTzYpDypFgM7etwgwxPyCt09hoEBW5B0VC_NN2XYMEo0cCS1ncxrWC7yizH3lmBWU0zxHipUPmhar5jbRXbPM2N7nAKGVl7o6zVPeZnfkh5zaFNQGQizxrPbIYfT83TqqZ2xUxjgkxfvwGRnfPMw2r8Xb1lzKHLhsvekWBKxkJqJ-u1SzcH_M8eoFxrrNZeT_l6ivw6UwHKRh6Jt8Ntf4sXpE9OXql0M2bFIQd-10a2873FU0RGMF7e_blyoy0tPcXJnWkNrycNAhf8VKsggP1MNKwAdN6peSYsdy92FK9cqpIAX84hVGo84J69f70w
+
+###
+
+### 5. Test public endpoint
+GET http://localhost:8080/api/health
+
+###
+
+
+POST http://localhost:8080/api/sos
+Content-Type: application/json
+
+{
+  "lat": 10.7769,
+  "lng": 106.6826,
+  "address": "Quận 1",
+  "description": "Cần giúp đỡ"
+}
