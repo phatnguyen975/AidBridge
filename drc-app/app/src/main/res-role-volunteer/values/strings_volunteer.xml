@@ -27,4 +27,24 @@
     <string name="volunteer_dashboard_toast_see_all_notifications">Xem tất cả thông báo</string>
     <string name="volunteer_dashboard_toast_view_mission_detail">Xem chi tiết nhiệm vụ cứu hộ</string>
     <string name="volunteer_dashboard_toast_logout">Xử lý đăng xuất</string>
+
+    <!-- Volunteer Mission History Item -->
+    <string name="volunteer_mission_history_category_emergency">Cứu hộ khẩn cấp</string>
+    <string name="volunteer_mission_history_category_supply">Giao hàng tiếp tế</string>
+    <string name="volunteer_mission_history_location_placeholder">12 Nguyen Hue, Ben Nghe, Quan 1</string>
+    <string name="volunteer_mission_history_location_placeholder_second">45 Le Loi, Ben Thanh, Quan 1</string>
+    <string name="volunteer_mission_history_location_placeholder_third">12 Tran Hung Dao, Cau Ong Lanh, Quan 1</string>
+    <string name="volunteer_mission_history_datetime_placeholder">15/10/2023 • 08:30 sáng</string>
+    <string name="volunteer_mission_history_datetime_placeholder_second">16/10/2023 • 02:10 chiều</string>
+    <string name="volunteer_mission_history_datetime_placeholder_third">17/10/2023 • 06:45 sáng</string>
+    <string name="volunteer_mission_history_category_icon_content_desc">Biểu tượng danh mục nhiệm vụ</string>
+    <string name="volunteer_mission_history_photo_content_desc">Ảnh minh họa nhiệm vụ</string>
+
+    <!-- Volunteer History Screen -->
+    <string name="volunteer_history_toolbar_title">Lịch sử Nhiệm vụ</string>
+    <string name="volunteer_history_back_content_desc">Quay lại</string>
+    <string name="volunteer_history_filter_all">Tất cả</string>
+    <string name="volunteer_history_filter_rescue">Cứu hộ</string>
+    <string name="volunteer_history_filter_delivery">Giao hàng</string>
+    <string name="volunteer_history_completed_label">Nhiệm vụ đã hoàn thành</string>
 </resources>

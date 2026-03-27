@@ -19,4 +19,11 @@
     <dimen name="volunteer_dashboard_notification_icon_padding">8dp</dimen>
     <dimen name="volunteer_dashboard_notification_overlay_icon_size">60dp</dimen>
     <dimen name="volunteer_dashboard_button_corner_radius">8dp</dimen>
+
+    <!-- Volunteer Mission History Item Dimensions -->
+    <dimen name="volunteer_mission_history_card_stroke_width">1dp</dimen>
+    <dimen name="volunteer_mission_history_badge_icon_size">14dp</dimen>
+    <dimen name="volunteer_mission_history_badge_text_size">11sp</dimen>
+    <dimen name="volunteer_mission_history_location_text_size">16sp</dimen>
+    <dimen name="volunteer_mission_history_datetime_text_size">13sp</dimen>
 </resources>
