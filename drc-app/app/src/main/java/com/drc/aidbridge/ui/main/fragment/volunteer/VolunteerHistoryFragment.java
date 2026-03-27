@@ -95,7 +95,7 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
     }
 
     private void setupToolbar() {
-        binding.toolbarVolunteerHistory.setNavigationOnClickListener(v -> popBackStackSafely());
+        binding.btnBack.setOnClickListener(v -> popBackStackSafely());
     }
 
     private void setupFilterLogging() {
