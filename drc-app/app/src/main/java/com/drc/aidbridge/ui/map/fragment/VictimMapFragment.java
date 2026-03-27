@@ -5,18 +5,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 
-import com.drc.aidbridge.databinding.FragmentMapVictimBinding;
+import com.drc.aidbridge.databinding.FragmentVictimMapBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class VictimMapFragment extends BaseFragment<FragmentMapVictimBinding> {
+public class VictimMapFragment extends BaseFragment<FragmentVictimMapBinding> {
 
 	@Nullable
 	@Override
-	protected FragmentMapVictimBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
-		return FragmentMapVictimBinding.inflate(inflater, container, false);
+	protected FragmentVictimMapBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
+		return FragmentVictimMapBinding.inflate(inflater, container, false);
 	}
 
 	@Override

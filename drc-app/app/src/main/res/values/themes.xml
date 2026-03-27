@@ -77,4 +77,9 @@
         <item name="strokeColor">@color/border_default</item>
         <item name="cardCornerRadius">12dp</item>
     </style>
+
+    <style name="CircleAppearance">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

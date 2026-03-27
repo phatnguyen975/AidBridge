@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/victimHomeFragment"
+        android:id="@+id/victimProfileFragment"
         android:icon="@drawable/ic_person"
-        android:title="Home" />
+        android:title="@string/nav_profile" />
     <item
-        android:id="@+id/mapFragment"
+        android:id="@+id/victimSosFragment"
+        android:icon="@drawable/ic_rescue"
+        android:title="@string/nav_rescue" />
+    <item
+        android:id="@+id/victimMapFragment"
         android:icon="@drawable/ic_map"
-        android:title="Map" />
+        android:title="@string/nav_map" />
 </menu>

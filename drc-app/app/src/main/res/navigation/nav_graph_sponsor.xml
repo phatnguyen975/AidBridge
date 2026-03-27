@@ -3,15 +3,59 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_sponsor"
-    app:startDestination="@id/sponsorHomeFragment">
+    app:startDestination="@id/sponsorDashboardFragment">
 
     <fragment
-        android:id="@+id/sponsorHomeFragment"
-        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorHomeFragment"
-        android:label="SponsorHomeFragment" />
+        android:id="@+id/sponsorDashboardFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorDashboardFragment"
+        android:label="SponsorDashboardFragment">
+
+        <action
+            android:id="@+id/action_sponsor_dashboard_to_donate"
+            app:destination="@id/sponsorDonateFragment" />
+
+        <action
+            android:id="@+id/action_sponsor_dashboard_to_history"
+            app:destination="@id/sponsorHistoryFragment" />
+    </fragment>
 
     <fragment
-        android:id="@+id/mapFragment"
+        android:id="@+id/sponsorDonateFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorDonateFragment"
+        android:label="SponsorDonateFragment">
+
+        <action
+            android:id="@+id/action_sponsor_donate_to_qr"
+            app:destination="@id/sponsorQrCodeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/sponsorQrCodeFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorQrCodeFragment"
+        android:label="SponsorQrCodeFragment" />
+
+    <fragment
+        android:id="@+id/sponsorMapFragment"
         android:name="com.drc.aidbridge.ui.map.fragment.SponsorMapFragment"
-        android:label="MapFragment" />
+        android:label="SponsorMapFragment" />
+
+    <fragment
+        android:id="@+id/sponsorProfileFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorProfileFragment"
+        android:label="SponsorProfileFragment" />
+
+    <fragment
+        android:id="@+id/sponsorEditProfileFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorEditProfileFragment"
+        android:label="SponsorEditProfileFragment" />
+
+    <fragment
+        android:id="@+id/sponsorChangePasswordFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorChangePasswordFragment"
+        android:label="SponsorChangePasswordFragment" />
+
+    <fragment
+        android:id="@+id/sponsorHistoryFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorHistoryFragment"
+        android:label="SponsorHistoryFragment" />
 </navigation>

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/sponsor_dashboard_toolbar_height"
+        android:paddingStart="@dimen/sponsor_dashboard_screen_padding"
+        android:paddingEnd="@dimen/sponsor_dashboard_screen_padding"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="@dimen/sponsor_dashboard_logo_size"
+            android:layout_height="@dimen/sponsor_dashboard_logo_size"
+            android:contentDescription="@string/app_logo"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sponsor_dashboard_title"
+            android:textAllCaps="true"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/sponsor_dashboard_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/viewToolbarDivider"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/sponsor_dashboard_card_stroke_width"
+        android:background="@color/border_default"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutHeader" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewToolbarDivider">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/sponsor_dashboard_screen_padding"
+            android:paddingEnd="@dimen/sponsor_dashboard_screen_padding"
+            android:paddingBottom="@dimen/sponsor_dashboard_screen_padding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sponsor_dashboard_section_spacing"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardRegisterDonation"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/sponsor_dashboard_quick_action_height"
+                android:layout_marginEnd="@dimen/sponsor_dashboard_card_gap"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="@color/color_primary"
+                app:cardCornerRadius="@dimen/sponsor_dashboard_card_radius"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/sponsor_dashboard_card_inner_padding">
+
+                    <ImageView
+                        android:layout_width="@dimen/sponsor_dashboard_quick_action_icon_size"
+                        android:layout_height="@dimen/sponsor_dashboard_quick_action_icon_size"
+                        android:contentDescription="@string/sponsor_dashboard_register_donation"
+                        android:src="@drawable/ic_plus"
+                        app:tint="@color/white" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sponsor_dashboard_quick_action_text_top_margin"
+                        android:gravity="center"
+                        android:text="@string/sponsor_dashboard_register_donation"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sponsor_dashboard_quick_action_text_size"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDonationHistory"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/sponsor_dashboard_quick_action_height"
+                android:layout_marginStart="@dimen/sponsor_dashboard_card_gap"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="@color/bg_surface"
+                app:cardCornerRadius="@dimen/sponsor_dashboard_card_radius"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/border_default"
+                app:strokeWidth="@dimen/sponsor_dashboard_card_stroke_width">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/sponsor_dashboard_card_inner_padding">
+
+                    <ImageView
+                        android:layout_width="@dimen/sponsor_dashboard_quick_action_icon_size"
+                        android:layout_height="@dimen/sponsor_dashboard_quick_action_icon_size"
+                        android:contentDescription="@string/sponsor_dashboard_history"
+                        android:src="@drawable/ic_history"
+                        app:tint="@color/text_primary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sponsor_dashboard_quick_action_text_top_margin"
+                        android:gravity="center"
+                        android:text="@string/sponsor_dashboard_history"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/sponsor_dashboard_quick_action_text_size"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvStatsSectionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sponsor_dashboard_heading_top_margin"
+            android:text="@string/sponsor_dashboard_stats_title"
+            android:textAllCaps="true"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/sponsor_dashboard_heading_text_size"
+            android:textStyle="bold" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardTotalContributions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sponsor_dashboard_card_top_margin"
+            app:cardBackgroundColor="@color/bg_surface"
+            app:cardCornerRadius="@dimen/sponsor_dashboard_card_radius"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/border_default"
+            app:strokeWidth="@dimen/sponsor_dashboard_card_stroke_width">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/sponsor_dashboard_card_inner_padding">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/sponsor_dashboard_stat_icon_size"
+                        android:layout_height="@dimen/sponsor_dashboard_stat_icon_size"
+                        android:contentDescription="@string/sponsor_dashboard_total_contributions_label"
+                        android:src="@drawable/ic_hand_heart"
+                        app:tint="@color/hub_blue" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sponsor_dashboard_stat_icon_label_spacing"
+                        android:text="@string/sponsor_dashboard_total_contributions_label"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/sponsor_dashboard_stat_label_text_size" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvTotalContributionsValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sponsor_dashboard_value_top_margin"
+                    android:text="@string/sponsor_dashboard_total_contributions_value"
+                    android:textColor="@color/hub_blue"
+                    android:textSize="@dimen/sponsor_dashboard_stat_primary_value_text_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sponsor_dashboard_card_top_margin"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardTotalItems"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/sponsor_dashboard_card_gap"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/bg_surface"
+                app:cardCornerRadius="@dimen/sponsor_dashboard_card_radius"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/border_default"
+                app:strokeWidth="@dimen/sponsor_dashboard_card_stroke_width">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/sponsor_dashboard_card_inner_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sponsor_dashboard_total_items_label"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/sponsor_dashboard_stat_label_text_size" />
+
+                    <TextView
+                        android:id="@+id/tvTotalItemsValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sponsor_dashboard_value_top_margin"
+                        android:text="@string/sponsor_dashboard_total_items_value"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/sponsor_dashboard_stat_secondary_value_text_size"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardRewardPoints"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/sponsor_dashboard_card_gap"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/bg_surface"
+                app:cardCornerRadius="@dimen/sponsor_dashboard_card_radius"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/border_default"
+                app:strokeWidth="@dimen/sponsor_dashboard_card_stroke_width">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/sponsor_dashboard_card_inner_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sponsor_dashboard_reward_points_label"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/sponsor_dashboard_stat_label_text_size" />
+
+                    <TextView
+                        android:id="@+id/tvRewardPointsValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sponsor_dashboard_value_top_margin"
+                        android:text="@string/sponsor_dashboard_reward_points_value"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/sponsor_dashboard_stat_secondary_value_text_size"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvRecentSectionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sponsor_dashboard_heading_top_margin"
+            android:text="@string/sponsor_dashboard_recent_title"
+            android:textAllCaps="true"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/sponsor_dashboard_heading_text_size"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_recent_donations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sponsor_dashboard_card_top_margin"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

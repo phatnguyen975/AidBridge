@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <size
+        android:width="@dimen/sponsor_hub_drag_handle_width"
+        android:height="@dimen/sponsor_hub_drag_handle_height" />
+    <solid android:color="@color/border_default" />
+    <corners android:radius="@dimen/sponsor_hub_drag_handle_radius" />
+</shape>

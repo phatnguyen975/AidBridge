@@ -126,6 +126,18 @@ app/src/
   - Use base safe navigation helpers to avoid stale-destination crashes.
   - Respect debounce policy before navigating.
 
+### Standardized Network Parsing (DTO vs Wrapper)
+
+To handle the Backend's standardized JSON response format, we strictly separate the parsing layer from the UI state layer:
+
+1. **`BaseResponse<T>` (Data Layer):** - All Retrofit API calls MUST return `Call<BaseResponse<T>>`.
+   - This wrapper handles the outer JSON layer (`success`, `message`, `data`).
+   - It is strictly used for Gson parsing and must NOT leak into the Domain or UI layers.
+
+2. **`NetworkResultWrapper<T>` (UI/Presentation Layer):**
+   - The UI only understands `NetworkResultWrapper` (`LOADING`, `SUCCESS`, `ERROR`).
+   - The Repository is responsible for unwrapping `BaseResponse`, mapping the inner DTO to a Domain Model, and packing it into `NetworkResultWrapper` to post to the ViewModel.
+
 ## 4. Detailed Flow Walkthrough (The Authentication Flow)
 
 Golden path: `LoginFragment -> LoginViewModel -> LoginUseCase -> AuthInputValidator -> AuthRepositoryImpl`
@@ -195,7 +207,8 @@ Use this checklist whenever adding a new feature screen.
 ### A. New Screen UI
 
 - `Fragment.java`:
-  - Place in `app/src/main/java/com/drc/aidbridge/ui/<feature>/fragment/`
+  - Role-based screens: place in `app/src/main/java/com/drc/aidbridge/ui/main/fragment/<role_name>/`
+  - Non-role feature screens (auth/guest/common): place in `app/src/main/java/com/drc/aidbridge/ui/<feature>/fragment/`
 - `fragment_<name>.xml`:
   - Place in feature resource set:
     - Auth screens: `app/src/main/res-auth/layout/`
@@ -206,7 +219,8 @@ Use this checklist whenever adding a new feature screen.
 ### B. Screen State and Logic
 
 - `ViewModel.java`:
-  - Place in `app/src/main/java/com/drc/aidbridge/ui/<feature>/viewmodel/`
+  - Role-based screens: place in `app/src/main/java/com/drc/aidbridge/ui/main/viewmodel/<role_name>/`
+  - Non-role feature screens (auth/guest/common): place in `app/src/main/java/com/drc/aidbridge/ui/<feature>/viewmodel/`
 - `UseCase.java`:
   - Place in `app/src/main/java/com/drc/aidbridge/domain/usecase/<feature>/`
 - Input validators:
@@ -237,8 +251,11 @@ Use this checklist whenever adding a new feature screen.
 
 ### E. Theme, Colors, Icons, and Shared UI Assets
 
-- Colors, strings, dimensions, theme:
+- Global/shared colors, strings, dimensions, theme:
   - `app/src/main/res/values/`
+- Role-specific strings and dimensions:
+  - `app/src/main/res-role-<role>/values/strings_<role>.xml`
+  - `app/src/main/res-role-<role>/values/dimens_<role>.xml`
 - Night theme overrides:
   - `app/src/main/res/values-night/`
 - Shared icons/drawables:

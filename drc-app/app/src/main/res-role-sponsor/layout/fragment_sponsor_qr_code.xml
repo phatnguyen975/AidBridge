@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sponsor_qr_toolbar_height"
+        android:paddingStart="@dimen/sponsor_qr_section_padding_horizontal"
+        android:paddingEnd="@dimen/sponsor_qr_section_padding_horizontal">
+
+        <ImageView
+            android:id="@+id/iv_toolbar_logo"
+            android:layout_width="@dimen/sponsor_qr_toolbar_logo_size"
+            android:layout_height="@dimen/sponsor_qr_toolbar_logo_size"
+            android:contentDescription="@string/sponsor_qr_toolbar_title"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/sponsor_donate_info_text_start_margin"
+            android:text="@string/sponsor_qr_toolbar_title"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/sponsor_qr_toolbar_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_toolbar_logo"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="@dimen/sponsor_qr_toolbar_icon_size"
+            android:layout_height="@dimen/sponsor_qr_toolbar_icon_size"
+            android:contentDescription="@string/sponsor_qr_close_desc"
+            android:src="@drawable/ic_close"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/text_primary" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sponsor_hub_item_stroke_width"
+        app:dividerColor="@color/border_default" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/sponsor_qr_section_padding_horizontal"
+            android:paddingEnd="@dimen/sponsor_qr_section_padding_horizontal">
+
+            <TextView
+                android:id="@+id/tv_qr_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sponsor_qr_title_margin_top"
+                android:layout_marginBottom="@dimen/sponsor_qr_title_margin_bottom"
+                android:gravity="center"
+                android:text="@string/sponsor_qr_title"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/sponsor_qr_title_text_size"
+                android:textStyle="bold" />
+
+            <FrameLayout
+                android:layout_width="@dimen/sponsor_qr_card_size"
+                android:layout_height="@dimen/sponsor_qr_card_size"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/sponsor_qr_card_blur_bg"
+                android:padding="@dimen/sponsor_qr_card_inner_padding">
+
+                <ImageView
+                    android:id="@+id/iv_qr_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="0dp"
+                    android:scaleType="centerInside" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/sponsor_qr_title"
+                    android:src="@drawable/bg_sponsor_qr_corner_frame" />
+            </FrameLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sponsor_qr_instruction_margin_top"
+                app:cardBackgroundColor="@color/bg_surface"
+                app:cardCornerRadius="@dimen/sponsor_qr_summary_radius"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/sponsor_qr_instruction_padding">
+
+                    <ImageView
+                        android:layout_width="@dimen/sponsor_donate_info_icon_size"
+                        android:layout_height="@dimen/sponsor_donate_info_icon_size"
+                        android:contentDescription="@string/sponsor_qr_title"
+                        android:src="@drawable/ic_info"
+                        app:tint="@color/text_secondary" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sponsor_donate_info_text_start_margin"
+                        android:layout_weight="1"
+                        android:text="@string/sponsor_qr_instruction"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_sm" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sponsor_qr_summary_margin_top"
+                app:cardBackgroundColor="@color/bg_surface_elevated"
+                app:cardCornerRadius="@dimen/sponsor_qr_summary_radius"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/border_default"
+                app:strokeWidth="@dimen/sponsor_hub_item_stroke_width">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/sponsor_qr_summary_padding_horizontal"
+                    android:paddingTop="@dimen/sponsor_qr_summary_padding_vertical"
+                    android:paddingEnd="@dimen/sponsor_qr_summary_padding_horizontal"
+                    android:paddingBottom="@dimen/sponsor_qr_summary_padding_vertical">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/sponsor_qr_row_spacing">
+
+                        <TextView
+                            android:id="@+id/tv_donation_code_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sponsor_qr_donation_code_label"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/sponsor_qr_row_label_text_size"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_donation_code_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/sponsor_qr_row_value_text_size"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sponsor_hub_item_stroke_width"
+                        android:layout_marginBottom="@dimen/sponsor_qr_divider_margin_vertical"
+                        app:dividerColor="@color/border_default" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/sponsor_qr_row_spacing">
+
+                        <TextView
+                            android:id="@+id/tv_item_type_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sponsor_donate_category_label"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/sponsor_qr_row_label_text_size"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_item_type_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/sponsor_qr_row_value_text_size"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sponsor_hub_item_stroke_width"
+                        android:layout_marginBottom="@dimen/sponsor_qr_divider_margin_vertical"
+                        app:dividerColor="@color/border_default" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tv_quantity_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sponsor_donate_quantity_label"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/sponsor_qr_row_label_text_size"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_quantity_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/sponsor_qr_row_value_text_size"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save_qr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sponsor_qr_button_margin_top"
+                android:layout_marginBottom="@dimen/sponsor_qr_button_margin_bottom"
+                android:paddingVertical="@dimen/spacing_md"
+                android:text="@string/sponsor_qr_save_button"
+                android:textStyle="bold"
+                app:cornerRadius="@dimen/sponsor_qr_button_radius"
+                app:iconTint="@color/text_primary" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

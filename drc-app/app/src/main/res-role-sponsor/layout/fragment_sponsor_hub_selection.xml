@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_sponsor_hub_sheet"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/sponsor_hub_sheet_padding_horizontal"
+    android:paddingTop="@dimen/sponsor_hub_sheet_padding_top"
+    android:paddingEnd="@dimen/sponsor_hub_sheet_padding_horizontal"
+    android:paddingBottom="@dimen/sponsor_hub_sheet_padding_bottom">
+
+    <View
+        android:id="@+id/view_drag_handle"
+        android:layout_width="@dimen/sponsor_hub_drag_handle_width"
+        android:layout_height="@dimen/sponsor_hub_drag_handle_height"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/sponsor_hub_drag_handle_margin_bottom"
+        android:background="@drawable/bg_sponsor_bottomsheet_handle"
+        android:contentDescription="@string/sponsor_hub_drag_handle_desc" />
+
+    <TextView
+        android:id="@+id/tv_hub_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/sponsor_hub_title_margin_bottom"
+        android:gravity="center"
+        android:text="@string/sponsor_hub_selection_title"
+        android:textAlignment="center"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/sponsor_hub_title_text_size"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_hubs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/sponsor_hub_item_margin_bottom" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnConfirmGenerateQr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/spacing_md"
+        android:text="@string/sponsor_hub_confirm_generate_qr"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        app:cornerRadius="@dimen/sponsor_hub_button_radius" />
+</LinearLayout>
