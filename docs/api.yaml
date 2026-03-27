@@ -1,0 +1,4473 @@
+openapi: 3.0.3
+info:
+  title: AidBridge API
+  description: |
+    AidBridge - Disaster Relief Coordinator API
+
+    ## Overview
+    RESTful API for coordinating disaster relief operations including:
+    - SOS rescue requests
+    - Aid supply requests and delivery
+    - Volunteer mission management
+    - Hub inventory management
+    - Sponsor donations
+
+    ## Authentication
+    All protected endpoints require Bearer token in Authorization header.
+
+    ## Database Version
+    This API is aligned with database schema v4.0
+  version: 1.0.0
+  contact:
+    name: AidBridge Team
+
+servers:
+  - url: https://api.aidbridge.com/v1
+    description: Production
+  - url: https://staging-api.aidbridge.com/v1
+    description: Staging
+
+tags:
+  - name: Auth
+    description: Authentication and user management
+  - name: SOS Requests
+    description: Emergency rescue requests
+  - name: Aid Requests
+    description: Supply aid requests
+  - name: Missions
+    description: Volunteer missions
+  - name: Volunteers
+    description: Volunteer management
+  - name: Sponsors
+    description: Sponsor management
+  - name: Donations
+    description: Donation management
+  - name: Hubs
+    description: Distribution hub management
+  - name: Inventory
+    description: Hub inventory operations
+  - name: Shelters
+    description: Emergency shelter management
+  - name: Categories
+    description: Item categories
+  - name: Chat
+    description: Mission chat
+  - name: Ratings
+    description: Mission ratings
+  - name: Notifications
+    description: User notifications
+  - name: Map
+    description: Map and location services
+  - name: Admin
+    description: Admin operations
+  - name: AI
+    description: AI-powered services
+
+# ============================================================
+# SECURITY SCHEMES
+# ============================================================
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token
+
+  # ============================================================
+  # ENUMS - Matching database schema v4.0 exactly
+  # ============================================================
+  schemas:
+    # ---------- ENUM: user_role ----------
+    UserRole:
+      type: string
+      enum: [VICTIM, VOLUNTEER, SPONSOR, STAFF, ADMIN]
+      description: User role in the system
+
+    # ---------- ENUM: hub_status ----------
+    HubStatus:
+      type: string
+      enum: [ACTIVE, INACTIVE, EMERGENCY]
+      description: Hub operational status
+
+    # ---------- ENUM: urgency_level ----------
+    UrgencyLevel:
+      type: string
+      enum: [CRITICAL, HIGH, MEDIUM, LOW]
+      description: Request urgency level
+
+    # ---------- ENUM: sos_status ----------
+    SosStatus:
+      type: string
+      enum: [PENDING, DISPATCHING, ASSIGNED, IN_PROGRESS, COMPLETED, CANCELLED]
+      description: SOS request status
+
+    # ---------- ENUM: aid_status ----------
+    AidStatus:
+      type: string
+      enum: [PENDING, DISPATCHING, ASSIGNED, PICKED_UP, IN_TRANSIT, COMPLETED, CANCELLED]
+      description: Aid request status
+
+    # ---------- ENUM: donation_status ----------
+    DonationStatus:
+      type: string
+      enum: [REGISTERED, QR_GENERATED, RECEIVED, REJECTED]
+      description: Donation status
+
+    # ---------- ENUM: mission_type ----------
+    MissionType:
+      type: string
+      enum: [RESCUE, DELIVERY]
+      description: Type of mission
+
+    # ---------- ENUM: mission_status ----------
+    MissionStatus:
+      type: string
+      enum: [PENDING, DISPATCHING, ASSIGNED, PICKING_UP, PICKED_UP, IN_TRANSIT, COMPLETED, CANCELLED]
+      description: Mission status
+
+    # ---------- ENUM: dispatch_response ----------
+    DispatchResponse:
+      type: string
+      enum: [PENDING, ACCEPTED, REJECTED, TIMEOUT]
+      description: Volunteer response to dispatch
+
+    # ---------- ENUM: badge_level ----------
+    BadgeLevel:
+      type: string
+      enum: [BRONZE, SILVER, GOLD, PLATINUM]
+      description: Sponsor badge level
+
+    # ---------- ENUM: otp_type ----------
+    OtpType:
+      type: string
+      enum: [EMAIL_VERIFY, PHONE_VERIFY, PASSWORD_RESET]
+      description: OTP purpose type
+
+    # ---------- ENUM: shelter_status ----------
+    ShelterStatus:
+      type: string
+      enum: [AVAILABLE, FULL, UNAVAILABLE]
+      description: Shelter availability status
+
+    # ---------- ENUM: inventory_change ----------
+    InventoryChangeType:
+      type: string
+      enum: [INBOUND, OUTBOUND]
+      description: Inventory change direction
+
+    # ---------- ENUM: inventory_ref_type ----------
+    InventoryRefType:
+      type: string
+      enum: [DONATION, MISSION]
+      description: Inventory log reference type
+
+    # ---------- ENUM: dispatch_type ----------
+    DispatchType:
+      type: string
+      enum: [BROADCAST, SEQUENTIAL]
+      description: Dispatch strategy type
+
+    # ---------- ENUM: message_type ----------
+    MessageType:
+      type: string
+      enum: [TEXT, IMAGE]
+      description: Chat message type
+
+    # ---------- ENUM: notification_type ----------
+    NotificationType:
+      type: string
+      enum: [MISSION, SOS, DONATION, AID_REQUEST, SYSTEM]
+      description: Notification category
+
+    # ---------- ENUM: vehicle_type ----------
+    VehicleType:
+      type: string
+      enum: [MOTORBIKE, CAR, TRUCK, BICYCLE, WALK]
+      description: Volunteer vehicle type
+
+    # ============================================================
+    # COMMON SCHEMAS
+    # ============================================================
+    Location:
+      type: object
+      description: Geographic coordinates
+      required: [lat, lng]
+      properties:
+        lat:
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+          example: 10.762622
+        lng:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+          example: 106.660172
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 1
+          example: 1
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+          example: 20
+        total:
+          type: integer
+          example: 150
+        total_pages:
+          type: integer
+          example: 8
+
+    Error:
+      type: object
+      required: [success, error]
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: VALIDATION_ERROR
+            message:
+              type: string
+              example: Invalid input data
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                  message:
+                    type: string
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+
+    # ============================================================
+    # AUTH SCHEMAS - Matching users table
+    # ============================================================
+    RegisterRequest:
+      type: object
+      required: [full_name, password, role]
+      properties:
+        full_name:
+          type: string
+          maxLength: 100
+          example: Nguyen Van A
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          example: user@example.com
+        phone_number:
+          type: string
+          maxLength: 20
+          example: "+84901234567"
+        password:
+          type: string
+          format: password
+          minLength: 8
+          example: SecurePass123
+        role:
+          $ref: '#/components/schemas/UserRole'
+        avatar_url:
+          type: string
+          format: uri
+          maxLength: 500
+        # Volunteer-specific
+        vehicle_type:
+          $ref: '#/components/schemas/VehicleType'
+
+    LoginRequest:
+      type: object
+      required: [password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        phone_number:
+          type: string
+          example: "+84901234567"
+        password:
+          type: string
+          format: password
+          example: SecurePass123
+
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            access_token:
+              type: string
+            refresh_token:
+              type: string
+            expires_in:
+              type: integer
+              description: Token expiry in seconds
+              example: 3600
+            user:
+              $ref: '#/components/schemas/UserProfile'
+
+    RefreshTokenRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token:
+          type: string
+
+    # ---------- User Profile (from users table) ----------
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+          maxLength: 100
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+        role:
+          $ref: '#/components/schemas/UserRole'
+        is_verified:
+          type: boolean
+        is_active:
+          type: boolean
+        avatar_url:
+          type: string
+          format: uri
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        full_name:
+          type: string
+          maxLength: 100
+        avatar_url:
+          type: string
+          format: uri
+          maxLength: 500
+        fcm_token:
+          type: string
+          maxLength: 500
+
+    # ---------- OTP Schemas ----------
+    RequestOtpRequest:
+      type: object
+      required: [otp_type]
+      properties:
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+        otp_type:
+          $ref: '#/components/schemas/OtpType'
+
+    VerifyOtpRequest:
+      type: object
+      required: [otp_code, otp_type]
+      properties:
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+        otp_code:
+          type: string
+          pattern: '^\d{6}$'
+          example: "123456"
+        otp_type:
+          $ref: '#/components/schemas/OtpType'
+
+    ResetPasswordRequest:
+      type: object
+      required: [otp_code, new_password]
+      properties:
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+        otp_code:
+          type: string
+          pattern: '^\d{6}$'
+        new_password:
+          type: string
+          format: password
+          minLength: 8
+
+    ChangePasswordRequest:
+      type: object
+      required: [current_password, new_password]
+      properties:
+        current_password:
+          type: string
+          format: password
+        new_password:
+          type: string
+          format: password
+          minLength: 8
+
+    # ============================================================
+    # SOS REQUESTS - Matching sos_requests table
+    # ============================================================
+    CreateSosRequest:
+      type: object
+      required: [requester_name, requester_phone, victim_lat, victim_lng, people_count]
+      properties:
+        requester_name:
+          type: string
+          maxLength: 100
+          example: Nguyen Van A
+        requester_phone:
+          type: string
+          maxLength: 20
+          example: "+84901234567"
+        victim_name:
+          type: string
+          maxLength: 100
+          description: Name of person needing rescue (if different from requester)
+        victim_phone:
+          type: string
+          maxLength: 20
+        victim_lat:
+          type: number
+          format: double
+          example: 10.762622
+        victim_lng:
+          type: number
+          format: double
+          example: 106.660172
+        victim_address:
+          type: string
+          example: 123 Nguyen Hue, District 1, HCMC
+        description:
+          type: string
+          example: Flooding, need immediate rescue
+        people_count:
+          type: integer
+          minimum: 1
+          example: 3
+        is_on_behalf:
+          type: boolean
+          default: false
+          description: True if requesting for someone else
+        urgency_level:
+          $ref: '#/components/schemas/UrgencyLevel'
+        image_url:
+          type: string
+          format: uri
+          maxLength: 500
+
+    SosRequestResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/SosRequest'
+
+    SosRequest:
+      type: object
+      description: SOS request entity matching sos_requests table
+      properties:
+        id:
+          type: string
+          format: uuid
+        requester_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: NULL for guest requests
+        requester_name:
+          type: string
+        requester_phone:
+          type: string
+        victim_name:
+          type: string
+          nullable: true
+        victim_phone:
+          type: string
+          nullable: true
+        victim_lat:
+          type: number
+          format: double
+        victim_lng:
+          type: number
+          format: double
+        victim_address:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        people_count:
+          type: integer
+        is_on_behalf:
+          type: boolean
+        urgency_level:
+          $ref: '#/components/schemas/UrgencyLevel'
+        ai_summary:
+          type: string
+          nullable: true
+          description: AI-generated summary
+        status:
+          $ref: '#/components/schemas/SosStatus'
+        image_url:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    SosRequestListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/SosRequest'
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+    # ============================================================
+    # AID REQUESTS - Matching aid_requests + aid_request_items
+    # ============================================================
+    CreateAidRequest:
+      type: object
+      required: [lat, lng, items]
+      properties:
+        sos_request_id:
+          type: string
+          format: uuid
+          description: Link to SOS request if applicable
+        lat:
+          type: number
+          format: double
+          example: 10.762622
+        lng:
+          type: number
+          format: double
+          example: 106.660172
+        address:
+          type: string
+        adults_count:
+          type: integer
+          minimum: 0
+          default: 0
+        elderly_count:
+          type: integer
+          minimum: 0
+          default: 0
+        children_count:
+          type: integer
+          minimum: 0
+          default: 0
+        notes:
+          type: string
+        urgency_level:
+          $ref: '#/components/schemas/UrgencyLevel'
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/AidRequestItemInput'
+
+    AidRequestItemInput:
+      type: object
+      required: [item_category_id, quantity]
+      properties:
+        item_category_id:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          minimum: 1
+
+    AidRequestResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/AidRequest'
+
+    AidRequest:
+      type: object
+      description: Aid request entity matching aid_requests table
+      properties:
+        id:
+          type: string
+          format: uuid
+        requester_id:
+          type: string
+          format: uuid
+        sos_request_id:
+          type: string
+          format: uuid
+          nullable: true
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+        address:
+          type: string
+          nullable: true
+        adults_count:
+          type: integer
+        elderly_count:
+          type: integer
+        children_count:
+          type: integer
+        notes:
+          type: string
+          nullable: true
+        urgency_level:
+          $ref: '#/components/schemas/UrgencyLevel'
+        status:
+          $ref: '#/components/schemas/AidStatus'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AidRequestItem'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    AidRequestItem:
+      type: object
+      description: Aid request line item matching aid_request_items table
+      properties:
+        id:
+          type: string
+          format: uuid
+        aid_request_id:
+          type: string
+          format: uuid
+        item_category_id:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+        # Joined from item_categories
+        category_name:
+          type: string
+        category_name_vi:
+          type: string
+        unit:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    AidRequestListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/AidRequest'
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+    # ============================================================
+    # MISSIONS - Matching missions + mission_items tables
+    # ============================================================
+    Mission:
+      type: object
+      description: Mission entity matching missions table
+      properties:
+        id:
+          type: string
+          format: uuid
+        mission_type:
+          $ref: '#/components/schemas/MissionType'
+        sos_request_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: For RESCUE missions
+        aid_request_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: For DELIVERY missions
+        volunteer_id:
+          type: string
+          format: uuid
+          nullable: true
+        hub_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: For DELIVERY missions
+        status:
+          $ref: '#/components/schemas/MissionStatus'
+        qr_code_token:
+          type: string
+          nullable: true
+        priority_score:
+          type: number
+          format: double
+          nullable: true
+        version:
+          type: integer
+          description: Optimistic locking version
+        accepted_at:
+          type: string
+          format: date-time
+          nullable: true
+        picked_up_at:
+          type: string
+          format: date-time
+          nullable: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        cancelled_at:
+          type: string
+          format: date-time
+          nullable: true
+        cancellation_reason:
+          type: string
+          nullable: true
+        confirmation_image_url:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    MissionItem:
+      type: object
+      description: Mission line item matching mission_items table
+      properties:
+        id:
+          type: string
+          format: uuid
+        mission_id:
+          type: string
+          format: uuid
+        item_category_id:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+        category_name:
+          type: string
+        category_name_vi:
+          type: string
+        unit:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    MissionListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Mission'
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+    MissionDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          allOf:
+            - $ref: '#/components/schemas/Mission'
+            - type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MissionItem'
+                volunteer:
+                  $ref: '#/components/schemas/VolunteerBrief'
+                hub:
+                  $ref: '#/components/schemas/HubBrief'
+                sos_request:
+                  $ref: '#/components/schemas/SosRequest'
+                aid_request:
+                  $ref: '#/components/schemas/AidRequest'
+
+    TrackingResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            mission_id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/MissionStatus'
+            volunteer:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                full_name:
+                  type: string
+                avatar_url:
+                  type: string
+                current_lat:
+                  type: number
+                current_lng:
+                  type: number
+                last_updated:
+                  type: string
+                  format: date-time
+            destination:
+              $ref: '#/components/schemas/Location'
+            destination_address:
+              type: string
+            eta_minutes:
+              type: integer
+            distance_km:
+              type: number
+            websocket_url:
+              type: string
+
+    # ============================================================
+    # DISPATCH ATTEMPTS - Matching dispatch_attempts table
+    # ============================================================
+    DispatchAttempt:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        mission_id:
+          type: string
+          format: uuid
+        volunteer_id:
+          type: string
+          format: uuid
+        dispatch_type:
+          $ref: '#/components/schemas/DispatchType'
+        batch_number:
+          type: integer
+        radius_km:
+          type: number
+        priority_score:
+          type: number
+        sent_at:
+          type: string
+          format: date-time
+        response:
+          $ref: '#/components/schemas/DispatchResponse'
+        responded_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    # ============================================================
+    # VOLUNTEER PROFILE - Matching volunteer_profiles table
+    # ============================================================
+    VolunteerProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        is_online:
+          type: boolean
+        current_lat:
+          type: number
+          nullable: true
+        current_lng:
+          type: number
+          nullable: true
+        vehicle_type:
+          $ref: '#/components/schemas/VehicleType'
+        total_tasks_completed:
+          type: integer
+        avg_rating:
+          type: number
+          format: double
+        avg_response_seconds:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    VolunteerBrief:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+        phone_number:
+          type: string
+        avatar_url:
+          type: string
+        avg_rating:
+          type: number
+        vehicle_type:
+          $ref: '#/components/schemas/VehicleType'
+
+    VolunteerProfileResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          allOf:
+            - $ref: '#/components/schemas/VolunteerProfile'
+            - type: object
+              properties:
+                user:
+                  $ref: '#/components/schemas/UserProfile'
+
+    UpdateVolunteerProfileRequest:
+      type: object
+      properties:
+        vehicle_type:
+          $ref: '#/components/schemas/VehicleType'
+
+    VolunteerStatisticsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            total_tasks_completed:
+              type: integer
+            rescue_missions:
+              type: integer
+            delivery_missions:
+              type: integer
+            avg_rating:
+              type: number
+            total_ratings:
+              type: integer
+            avg_response_seconds:
+              type: integer
+            people_helped:
+              type: integer
+
+    NearbyRequestsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  request_type:
+                    type: string
+                    enum: [SOS, AID]
+                  id:
+                    type: string
+                    format: uuid
+                  urgency_level:
+                    $ref: '#/components/schemas/UrgencyLevel'
+                  summary:
+                    type: string
+                  distance_km:
+                    type: number
+                  lat:
+                    type: number
+                  lng:
+                    type: number
+                  address:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+
+    # ============================================================
+    # SPONSOR PROFILE - Matching sponsor_profiles table
+    # ============================================================
+    SponsorProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        total_points:
+          type: integer
+        total_items_donated:
+          type: integer
+        donation_count:
+          type: integer
+        badge_level:
+          $ref: '#/components/schemas/BadgeLevel'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    SponsorProfileResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          allOf:
+            - $ref: '#/components/schemas/SponsorProfile'
+            - type: object
+              properties:
+                user:
+                  $ref: '#/components/schemas/UserProfile'
+                badge_progress:
+                  type: object
+                  properties:
+                    current_level:
+                      $ref: '#/components/schemas/BadgeLevel'
+                    current_count:
+                      type: integer
+                    next_level:
+                      $ref: '#/components/schemas/BadgeLevel'
+                    next_level_threshold:
+                      type: integer
+                    progress_percent:
+                      type: integer
+
+    SponsorStatisticsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            total_points:
+              type: integer
+            total_items_donated:
+              type: integer
+            donation_count:
+              type: integer
+            badge_level:
+              $ref: '#/components/schemas/BadgeLevel'
+            by_category:
+              type: array
+              items:
+                type: object
+                properties:
+                  item_category_id:
+                    type: string
+                    format: uuid
+                  category_name:
+                    type: string
+                  total_quantity:
+                    type: integer
+                  unit:
+                    type: string
+
+    # ============================================================
+    # DONATIONS - Matching donations + donation_items tables
+    # ============================================================
+    CreateDonationRequest:
+      type: object
+      required: [items, estimated_delivery_at]
+      properties:
+        hub_id:
+          type: string
+          format: uuid
+          description: Optional - can select later
+        estimated_delivery_at:
+          type: string
+          format: date
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/DonationItemInput'
+
+    DonationItemInput:
+      type: object
+      required: [item_category_id, quantity]
+      properties:
+        item_category_id:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          minimum: 1
+        expiry_date:
+          type: string
+          format: date
+        condition_notes:
+          type: string
+        image_url:
+          type: string
+          format: uri
+
+    Donation:
+      type: object
+      description: Donation entity matching donations table
+      properties:
+        id:
+          type: string
+          format: uuid
+        sponsor_id:
+          type: string
+          format: uuid
+        hub_id:
+          type: string
+          format: uuid
+          nullable: true
+        estimated_delivery_at:
+          type: string
+          format: date
+          nullable: true
+        qr_code_token:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/DonationStatus'
+        received_by:
+          type: string
+          format: uuid
+          nullable: true
+        received_at:
+          type: string
+          format: date-time
+          nullable: true
+        rejection_reason:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    DonationItem:
+      type: object
+      description: Donation line item matching donation_items table
+      properties:
+        id:
+          type: string
+          format: uuid
+        donation_id:
+          type: string
+          format: uuid
+        item_category_id:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+        expiry_date:
+          type: string
+          format: date
+          nullable: true
+        condition_notes:
+          type: string
+          nullable: true
+        image_url:
+          type: string
+          nullable: true
+        category_name:
+          type: string
+        category_name_vi:
+          type: string
+        unit:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    DonationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          allOf:
+            - $ref: '#/components/schemas/Donation'
+            - type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DonationItem'
+                suggested_hubs:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SuggestedHub'
+
+    SuggestedHub:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        address:
+          type: string
+        distance_km:
+          type: number
+        needs_category:
+          type: boolean
+        current_stock:
+          type: integer
+        low_stock_threshold:
+          type: integer
+
+    DonationListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Donation'
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+    DonationDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          allOf:
+            - $ref: '#/components/schemas/Donation'
+            - type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DonationItem'
+                sponsor:
+                  $ref: '#/components/schemas/UserProfile'
+                hub:
+                  $ref: '#/components/schemas/HubBrief'
+                received_by_staff:
+                  $ref: '#/components/schemas/UserProfile'
+
+    DonationQrResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/DonationStatus'
+            hub:
+              $ref: '#/components/schemas/HubBrief'
+            qr_code:
+              type: object
+              properties:
+                token:
+                  type: string
+                data_url:
+                  type: string
+                  description: Base64 encoded QR image
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/DonationItem'
+
+    # ============================================================
+    # HUBS - Matching hubs + hub_staff + hub_accepted_categories
+    # ============================================================
+    Hub:
+      type: object
+      description: Hub entity matching hubs table
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 100
+        address:
+          type: string
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+        status:
+          $ref: '#/components/schemas/HubStatus'
+        contact_phone:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    HubBrief:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        address:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        contact_phone:
+          type: string
+
+    CreateHubRequest:
+      type: object
+      required: [name, address, lat, lng]
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        address:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        contact_phone:
+          type: string
+          maxLength: 20
+        accepted_category_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    UpdateHubRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        address:
+          type: string
+        contact_phone:
+          type: string
+
+    HubResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/Hub'
+
+    HubListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                allOf:
+                  - $ref: '#/components/schemas/Hub'
+                  - type: object
+                    properties:
+                      distance_km:
+                        type: number
+
+    HubDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          allOf:
+            - $ref: '#/components/schemas/Hub'
+            - type: object
+              properties:
+                accepted_categories:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ItemCategory'
+                inventory:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/HubInventory'
+                staff:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/HubStaff'
+
+    HubStaff:
+      type: object
+      description: Hub staff assignment matching hub_staff table
+      properties:
+        id:
+          type: string
+          format: uuid
+        hub_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        is_available:
+          type: boolean
+        assigned_at:
+          type: string
+          format: date-time
+        unassigned_at:
+          type: string
+          format: date-time
+          nullable: true
+        user:
+          $ref: '#/components/schemas/UserProfile'
+
+    # ============================================================
+    # INVENTORY - Matching hub_inventories + inventory_logs
+    # ============================================================
+    HubInventory:
+      type: object
+      description: Hub inventory matching hub_inventories table
+      properties:
+        id:
+          type: string
+          format: uuid
+        hub_id:
+          type: string
+          format: uuid
+        item_category_id:
+          type: string
+          format: uuid
+        current_quantity:
+          type: integer
+        low_stock_threshold:
+          type: integer
+        version:
+          type: integer
+          description: Optimistic locking version
+        updated_at:
+          type: string
+          format: date-time
+        category_name:
+          type: string
+        category_name_vi:
+          type: string
+        unit:
+          type: string
+        stock_level:
+          type: string
+          enum: [CRITICAL, LOW, NORMAL, HIGH]
+
+    HubInventoryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            hub_id:
+              type: string
+              format: uuid
+            hub_name:
+              type: string
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/HubInventory'
+            summary:
+              type: object
+              properties:
+                total_categories:
+                  type: integer
+                critical_count:
+                  type: integer
+                low_count:
+                  type: integer
+                normal_count:
+                  type: integer
+
+    InventoryLog:
+      type: object
+      description: Inventory log matching inventory_logs table
+      properties:
+        id:
+          type: string
+          format: uuid
+        hub_inventory_id:
+          type: string
+          format: uuid
+        change_type:
+          $ref: '#/components/schemas/InventoryChangeType'
+        quantity_delta:
+          type: integer
+        reference_type:
+          $ref: '#/components/schemas/InventoryRefType'
+        reference_id:
+          type: string
+          format: uuid
+          nullable: true
+        performed_by:
+          type: string
+          format: uuid
+          nullable: true
+        quantity_after:
+          type: integer
+        notes:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        category_name:
+          type: string
+        performed_by_name:
+          type: string
+
+    InventoryLogListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/InventoryLog'
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+    OutboundQueueResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  mission_id:
+                    type: string
+                    format: uuid
+                  status:
+                    $ref: '#/components/schemas/MissionStatus'
+                  volunteer:
+                    $ref: '#/components/schemas/VolunteerBrief'
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MissionItem'
+                  destination_address:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+
+    InboundDonationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          allOf:
+            - $ref: '#/components/schemas/Donation'
+            - type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DonationItem'
+                sponsor:
+                  $ref: '#/components/schemas/UserProfile'
+
+    ConfirmInboundRequest:
+      type: object
+      required: [donation_id, action]
+      properties:
+        donation_id:
+          type: string
+          format: uuid
+        action:
+          type: string
+          enum: [ACCEPT, REJECT]
+        rejection_reason:
+          type: string
+
+    ConfirmInboundResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            donation_id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/DonationStatus'
+            received_at:
+              type: string
+              format: date-time
+            rejection_reason:
+              type: string
+            inventory_updated:
+              type: array
+              items:
+                type: object
+                properties:
+                  item_category_id:
+                    type: string
+                    format: uuid
+                  category_name:
+                    type: string
+                  quantity_added:
+                    type: integer
+                  new_total:
+                    type: integer
+
+    ConfirmOutboundRequest:
+      type: object
+      required: [mission_id, items]
+      properties:
+        mission_id:
+          type: string
+          format: uuid
+        items:
+          type: array
+          items:
+            type: object
+            required: [item_category_id, quantity_given]
+            properties:
+              item_category_id:
+                type: string
+                format: uuid
+              quantity_given:
+                type: integer
+
+    ConfirmOutboundResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            mission_id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/MissionStatus'
+            picked_up_at:
+              type: string
+              format: date-time
+            inventory_updated:
+              type: array
+              items:
+                type: object
+                properties:
+                  item_category_id:
+                    type: string
+                    format: uuid
+                  category_name:
+                    type: string
+                  quantity_deducted:
+                    type: integer
+                  new_total:
+                    type: integer
+
+    # ============================================================
+    # SHELTERS - Matching shelters table
+    # ============================================================
+    Shelter:
+      type: object
+      description: Shelter entity matching shelters table
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 100
+        address:
+          type: string
+          nullable: true
+        lat:
+          type: number
+          nullable: true
+        lng:
+          type: number
+          nullable: true
+        current_capacity:
+          type: integer
+        max_capacity:
+          type: integer
+        has_electricity:
+          type: boolean
+        has_clean_water:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/ShelterStatus'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateShelterRequest:
+      type: object
+      required: [name, max_capacity]
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        address:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        max_capacity:
+          type: integer
+          minimum: 1
+        has_electricity:
+          type: boolean
+          default: false
+        has_clean_water:
+          type: boolean
+          default: false
+
+    UpdateShelterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        current_capacity:
+          type: integer
+        status:
+          $ref: '#/components/schemas/ShelterStatus'
+
+    ShelterResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/Shelter'
+
+    ShelterListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                allOf:
+                  - $ref: '#/components/schemas/Shelter'
+                  - type: object
+                    properties:
+                      available_spots:
+                        type: integer
+                      distance_km:
+                        type: number
+
+    # ============================================================
+    # ITEM CATEGORIES - Matching item_categories table
+    # ============================================================
+    ItemCategory:
+      type: object
+      description: Item category matching item_categories table
+      properties:
+        id:
+          type: string
+          format: uuid
+        parent_id:
+          type: string
+          format: uuid
+          nullable: true
+        name:
+          type: string
+        name_vi:
+          type: string
+        unit:
+          type: string
+        is_leaf:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemCategory'
+
+    CategoryListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/ItemCategory'
+
+    CategoryDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          allOf:
+            - $ref: '#/components/schemas/ItemCategory'
+            - type: object
+              properties:
+                parent:
+                  $ref: '#/components/schemas/ItemCategory'
+
+    # ============================================================
+    # CHAT - Matching chat_messages table
+    # ============================================================
+    ChatMessage:
+      type: object
+      description: Chat message matching chat_messages table
+      properties:
+        id:
+          type: string
+          format: uuid
+        mission_id:
+          type: string
+          format: uuid
+        sender_id:
+          type: string
+          format: uuid
+        message_type:
+          $ref: '#/components/schemas/MessageType'
+        message_text:
+          type: string
+          nullable: true
+        image_url:
+          type: string
+          nullable: true
+        is_read:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        sender_name:
+          type: string
+        sender_role:
+          $ref: '#/components/schemas/UserRole'
+
+    SendChatMessageRequest:
+      type: object
+      required: [message_type]
+      properties:
+        message_type:
+          $ref: '#/components/schemas/MessageType'
+        message_text:
+          type: string
+        image_url:
+          type: string
+          format: uri
+
+    ChatMessageResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/ChatMessage'
+
+    ChatMessageListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/ChatMessage'
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+    # ============================================================
+    # RATINGS - Matching ratings table
+    # ============================================================
+    Rating:
+      type: object
+      description: Rating matching ratings table
+      properties:
+        id:
+          type: string
+          format: uuid
+        mission_id:
+          type: string
+          format: uuid
+        rater_id:
+          type: string
+          format: uuid
+        ratee_id:
+          type: string
+          format: uuid
+        score:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    CreateRatingRequest:
+      type: object
+      required: [score]
+      properties:
+        score:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+
+    RatingResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/Rating'
+
+    VolunteerRatingsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            volunteer_id:
+              type: string
+              format: uuid
+            avg_rating:
+              type: number
+            total_ratings:
+              type: integer
+            distribution:
+              type: object
+              additionalProperties:
+                type: integer
+            items:
+              type: array
+              items:
+                allOf:
+                  - $ref: '#/components/schemas/Rating'
+                  - type: object
+                    properties:
+                      mission_type:
+                        $ref: '#/components/schemas/MissionType'
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+    # ============================================================
+    # NOTIFICATIONS - Matching notifications table
+    # ============================================================
+    Notification:
+      type: object
+      description: Notification matching notifications table
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          maxLength: 200
+        body:
+          type: string
+          nullable: true
+        related_type:
+          $ref: '#/components/schemas/NotificationType'
+        related_id:
+          type: string
+          format: uuid
+          nullable: true
+        is_read:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    NotificationListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Notification'
+            unread_count:
+              type: integer
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+    BroadcastNotificationRequest:
+      type: object
+      required: [title, body, target]
+      properties:
+        title:
+          type: string
+          maxLength: 200
+        body:
+          type: string
+        target:
+          type: object
+          required: [type]
+          properties:
+            type:
+              type: string
+              enum: [ALL, ROLE, AREA]
+            roles:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserRole'
+            area:
+              type: object
+              properties:
+                lat:
+                  type: number
+                lng:
+                  type: number
+                radius_km:
+                  type: number
+
+    BroadcastResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            notification_id:
+              type: string
+              format: uuid
+            recipients_count:
+              type: integer
+            message:
+              type: string
+
+    # ============================================================
+    # MAP & DIRECTIONS
+    # ============================================================
+    MapLayersResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            hubs:
+              type: array
+              items:
+                $ref: '#/components/schemas/HubBrief'
+            shelters:
+              type: array
+              items:
+                $ref: '#/components/schemas/Shelter'
+            requests:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum: [SOS, AID]
+                  id:
+                    type: string
+                    format: uuid
+                  lat:
+                    type: number
+                  lng:
+                    type: number
+                  urgency_level:
+                    $ref: '#/components/schemas/UrgencyLevel'
+            last_updated:
+              type: string
+              format: date-time
+
+    DirectionsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            polyline:
+              type: string
+              description: Encoded polyline string
+            distance_km:
+              type: number
+            duration_minutes:
+              type: integer
+            steps:
+              type: array
+              items:
+                type: object
+                properties:
+                  instruction:
+                    type: string
+                  distance_m:
+                    type: integer
+
+    # ============================================================
+    # SYSTEM CONFIG - Matching system_config table
+    # ============================================================
+    SystemConfig:
+      type: object
+      description: System config matching system_config table
+      properties:
+        key:
+          type: string
+          maxLength: 100
+        value:
+          type: string
+        description:
+          type: string
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+
+    SystemConfigResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/SystemConfig'
+
+    UpdateSystemConfigRequest:
+      type: object
+      required: [configs]
+      properties:
+        configs:
+          type: array
+          items:
+            type: object
+            required: [key, value]
+            properties:
+              key:
+                type: string
+              value:
+                type: string
+
+    UpdateSystemConfigResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            updated:
+              type: array
+              items:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  old_value:
+                    type: string
+                  new_value:
+                    type: string
+
+    # ============================================================
+    # AI SERVICES
+    # ============================================================
+    AiSummaryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            period:
+              type: string
+            summary:
+              type: object
+              properties:
+                total_requests:
+                  type: integer
+                sos_requests:
+                  type: integer
+                aid_requests:
+                  type: integer
+                completed_missions:
+                  type: integer
+                active_volunteers:
+                  type: integer
+                people_helped:
+                  type: integer
+            hub_alerts:
+              type: array
+              items:
+                type: object
+                properties:
+                  hub_id:
+                    type: string
+                    format: uuid
+                  hub_name:
+                    type: string
+                  alert_type:
+                    type: string
+                  message:
+                    type: string
+            generated_at:
+              type: string
+              format: date-time
+
+    AiChatResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            response:
+              type: string
+            data_sources:
+              type: array
+              items:
+                type: string
+            generated_at:
+              type: string
+              format: date-time
+
+    ExportReportRequest:
+      type: object
+      required: [period, format]
+      properties:
+        period:
+          type: string
+          enum: [today, week, month]
+        format:
+          type: string
+          enum: [PDF, CSV, EXCEL]
+        sections:
+          type: array
+          items:
+            type: string
+            enum: [summary, missions, inventory, volunteers]
+
+    ExportReportResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            job_id:
+              type: string
+              format: uuid
+            status:
+              type: string
+              enum: [PROCESSING, COMPLETED, FAILED]
+            download_url:
+              type: string
+            expires_at:
+              type: string
+              format: date-time
+
+    # ============================================================
+    # ATTACHMENTS
+    # ============================================================
+    AttachmentResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            url:
+              type: string
+            file_name:
+              type: string
+            file_size:
+              type: integer
+            mime_type:
+              type: string
+            uploaded_by:
+              type: string
+              format: uuid
+            created_at:
+              type: string
+              format: date-time
+
+# ============================================================
+# PATHS - Part 1: Auth
+# ============================================================
+paths:
+  # ---------- AUTH ENDPOINTS ----------
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register new user
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Email or phone already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: User login
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh access token
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout and revoke tokens
+      operationId: logout
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /auth/otp/request:
+    post:
+      tags: [Auth]
+      summary: Request OTP code
+      operationId: requestOtp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOtpRequest'
+      responses:
+        '200':
+          description: OTP sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '429':
+          description: Too many OTP requests (rate limited)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/otp/verify:
+    post:
+      tags: [Auth]
+      summary: Verify OTP code
+      operationId: verifyOtp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOtpRequest'
+      responses:
+        '200':
+          description: OTP verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Invalid OTP
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Account locked due to too many failed attempts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/password/reset:
+    post:
+      tags: [Auth]
+      summary: Reset password with OTP
+      operationId: resetPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Invalid OTP or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/password/change:
+    post:
+      tags: [Auth]
+      summary: Change password (authenticated)
+      operationId: changePassword
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '200':
+          description: Password changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Current password incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ---------- USER PROFILE ----------
+  /users/me:
+    get:
+      tags: [Auth]
+      summary: Get current user profile
+      operationId: getMe
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/UserProfile'
+
+    patch:
+      tags: [Auth]
+      summary: Update current user profile
+      operationId: updateMe
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/UserProfile'
+
+  # ============================================================
+  # SOS REQUESTS
+  # ============================================================
+  /sos-requests:
+    post:
+      tags: [SOS Requests]
+      summary: Create SOS rescue request (allows guest)
+      operationId: createSosRequest
+      description: Creates emergency rescue request. Authentication optional for guests.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSosRequest'
+      responses:
+        '201':
+          description: SOS request created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SosRequestResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags: [SOS Requests]
+      summary: List SOS requests
+      operationId: listSosRequests
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/SosStatus'
+        - name: urgency_level
+          in: query
+          schema:
+            $ref: '#/components/schemas/UrgencyLevel'
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: SOS requests list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SosRequestListResponse'
+
+  /sos-requests/{id}:
+    get:
+      tags: [SOS Requests]
+      summary: Get SOS request details
+      operationId: getSosRequest
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: SOS request details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SosRequestResponse'
+        '404':
+          description: SOS request not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /sos-requests/{id}/cancel:
+    post:
+      tags: [SOS Requests]
+      summary: Cancel SOS request
+      operationId: cancelSosRequest
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: SOS request cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SosRequestResponse'
+
+  # ============================================================
+  # AID REQUESTS
+  # ============================================================
+  /aid-requests:
+    post:
+      tags: [Aid Requests]
+      summary: Create aid supply request
+      operationId: createAidRequest
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAidRequest'
+      responses:
+        '201':
+          description: Aid request created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AidRequestResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags: [Aid Requests]
+      summary: List aid requests
+      operationId: listAidRequests
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/AidStatus'
+        - name: urgency_level
+          in: query
+          schema:
+            $ref: '#/components/schemas/UrgencyLevel'
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Aid requests list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AidRequestListResponse'
+
+  /aid-requests/{id}:
+    get:
+      tags: [Aid Requests]
+      summary: Get aid request details
+      operationId: getAidRequest
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Aid request details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AidRequestResponse'
+        '404':
+          description: Aid request not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /aid-requests/{id}/cancel:
+    post:
+      tags: [Aid Requests]
+      summary: Cancel aid request
+      operationId: cancelAidRequest
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Aid request cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AidRequestResponse'
+
+  /aid-requests/voice:
+    post:
+      tags: [Aid Requests]
+      summary: Create aid request via voice (AI transcription)
+      operationId: createVoiceAidRequest
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [audio]
+              properties:
+                audio:
+                  type: string
+                  format: binary
+                lat:
+                  type: number
+                lng:
+                  type: number
+      responses:
+        '200':
+          description: Voice transcribed and aid request suggested
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      transcription:
+                        type: string
+                      suggested_request:
+                        $ref: '#/components/schemas/CreateAidRequest'
+                      requires_confirmation:
+                        type: boolean
+
+  # ============================================================
+  # MISSIONS
+  # ============================================================
+  /missions:
+    get:
+      tags: [Missions]
+      summary: List missions
+      operationId: listMissions
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: mission_type
+          in: query
+          schema:
+            $ref: '#/components/schemas/MissionType'
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/MissionStatus'
+        - name: volunteer_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Missions list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissionListResponse'
+
+  /missions/{id}:
+    get:
+      tags: [Missions]
+      summary: Get mission details
+      operationId: getMission
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Mission details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissionDetailResponse'
+        '404':
+          description: Mission not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /missions/{id}/pickup:
+    post:
+      tags: [Missions]
+      summary: Confirm pickup at hub (DELIVERY mission)
+      operationId: confirmMissionPickup
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                qr_code_token:
+                  type: string
+                  description: QR code scanned at hub
+      responses:
+        '200':
+          description: Pickup confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissionDetailResponse'
+
+  /missions/{id}/complete:
+    post:
+      tags: [Missions]
+      summary: Complete mission with confirmation
+      operationId: completeMission
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [confirmation_image]
+              properties:
+                confirmation_image:
+                  type: string
+                  format: binary
+                notes:
+                  type: string
+      responses:
+        '200':
+          description: Mission completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissionDetailResponse'
+
+  /missions/{id}/cancel:
+    post:
+      tags: [Missions]
+      summary: Cancel mission
+      operationId: cancelMission
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [cancellation_reason]
+              properties:
+                cancellation_reason:
+                  type: string
+      responses:
+        '200':
+          description: Mission cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissionDetailResponse'
+
+  /missions/{id}/tracking:
+    get:
+      tags: [Missions]
+      summary: Get real-time tracking info
+      operationId: getMissionTracking
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Tracking information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackingResponse'
+
+  /missions/{id}/chat:
+    get:
+      tags: [Chat]
+      summary: Get mission chat messages
+      operationId: getMissionChat
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: Chat messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessageListResponse'
+
+    post:
+      tags: [Chat]
+      summary: Send chat message
+      operationId: sendChatMessage
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendChatMessageRequest'
+      responses:
+        '201':
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessageResponse'
+
+  /missions/{id}/rating:
+    post:
+      tags: [Ratings]
+      summary: Rate completed mission
+      operationId: rateMission
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRatingRequest'
+      responses:
+        '201':
+          description: Rating submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RatingResponse'
+        '400':
+          description: Mission not completed or already rated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ============================================================
+  # VOLUNTEERS
+  # ============================================================
+  /volunteers/profile:
+    get:
+      tags: [Volunteers]
+      summary: Get volunteer profile
+      operationId: getVolunteerProfile
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Volunteer profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolunteerProfileResponse'
+
+    patch:
+      tags: [Volunteers]
+      summary: Update volunteer profile
+      operationId: updateVolunteerProfile
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateVolunteerProfileRequest'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolunteerProfileResponse'
+
+  /volunteers/status:
+    post:
+      tags: [Volunteers]
+      summary: Toggle online status
+      operationId: toggleVolunteerStatus
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [is_online]
+              properties:
+                is_online:
+                  type: boolean
+                current_lat:
+                  type: number
+                  format: double
+                current_lng:
+                  type: number
+                  format: double
+      responses:
+        '200':
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      is_online:
+                        type: boolean
+                      message:
+                        type: string
+
+  /volunteers/location:
+    post:
+      tags: [Volunteers]
+      summary: Update current location
+      operationId: updateVolunteerLocation
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [current_lat, current_lng]
+              properties:
+                current_lat:
+                  type: number
+                  format: double
+                current_lng:
+                  type: number
+                  format: double
+      responses:
+        '200':
+          description: Location updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /volunteers/current-mission:
+    get:
+      tags: [Volunteers]
+      summary: Get volunteer's active mission
+      operationId: getVolunteerCurrentMission
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Current mission details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissionDetailResponse'
+        '404':
+          description: No active mission
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /volunteers/nearby-requests:
+    get:
+      tags: [Volunteers]
+      summary: Get nearby pending requests
+      operationId: getNearbyRequests
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: lng
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: radius_km
+          in: query
+          schema:
+            type: number
+            default: 5
+      responses:
+        '200':
+          description: Nearby requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NearbyRequestsResponse'
+
+  /volunteers/statistics:
+    get:
+      tags: [Volunteers]
+      summary: Get volunteer statistics
+      operationId: getVolunteerStatistics
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolunteerStatisticsResponse'
+
+  /volunteers/ratings:
+    get:
+      tags: [Volunteers]
+      summary: Get volunteer ratings
+      operationId: getVolunteerRatings
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Volunteer ratings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolunteerRatingsResponse'
+
+  /volunteers/dispatch/{dispatch_id}/respond:
+    post:
+      tags: [Volunteers]
+      summary: Respond to dispatch request
+      operationId: respondToDispatch
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: dispatch_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [response]
+              properties:
+                response:
+                  $ref: '#/components/schemas/DispatchResponse'
+      responses:
+        '200':
+          description: Response recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      mission_id:
+                        type: string
+                        format: uuid
+                      status:
+                        $ref: '#/components/schemas/MissionStatus'
+                      message:
+                        type: string
+
+  # ============================================================
+  # SPONSORS
+  # ============================================================
+  /sponsors/profile:
+    get:
+      tags: [Sponsors]
+      summary: Get sponsor profile
+      operationId: getSponsorProfile
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Sponsor profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SponsorProfileResponse'
+
+  /sponsors/statistics:
+    get:
+      tags: [Sponsors]
+      summary: Get sponsor statistics
+      operationId: getSponsorStatistics
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SponsorStatisticsResponse'
+
+  # ============================================================
+  # DONATIONS
+  # ============================================================
+  /donations:
+    post:
+      tags: [Donations]
+      summary: Register new donation
+      operationId: createDonation
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDonationRequest'
+      responses:
+        '201':
+          description: Donation registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonationResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags: [Donations]
+      summary: List donations
+      operationId: listDonations
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/DonationStatus'
+        - name: hub_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Donations list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonationListResponse'
+
+  /donations/{id}:
+    get:
+      tags: [Donations]
+      summary: Get donation details
+      operationId: getDonation
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Donation details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonationDetailResponse'
+        '404':
+          description: Donation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /donations/{id}/select-hub:
+    post:
+      tags: [Donations]
+      summary: Select hub for donation
+      operationId: selectDonationHub
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [hub_id]
+              properties:
+                hub_id:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Hub selected, QR code generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonationQrResponse'
+
+  /donations/{id}/qr:
+    get:
+      tags: [Donations]
+      summary: Get donation QR code
+      operationId: getDonationQr
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: QR code data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonationQrResponse'
+
+  # ============================================================
+  # HUBS
+  # ============================================================
+  /hubs:
+    get:
+      tags: [Hubs]
+      summary: List hubs
+      operationId: listHubs
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/HubStatus'
+        - name: lat
+          in: query
+          schema:
+            type: number
+        - name: lng
+          in: query
+          schema:
+            type: number
+        - name: radius_km
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Hubs list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubListResponse'
+
+    post:
+      tags: [Hubs]
+      summary: Create new hub (Admin only)
+      operationId: createHub
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateHubRequest'
+      responses:
+        '201':
+          description: Hub created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubResponse'
+
+  /hubs/{id}:
+    get:
+      tags: [Hubs]
+      summary: Get hub details
+      operationId: getHub
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Hub details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubDetailResponse'
+
+    patch:
+      tags: [Hubs]
+      summary: Update hub (Admin only)
+      operationId: updateHub
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateHubRequest'
+      responses:
+        '200':
+          description: Hub updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubResponse'
+
+  /hubs/{id}/status:
+    post:
+      tags: [Hubs]
+      summary: Change hub status (Admin/Staff)
+      operationId: changeHubStatus
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  $ref: '#/components/schemas/HubStatus'
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Status changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubResponse'
+
+  /hubs/{id}/accepted-categories:
+    put:
+      tags: [Hubs]
+      summary: Update hub accepted categories
+      operationId: updateHubAcceptedCategories
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [item_category_ids]
+              properties:
+                item_category_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        '200':
+          description: Categories updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  # ============================================================
+  # INVENTORY
+  # ============================================================
+  /hubs/{hub_id}/inventory:
+    get:
+      tags: [Inventory]
+      summary: Get hub inventory
+      operationId: getHubInventory
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hub_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Inventory list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubInventoryResponse'
+
+  /hubs/{hub_id}/inventory/logs:
+    get:
+      tags: [Inventory]
+      summary: Get inventory change logs
+      operationId: getInventoryLogs
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hub_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: change_type
+          in: query
+          schema:
+            $ref: '#/components/schemas/InventoryChangeType'
+        - name: item_category_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: Inventory logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryLogListResponse'
+
+  /hubs/{hub_id}/inventory/outbound-queue:
+    get:
+      tags: [Inventory]
+      summary: Get pending outbound missions
+      operationId: getOutboundQueue
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hub_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Outbound queue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutboundQueueResponse'
+
+  /hubs/{hub_id}/inventory/inbound/scan:
+    post:
+      tags: [Inventory]
+      summary: Scan donation QR for inbound
+      operationId: scanInboundDonation
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hub_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [qr_code_token]
+              properties:
+                qr_code_token:
+                  type: string
+      responses:
+        '200':
+          description: Donation details for confirmation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InboundDonationResponse'
+
+  /hubs/{hub_id}/inventory/inbound/confirm:
+    post:
+      tags: [Inventory]
+      summary: Confirm inbound donation
+      operationId: confirmInbound
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hub_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmInboundRequest'
+      responses:
+        '200':
+          description: Inbound confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmInboundResponse'
+
+  /hubs/{hub_id}/inventory/outbound/confirm:
+    post:
+      tags: [Inventory]
+      summary: Confirm outbound for mission
+      operationId: confirmOutbound
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hub_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmOutboundRequest'
+      responses:
+        '200':
+          description: Outbound confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmOutboundResponse'
+
+  # ============================================================
+  # SHELTERS
+  # ============================================================
+  /shelters:
+    get:
+      tags: [Shelters]
+      summary: List shelters
+      operationId: listShelters
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/ShelterStatus'
+        - name: lat
+          in: query
+          schema:
+            type: number
+        - name: lng
+          in: query
+          schema:
+            type: number
+        - name: radius_km
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Shelters list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShelterListResponse'
+
+    post:
+      tags: [Shelters]
+      summary: Create shelter (Admin only)
+      operationId: createShelter
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateShelterRequest'
+      responses:
+        '201':
+          description: Shelter created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShelterResponse'
+
+  /shelters/{id}:
+    patch:
+      tags: [Shelters]
+      summary: Update shelter
+      operationId: updateShelter
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateShelterRequest'
+      responses:
+        '200':
+          description: Shelter updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShelterResponse'
+
+  # ============================================================
+  # CATEGORIES
+  # ============================================================
+  /categories:
+    get:
+      tags: [Categories]
+      summary: Get item categories tree
+      operationId: listCategories
+      parameters:
+        - name: is_leaf
+          in: query
+          schema:
+            type: boolean
+          description: Filter leaf categories only
+      responses:
+        '200':
+          description: Categories tree
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryListResponse'
+
+  /categories/{id}:
+    get:
+      tags: [Categories]
+      summary: Get category details
+      operationId: getCategory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Category details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDetailResponse'
+
+  # ============================================================
+  # NOTIFICATIONS
+  # ============================================================
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: Get user notifications
+      operationId: listNotifications
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: is_read
+          in: query
+          schema:
+            type: boolean
+        - name: related_type
+          in: query
+          schema:
+            $ref: '#/components/schemas/NotificationType'
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Notifications list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationListResponse'
+
+  /notifications/{id}/read:
+    post:
+      tags: [Notifications]
+      summary: Mark notification as read
+      operationId: markNotificationRead
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Marked as read
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /notifications/read-all:
+    post:
+      tags: [Notifications]
+      summary: Mark all notifications as read
+      operationId: markAllNotificationsRead
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: All marked as read
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  # ============================================================
+  # MAP
+  # ============================================================
+  /map/layers:
+    get:
+      tags: [Map]
+      summary: Get map layers data
+      operationId: getMapLayers
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: lng
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: radius_km
+          in: query
+          schema:
+            type: number
+            default: 10
+        - name: layers
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [hubs, shelters, requests]
+      responses:
+        '200':
+          description: Map layers data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MapLayersResponse'
+
+  /map/directions:
+    get:
+      tags: [Map]
+      summary: Get directions between points
+      operationId: getDirections
+      parameters:
+        - name: origin_lat
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: origin_lng
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: dest_lat
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: dest_lng
+          in: query
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Directions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DirectionsResponse'
+
+  # ============================================================
+  # ADMIN
+  # ============================================================
+  /admin/system-config:
+    get:
+      tags: [Admin]
+      summary: Get system configuration
+      operationId: getSystemConfig
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: System config
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemConfigResponse'
+
+    patch:
+      tags: [Admin]
+      summary: Update system configuration
+      operationId: updateSystemConfig
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSystemConfigRequest'
+      responses:
+        '200':
+          description: Config updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateSystemConfigResponse'
+
+  /admin/notifications/broadcast:
+    post:
+      tags: [Admin]
+      summary: Broadcast notification
+      operationId: broadcastNotification
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BroadcastNotificationRequest'
+      responses:
+        '200':
+          description: Broadcast sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastResponse'
+
+  # ============================================================
+  # AI SERVICES
+  # ============================================================
+  /ai/summary:
+    get:
+      tags: [AI]
+      summary: Get AI-generated operational summary
+      operationId: getAiSummary
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [today, week, month]
+            default: today
+      responses:
+        '200':
+          description: AI summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiSummaryResponse'
+
+  /ai/chat:
+    post:
+      tags: [AI]
+      summary: Chat with AI assistant
+      operationId: aiChat
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message:
+                  type: string
+                context:
+                  type: string
+                  enum: [general, inventory, missions, donations]
+      responses:
+        '200':
+          description: AI response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiChatResponse'
+
+  /ai/report:
+    post:
+      tags: [AI]
+      summary: Generate and export report
+      operationId: exportReport
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportReportRequest'
+      responses:
+        '202':
+          description: Report generation started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportReportResponse'
+
+  # ============================================================
+  # ATTACHMENTS
+  # ============================================================
+  /attachments:
+    post:
+      tags: [Auth]
+      summary: Upload attachment
+      operationId: uploadAttachment
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                reference_type:
+                  type: string
+                reference_id:
+                  type: string
+                  format: uuid
+      responses:
+        '201':
+          description: Attachment uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentResponse'

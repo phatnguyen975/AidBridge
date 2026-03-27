@@ -73,7 +73,7 @@ CREATE INDEX idx_inventory_logs_reference ON inventory_logs(reference_type, refe
 -- SOS requests
 CREATE INDEX idx_sos_requester ON sos_requests(requester_id);
 CREATE INDEX idx_sos_status ON sos_requests(status);
-CREATE INDEX idx_sos_location ON sos_requests(victim_lat, victim_lng);
+CREATE INDEX idx_sos_location ON sos_requests(lat, lng);
 CREATE INDEX idx_sos_created ON sos_requests(created_at DESC);
 CREATE INDEX idx_sos_pending ON sos_requests(urgency_level, created_at)
 WHERE status = 'PENDING';
@@ -111,6 +111,8 @@ CREATE INDEX idx_missions_sos ON missions(sos_request_id)
 WHERE sos_request_id IS NOT NULL;
 CREATE INDEX idx_missions_aid ON missions(aid_request_id)
 WHERE aid_request_id IS NOT NULL;
+CREATE INDEX idx_missions_help ON missions(help_request_id)
+WHERE help_request_id IS NOT NULL;
 CREATE INDEX idx_missions_volunteer ON missions(volunteer_id)
 WHERE volunteer_id IS NOT NULL;
 CREATE INDEX idx_missions_hub ON missions(hub_id)

@@ -265,19 +265,13 @@ CREATE TABLE inventory_logs (
 -- ----------------------------------------------------------------------------
 CREATE TABLE sos_requests (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    requester_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    requester_name VARCHAR(100) NOT NULL,
-    requester_phone VARCHAR(15) NOT NULL,
-    victim_name VARCHAR(100),
-    victim_phone VARCHAR(15),
-    victim_lat DECIMAL(9, 6) NOT NULL,
-    victim_lng DECIMAL(9, 6) NOT NULL,
-    victim_address VARCHAR(255),
+    requester_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    lat DECIMAL(9, 6) NOT NULL,
+    lng DECIMAL(9, 6) NOT NULL,
+    address VARCHAR(500),
     description TEXT,
     people_count INTEGER NOT NULL DEFAULT 1,
-    is_on_behalf BOOLEAN NOT NULL DEFAULT FALSE,
     urgency_level urgency_level NOT NULL DEFAULT 'MEDIUM',
-    ai_summary TEXT,
     status sos_status NOT NULL DEFAULT 'PENDING',
     image_url VARCHAR(500),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -344,41 +338,42 @@ CREATE TABLE donation_items (
 CREATE TABLE missions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     mission_type mission_type NOT NULL,
-    sos_request_id UUID REFERENCES sos_requests(id) ON DELETE
-    SET NULL,
-        aid_request_id UUID REFERENCES aid_requests(id) ON DELETE
-    SET NULL,
-        volunteer_id UUID REFERENCES users(id) ON DELETE
-    SET NULL,
-        hub_id UUID REFERENCES hubs(id) ON DELETE
-    SET NULL,
-        status mission_status NOT NULL DEFAULT 'PENDING',
-        qr_code_token VARCHAR(100) UNIQUE,
-        priority_score DECIMAL(5, 2) DEFAULT 0.00,
-        accepted_at TIMESTAMPTZ,
-        picked_up_at TIMESTAMPTZ,
-        completed_at TIMESTAMPTZ,
-        cancelled_at TIMESTAMPTZ,
-        cancellation_reason TEXT,
-        confirmation_image_url VARCHAR(500),
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        CONSTRAINT chk_mission_rescue CHECK (
-            mission_type != 'RESCUE'
-            OR (
-                sos_request_id IS NOT NULL
-                AND aid_request_id IS NULL
-                AND hub_id IS NULL
-            )
-        ),
-        CONSTRAINT chk_mission_delivery CHECK (
-            mission_type != 'DELIVERY'
-            OR (
-                aid_request_id IS NOT NULL
-                AND hub_id IS NOT NULL
-                AND sos_request_id IS NULL
-            )
+    sos_request_id UUID REFERENCES sos_requests(id) ON DELETE SET NULL,
+    aid_request_id UUID REFERENCES aid_requests(id) ON DELETE SET NULL,
+    help_request_id UUID REFERENCES help_requests(id) ON DELETE SET NULL,
+    volunteer_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    hub_id UUID REFERENCES hubs(id) ON DELETE SET NULL,
+    status mission_status NOT NULL DEFAULT 'PENDING',
+    qr_code_token VARCHAR(100) UNIQUE,
+    priority_score DECIMAL(5, 2) DEFAULT 0.00,
+    victim_lat DECIMAL(9, 6),
+    victim_lng DECIMAL(9, 6),
+    cancellation_reason TEXT,
+    image_url VARCHAR(500),
+    comment TEXT,
+    started_at TIMESTAMPTZ,
+    accepted_at TIMESTAMPTZ,
+    completed_at TIMESTAMPTZ,
+    picked_up_at TIMESTAMPTZ,
+    cancelled_at TIMESTAMPTZ,
+    confirmation_image_url VARCHAR(500),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT chk_missions_type_rescue CHECK (
+        mission_type != 'RESCUE'
+        OR (
+            sos_request_id IS NOT NULL
+            AND aid_request_id IS NULL
         )
+    ),
+    CONSTRAINT chk_missions_type_delivery CHECK (
+        mission_type != 'DELIVERY'
+        OR (
+            aid_request_id IS NOT NULL
+            AND sos_request_id IS NULL
+            AND hub_id IS NOT NULL
+        )
+    )
 );
 CREATE TABLE dispatch_attempts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -493,7 +488,7 @@ CREATE INDEX idx_inventory_logs_reference ON inventory_logs(reference_type, refe
 -- REQUESTS
 CREATE INDEX idx_sos_requester ON sos_requests(requester_id);
 CREATE INDEX idx_sos_status ON sos_requests(status);
-CREATE INDEX idx_sos_location ON sos_requests(victim_lat, victim_lng);
+CREATE INDEX idx_sos_location ON sos_requests(lat, lng);
 CREATE INDEX idx_sos_created ON sos_requests(created_at DESC);
 CREATE INDEX idx_sos_pending ON sos_requests(urgency_level, created_at)
 WHERE status = 'PENDING';
@@ -522,6 +517,8 @@ CREATE INDEX idx_missions_sos ON missions(sos_request_id)
 WHERE sos_request_id IS NOT NULL;
 CREATE INDEX idx_missions_aid ON missions(aid_request_id)
 WHERE aid_request_id IS NOT NULL;
+CREATE INDEX idx_missions_help ON missions(help_request_id)
+WHERE help_request_id IS NOT NULL;
 CREATE INDEX idx_missions_volunteer ON missions(volunteer_id)
 WHERE volunteer_id IS NOT NULL;
 CREATE INDEX idx_missions_hub ON missions(hub_id)
