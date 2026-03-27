@@ -24,13 +24,41 @@ Content-Type: application/json
 ### 3. Create SOS (❗ DÁN TOKEN VÀO ĐÂY)
 POST http://localhost:8080/api/victim/sos-requests
 Content-Type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwNDcyNDFmOS0wNWZmLTRlMzktYjI5NS1mZDY4MzZjY2RmNTUiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6IjA1ZDBmYTg4LTc2M2ItNDEzOC05YzY5LWRjZGU0ZWVhYzlkZCIsImlhdCI6MTc3NDAyMDU5MSwiZXhwIjoxNzc0MDIxNDkxfQ.VvKqgENlwktStwSwbYgpOgPSoSlb0An7IV4MmUcM1GnUbPEz-Spr8CU5qI32mauEUYIKbshM_158rEZqBHqE3dHpqm-XpXIfDn5nRDPcQYxILGjxiWo4PVDRCRWCq34vhJTO6wuA0JVfD3A9Zz3kniGuL96CKG8XpM4fmpMDK2ldADu_A7HNCRDPqevYVJh3PozsX66EtbBhQlw7P4qUBkc6PkEkiVVyrO77eHK6TJTUrCz-Ged3v5tPTbIPkpp9jBvvAmlPAV4IGDIFNCHaAdJyszBdLvl4xKBnW075CNtbdiquhPrbVa6jmWhFdyuerNMtFANk2xTULHtki0a0Xg
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwNDcyNDFmOS0wNWZmLTRlMzktYjI5NS1mZDY4MzZjY2RmNTUiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6Ijg4MmMwOWRmLTIzMTEtNDE5ZS1iNTMzLTM3NTA2MmQyNzY5MiIsImlhdCI6MTc3NDYyNzY2NSwiZXhwIjoxNzc0NjI4NTY1fQ.cAMHl554Q7zipxD5l6bdfxhm9CiuLNXojivfB0NwqNBDpGrMrA2frpozKLoLnhOztcgEmq3IK0ow5bGXWfRW2qEuxoYJfR0BDnZzhXmh_Za9qydkP767_1f4as4rR_PQCaA72LGckPYYPSSkpTZ78HPNlpen_nZCk5ZadP-_Lh-E5QqGGotUm0tIj_Y9QaUXVWEMkI2qu4ogxcaWx-DhfZpDBiHWvlFz16dKaiUZWfdF2Bfj5eD7zqwVTAKwUpwakUsre1O0KK0ncbAcBHY1GYu3zO1XJY--fBWDwHccn_UfMf_RrfKmv51XNVT0OI1xB0NWO5PzDWhucj9n1WdVuQ
 
 {
   "lat": 10.123456,
   "lng": 106.123456,
   "description": "Help needed",
   "peopleCount": 2
+}
+
+###
+
+### 3.1 Create Aid Request (❗ DÁN TOKEN VÀO ĐÂY)
+POST http://localhost:8080/api/victim/aid-requests
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwNDcyNDFmOS0wNWZmLTRlMzktYjI5NS1mZDY4MzZjY2RmNTUiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6IjYzYzcwYWM3LWEzNjYtNDZhZS05NGY2LWYwY2MyNDk4OGE3NCIsImlhdCI6MTc3NDYzMDczNiwiZXhwIjoxNzc0NjMxNjM2fQ.Ehnh0hyitTT46kHthfZunq15JMVRhuC3VnNVDXO8so-ehbmqQsUS_cJqW86iDx6bF0vLNSBq_okk7Y8Bm1Q1mUyRmIl_gbQhdYJCxr6iYomoyTzBYS3yoZeXQYlKrZOIUbQsNqm2wIJTwC-hOIsZgqL8eem9LQKjSiaQP2dkvxiUd-4wZhrKAevGQoNKUYUQgOsRO4doF9_mJ94Q08mMakxJCyK28WknVGOdsp_pxIUXCLC0GMSlvzRQ-XfIO9ead9NLNa8RiFGZeYuzM-cznMmSnnEt39PF45wHJ-ZdutHTcSA-1jyHkOF1yuRUMHfX0WUwkmbBbwHzKZY8_1p_iA
+
+{
+  "lat": 10.762622,
+  "lng": 106.660172,
+  "address": "123 Example St, District 1",
+  "adultsCount": 2,
+  "elderlyCount": 0,
+  "childrenCount": 1,
+  "notes": "Need rice and bread",
+  "urgencyLevel": "HIGH",
+  "items": [
+    {
+      "itemCategoryId": "19ba8ca0-e43a-4aca-92aa-0183e2f32311",
+      "quantity": 10
+    },
+    {
+      "itemCategoryId": "44d487ba-8c24-4863-96f6-bc54a322a286",
+      "quantity": 5
+    }
+  ]
 }
 
 ###

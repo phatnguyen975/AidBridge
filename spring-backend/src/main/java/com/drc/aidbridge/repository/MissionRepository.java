@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface MissionRepository extends JpaRepository<Mission, UUID> {
 
     java.util.Optional<Mission> findBySosRequestId(UUID sosRequestId);
+
+    java.util.Optional<Mission> findByAidRequestId(UUID aidRequestId);
 }
