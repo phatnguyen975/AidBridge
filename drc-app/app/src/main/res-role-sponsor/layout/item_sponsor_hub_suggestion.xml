@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_hub_suggestion"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/sponsor_hub_item_margin_bottom"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@color/bg_surface_elevated"
+    app:cardCornerRadius="@dimen/sponsor_hub_item_radius"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/border_default"
+    app:strokeWidth="@dimen/sponsor_hub_item_stroke_width">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/sponsor_hub_item_padding">
+
+        <ImageView
+            android:id="@+id/iv_hub_icon"
+            android:layout_width="@dimen/sponsor_hub_icon_size"
+            android:layout_height="@dimen/sponsor_hub_icon_size"
+            android:contentDescription="@string/sponsor_hub_icon_desc"
+            android:src="@drawable/ic_warehouse"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/color_primary" />
+
+        <LinearLayout
+            android:id="@+id/layout_hub_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/sponsor_donate_info_text_start_margin"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_hub_icon"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_hub_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/sponsor_hub_name_text_size"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/layout_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sponsor_hub_distance_top_margin"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/iv_distance_pin"
+                    android:layout_width="@dimen/sponsor_hub_pin_icon_size"
+                    android:layout_height="@dimen/sponsor_hub_pin_icon_size"
+                    android:contentDescription="@string/sponsor_hub_pin_icon_desc"
+                    android:src="@drawable/ic_map_pin"
+                    app:tint="@color/text_secondary" />
+
+                <TextView
+                    android:id="@+id/tv_hub_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_xs"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/sponsor_hub_distance_text_size" />
+            </LinearLayout>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_urgency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sponsor_hub_badge_top_margin"
+                android:paddingVertical="@dimen/sponsor_hub_badge_padding_vertical"
+                android:text="@string/sponsor_hub_urgency_badge"
+                android:textColor="@color/warning_orange"
+                android:textSize="@dimen/sponsor_hub_badge_text_size"
+                app:chipEndPadding="@dimen/sponsor_hub_badge_padding_horizontal"
+                app:chipBackgroundColor="@color/bg_surface"
+                app:chipCornerRadius="@dimen/sponsor_hub_button_radius"
+                app:chipMinHeight="@dimen/sponsor_hub_badge_min_height"
+                app:chipStartPadding="@dimen/sponsor_hub_badge_padding_horizontal"
+                app:ensureMinTouchTargetSize="false"
+                app:chipStrokeColor="@color/warning_orange"
+                app:chipStrokeWidth="@dimen/sponsor_hub_item_stroke_width" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

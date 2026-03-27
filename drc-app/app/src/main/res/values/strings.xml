@@ -21,4 +21,6 @@
     <string name="nav_map">BẢN ĐỒ</string>
     <string name="nav_profile">CÁ NHÂN</string>
     <string name="nav_mission">NHIỆM VỤ</string>
+    <string name="nav_dashboard">TRANG CHỦ</string>
+    <string name="nav_donate">QUYÊN GÓP</string>
 </resources>

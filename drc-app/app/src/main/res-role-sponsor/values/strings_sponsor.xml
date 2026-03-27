@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dashboard Screen -->
+    <string name="sponsor_dashboard_title">TRANG CHỦ</string>
+    <string name="sponsor_dashboard_register_donation">Đăng ký đóng góp</string>
+    <string name="sponsor_dashboard_history">Lịch sử đóng góp</string>
+    <string name="sponsor_dashboard_stats_title">THỐNG KÊ CÁ NHÂN</string>
+    <string name="sponsor_dashboard_total_contributions_label">Tổng số lần đóng góp</string>
+    <string name="sponsor_dashboard_total_contributions_value">24</string>
+    <string name="sponsor_dashboard_total_items_label">Tổng vật phẩm</string>
+    <string name="sponsor_dashboard_total_items_value">1.260</string>
+    <string name="sponsor_dashboard_reward_points_label">Điểm tích lũy</string>
+    <string name="sponsor_dashboard_reward_points_value">3.450</string>
+    <string name="sponsor_dashboard_recent_title">ĐÓNG GÓP GẦN NHẤT</string>
+
+    <!-- Recent Item -->
+    <string name="sponsor_recent_details">Chi tiết</string>
+    <string name="sponsor_recent_thumbnail_desc">Hình minh họa đóng góp</string>
+    <string name="sponsor_recent_status_stocked">Đã nhập kho</string>
+    <string name="sponsor_recent_status_shipping">Đang vận chuyển</string>
+    <string name="sponsor_recent_date_1">26/03/2026</string>
+    <string name="sponsor_recent_date_2">25/03/2026</string>
+    <string name="sponsor_recent_category_food">Thực phẩm</string>
+    <string name="sponsor_recent_category_clothes">Quần áo</string>
+    <string name="sponsor_recent_quantity_food">120 thùng mì gói</string>
+    <string name="sponsor_recent_quantity_clothes">200 bộ quần áo</string>
+
+    <!-- Donate Form -->
+    <string name="sponsor_donate_title">ĐĂNG KÝ ĐÓNG GÓP</string>
+    <string name="sponsor_donate_category_label">Loại vật phẩm</string>
+    <string name="sponsor_donate_quantity_label">Số lượng</string>
+    <string name="sponsor_donate_unit_label">Đơn vị tính</string>
+    <string name="sponsor_donate_description_label">Mô tả chi tiết</string>
+    <string name="sponsor_donate_upload_label">Tải ảnh lên hoặc chụp mới</string>
+    <string name="sponsor_donate_upload_hint">Giúp nhân viên trạm dễ dàng xác nhận</string>
+    <string name="sponsor_donate_expected_time_label">Thời gian giao hàng</string>
+    <string name="sponsor_donate_submit">GỬI ĐĂNG KÝ</string>
+
+    <string name="sponsor_donate_category_food">Thực phẩm</string>
+    <string name="sponsor_donate_category_water">Nước uống</string>
+    <string name="sponsor_donate_category_medicine">Thuốc men</string>
+    <string name="sponsor_donate_category_clothes">Quần áo</string>
+
+    <string name="sponsor_donate_preview_thumbnail_desc">Ảnh minh họa vật phẩm</string>
+    <string name="sponsor_donate_close_preview_desc">Xóa ảnh</string>
+
+    <string name="sponsor_donate_image_real_label">Ảnh thực tế</string>
+    <string name="sponsor_donate_placeholder_category">Chọn loại vật phẩm</string>
+    <string name="sponsor_donate_placeholder_quantity">VD: 100</string>
+    <string name="sponsor_donate_placeholder_unit">VD: Thùng</string>
+    <string name="sponsor_donate_placeholder_description">Ghi chú về tình trạng, hạn sử dụng...</string>
+    <string name="sponsor_donate_placeholder_expected_time">Chọn ngày giờ dự kiến</string>
+    <string name="sponsor_donate_upload_subtext">PNG, JPG tối đa 5MB</string>
+
+    <!-- Sponsor Hub Selection & QR Flow -->
+    <string name="sponsor_hub_selection_title">Chọn trạm tập kết</string>
+    <string name="sponsor_hub_urgency_badge">Đang thiếu hụt</string>
+    <string name="sponsor_hub_confirm_generate_qr">XÁC NHẬN &amp; TẠO MÃ QR</string>
+
+    <string name="sponsor_qr_toolbar_title">QUYÊN GÓP</string>
+    <string name="sponsor_qr_title">MÃ QR CỦA BẠN</string>
+    <string name="sponsor_qr_instruction">Vui lòng đưa mã này cho nhân viên trạm để xác nhận quyên góp</string>
+    <string name="sponsor_qr_donation_code_label">Mã quyên góp</string>
+    <string name="sponsor_qr_save_button">LƯU MÃ QR</string>
+
+    <string name="sponsor_hub_name_1">Trạm tập kết Quận 1</string>
+    <string name="sponsor_hub_name_2">Trạm tập kết Bình Thạnh</string>
+    <string name="sponsor_hub_name_3">Trạm tập kết Thủ Đức</string>
+    <string name="sponsor_hub_distance_1">Cách bạn 2.5 km</string>
+    <string name="sponsor_hub_distance_2">Cách bạn 4.1 km</string>
+    <string name="sponsor_hub_distance_3">Cách bạn 5.8 km</string>
+
+    <string name="sponsor_qr_mock_donation_code">#DON-99281</string>
+    <string name="sponsor_qr_mock_item_type">Thực phẩm</string>
+    <string name="sponsor_qr_mock_quantity">50 Thùng</string>
+
+    <string name="sponsor_hub_icon_desc">Biểu tượng trạm tập kết</string>
+    <string name="sponsor_hub_pin_icon_desc">Biểu tượng khoảng cách</string>
+    <string name="sponsor_qr_close_desc">Đóng màn hình QR</string>
+    <string name="sponsor_qr_download_icon_desc">Tải mã QR</string>
+    <string name="sponsor_hub_drag_handle_desc">Thanh kéo BottomSheet</string>
+
+    <!-- Sponsor Profile & Settings -->
+    <string name="sponsor_profile_title">CÁ NHÂN</string>
+    <string name="sponsor_profile_edit_info">Chỉnh sửa thông tin</string>
+    <string name="sponsor_profile_change_password">Đổi mật khẩu</string>
+    <string name="sponsor_profile_history">Lịch sử đóng góp</string>
+    <string name="sponsor_profile_logout">ĐĂNG XUẤT</string>
+    <string name="sponsor_profile_premium_badge">Nhà tài trợ vàng | 1.200 Điểm</string>
+    <string name="sponsor_profile_mock_name">Nguyễn Văn A</string>
+    <string name="sponsor_profile_avatar_desc">Ảnh đại diện nhà tài trợ</string>
+    <string name="sponsor_profile_edit_avatar_desc">Sửa ảnh đại diện</string>
+
+    <string name="sponsor_edit_profile_title">CHỈNH SỬA THÔNG TIN</string>
+    <string name="sponsor_profile_full_name">Họ và tên</string>
+    <string name="sponsor_profile_phone">Số điện thoại</string>
+    <string name="sponsor_profile_contact_email">Email liên hệ</string>
+    <string name="sponsor_profile_contact_address">Địa chỉ liên lạc</string>
+    <string name="sponsor_profile_update_info">CẬP NHẬT THÔNG TIN</string>
+
+    <string name="sponsor_change_password_title">ĐỔI MẬT KHẨU</string>
+    <string name="sponsor_password_current">Mật khẩu hiện tại</string>
+    <string name="sponsor_password_new">Mật khẩu mới</string>
+    <string name="sponsor_password_confirm_new">Xác nhận mật khẩu mới</string>
+    <string name="sponsor_password_update">CẬP NHẬT MẬT KHẨU</string>
+
+    <!-- Sponsor History -->
+    <string name="sponsor_history_title">LỊCH SỬ ĐÓNG GÓP</string>
+    <string name="sponsor_history_tab_all">Tất cả</string>
+    <string name="sponsor_history_status_pending">Đang chờ</string>
+    <string name="sponsor_history_status_stocked">Đã nhập kho</string>
+    <string name="sponsor_history_status_shipping">Đang vận chuyển</string>
+    <string name="sponsor_history_status_arrived">Đã đến nơi</string>
+    <string name="sponsor_history_quantity_prefix">Số lượng:</string>
+    <string name="sponsor_history_thumbnail_desc">Ảnh vật phẩm đóng góp</string>
+    <string name="sponsor_history_hub_icon_desc">Biểu tượng trạm nhận</string>
+</resources>

@@ -1,27 +1,51 @@
 package com.drc.aidbridge.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Standard API response wrapper.
+ * Format:
+ * {
+ * "success": true/false,
+ * "message": "...",
+ * "data": { ... }
+ * }
+ */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
     private boolean success;
     private String message;
     private T data;
-    private String timestamp;
 
     public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>(true, "Success", data, java.time.LocalDateTime.now().toString());
+        return ApiResponse.<T>builder()
+                .success(true)
+                .message("Success")
+                .data(data)
+                .build();
     }
 
     public static <T> ApiResponse<T> success(String message, T data) {
-        return new ApiResponse<>(true, message, data, java.time.LocalDateTime.now().toString());
+        return ApiResponse.<T>builder()
+                .success(true)
+                .message(message)
+                .data(data)
+                .build();
     }
 
-    public static ApiResponse<Void> error(String message) {
-        return new ApiResponse<>(false, message, null, java.time.LocalDateTime.now().toString());
+    public static <T> ApiResponse<T> error(String message) {
+        return ApiResponse.<T>builder()
+                .success(false)
+                .message(message)
+                .data(null)
+                .build();
     }
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="48dp"
+    android:paddingStart="@dimen/sponsor_donate_dropdown_option_padding_start"
+    android:paddingTop="@dimen/sponsor_donate_dropdown_option_padding_vertical"
+    android:paddingEnd="@dimen/sponsor_donate_form_padding"
+    android:paddingBottom="@dimen/sponsor_donate_dropdown_option_padding_vertical"
+    android:textColor="@color/text_primary"
+    android:textSize="@dimen/sponsor_dashboard_stat_label_text_size" />

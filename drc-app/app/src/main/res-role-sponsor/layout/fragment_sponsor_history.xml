@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sponsor_history_toolbar_height"
+        android:paddingStart="@dimen/sponsor_history_content_padding"
+        android:paddingEnd="@dimen/sponsor_history_content_padding">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="@dimen/sponsor_profile_menu_icon_size"
+            android:layout_height="@dimen/sponsor_profile_menu_icon_size"
+            android:contentDescription="@string/btn_back"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sponsor_history_title"
+            android:textAllCaps="true"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/sponsor_history_toolbar_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sponsor_profile_divider_thickness"
+        app:dividerColor="@color/border_default"
+        app:dividerThickness="@dimen/sponsor_profile_divider_thickness" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_primary"
+        app:tabIndicatorColor="@color/color_primary"
+        app:tabMode="scrollable"
+        app:tabSelectedTextColor="@color/text_primary"
+        app:tabTextColor="@color/text_secondary" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_history"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:padding="@dimen/sponsor_history_content_padding" />
+</LinearLayout>
