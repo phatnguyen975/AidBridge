@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="sponsor_qr_card_blur_bg">#B3263248</color>
+    <color name="sponsor_profile_badge_bg">#26F59E0B</color>
+    <color name="sponsor_profile_badge_border">#F5B13A</color>
+</resources>
