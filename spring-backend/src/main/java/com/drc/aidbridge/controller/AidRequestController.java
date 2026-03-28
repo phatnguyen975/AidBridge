@@ -3,6 +3,7 @@ package com.drc.aidbridge.controller;
 import com.drc.aidbridge.dto.request.CreateAidRequestDto;
 import com.drc.aidbridge.dto.response.AidRequestResponseDto;
 import com.drc.aidbridge.dto.response.ApiResponse;
+import com.drc.aidbridge.dto.response.PaginatedResponseDto;
 import com.drc.aidbridge.service.AidRequestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +36,10 @@ public class AidRequestController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<java.util.List<AidRequestResponseDto>>> listAidRequests() {
-        java.util.List<AidRequestResponseDto> response = aidRequestService.listAidRequests();
+    public ResponseEntity<ApiResponse<PaginatedResponseDto<AidRequestResponseDto>>> listAidRequests(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "limit", defaultValue = "20") int limit) {
+        PaginatedResponseDto<AidRequestResponseDto> response = aidRequestService.listAidRequests(page, limit);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

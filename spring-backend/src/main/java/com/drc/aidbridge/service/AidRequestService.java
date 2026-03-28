@@ -4,6 +4,8 @@ import com.drc.aidbridge.dto.request.AidRequestItemInputDto;
 import com.drc.aidbridge.dto.request.CreateAidRequestDto;
 import com.drc.aidbridge.dto.response.AidRequestItemResponseDto;
 import com.drc.aidbridge.dto.response.AidRequestResponseDto;
+import com.drc.aidbridge.dto.response.PaginatedResponseDto;
+import com.drc.aidbridge.dto.response.PaginationDto;
 import com.drc.aidbridge.entity.AidRequest;
 import com.drc.aidbridge.entity.AidRequestItem;
 import com.drc.aidbridge.entity.Mission;
@@ -17,6 +19,9 @@ import com.drc.aidbridge.repository.AidRequestRepository;
 import com.drc.aidbridge.repository.MissionRepository;
 import com.drc.aidbridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,14 +104,33 @@ public class AidRequestService {
         return toResponse(aidRequest, items, mission);
     }
 
-    public List<AidRequestResponseDto> listAidRequests() {
-        return aidRequestRepository.findAll().stream()
+    public PaginatedResponseDto<AidRequestResponseDto> listAidRequests(int page, int limit) {
+        int safeLimit = Math.max(1, Math.min(limit, 100));
+        int safePage = Math.max(page, 0);
+        Pageable pageable = PageRequest.of(safePage, safeLimit);
+
+        Page<AidRequest> paged = aidRequestRepository.findAll(pageable);
+
+        List<AidRequestResponseDto> items = paged.getContent().stream()
                 .map(aidRequest -> {
                     Mission mission = missionRepository.findByAidRequestId(aidRequest.getId()).orElse(null);
-                    List<AidRequestItem> items = aidRequestItemRepository.findByAidRequestId(aidRequest.getId());
-                    return toResponse(aidRequest, items, mission);
+                    List<AidRequestItem> aidRequestItems = aidRequestItemRepository.findByAidRequestId(aidRequest.getId());
+                    return toResponse(aidRequest, aidRequestItems, mission);
                 })
                 .collect(Collectors.toList());
+
+        PaginationDto pagination = PaginationDto.builder()
+                .page(safePage)
+                .limit(safeLimit)
+                .total(paged.getTotalElements())
+                .totalPages(paged.getTotalPages())
+                .hasNext(paged.hasNext())
+                .build();
+
+        return PaginatedResponseDto.<AidRequestResponseDto>builder()
+                .items(items)
+                .pagination(pagination)
+                .build();
     }
 
     private AidRequestItemResponseDto toItemResponse(AidRequestItem item) {
