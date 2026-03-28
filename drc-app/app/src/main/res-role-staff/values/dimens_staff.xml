@@ -45,4 +45,54 @@
 
     <dimen name="staff_profile_logout_margin_top">24dp</dimen>
     <dimen name="staff_profile_logout_icon_padding">8dp</dimen>
+
+    <!-- Staff inventory -->
+    <dimen name="staff_inventory_screen_padding">16dp</dimen>
+    <dimen name="staff_inventory_header_logo_size">36dp</dimen>
+    <dimen name="staff_inventory_header_title_text_size">18sp</dimen>
+    <dimen name="staff_inventory_search_top_margin">12dp</dimen>
+    <dimen name="staff_inventory_search_corner_radius">14dp</dimen>
+    <dimen name="staff_inventory_search_stroke_width">2dp</dimen>
+    <dimen name="staff_inventory_search_text_horizontal_padding">2dp</dimen>
+    <dimen name="staff_inventory_search_vertical_padding">12dp</dimen>
+    <dimen name="staff_inventory_filter_top_margin">8dp</dimen>
+    <dimen name="staff_inventory_chip_spacing">8dp</dimen>
+    <dimen name="staff_inventory_chip_stroke_width">1dp</dimen>
+    <dimen name="staff_inventory_list_header_top_padding">16dp</dimen>
+    <dimen name="staff_inventory_list_header_bottom_padding">12dp</dimen>
+    <dimen name="staff_inventory_list_title_text_size">18sp</dimen>
+    <dimen name="staff_inventory_refresh_icon_size">14dp</dimen>
+    <dimen name="staff_inventory_refresh_text_margin_start">4dp</dimen>
+    <dimen name="staff_inventory_refresh_text_size">12sp</dimen>
+    <dimen name="staff_inventory_list_bottom_padding">80dp</dimen>
+    <dimen name="staff_inventory_pagination_margin_bottom">16dp</dimen>
+    <dimen name="staff_inventory_bottom_bar_margin_bottom">16dp</dimen>
+    <dimen name="staff_inventory_action_button_gap">8dp</dimen>
+    <dimen name="staff_inventory_action_text_size">14sp</dimen>
+    <dimen name="staff_inventory_action_icon_size">18dp</dimen>
+    <dimen name="staff_inventory_action_icon_padding">8dp</dimen>
+    <dimen name="staff_inventory_action_stroke_width">1dp</dimen>
+
+    <dimen name="staff_inventory_item_margin_bottom">12dp</dimen>
+    <dimen name="staff_inventory_item_corner_radius">14dp</dimen>
+    <dimen name="staff_inventory_item_stroke_width">1dp</dimen>
+    <dimen name="staff_inventory_item_min_height">92dp</dimen>
+    <dimen name="staff_inventory_item_content_padding">12dp</dimen>
+    <dimen name="staff_inventory_left_border_width">4dp</dimen>
+    <dimen name="staff_inventory_item_image_size">56dp</dimen>
+    <dimen name="staff_inventory_item_image_margin_start">8dp</dimen>
+    <dimen name="staff_inventory_item_middle_margin_start">12dp</dimen>
+    <dimen name="staff_inventory_item_middle_margin_end">8dp</dimen>
+    <dimen name="staff_inventory_item_name_text_size">15sp</dimen>
+    <dimen name="staff_inventory_item_category_margin_top">4dp</dimen>
+    <dimen name="staff_inventory_item_category_text_size">12sp</dimen>
+    <dimen name="staff_inventory_item_status_text_size">11sp</dimen>
+    <dimen name="staff_inventory_item_status_min_height">26dp</dimen>
+    <dimen name="staff_inventory_item_status_stroke_width">1dp</dimen>
+    <dimen name="staff_inventory_item_status_chip_start_end_padding">6dp</dimen>
+    <dimen name="staff_inventory_item_status_text_horizontal_padding">2dp</dimen>
+    <dimen name="staff_inventory_item_quantity_margin_top">8dp</dimen>
+    <dimen name="staff_inventory_item_quantity_text_size">20sp</dimen>
+    <dimen name="staff_inventory_item_unit_margin_start">4dp</dimen>
+    <dimen name="staff_inventory_item_unit_text_size">12sp</dimen>
 </resources>

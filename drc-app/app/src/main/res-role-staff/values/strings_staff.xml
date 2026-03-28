@@ -16,4 +16,19 @@
     <string name="staff_profile_join_date_value">15/05/2023</string>
     <string name="staff_profile_logout">ĐĂNG XUẤT</string>
     <string name="staff_profile_avatar_desc">Ảnh đại diện nhân viên</string>
+
+    <!-- Staff inventory -->
+    <string name="staff_inventory_title">QUẢN LÝ TỒN KHO</string>
+    <string name="staff_inventory_search_hint">Tìm kiếm nhu yếu phẩm...</string>
+    <string name="staff_inventory_chip_all">Tất cả</string>
+    <string name="staff_inventory_chip_food">Thực phẩm</string>
+    <string name="staff_inventory_chip_water">Nước uống</string>
+    <string name="staff_inventory_chip_medical">Y tế</string>
+    <string name="staff_inventory_list_title">Danh sách vật tư</string>
+    <string name="staff_inventory_updated_ago">5 phút trước</string>
+    <string name="staff_inventory_status_shortage">Thiếu hụt</string>
+    <string name="staff_inventory_status_low_stock">Sắp hết</string>
+    <string name="staff_inventory_status_stable">Ổn định</string>
+    <string name="staff_inventory_action_stock_in">Nhập kho</string>
+    <string name="staff_inventory_action_stock_out">Xuất kho</string>
 </resources>

@@ -13,7 +13,12 @@
     <fragment
         android:id="@+id/staffInventoryFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffInventoryFragment"
-        android:label="StaffInventoryFragment" />
+        android:label="StaffInventoryFragment">
+
+        <action
+            android:id="@+id/action_staffInventoryFragment_to_staffScannerFragment"
+            app:destination="@id/staffScannerFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/staffTaskListFragment"
@@ -24,4 +29,9 @@
         android:id="@+id/staffMapFragment"
         android:name="com.drc.aidbridge.ui.map.fragment.StaffMapFragment"
         android:label="StaffMapFragment" />
+
+    <fragment
+        android:id="@+id/staffScannerFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffScannerFragment"
+        android:label="StaffScannerFragment" />
 </navigation>
