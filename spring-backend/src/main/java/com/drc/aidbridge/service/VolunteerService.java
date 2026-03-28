@@ -1,6 +1,7 @@
 package com.drc.aidbridge.service;
 
 import com.drc.aidbridge.dto.request.UpdateVolunteerProfileRequestDto;
+import com.drc.aidbridge.dto.request.ToggleVolunteerStatusRequestDto;
 import com.drc.aidbridge.dto.response.VolunteerProfileDto;
 import com.drc.aidbridge.dto.response.VolunteerProfileResponseDto;
 import com.drc.aidbridge.dto.response.UserDto;
@@ -118,6 +119,52 @@ public class VolunteerService {
         log.info("Created volunteer profile for user: {}", userId);
 
         return volunteer;
+    }
+
+    /**
+     * Toggle volunteer online status and update location coordinates.
+     *
+     * @param userId The authenticated user ID
+     * @param request Status toggle request containing is_online and optional coordinates
+     * @return Updated volunteer profile response
+     * @throws ResourceNotFoundException if volunteer profile not found
+     */
+    @Transactional
+    public VolunteerProfileResponseDto toggleVolunteerStatus(
+            UUID userId,
+            ToggleVolunteerStatusRequestDto request) {
+
+        // Get user
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // Get volunteer profile
+        Volunteer volunteer = volunteerRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Volunteer profile not found"));
+
+        // Update online status
+        volunteer.setOnline(request.isOnline());
+
+        // Update location if provided
+        if (request.getCurrentLat() != null) {
+            volunteer.setCurrentLat(request.getCurrentLat());
+        }
+        if (request.getCurrentLng() != null) {
+            volunteer.setCurrentLng(request.getCurrentLng());
+        }
+
+        volunteer = volunteerRepository.save(volunteer);
+        log.debug("Toggled volunteer {} online status to: {}, location: ({}, {})",
+                userId, request.isOnline(), request.getCurrentLat(), request.getCurrentLng());
+
+        // Map to DTOs
+        VolunteerProfileDto profileDto = mapToProfileDto(volunteer);
+        UserDto userDto = mapToUserDto(user);
+
+        return VolunteerProfileResponseDto.builder()
+                .profile(profileDto)
+                .user(userDto)
+                .build();
     }
 
     // ==================== HELPER METHODS ====================

@@ -1,6 +1,7 @@
 package com.drc.aidbridge.controller;
 
 import com.drc.aidbridge.dto.request.UpdateVolunteerProfileRequestDto;
+import com.drc.aidbridge.dto.request.ToggleVolunteerStatusRequestDto;
 import com.drc.aidbridge.dto.response.ApiResponse;
 import com.drc.aidbridge.dto.response.VolunteerProfileResponseDto;
 import com.drc.aidbridge.service.VolunteerService;
@@ -62,5 +63,26 @@ public class VolunteerController {
 
         return ResponseEntity.ok(
                 ApiResponse.success("Volunteer profile updated successfully", response));
+    }
+
+    /**
+     * Toggle volunteer online status and update location.
+     *
+     * @param authentication Spring Security authentication object
+     * @param request        Status toggle request containing is_online and optional coordinates
+     * @return Updated volunteer profile response
+     */
+    @PostMapping("/status")
+    public ResponseEntity<ApiResponse<VolunteerProfileResponseDto>> toggleVolunteerStatus(
+            Authentication authentication,
+            @Valid @RequestBody ToggleVolunteerStatusRequestDto request) {
+
+        // Extract user ID from JWT token
+        UUID userId = UUID.fromString(authentication.getName());
+
+        VolunteerProfileResponseDto response = volunteerService.toggleVolunteerStatus(userId, request);
+
+        return ResponseEntity.ok(
+                ApiResponse.success("Volunteer status toggled successfully", response));
     }
 }
