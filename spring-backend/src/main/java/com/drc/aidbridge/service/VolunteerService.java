@@ -2,6 +2,7 @@ package com.drc.aidbridge.service;
 
 import com.drc.aidbridge.dto.request.UpdateVolunteerProfileRequestDto;
 import com.drc.aidbridge.dto.request.ToggleVolunteerStatusRequestDto;
+import com.drc.aidbridge.dto.request.UpdateVolunteerLocationRequestDto;
 import com.drc.aidbridge.dto.response.VolunteerProfileDto;
 import com.drc.aidbridge.dto.response.VolunteerProfileResponseDto;
 import com.drc.aidbridge.dto.response.UserDto;
@@ -165,6 +166,31 @@ public class VolunteerService {
                 .profile(profileDto)
                 .user(userDto)
                 .build();
+    }
+
+    /**
+     * Update volunteer current location.
+     *
+     * @param userId The authenticated user ID
+     * @param request Location update request containing current_lat and current_lng
+     * @throws ResourceNotFoundException if volunteer profile not found
+     */
+    @Transactional
+    public void updateVolunteerLocation(
+            UUID userId,
+            UpdateVolunteerLocationRequestDto request) {
+
+        // Get volunteer profile
+        Volunteer volunteer = volunteerRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Volunteer profile not found"));
+
+        // Update location
+        volunteer.setCurrentLat(request.getCurrentLat());
+        volunteer.setCurrentLng(request.getCurrentLng());
+
+        volunteerRepository.save(volunteer);
+        log.debug("Updated location for volunteer {}: ({}, {})",
+                userId, request.getCurrentLat(), request.getCurrentLng());
     }
 
     // ==================== HELPER METHODS ====================

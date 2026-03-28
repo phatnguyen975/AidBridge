@@ -2,6 +2,7 @@ package com.drc.aidbridge.controller;
 
 import com.drc.aidbridge.dto.request.UpdateVolunteerProfileRequestDto;
 import com.drc.aidbridge.dto.request.ToggleVolunteerStatusRequestDto;
+import com.drc.aidbridge.dto.request.UpdateVolunteerLocationRequestDto;
 import com.drc.aidbridge.dto.response.ApiResponse;
 import com.drc.aidbridge.dto.response.VolunteerProfileResponseDto;
 import com.drc.aidbridge.service.VolunteerService;
@@ -84,5 +85,26 @@ public class VolunteerController {
 
         return ResponseEntity.ok(
                 ApiResponse.success("Volunteer status toggled successfully", response));
+    }
+
+    /**
+     * Update volunteer current location.
+     *
+     * @param authentication Spring Security authentication object
+     * @param request        Location update request containing current_lat and current_lng
+     * @return Success response
+     */
+    @PostMapping("/location")
+    public ResponseEntity<ApiResponse<Void>> updateVolunteerLocation(
+            Authentication authentication,
+            @Valid @RequestBody UpdateVolunteerLocationRequestDto request) {
+
+        // Extract user ID from JWT token
+        UUID userId = UUID.fromString(authentication.getName());
+
+        volunteerService.updateVolunteerLocation(userId, request);
+
+        return ResponseEntity.ok(
+                ApiResponse.success("Location updated successfully", null));
     }
 }
