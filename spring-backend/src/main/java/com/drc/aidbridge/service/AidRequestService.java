@@ -1,6 +1,7 @@
 package com.drc.aidbridge.service;
 
 import com.drc.aidbridge.dto.request.AidRequestItemInputDto;
+import com.drc.aidbridge.dto.request.CancelAidRequestDto;
 import com.drc.aidbridge.dto.request.CreateAidRequestDto;
 import com.drc.aidbridge.dto.response.AidRequestItemResponseDto;
 import com.drc.aidbridge.dto.response.AidRequestResponseDto;
@@ -13,6 +14,7 @@ import com.drc.aidbridge.entity.User;
 import com.drc.aidbridge.entity.enums.AidStatus;
 import com.drc.aidbridge.entity.enums.MissionStatus;
 import com.drc.aidbridge.entity.enums.MissionType;
+import com.drc.aidbridge.entity.enums.UserRole;
 import com.drc.aidbridge.exception.ResourceNotFoundException;
 import com.drc.aidbridge.repository.AidRequestItemRepository;
 import com.drc.aidbridge.repository.AidRequestRepository;
@@ -22,9 +24,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -102,6 +106,33 @@ public class AidRequestService {
         List<AidRequestItem> items = aidRequestItemRepository.findByAidRequestId(aidRequest.getId());
 
         return toResponse(aidRequest, items, mission);
+    }
+
+    @Transactional
+    public AidRequestResponseDto cancelAidRequest(UUID requesterId, UUID aidRequestId, CancelAidRequestDto request) {
+        User requester = userRepository.findById(requesterId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + requesterId));
+
+        AidRequest aidRequest = aidRequestRepository.findById(aidRequestId)
+                .orElseThrow(() -> new ResourceNotFoundException("Aid request not found: " + aidRequestId));
+
+        if (!requester.getId().equals(aidRequest.getRequesterId()) && requester.getRole() != UserRole.ADMIN) {
+            throw new AccessDeniedException("User is not allowed to cancel this aid request");
+        }
+
+        aidRequest.setStatus(AidStatus.CANCELLED);
+        AidRequest saved = aidRequestRepository.save(aidRequest);
+
+        Mission mission = missionRepository.findByAidRequestId(saved.getId()).orElse(null);
+        if (mission != null && mission.getStatus() != MissionStatus.COMPLETED && mission.getStatus() != MissionStatus.CANCELLED) {
+            mission.setStatus(MissionStatus.CANCELLED);
+            mission.setCancelledAt(Instant.now());
+            mission.setCancellationReason(request.getReason());
+            missionRepository.save(mission);
+        }
+
+        List<AidRequestItem> items = aidRequestItemRepository.findByAidRequestId(saved.getId());
+        return toResponse(saved, items, mission);
     }
 
     public PaginatedResponseDto<AidRequestResponseDto> listAidRequests(int page, int limit) {

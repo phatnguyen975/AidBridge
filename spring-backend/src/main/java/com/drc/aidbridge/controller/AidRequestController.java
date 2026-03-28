@@ -1,5 +1,6 @@
 package com.drc.aidbridge.controller;
 
+import com.drc.aidbridge.dto.request.CancelAidRequestDto;
 import com.drc.aidbridge.dto.request.CreateAidRequestDto;
 import com.drc.aidbridge.dto.response.AidRequestResponseDto;
 import com.drc.aidbridge.dto.response.ApiResponse;
@@ -33,6 +34,19 @@ public class AidRequestController {
     public ResponseEntity<ApiResponse<AidRequestResponseDto>> getAidRequest(@PathVariable UUID id) {
         AidRequestResponseDto response = aidRequestService.getAidRequest(id);
         return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<ApiResponse<AidRequestResponseDto>> cancelAidRequest(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UUID userId,
+            @RequestBody(required = false) CancelAidRequestDto request) {
+        if (request == null) {
+            request = new CancelAidRequestDto();
+        }
+
+        AidRequestResponseDto response = aidRequestService.cancelAidRequest(userId, id, request);
+        return ResponseEntity.ok(ApiResponse.success("Aid request cancelled", response));
     }
 
     @GetMapping
