@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class VolunteerTaskViewModel extends BaseViewModel {
 
     private final MutableLiveData<Boolean> isMissionAccepted = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isMissionIgnored = new MutableLiveData<>(false);
     private final MutableLiveData<String> missionTrigger = new MutableLiveData<>();
 
     private final LiveData<NetworkResultWrapper<Boolean>> acceptResult;
@@ -32,13 +33,23 @@ public class VolunteerTaskViewModel extends BaseViewModel {
         return isMissionAccepted;
     }
 
+    public LiveData<Boolean> getIsMissionIgnored() {
+        return isMissionIgnored;
+    }
+
     public LiveData<NetworkResultWrapper<Boolean>> getAcceptResult() {
         return acceptResult;
     }
 
     public void acceptMission(String missionId) {
         missionTrigger.setValue(missionId);
+        isMissionIgnored.setValue(false);
         isMissionAccepted.setValue(true);
+    }
+
+    public void declineMission() {
+        isMissionIgnored.setValue(true);
+        isMissionAccepted.setValue(false);
     }
 
     public void completeMission() {

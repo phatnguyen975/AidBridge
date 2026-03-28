@@ -18,19 +18,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageButton
-                android:id="@+id/btnBack"
-                android:layout_width="@dimen/volunteer_current_mission_toolbar_icon_button_size"
-                android:layout_height="@dimen/volunteer_current_mission_toolbar_icon_button_size"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/volunteer_current_mission_back_content_desc"
-                android:padding="@dimen/spacing_sm"
-                android:src="?attr/homeAsUpIndicator"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/volunteer_acceptance_text_primary" />
-
             <TextView
                 android:id="@+id/tvToolbarTitle"
                 android:layout_width="0dp"

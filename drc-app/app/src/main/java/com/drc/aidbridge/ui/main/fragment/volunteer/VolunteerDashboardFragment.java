@@ -1,24 +1,26 @@
 package com.drc.aidbridge.ui.main.fragment.volunteer;
 
 import android.os.Bundle;
+import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVolunteerDashboardBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
-import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerDashboardViewModel;
+import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDashboardBinding> {
 
-    private VolunteerDashboardViewModel viewModel;
+    private VolunteerTaskViewModel volunteerTaskViewModel;
+    private boolean isMissionAccepted;
+    private boolean isMissionIgnored;
 
     @Override
     protected FragmentVolunteerDashboardBinding inflateBinding(LayoutInflater inflater, @Nullable ViewGroup container) {
@@ -27,6 +29,8 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
 
     @Override
     protected void setupViews() {
+        volunteerTaskViewModel = new ViewModelProvider(requireActivity()).get(VolunteerTaskViewModel.class);
+
         // Online Status (Online by default - Test UI)
         updateStatusUI(true);
         binding.switchOnlineStatus.setChecked(true);
@@ -36,7 +40,25 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
 
     @Override
     protected void observeViewModel() {
-        // TODO: Observe ViewModel state once use cases are implemented
+        if (volunteerTaskViewModel == null) {
+            return;
+        }
+
+        volunteerTaskViewModel.getIsMissionAccepted().observe(getViewLifecycleOwner(), isAccepted -> {
+            isMissionAccepted = Boolean.TRUE.equals(isAccepted);
+            renderMissionCardsState();
+        });
+
+        volunteerTaskViewModel.getIsMissionIgnored().observe(getViewLifecycleOwner(), isIgnored -> {
+            isMissionIgnored = Boolean.TRUE.equals(isIgnored);
+            renderMissionCardsState();
+        });
+    }
+
+    private void renderMissionCardsState() {
+        boolean shouldShowEmergencyCard = !isMissionAccepted && !isMissionIgnored;
+        binding.cardEmergency.setVisibility(shouldShowEmergencyCard ? View.VISIBLE : View.GONE);
+        binding.cardCurrentMission.setVisibility(isMissionAccepted ? View.VISIBLE : View.GONE);
     }
 
     private void setupClickListeners() {
@@ -53,7 +75,7 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
                 v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_view_profile)));
 
         binding.cardCurrentMission.setOnClickListener(
-                v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_open_current_missions)));
+                v -> navigateSafely(R.id.action_dashboard_to_current_sos_mission));
 
         // binding.cardCompleted.setOnClickListener(v ->
         // showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_open_completed_missions)));

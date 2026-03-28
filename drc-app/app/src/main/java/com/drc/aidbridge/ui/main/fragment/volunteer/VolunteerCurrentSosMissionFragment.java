@@ -4,20 +4,25 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVolunteerCurrentSosMissionBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
+import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class VolunteerCurrentSosMissionFragment extends BaseFragment<FragmentVolunteerCurrentSosMissionBinding> {
+
+    private VolunteerTaskViewModel volunteerTaskViewModel;
 
     @Override
     protected FragmentVolunteerCurrentSosMissionBinding inflateBinding(LayoutInflater inflater,
@@ -27,6 +32,7 @@ public class VolunteerCurrentSosMissionFragment extends BaseFragment<FragmentVol
 
     @Override
     protected void setupViews() {
+        volunteerTaskViewModel = new ViewModelProvider(requireActivity()).get(VolunteerTaskViewModel.class);
         syncBottomNavigationSelection();
         mockVictimData();
         setupClickListeners();
@@ -35,7 +41,13 @@ public class VolunteerCurrentSosMissionFragment extends BaseFragment<FragmentVol
     @Override
     public void onStart() {
         super.onStart();
-        syncBottomNavigationSelection();
+        BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.bottom_nav);
+        if (bottomNavigationView != null) {
+            MenuItem missionItem = bottomNavigationView.getMenu().findItem(R.id.volunteerMissionListFragment);
+            if (missionItem != null) {
+                missionItem.setChecked(true);
+            }
+        }
     }
 
     @Override
@@ -44,11 +56,10 @@ public class VolunteerCurrentSosMissionFragment extends BaseFragment<FragmentVol
     }
 
     private void setupClickListeners() {
-        binding.btnBack.setOnClickListener(v -> popBackStackSafely());
-
         binding.btnCallVictim.setOnClickListener(v -> openDialer());
 
         binding.btnArrived.setOnClickListener(v -> {
+            volunteerTaskViewModel.completeMission();
             showToast(getString(R.string.volunteer_current_mission_toast_arrived));
             // TODO: Điều hướng sang màn hình Xác nhận cứu hộ sau khi tích hợp API.
         });

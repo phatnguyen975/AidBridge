@@ -18,12 +18,22 @@
             android:id="@+id/action_dashboard_to_sos_acceptance"
             app:destination="@id/volunteerSosAcceptanceFragment" />
 
+        <action
+            android:id="@+id/action_dashboard_to_current_sos_mission"
+            app:destination="@id/volunteerCurrentSosMissionFragment" />
+
     </fragment>
 
     <fragment
         android:id="@+id/volunteerMissionListFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerMissionFragment"
-        android:label="Volunteer Missions" />
+        android:label="Volunteer Missions" >
+
+        <action
+            android:id="@+id/action_mission_list_to_current_sos_mission"
+            app:destination="@id/volunteerCurrentSosMissionFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/volunteerMapFragment"

@@ -8,10 +8,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVolunteerSosAcceptanceBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
+import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -24,9 +26,11 @@ public class VolunteerSosAcceptanceFragment extends BaseFragment<FragmentVolunte
 
     private static final long TIMER_TOTAL_MS = 60_000L;
     private static final long TIMER_INTERVAL_MS = 1_000L;
+    private static final String MOCK_MISSION_ID = "MISSION_RESCUE_001";
 
     private String missionType = MISSION_TYPE_RESCUE;
     private CountDownTimer missionCountDownTimer;
+    private VolunteerTaskViewModel volunteerTaskViewModel;
 
     @NonNull
     public static VolunteerSosAcceptanceFragment newInstance(@NonNull String missionType) {
@@ -56,6 +60,7 @@ public class VolunteerSosAcceptanceFragment extends BaseFragment<FragmentVolunte
 
     @Override
     protected void setupViews() {
+        volunteerTaskViewModel = new ViewModelProvider(requireActivity()).get(VolunteerTaskViewModel.class);
         applyMissionTypeUI();
         setupClickListeners();
         startCountDownTimer();
@@ -88,11 +93,13 @@ public class VolunteerSosAcceptanceFragment extends BaseFragment<FragmentVolunte
 
     private void setupClickListeners() {
         binding.btnDecline.setOnClickListener(v -> {
+            volunteerTaskViewModel.declineMission();
             showToast(getString(R.string.volunteer_sos_acceptance_toast_decline_success));
             popBackStackSafely();
         });
 
         binding.btnAccept.setOnClickListener(v -> {
+            volunteerTaskViewModel.acceptMission(MOCK_MISSION_ID);
             showToast(getString(R.string.volunteer_sos_acceptance_toast_accept_success));
             navigateSafely(R.id.action_sos_acceptance_to_current_sos_mission);
         });
