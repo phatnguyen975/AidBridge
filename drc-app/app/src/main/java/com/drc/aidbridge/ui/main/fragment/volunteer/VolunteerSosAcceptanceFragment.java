@@ -94,8 +94,7 @@ public class VolunteerSosAcceptanceFragment extends BaseFragment<FragmentVolunte
 
         binding.btnAccept.setOnClickListener(v -> {
             showToast(getString(R.string.volunteer_sos_acceptance_toast_accept_success));
-            // TODO:
-            // navigateSafely(R.id.action_volunteerSosAcceptanceFragment_to_volunteerMissionExecutionFragment)
+            navigateSafely(R.id.action_sos_acceptance_to_current_sos_mission);
         });
     }
 
