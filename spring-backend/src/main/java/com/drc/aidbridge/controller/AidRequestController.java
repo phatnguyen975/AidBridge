@@ -33,4 +33,11 @@ public class AidRequestController {
         AidRequestResponseDto response = aidRequestService.getAidRequest(id);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<java.util.List<AidRequestResponseDto>>> listAidRequests() {
+        java.util.List<AidRequestResponseDto> response = aidRequestService.listAidRequests();
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
 }
+

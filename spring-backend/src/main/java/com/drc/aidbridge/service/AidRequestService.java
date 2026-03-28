@@ -99,6 +99,16 @@ public class AidRequestService {
         return toResponse(aidRequest, items, mission);
     }
 
+    public List<AidRequestResponseDto> listAidRequests() {
+        return aidRequestRepository.findAll().stream()
+                .map(aidRequest -> {
+                    Mission mission = missionRepository.findByAidRequestId(aidRequest.getId()).orElse(null);
+                    List<AidRequestItem> items = aidRequestItemRepository.findByAidRequestId(aidRequest.getId());
+                    return toResponse(aidRequest, items, mission);
+                })
+                .collect(Collectors.toList());
+    }
+
     private AidRequestItemResponseDto toItemResponse(AidRequestItem item) {
         return AidRequestItemResponseDto.builder()
                 .id(item.getId())
