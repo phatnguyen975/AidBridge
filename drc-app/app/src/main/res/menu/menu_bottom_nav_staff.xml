@@ -5,6 +5,14 @@
         android:icon="@drawable/ic_person"
         android:title="@string/nav_profile" />
     <item
+        android:id="@+id/staffInventoryFragment"
+        android:icon="@drawable/ic_warehouse"
+        android:title="@string/nav_inventory" />
+    <item
+        android:id="@+id/staffTaskListFragment"
+        android:icon="@drawable/ic_mission"
+        android:title="@string/nav_mission" />
+    <item
         android:id="@+id/staffMapFragment"
         android:icon="@drawable/ic_map"
         android:title="@string/nav_map" />

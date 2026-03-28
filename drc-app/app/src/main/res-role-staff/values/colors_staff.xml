@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Staff profile -->
+    <color name="staff_ready_color">@color/safe_green</color>
+    <color name="staff_ready_bg">#1A34D399</color>
+    <color name="staff_offline_color">#94A3B8</color>
+    <color name="staff_offline_active">#F59E0B</color>
+    <color name="staff_offline_bg">#26F59E0B</color>
+    <color name="staff_dim_color">#6B7D94</color>
+    <color name="staff_active_dot_green">@color/safe_green</color>
+    <color name="staff_active_dot_gray">#7A8CA4</color>
+    <color name="staff_icon_bg">#1A288DFA</color>
+    <color name="staff_logout_red">@color/sos_red</color>
+    <color name="staff_logout_ripple">#26EF4444</color>
+    <color name="staff_toggle_thumb_ready">@color/staff_ready_color</color>
+    <color name="staff_toggle_track_ready">#4D34D399</color>
+    <color name="staff_toggle_thumb_offline">#F6AD2F</color>
+    <color name="staff_toggle_track_offline">#4DF59E0B</color>
+</resources>

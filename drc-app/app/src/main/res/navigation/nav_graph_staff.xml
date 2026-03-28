@@ -11,6 +11,16 @@
         android:label="StaffProfileFragment" />
 
     <fragment
+        android:id="@+id/staffInventoryFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffInventoryFragment"
+        android:label="StaffInventoryFragment" />
+
+    <fragment
+        android:id="@+id/staffTaskListFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffTaskListFragment"
+        android:label="StaffTaskListFragment" />
+
+    <fragment
         android:id="@+id/staffMapFragment"
         android:name="com.drc.aidbridge.ui.map.fragment.StaffMapFragment"
         android:label="StaffMapFragment" />

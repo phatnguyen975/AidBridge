@@ -7,7 +7,7 @@
     <item
         android:id="@+id/sponsorDonateFragment"
         android:icon="@drawable/ic_hand_heart"
-        android:title="@string/nav_donate" />
+        android:title="@string/nav_donation" />
     <item
         android:id="@+id/sponsorMapFragment"
         android:icon="@drawable/ic_map"

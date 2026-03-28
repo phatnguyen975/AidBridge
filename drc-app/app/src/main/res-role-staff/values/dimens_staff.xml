@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Staff profile -->
+    <dimen name="staff_profile_toolbar_height">56dp</dimen>
+    <dimen name="staff_profile_toolbar_logo_size">36dp</dimen>
+    <dimen name="staff_profile_toolbar_title_text_size">18sp</dimen>
+
+    <dimen name="staff_profile_screen_padding">16dp</dimen>
+    <dimen name="staff_profile_card_radius">16dp</dimen>
+    <dimen name="staff_profile_card_stroke_width">1dp</dimen>
+    <dimen name="staff_profile_card_content_padding">16dp</dimen>
+    <dimen name="staff_profile_card_spacing">16dp</dimen>
+
+    <dimen name="staff_profile_avatar_size">80dp</dimen>
+    <dimen name="staff_profile_active_dot_size">16dp</dimen>
+    <dimen name="staff_profile_active_dot_offset">2dp</dimen>
+    <dimen name="staff_active_dot_stroke_width">1dp</dimen>
+    <dimen name="staff_profile_avatar_text_margin_start">16dp</dimen>
+    <dimen name="staff_profile_name_text_size">20sp</dimen>
+    <dimen name="staff_profile_role_text_size">14sp</dimen>
+    <dimen name="staff_profile_role_margin_top">4dp</dimen>
+
+    <dimen name="staff_profile_status_title_text_size">16sp</dimen>
+    <dimen name="staff_profile_status_subtitle_text_size">12sp</dimen>
+    <dimen name="staff_profile_status_subtitle_margin_top">4dp</dimen>
+    <dimen name="staff_profile_status_indicator_margin_top">16dp</dimen>
+    <dimen name="staff_profile_status_indicator_gap">8dp</dimen>
+    <dimen name="staff_profile_status_indicator_padding_horizontal">12dp</dimen>
+    <dimen name="staff_profile_status_indicator_padding_vertical">10dp</dimen>
+    <dimen name="staff_profile_status_icon_size">20dp</dimen>
+    <dimen name="staff_profile_status_icon_text_gap">8dp</dimen>
+    <dimen name="staff_profile_status_small_text_size">12sp</dimen>
+    <dimen name="staff_status_indicator_corner">14dp</dimen>
+    <dimen name="staff_status_indicator_stroke">1dp</dimen>
+
+    <dimen name="staff_profile_info_row_padding">16dp</dimen>
+    <dimen name="staff_profile_info_icon_size">40dp</dimen>
+    <dimen name="staff_profile_info_icon_inner_padding">10dp</dimen>
+    <dimen name="staff_profile_phone_icon_inner_padding">8dp</dimen>
+    <dimen name="staff_profile_info_text_margin_start">12dp</dimen>
+    <dimen name="staff_profile_info_label_text_size">11sp</dimen>
+    <dimen name="staff_profile_info_value_text_size">16sp</dimen>
+    <dimen name="staff_profile_info_value_margin_top">4dp</dimen>
+    <dimen name="staff_profile_divider_thickness">1dp</dimen>
+
+    <dimen name="staff_profile_logout_margin_top">24dp</dimen>
+    <dimen name="staff_profile_logout_icon_padding">8dp</dimen>
+</resources>

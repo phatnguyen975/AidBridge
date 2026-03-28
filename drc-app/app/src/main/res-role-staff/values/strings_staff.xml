@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Staff profile -->
+    <string name="staff_profile_header_title">CÁ NHÂN</string>
+    <string name="staff_profile_name">Nguyễn Văn A</string>
+    <string name="staff_profile_role">Nhân viên quản lý kho</string>
+    <string name="staff_profile_status_title">Trạng thái hoạt động</string>
+    <string name="staff_profile_status_subtitle">Sẵn sàng nhận nhiệm vụ mới</string>
+    <string name="staff_profile_ready">Sẵn sàng</string>
+    <string name="staff_profile_offline">Ngoại tuyến</string>
+    <string name="staff_profile_phone_label">SỐ ĐIỆN THOẠI</string>
+    <string name="staff_profile_phone_value">0901 234 567</string>
+    <string name="staff_profile_email_label">EMAIL</string>
+    <string name="staff_profile_email_value">nguyenvana@drc.gov.vn</string>
+    <string name="staff_profile_join_date_label">NGÀY BẮT ĐẦU THAM GIA</string>
+    <string name="staff_profile_join_date_value">15/05/2023</string>
+    <string name="staff_profile_logout">ĐĂNG XUẤT</string>
+    <string name="staff_profile_avatar_desc">Ảnh đại diện nhân viên</string>
+</resources>
