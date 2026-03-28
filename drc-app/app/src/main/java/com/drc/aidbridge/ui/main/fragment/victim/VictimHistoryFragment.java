@@ -1,5 +1,9 @@
 package com.drc.aidbridge.ui.main.fragment.victim;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBinding> {
 
     private VictimHistoryAdapter adapter;
+    private int baseRecyclerBottomPadding;
 
     private int currentPage = 1;
     private String currentFilter = "1H";
@@ -107,6 +112,7 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
 
         binding.rvHistory.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvHistory.setAdapter(adapter);
+        baseRecyclerBottomPadding = binding.rvHistory.getPaddingBottom();
 
         binding.rvHistory.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -166,24 +172,55 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
             return;
         }
 
+        // TODO(API): Remove mock delay and trigger ViewModel paged history request.
         isLoading = true;
-        binding.paginationProgress.setVisibility(android.view.View.VISIBLE);
+        updatePaginationLoading(true);
 
-        List<VictimHistoryAdapter.HistoryModel> pageData = generateDummyData(currentPage, currentFilter);
-        if (pageData.isEmpty()) {
-            isLastPage = true;
-        } else {
-            adapter.addItems(pageData);
-            if (currentPage >= 4) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            List<VictimHistoryAdapter.HistoryModel> pageData = generateDummyData(currentPage, currentFilter);
+            if (pageData.isEmpty()) {
                 isLastPage = true;
+            } else {
+                adapter.addItems(pageData);
+                if (currentPage >= 4) {
+                    isLastPage = true;
+                }
             }
+
+            isLoading = false;
+            if (binding != null) {
+                updatePaginationLoading(false);
+            }
+        }, 500);
+    }
+
+    private void updatePaginationLoading(boolean show) {
+        boolean hasLoadedItems = adapter != null && adapter.getItemCount() > 0;
+
+        if (!show) {
+            binding.initialLoadingProgress.setVisibility(View.GONE);
+            binding.paginationProgress.setVisibility(View.GONE);
+            setTemporaryBottomSpace(false);
+            return;
         }
 
-        isLoading = false;
-        binding.paginationProgress.setVisibility(android.view.View.GONE);
+        binding.initialLoadingProgress.setVisibility(hasLoadedItems ? View.GONE : View.VISIBLE);
+        binding.paginationProgress.setVisibility(hasLoadedItems ? View.VISIBLE : View.GONE);
+        setTemporaryBottomSpace(hasLoadedItems);
+    }
+
+    private void setTemporaryBottomSpace(boolean enabled) {
+        int extraSpace = enabled ? getResources().getDimensionPixelSize(R.dimen.spacing_xxl) : 0;
+        binding.rvHistory.setPaddingRelative(
+                binding.rvHistory.getPaddingStart(),
+                binding.rvHistory.getPaddingTop(),
+                binding.rvHistory.getPaddingEnd(),
+                baseRecyclerBottomPadding + extraSpace
+        );
     }
 
     private List<VictimHistoryAdapter.HistoryModel> generateDummyData(int page, String filter) {
+        // TODO(API): Remove mock list generation when backend pagination is integrated.
         List<VictimHistoryAdapter.HistoryModel> list = new ArrayList<>();
 
         String statusPending = getString(R.string.victim_history_status_pending);
