@@ -1,0 +1,437 @@
+{
+  "info": {
+    "_postman_id": "mission-api-collection",
+    "name": "AidBridge - Mission API",
+    "description": "Mission API endpoints for disaster relief coordinator system\n\nCache Strategy:\n- GET /missions: Not cached (list changes frequently)\n- GET /missions/{id}: Redis cache TTL 5 min for active missions\n- GET /missions/{id}/tracking: Volunteer location from Redis geo data\n\nFCM Notifications:\n- POST /missions/{id}/pickup: Sends \"📦 Vật phẩm đã được lấy\" to victim\n- POST /missions/{id}/complete: Sends \"✅ Đã nhận được hỗ trợ\" to victim\n- POST /missions/{id}/cancel: Sends \"❌ Hỗ trợ bị hủy\" to victim",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. List Missions",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/missions?missionType=RESCUE&status=ASSIGNED&page=1&limit=10",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "missions"
+          ],
+          "query": [
+            {
+              "key": "missionType",
+              "value": "RESCUE",
+              "disabled": false
+            },
+            {
+              "key": "status",
+              "value": "ASSIGNED",
+              "disabled": false
+            },
+            {
+              "key": "volunteer_id",
+              "value": "{{volunteer_id}}",
+              "disabled": true
+            },
+            {
+              "key": "page",
+              "value": "1",
+              "disabled": false
+            },
+            {
+              "key": "limit",
+              "value": "10",
+              "disabled": false
+            }
+          ]
+        },
+        "description": "Get paginated list of missions with optional filters\n\nQuery Parameters:\n- missionType: RESCUE | DELIVERY (optional)\n- status: PENDING, DISPATCHING, ASSIGNED, PICKING_UP, PICKED_UP, IN_TRANSIT, COMPLETED, CANCELLED (optional)\n- volunteer_id: UUID of volunteer (optional, Staff/Admin only)\n- page: Page number (default: 1)\n- limit: Items per page (default: 20, max: 100)\n\nCache: Not cached - data changes frequently"
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/missions?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "missions"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [],
+          "body": "{\n  \"success\": true,\n  \"message\": \"Missions retrieved successfully\",\n  \"data\": {\n    \"items\": [\n      {\n        \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n        \"missionType\": \"RESCUE\",\n        \"status\": \"ASSIGNED\",\n        \"sosRequestId\": \"650e8400-e29b-41d4-a716-446655440001\",\n        \"volunteerId\": \"750e8400-e29b-41d4-a716-446655440002\",\n        \"victimLat\": 10.762622,\n        \"victimLng\": 106.660172,\n        \"priorityScore\": 8.5,\n        \"acceptedAt\": \"2026-03-28T10:30:00Z\",\n        \"createdAt\": \"2026-03-28T10:15:00Z\",\n        \"updatedAt\": \"2026-03-28T10:30:00Z\"\n      }\n    ],\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 10,\n      \"total\": 5,\n      \"totalPages\": 1,\n      \"hasNext\": false,\n      \"hasPrevious\": false\n    }\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "2. Get Mission Detail",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/missions/{{mission_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "missions",
+            "{{mission_id}}"
+          ]
+        },
+        "description": "Get detailed information about a specific mission\n\nCache Strategy:\n- Active missions (ASSIGNED, PICKING_UP, PICKED_UP, IN_TRANSIT, DISPATCHING): Cached in Redis with TTL 5 minutes\n- Completed/Cancelled missions: Not cached (fetch from PostgreSQL)\n- Cache invalidated on status change\n\nResponse includes:\n- Mission details\n- Volunteer info\n- Hub info (for delivery missions)\n- SOS/Aid request details"
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/missions/550e8400-e29b-41d4-a716-446655440000",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "missions",
+                "550e8400-e29b-41d4-a716-446655440000"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [],
+          "body": "{\n  \"success\": true,\n  \"message\": \"Mission retrieved successfully\",\n  \"data\": {\n    \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"missionType\": \"RESCUE\",\n    \"status\": \"ASSIGNED\",\n    \"sosRequestId\": \"650e8400-e29b-41d4-a716-446655440001\",\n    \"volunteerId\": \"750e8400-e29b-41d4-a716-446655440002\",\n    \"victimLat\": 10.762622,\n    \"victimLng\": 106.660172,\n    \"priorityScore\": 8.5,\n    \"acceptedAt\": \"2026-03-28T10:30:00Z\",\n    \"createdAt\": \"2026-03-28T10:15:00Z\",\n    \"updatedAt\": \"2026-03-28T10:30:00Z\",\n    \"volunteer\": {\n      \"id\": \"750e8400-e29b-41d4-a716-446655440002\",\n      \"fullName\": \"Nguyễn Văn A\",\n      \"phoneNumber\": \"+84901234567\",\n      \"avatarUrl\": \"/avatars/750e8400/avatar.jpg\"\n    },\n    \"sosRequest\": {\n      \"id\": \"650e8400-e29b-41d4-a716-446655440001\",\n      \"lat\": 10.762622,\n      \"lng\": 106.660172,\n      \"address\": \"123 Nguyen Hue, District 1, HCMC\",\n      \"description\": \"Flooding, need immediate rescue\",\n      \"peopleCount\": 3,\n      \"urgencyLevel\": \"HIGH\"\n    }\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "3. Confirm Pickup (DELIVERY)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"qrCodeToken\": \"QR123456789\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/missions/{{mission_id}}/pickup",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "missions",
+            "{{mission_id}}",
+            "pickup"
+          ]
+        },
+        "description": "Confirm pickup at hub for DELIVERY missions\n\nRequest Body:\n- qrCodeToken: (optional) QR code scanned at hub for verification\n\nValidations:\n- Mission type must be DELIVERY\n- Mission status must be ASSIGNED\n- QR code token (if provided) must match mission token\n\nCache:\n- Invalidates mission:{id} cache after successful pickup\n\nTriggers:\n- Supabase Realtime status update\n- FCM notification to victim: \"📦 Vật phẩm đã được lấy\"\n\nStatus Change: ASSIGNED → PICKED_UP"
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"qrCodeToken\": \"QR123456789\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/missions/550e8400-e29b-41d4-a716-446655440000/pickup",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "missions",
+                "550e8400-e29b-41d4-a716-446655440000",
+                "pickup"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [],
+          "body": "{\n  \"success\": true,\n  \"message\": \"Pickup confirmed successfully\",\n  \"data\": {\n    \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"status\": \"PICKED_UP\",\n    \"pickedUpAt\": \"2026-03-28T11:00:00Z\",\n    \"qrCodeToken\": \"QR123456789\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "4. Complete Mission",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "confirmation_image",
+              "type": "file",
+              "src": "/path/to/confirmation.jpg",
+              "description": "Photo proof of delivery/rescue completion (required)"
+            },
+            {
+              "key": "notes",
+              "value": "Mission completed successfully without issues",
+              "type": "text",
+              "description": "Optional notes about the completion"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/missions/{{mission_id}}/complete",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "missions",
+            "{{mission_id}}",
+            "complete"
+          ]
+        },
+        "description": "Complete mission with confirmation image\n\nRequest:\n- multipart/form-data\n- confirmation_image: Binary image file (required)\n- notes: Optional text notes\n\nValidations:\n- Mission must be in active status (ASSIGNED, PICKING_UP, PICKED_UP, IN_TRANSIT)\n- Confirmation image is required\n\nCache:\n- Removes mission:{id} from active cache\n- Completed missions are not cached\n\nTriggers:\n- Supabase Realtime status update\n- FCM notification to victim: \"✅ Đã nhận được hỗ trợ\"\n- Updates volunteer stats\n- Updates SOS/Aid request status to RESOLVED\n\nStatus Change: Active → COMPLETED"
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "confirmation_image",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/missions/550e8400-e29b-41d4-a716-446655440000/complete",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "missions",
+                "550e8400-e29b-41d4-a716-446655440000",
+                "complete"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [],
+          "body": "{\n  \"success\": true,\n  \"message\": \"Mission completed successfully\",\n  \"data\": {\n    \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"status\": \"COMPLETED\",\n    \"completedAt\": \"2026-03-28T12:00:00Z\",\n    \"confirmationImageUrl\": \"/missions/550e8400/confirmation.jpg\",\n    \"volunteerStats\": {\n      \"totalMissionsCompleted\": 25,\n      \"pointsEarned\": 100\n    }\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "5. Cancel Mission",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cancellationReason\": \"Vehicle breakdown\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/missions/{{mission_id}}/cancel",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "missions",
+            "{{mission_id}}",
+            "cancel"
+          ]
+        },
+        "description": "Cancel an active mission\n\nRequest Body:\n- cancellationReason: (required) Reason for cancellation\n\nValidations:\n- Cannot cancel already COMPLETED or CANCELLED missions\n\nCache:\n- Removes mission:{id} from active cache\n\nTriggers:\n- Supabase Realtime status update\n- FCM notification to victim: \"❌ Hỗ trợ bị hủy\"\n- For RESCUE missions: triggers re-dispatch if SOS request still active\n- Returns reserved inventory to hub (for DELIVERY missions)\n\nStatus Change: Active → CANCELLED"
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cancellationReason\": \"Vehicle breakdown\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/missions/550e8400-e29b-41d4-a716-446655440000/cancel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "missions",
+                "550e8400-e29b-41d4-a716-446655440000",
+                "cancel"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [],
+          "body": "{\n  \"success\": true,\n  \"message\": \"Mission cancelled\",\n  \"data\": {\n    \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"status\": \"CANCELLED\",\n    \"cancelledAt\": \"2026-03-28T11:30:00Z\",\n    \"cancellationReason\": \"Vehicle breakdown\",\n    \"willRedispatch\": true\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "6. Get Mission Tracking",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/missions/{{mission_id}}/tracking",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "missions",
+            "{{mission_id}}",
+            "tracking"
+          ]
+        },
+        "description": "Get real-time tracking information for an active mission\n\nValidations:\n- Mission must be in trackable state (ASSIGNED, PICKING_UP, PICKED_UP, IN_TRANSIT, DISPATCHING)\n\nCache Strategy:\n- Volunteer location: Read from Redis geo data (volunteer:locations)\n- Location updates every 10 seconds via mobile app\n- ETA/distance calculated from route data (TTL: 30 seconds)\n\nReal-time Updates:\n- Subscribe to Supabase Realtime channel: missions:{id}\n- Client can listen for live location and status updates\n- WebSocket connection for continuous tracking\n\nResponse includes:\n- Current volunteer location\n- Destination coordinates and address\n- Estimated Time of Arrival (ETA)\n- Distance remaining\n- WebSocket channel for live updates"
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/missions/550e8400-e29b-41d4-a716-446655440000/tracking",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "missions",
+                "550e8400-e29b-41d4-a716-446655440000",
+                "tracking"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "header": [],
+          "body": "{\n  \"success\": true,\n  \"message\": \"Tracking info retrieved\",\n  \"data\": {\n    \"missionId\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"status\": \"IN_TRANSIT\",\n    \"volunteer\": {\n      \"id\": \"750e8400-e29b-41d4-a716-446655440002\",\n      \"fullName\": \"Nguyễn Văn A\",\n      \"avatarUrl\": \"/avatars/750e8400/avatar.jpg\",\n      \"currentLat\": 10.760000,\n      \"currentLng\": 106.658000,\n      \"lastUpdated\": \"2026-03-28T11:45:30Z\"\n    },\n    \"destination\": {\n      \"lat\": 10.762622,\n      \"lng\": 106.660172\n    },\n    \"destinationAddress\": \"123 Nguyen Hue, District 1, HCMC\",\n    \"etaMinutes\": 5,\n    \"distanceKm\": 0.5,\n    \"websocketChannel\": \"missions:550e8400-e29b-41d4-a716-446655440000\"\n  }\n}"
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "your_jwt_token_here",
+      "type": "string"
+    },
+    {
+      "key": "mission_id",
+      "value": "550e8400-e29b-41d4-a716-446655440000",
+      "type": "string"
+    },
+    {
+      "key": "volunteer_id",
+      "value": "750e8400-e29b-41d4-a716-446655440002",
+      "type": "string"
+    }
+  ]
+}
