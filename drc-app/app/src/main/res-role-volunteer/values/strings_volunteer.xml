@@ -91,4 +91,28 @@
     <string name="volunteer_sos_acceptance_icon_desc">Biểu tượng thông tin nhiệm vụ</string>
     <string name="volunteer_sos_acceptance_accept_icon_desc">Biểu tượng chấp nhận nhiệm vụ</string>
     <string name="volunteer_sos_acceptance_decline_icon_desc">Biểu tượng từ chối nhiệm vụ</string>
+
+    <!-- Volunteer Current SOS Mission -->
+    <string name="volunteer_current_mission_title">Nhiệm vụ hiện tại</string>
+    <string name="volunteer_current_mission_back_content_desc">Quay lại</string>
+    <string name="volunteer_current_mission_badge_rescue">CỨU HỘ</string>
+    <string name="volunteer_current_mission_urgent_label">Khẩn cấp</string>
+    <string name="volunteer_current_mission_request_title">Yêu cầu: Giải cứu người dân</string>
+    <string name="volunteer_current_mission_area">Khu vực Quận 8, TP. Hồ Chí Minh</string>
+    <string name="volunteer_current_mission_map_placeholder">Map Navigation Placeholder</string>
+    <string name="volunteer_current_mission_progress_start">Đến nhà</string>
+    <string name="volunteer_current_mission_progress_end">Hoàn thành</string>
+    <string name="volunteer_current_mission_status_text">Đang thực hiện: Đến nhà nạn nhân</string>
+    <string name="volunteer_current_mission_victim_info_icon_desc">Biểu tượng thông tin nạn nhân</string>
+    <string name="volunteer_current_mission_victim_info_title">Thông tin nạn nhân</string>
+    <string name="volunteer_current_mission_victim_name">Nguyễn Văn A</string>
+    <string name="volunteer_current_mission_victim_phone">090 123 4567</string>
+    <string name="volunteer_current_mission_call_victim_desc">Gọi cho nạn nhân</string>
+    <string name="volunteer_current_mission_victim_address">Địa chỉ: 123 Đường ABC, Quận XYZ</string>
+    <string name="volunteer_current_mission_health_label">Tình trạng sức khỏe</string>
+    <string name="volunteer_current_mission_health_value">Ổn định, đang lo lắng</string>
+    <string name="volunteer_current_mission_important_note_label">GHI CHÚ QUAN TRỌNG</string>
+    <string name="volunteer_current_mission_important_note_value">Mắc kẹt trên mái nhà do nước dâng cao</string>
+    <string name="volunteer_current_mission_btn_arrived">Tôi đã đến nơi</string>
+    <string name="volunteer_current_mission_btn_hint">Xác nhận vị trí của bạn để chuyển sang bước tiếp theo</string>
 </resources>

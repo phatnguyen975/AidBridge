@@ -61,4 +61,13 @@
     <dimen name="volunteer_sos_acceptance_button_radius">12dp</dimen>
     <dimen name="volunteer_sos_acceptance_button_text_size">16sp</dimen>
     <dimen name="volunteer_sos_acceptance_button_icon_size">18dp</dimen>
+
+    <!-- Volunteer Current SOS Mission Dimensions -->
+    <dimen name="volunteer_current_mission_toolbar_icon_button_size">40dp</dimen>
+    <dimen name="volunteer_current_mission_toolbar_title_size">18sp</dimen>
+    <dimen name="volunteer_current_mission_map_height">200dp</dimen>
+    <dimen name="volunteer_current_mission_request_title_size">20sp</dimen>
+    <dimen name="volunteer_current_mission_loading_size">18dp</dimen>
+    <dimen name="volunteer_current_mission_header_icon_size">20dp</dimen>
+    <dimen name="volunteer_current_mission_health_dot_size">10dp</dimen>
 </resources>
