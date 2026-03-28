@@ -25,8 +25,10 @@ public class CreateGuestSosRequestDto {
     private String description;
 
     @Min(value = 1)
+    @Builder.Default
     private Integer peopleCount = 1;
 
+    @Builder.Default
     private UrgencyLevel urgencyLevel = UrgencyLevel.MEDIUM;
 
     @Size(max = 500)

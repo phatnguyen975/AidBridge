@@ -50,3 +50,8 @@ spring:
 
 app:
   name: AidBridge
+
+firebase:
+  project-id: ${FIREBASE_PROJECT_ID:aidbridge-5613d}
+  service-account:
+    path: ${FIREBASE_SERVICE_ACCOUNT_PATH:firebase-service-account.json}
