@@ -80,6 +80,20 @@ public class SponsorHistoryAdapter extends RecyclerView.Adapter<SponsorHistoryAd
         notifyDataSetChanged();
     }
 
+    public void clear() {
+        items.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addItems(@NonNull List<HistoryItem> newItems) {
+        if (newItems.isEmpty()) {
+            return;
+        }
+        int startPosition = items.size();
+        items.addAll(newItems);
+        notifyItemRangeInserted(startPosition, newItems.size());
+    }
+
     private int resolveStatusColor(@NonNull HistoryViewHolder holder, @NonNull String status) {
         if (status.equals(holder.binding.getRoot().getContext().getString(R.string.sponsor_history_status_pending))) {
             return ContextCompat.getColor(holder.binding.getRoot().getContext(), R.color.warning_orange);

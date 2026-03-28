@@ -54,11 +54,34 @@
         app:tabSelectedTextColor="@color/text_primary"
         app:tabTextColor="@color/text_secondary" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_history"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:padding="@dimen/sponsor_history_content_padding" />
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_history"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="@dimen/sponsor_history_content_padding"
+            android:paddingTop="@dimen/sponsor_history_content_padding"
+            android:paddingEnd="@dimen/sponsor_history_content_padding"
+            android:paddingBottom="@dimen/sponsor_history_content_padding" />
+
+        <ProgressBar
+            android:id="@+id/initialLoadingProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/paginationProgress"
+            android:layout_width="@dimen/spacing_xl"
+            android:layout_height="@dimen/spacing_xl"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="@dimen/sponsor_history_content_padding"
+            android:visibility="gone" />
+    </FrameLayout>
 </LinearLayout>
