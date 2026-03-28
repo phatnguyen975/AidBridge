@@ -5,18 +5,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 
-import com.drc.aidbridge.databinding.FragmentStaffDashboardBinding;
+import com.drc.aidbridge.databinding.FragmentStaffProfileBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class StaffDashboardFragment extends BaseFragment<FragmentStaffDashboardBinding> {
+public class StaffProfileFragment extends BaseFragment<FragmentStaffProfileBinding> {
 
     @Nullable
     @Override
-    protected FragmentStaffDashboardBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
-        return FragmentStaffDashboardBinding.inflate(inflater, container, false);
+    protected FragmentStaffProfileBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
+        return FragmentStaffProfileBinding.inflate(inflater, container, false);
     }
 
     @Override

@@ -3,15 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_staff"
-    app:startDestination="@id/staffDashboardFragment">
+    app:startDestination="@id/staffProfileFragment">
 
     <fragment
-        android:id="@+id/staffDashboardFragment"
-        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffDashboardFragment"
-        android:label="StaffDashboardFragment" />
+        android:id="@+id/staffProfileFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffProfileFragment"
+        android:label="StaffProfileFragment" />
 
     <fragment
-        android:id="@+id/mapFragment"
+        android:id="@+id/staffMapFragment"
         android:name="com.drc.aidbridge.ui.map.fragment.StaffMapFragment"
-        android:label="MapFragment" />
+        android:label="StaffMapFragment" />
 </navigation>
