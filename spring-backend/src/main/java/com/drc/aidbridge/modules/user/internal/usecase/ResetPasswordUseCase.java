@@ -1,13 +1,13 @@
 package com.drc.aidbridge.modules.user.internal.usecase;
 
-import com.drc.aidbridge.exception.InvalidOtpException;
-import com.drc.aidbridge.exception.ResourceNotFoundException;
+import com.drc.aidbridge.modules.shared.exception.InvalidOtpException;
+import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
+import com.drc.aidbridge.modules.user.internal.cache.OtpRedisSchema;
+import com.drc.aidbridge.modules.user.internal.cache.SessionCacheRedisSchema;
 import com.drc.aidbridge.modules.user.internal.entity.User;
 import com.drc.aidbridge.modules.user.internal.repository.UserJpaRepository;
+import com.drc.aidbridge.modules.user.internal.security.JwtService;
 import com.drc.aidbridge.modules.user.internal.web.dto.ResetPasswordRequest;
-import com.drc.aidbridge.redis.OtpRedisSchema;
-import com.drc.aidbridge.redis.SessionCacheRedisSchema;
-import com.drc.aidbridge.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

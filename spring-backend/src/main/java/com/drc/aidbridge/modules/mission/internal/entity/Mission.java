@@ -1,8 +1,7 @@
 package com.drc.aidbridge.modules.mission.internal.entity;
 
-import com.drc.aidbridge.entity.SosRequest;
-import com.drc.aidbridge.entity.enums.MissionStatus;
-import com.drc.aidbridge.entity.enums.MissionType;
+import com.drc.aidbridge.modules.shared.enums.MissionStatus;
+import com.drc.aidbridge.modules.shared.enums.MissionType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -30,9 +29,8 @@ public class Mission {
     @Column(name = "mission_type", nullable = false)
     private MissionType missionType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sos_request_id")
-    private SosRequest sosRequest;
+    @Column(name = "sos_request_id")
+    private UUID sosRequestId;
 
     @Column(name = "aid_request_id")
     private UUID aidRequestId;

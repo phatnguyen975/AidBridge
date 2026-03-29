@@ -1,8 +1,6 @@
 package com.drc.aidbridge.modules.aid.internal.usecase;
 
-import com.drc.aidbridge.entity.enums.AidStatus;
-import com.drc.aidbridge.entity.enums.MissionStatus;
-import com.drc.aidbridge.entity.enums.MissionType;
+import com.drc.aidbridge.modules.shared.enums.AidStatus;
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequest;
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequestItem;
 import com.drc.aidbridge.modules.aid.internal.mapper.AidMapper;
@@ -10,9 +8,9 @@ import com.drc.aidbridge.modules.aid.internal.repository.AidRequestItemJpaReposi
 import com.drc.aidbridge.modules.aid.internal.repository.AidRequestJpaRepository;
 import com.drc.aidbridge.modules.aid.internal.web.dto.AidRequestResponse;
 import com.drc.aidbridge.modules.aid.internal.web.dto.CreateAidRequest;
+import com.drc.aidbridge.modules.mission.MissionDTO;
+import com.drc.aidbridge.modules.mission.MissionFacade;
 import com.drc.aidbridge.modules.user.UserFacade;
-import com.drc.aidbridge.entity.Mission;
-import com.drc.aidbridge.repository.MissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +25,7 @@ public class CreateAidRequestUseCase {
 
     private final AidRequestJpaRepository aidRequestRepository;
     private final AidRequestItemJpaRepository aidRequestItemRepository;
-    private final MissionRepository missionRepository;
+    private final MissionFacade missionFacade;
     private final UserFacade userFacade;
     private final AidMapper aidMapper;
 
@@ -66,14 +64,7 @@ public class CreateAidRequestUseCase {
         List<AidRequestItem> savedItems = aidRequestItemRepository.saveAll(items);
         saved.setItems(savedItems);
 
-        // Create associated mission
-        Mission savedMission = missionRepository.save(Mission.builder()
-                .missionType(MissionType.DELIVERY)
-                .aidRequestId(saved.getId())
-                .status(MissionStatus.PENDING)
-                .victimLat(saved.getLat())
-                .victimLng(saved.getLng())
-                .build());
+        MissionDTO savedMission = missionFacade.createDeliveryMission(saved.getId(), saved.getLat(), saved.getLng());
 
         return aidMapper.toResponse(saved, savedItems, savedMission);
     }

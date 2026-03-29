@@ -1,6 +1,6 @@
 package com.drc.aidbridge.modules.aid.internal;
 
-import com.drc.aidbridge.exception.ResourceNotFoundException;
+import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.aid.AidFacade;
 import com.drc.aidbridge.modules.aid.AidRequestDTO;
 import com.drc.aidbridge.modules.aid.internal.mapper.AidMapper;

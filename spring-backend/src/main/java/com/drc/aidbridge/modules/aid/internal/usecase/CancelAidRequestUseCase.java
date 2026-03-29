@@ -1,8 +1,8 @@
 package com.drc.aidbridge.modules.aid.internal.usecase;
 
-import com.drc.aidbridge.entity.enums.AidStatus;
-import com.drc.aidbridge.entity.enums.MissionStatus;
-import com.drc.aidbridge.exception.ResourceNotFoundException;
+import com.drc.aidbridge.modules.shared.enums.AidStatus;
+import com.drc.aidbridge.modules.shared.enums.MissionStatus;
+import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequest;
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequestItem;
 import com.drc.aidbridge.modules.aid.internal.mapper.AidMapper;
@@ -10,10 +10,10 @@ import com.drc.aidbridge.modules.aid.internal.repository.AidRequestItemJpaReposi
 import com.drc.aidbridge.modules.aid.internal.repository.AidRequestJpaRepository;
 import com.drc.aidbridge.modules.aid.internal.web.dto.AidRequestResponse;
 import com.drc.aidbridge.modules.aid.internal.web.dto.CancelAidRequest;
+import com.drc.aidbridge.modules.mission.MissionDTO;
+import com.drc.aidbridge.modules.mission.MissionFacade;
 import com.drc.aidbridge.modules.user.UserDTO;
 import com.drc.aidbridge.modules.user.UserFacade;
-import com.drc.aidbridge.entity.Mission;
-import com.drc.aidbridge.repository.MissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ public class CancelAidRequestUseCase {
 
     private final AidRequestJpaRepository aidRequestRepository;
     private final AidRequestItemJpaRepository aidRequestItemRepository;
-    private final MissionRepository missionRepository;
+    private final MissionFacade missionFacade;
     private final UserFacade userFacade;
     private final AidMapper aidMapper;
 
@@ -48,12 +48,9 @@ public class CancelAidRequestUseCase {
         aidRequest.setStatus(AidStatus.CANCELLED);
         AidRequest saved = aidRequestRepository.save(aidRequest);
 
-        Mission mission = missionRepository.findByAidRequestId(saved.getId()).orElse(null);
+        MissionDTO mission = missionFacade.findMissionByAidRequestId(saved.getId()).orElse(null);
         if (mission != null && mission.getStatus() != MissionStatus.COMPLETED && mission.getStatus() != MissionStatus.CANCELLED) {
-            mission.setStatus(MissionStatus.CANCELLED);
-            mission.setCancelledAt(Instant.now());
-            mission.setCancellationReason(request.getReason());
-            missionRepository.save(mission);
+            mission = missionFacade.cancelMissionByAidRequestId(saved.getId(), request.getReason()).orElse(mission);
         }
 
         List<AidRequestItem> items = aidRequestItemRepository.findByAidRequestId(saved.getId());

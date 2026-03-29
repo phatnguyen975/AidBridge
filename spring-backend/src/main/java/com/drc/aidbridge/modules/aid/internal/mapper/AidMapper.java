@@ -1,12 +1,12 @@
 package com.drc.aidbridge.modules.aid.internal.mapper;
 
 import com.drc.aidbridge.modules.aid.AidRequestDTO;
+import com.drc.aidbridge.modules.mission.MissionDTO;
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequest;
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequestItem;
 import com.drc.aidbridge.modules.aid.internal.web.dto.AidItemInput;
 import com.drc.aidbridge.modules.aid.internal.web.dto.AidItemResponse;
 import com.drc.aidbridge.modules.aid.internal.web.dto.AidRequestResponse;
-import com.drc.aidbridge.entity.Mission;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class AidMapper {
     }
 
     // Entity + items + mission → API response DTO
-    public AidRequestResponse toResponse(AidRequest entity, List<AidRequestItem> items, Mission mission) {
+    public AidRequestResponse toResponse(AidRequest entity, List<AidRequestItem> items, MissionDTO mission) {
         return AidRequestResponse.builder()
                 .id(entity.getId())
                 .requesterId(entity.getRequesterId())

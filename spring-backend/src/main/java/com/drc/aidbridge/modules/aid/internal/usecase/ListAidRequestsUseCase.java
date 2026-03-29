@@ -1,15 +1,15 @@
 package com.drc.aidbridge.modules.aid.internal.usecase;
 
-import com.drc.aidbridge.dto.response.PaginatedResponseDto;
-import com.drc.aidbridge.dto.response.PaginationDto;
+import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
+import com.drc.aidbridge.modules.shared.dto.PaginationDto;
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequest;
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequestItem;
 import com.drc.aidbridge.modules.aid.internal.mapper.AidMapper;
 import com.drc.aidbridge.modules.aid.internal.repository.AidRequestItemJpaRepository;
 import com.drc.aidbridge.modules.aid.internal.repository.AidRequestJpaRepository;
 import com.drc.aidbridge.modules.aid.internal.web.dto.AidRequestResponse;
-import com.drc.aidbridge.entity.Mission;
-import com.drc.aidbridge.repository.MissionRepository;
+import com.drc.aidbridge.modules.mission.MissionDTO;
+import com.drc.aidbridge.modules.mission.MissionFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +25,7 @@ public class ListAidRequestsUseCase {
 
     private final AidRequestJpaRepository aidRequestRepository;
     private final AidRequestItemJpaRepository aidRequestItemRepository;
-    private final MissionRepository missionRepository;
+    private final MissionFacade missionFacade;
     private final AidMapper aidMapper;
 
     public PaginatedResponseDto<AidRequestResponse> execute(int page, int limit) {
@@ -37,7 +37,7 @@ public class ListAidRequestsUseCase {
 
         List<AidRequestResponse> items = paged.getContent().stream()
                 .map(aidRequest -> {
-                    Mission mission = missionRepository.findByAidRequestId(aidRequest.getId()).orElse(null);
+                    MissionDTO mission = missionFacade.findMissionByAidRequestId(aidRequest.getId()).orElse(null);
                     List<AidRequestItem> aidRequestItems = aidRequestItemRepository.findByAidRequestId(aidRequest.getId());
                     return aidMapper.toResponse(aidRequest, aidRequestItems, mission);
                 })

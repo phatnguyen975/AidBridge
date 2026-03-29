@@ -1,6 +1,6 @@
 package com.drc.aidbridge.modules.aid.internal.web.dto;
 
-import com.drc.aidbridge.entity.enums.UrgencyLevel;
+import com.drc.aidbridge.modules.shared.enums.UrgencyLevel;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

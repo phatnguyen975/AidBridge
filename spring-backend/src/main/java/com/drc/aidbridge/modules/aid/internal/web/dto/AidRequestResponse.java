@@ -1,9 +1,9 @@
 package com.drc.aidbridge.modules.aid.internal.web.dto;
 
-import com.drc.aidbridge.entity.enums.AidStatus;
-import com.drc.aidbridge.entity.enums.MissionStatus;
-import com.drc.aidbridge.entity.enums.MissionType;
-import com.drc.aidbridge.entity.enums.UrgencyLevel;
+import com.drc.aidbridge.modules.shared.enums.AidStatus;
+import com.drc.aidbridge.modules.shared.enums.MissionStatus;
+import com.drc.aidbridge.modules.shared.enums.MissionType;
+import com.drc.aidbridge.modules.shared.enums.UrgencyLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

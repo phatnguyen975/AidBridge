@@ -1,7 +1,7 @@
 package com.drc.aidbridge.modules.user.internal.usecase;
 
 import com.drc.aidbridge.modules.user.internal.web.dto.LogoutRequest;
-import com.drc.aidbridge.security.JwtService;
+import com.drc.aidbridge.modules.user.internal.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,6 @@
 package com.drc.aidbridge.modules.user.internal;
 
-import com.drc.aidbridge.exception.ResourceNotFoundException;
+import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.user.UserDTO;
 import com.drc.aidbridge.modules.user.UserFacade;
 import com.drc.aidbridge.modules.user.internal.mapper.UserMapper;

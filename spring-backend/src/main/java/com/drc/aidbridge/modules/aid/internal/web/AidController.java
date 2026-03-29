@@ -1,7 +1,7 @@
 package com.drc.aidbridge.modules.aid.internal.web;
 
-import com.drc.aidbridge.dto.response.ApiResponse;
-import com.drc.aidbridge.dto.response.PaginatedResponseDto;
+import com.drc.aidbridge.modules.shared.dto.ApiResponse;
+import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
 import com.drc.aidbridge.modules.aid.internal.usecase.*;
 import com.drc.aidbridge.modules.aid.internal.web.dto.*;
 import jakarta.validation.Valid;

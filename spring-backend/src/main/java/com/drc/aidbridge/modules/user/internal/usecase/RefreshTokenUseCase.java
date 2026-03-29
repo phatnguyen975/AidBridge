@@ -1,12 +1,12 @@
 package com.drc.aidbridge.modules.user.internal.usecase;
 
-import com.drc.aidbridge.exception.AuthenticationException;
-import com.drc.aidbridge.exception.ResourceNotFoundException;
+import com.drc.aidbridge.modules.shared.exception.AuthenticationException;
+import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.user.internal.entity.User;
 import com.drc.aidbridge.modules.user.internal.repository.UserJpaRepository;
+import com.drc.aidbridge.modules.user.internal.security.JwtService;
 import com.drc.aidbridge.modules.user.internal.web.dto.RefreshTokenRequest;
 import com.drc.aidbridge.modules.user.internal.web.dto.TokenResponse;
-import com.drc.aidbridge.security.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
 package com.drc.aidbridge.modules.mission.internal.web;
 
-import com.drc.aidbridge.dto.response.ApiResponse;
-import com.drc.aidbridge.entity.enums.MissionStatus;
-import com.drc.aidbridge.entity.enums.MissionType;
+import com.drc.aidbridge.modules.shared.dto.ApiResponse;
+import com.drc.aidbridge.modules.shared.enums.MissionStatus;
+import com.drc.aidbridge.modules.shared.enums.MissionType;
 import com.drc.aidbridge.modules.mission.internal.usecase.*;
 import com.drc.aidbridge.modules.mission.internal.web.dto.*;
 import jakarta.validation.Valid;

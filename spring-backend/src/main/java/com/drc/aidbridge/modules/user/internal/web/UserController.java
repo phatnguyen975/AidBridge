@@ -1,6 +1,6 @@
 package com.drc.aidbridge.modules.user.internal.web;
 
-import com.drc.aidbridge.dto.response.ApiResponse;
+import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import com.drc.aidbridge.modules.user.internal.usecase.*;
 import com.drc.aidbridge.modules.user.internal.web.dto.*;
 import jakarta.validation.Valid;

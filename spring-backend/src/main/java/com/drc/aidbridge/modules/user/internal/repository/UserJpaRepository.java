@@ -1,6 +1,6 @@
 package com.drc.aidbridge.modules.user.internal.repository;
 
-import com.drc.aidbridge.entity.enums.UserRole;
+import com.drc.aidbridge.modules.shared.enums.UserRole;
 import com.drc.aidbridge.modules.user.internal.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

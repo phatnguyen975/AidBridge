@@ -1,6 +1,6 @@
 package com.drc.aidbridge.modules.user.internal.entity;
 
-import com.drc.aidbridge.entity.enums.UserRole;
+import com.drc.aidbridge.modules.shared.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

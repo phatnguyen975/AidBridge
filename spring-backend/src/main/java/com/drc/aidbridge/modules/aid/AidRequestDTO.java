@@ -1,6 +1,6 @@
 package com.drc.aidbridge.modules.aid;
 
-import com.drc.aidbridge.entity.enums.AidStatus;
+import com.drc.aidbridge.modules.shared.enums.AidStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

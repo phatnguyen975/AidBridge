@@ -1,10 +1,10 @@
 package com.drc.aidbridge.modules.user.internal.usecase;
 
-import com.drc.aidbridge.exception.ResourceNotFoundException;
+import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
+import com.drc.aidbridge.modules.user.internal.cache.OtpRedisSchema;
 import com.drc.aidbridge.modules.user.internal.repository.UserJpaRepository;
 import com.drc.aidbridge.modules.user.internal.web.dto.ResendOtpRequest;
-import com.drc.aidbridge.redis.OtpRedisSchema;
-import com.drc.aidbridge.service.EmailService;
+import com.drc.aidbridge.modules.notification.NotificationFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ public class ResendOtpUseCase {
 
     private final UserJpaRepository userRepository;
     private final OtpRedisSchema otpRedisSchema;
-    private final EmailService emailService;
+    private final NotificationFacade notificationFacade;
 
     public void execute(ResendOtpRequest request) {
         if (!userRepository.existsByEmail(request.getEmail())) {
@@ -25,7 +25,7 @@ public class ResendOtpUseCase {
 
         String otp = otpRedisSchema.generateOtp(
                 OtpRedisSchema.OtpPurpose.REGISTRATION, request.getEmail());
-        emailService.sendOtpEmail(request.getEmail(), otp);
+        notificationFacade.sendEmail(request.getEmail(), otp);
 
         log.info("OTP resent to: {}", request.getEmail());
     }

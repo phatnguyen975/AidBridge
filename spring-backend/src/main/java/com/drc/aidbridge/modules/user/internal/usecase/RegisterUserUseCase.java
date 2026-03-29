@@ -1,16 +1,16 @@
 package com.drc.aidbridge.modules.user.internal.usecase;
 
-import com.drc.aidbridge.entity.enums.UserRole;
-import com.drc.aidbridge.exception.DuplicateResourceException;
+import com.drc.aidbridge.modules.shared.enums.UserRole;
+import com.drc.aidbridge.modules.shared.exception.DuplicateResourceException;
+import com.drc.aidbridge.modules.user.internal.cache.OtpRedisSchema;
+import com.drc.aidbridge.modules.user.internal.cache.SessionCacheRedisSchema;
 import com.drc.aidbridge.modules.user.internal.entity.User;
 import com.drc.aidbridge.modules.user.internal.mapper.UserMapper;
 import com.drc.aidbridge.modules.user.internal.repository.UserJpaRepository;
+import com.drc.aidbridge.modules.user.internal.security.JwtService;
 import com.drc.aidbridge.modules.user.internal.web.dto.AuthResponse;
 import com.drc.aidbridge.modules.user.internal.web.dto.RegisterRequest;
-import com.drc.aidbridge.redis.OtpRedisSchema;
-import com.drc.aidbridge.redis.SessionCacheRedisSchema;
-import com.drc.aidbridge.security.JwtService;
-import com.drc.aidbridge.service.EmailService;
+import com.drc.aidbridge.modules.notification.NotificationFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +27,7 @@ public class RegisterUserUseCase {
     private final JwtService jwtService;
     private final OtpRedisSchema otpRedisSchema;
     private final SessionCacheRedisSchema sessionCacheRedisSchema;
-    private final EmailService emailService;
+    private final NotificationFacade notificationFacade;
     private final UserMapper userMapper;
 
     @Transactional
@@ -55,7 +55,7 @@ public class RegisterUserUseCase {
 
         String otp = otpRedisSchema.generateOtp(
                 OtpRedisSchema.OtpPurpose.REGISTRATION, request.getEmail());
-        emailService.sendOtpEmail(request.getEmail(), otp);
+        notificationFacade.sendEmail(request.getEmail(), otp);
 
         String accessToken = jwtService.generateAccessToken(user.getId(), user.getRole().name());
         String refreshToken = jwtService.generateRefreshToken(user.getId());

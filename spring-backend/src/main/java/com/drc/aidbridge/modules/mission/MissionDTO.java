@@ -1,7 +1,7 @@
 package com.drc.aidbridge.modules.mission;
 
-import com.drc.aidbridge.entity.enums.MissionStatus;
-import com.drc.aidbridge.entity.enums.MissionType;
+import com.drc.aidbridge.modules.shared.enums.MissionStatus;
+import com.drc.aidbridge.modules.shared.enums.MissionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

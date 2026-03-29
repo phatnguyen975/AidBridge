@@ -1,10 +1,10 @@
 package com.drc.aidbridge.modules.mission.internal.mapper;
 
-import com.drc.aidbridge.entity.SosRequest;
 import com.drc.aidbridge.modules.mission.MissionDTO;
 import com.drc.aidbridge.modules.mission.internal.entity.Mission;
 import com.drc.aidbridge.modules.mission.internal.web.dto.MissionResponse;
 import com.drc.aidbridge.modules.mission.internal.web.dto.MissionTrackingResponse;
+import com.drc.aidbridge.modules.sos.SosDTO;
 import com.drc.aidbridge.modules.user.UserDTO;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ public class MissionMapper {
                 .id(mission.getId())
                 .missionType(mission.getMissionType())
                 .status(mission.getStatus())
-                .sosRequestId(mission.getSosRequest() != null ? mission.getSosRequest().getId() : null)
+                .sosRequestId(mission.getSosRequestId())
                 .aidRequestId(mission.getAidRequestId())
                 .helpRequestId(mission.getHelpRequestId())
                 .volunteerId(mission.getVolunteerId())
@@ -37,7 +37,7 @@ public class MissionMapper {
                 .id(mission.getId())
                 .missionType(mission.getMissionType())
                 .status(mission.getStatus())
-                .sosRequestId(mission.getSosRequest() != null ? mission.getSosRequest().getId() : null)
+                .sosRequestId(mission.getSosRequestId())
                 .aidRequestId(mission.getAidRequestId())
                 .helpRequestId(mission.getHelpRequestId())
                 .volunteerId(mission.getVolunteerId())
@@ -62,6 +62,10 @@ public class MissionMapper {
 
     // Entity → API response with nested volunteer and SOS details
     public MissionResponse toResponseWithDetails(Mission mission, UserDTO volunteer) {
+        return toResponseWithDetails(mission, volunteer, null);
+    }
+
+    public MissionResponse toResponseWithDetails(Mission mission, UserDTO volunteer, SosDTO sos) {
         MissionResponse response = toResponse(mission);
 
         if (volunteer != null) {
@@ -73,8 +77,7 @@ public class MissionMapper {
                     .build());
         }
 
-        if (mission.getSosRequest() != null) {
-            SosRequest sos = mission.getSosRequest();
+                if (sos != null) {
             response.setSosRequest(MissionResponse.SosRequestBrief.builder()
                     .id(sos.getId())
                     .requesterId(sos.getRequesterId())
@@ -83,8 +86,8 @@ public class MissionMapper {
                     .address(sos.getAddress())
                     .description(sos.getDescription())
                     .peopleCount(sos.getPeopleCount())
-                    .urgencyLevel(sos.getUrgencyLevel() != null ? sos.getUrgencyLevel().name() : null)
-                    .status(sos.getStatus() != null ? sos.getStatus().name() : null)
+                        .urgencyLevel(sos.getUrgencyLevel() != null ? sos.getUrgencyLevel().name() : null)
+                        .status(sos.getStatus() != null ? sos.getStatus().name() : null)
                     .imageUrl(sos.getImageUrl())
                     .createdAt(sos.getCreatedAt())
                     .updatedAt(sos.getUpdatedAt())

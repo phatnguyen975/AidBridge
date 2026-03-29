@@ -1,6 +1,6 @@
 package com.drc.aidbridge.modules.aid.internal.entity;
 
-import com.drc.aidbridge.entity.enums.AidStatus;
+import com.drc.aidbridge.modules.shared.enums.AidStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

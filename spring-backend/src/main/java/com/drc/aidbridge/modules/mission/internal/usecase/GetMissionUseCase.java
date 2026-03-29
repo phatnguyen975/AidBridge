@@ -1,13 +1,15 @@
 package com.drc.aidbridge.modules.mission.internal.usecase;
 
-import com.drc.aidbridge.exception.ResourceNotFoundException;
+import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.mission.internal.entity.Mission;
+import com.drc.aidbridge.modules.mission.internal.cache.MissionCacheRedisSchema;
 import com.drc.aidbridge.modules.mission.internal.mapper.MissionMapper;
 import com.drc.aidbridge.modules.mission.internal.repository.MissionJpaRepository;
 import com.drc.aidbridge.modules.mission.internal.web.dto.MissionResponse;
+import com.drc.aidbridge.modules.sos.SosDTO;
+import com.drc.aidbridge.modules.sos.SosFacade;
 import com.drc.aidbridge.modules.user.UserDTO;
 import com.drc.aidbridge.modules.user.UserFacade;
-import com.drc.aidbridge.redis.MissionCacheRedisSchema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,6 +24,7 @@ public class GetMissionUseCase {
 
     private final MissionJpaRepository missionRepository;
     private final UserFacade userFacade;
+    private final SosFacade sosFacade;
     private final MissionMapper missionMapper;
     private final MissionCacheRedisSchema missionCache;
 
@@ -38,7 +41,8 @@ public class GetMissionUseCase {
 
         // Resolve volunteer via facade
         UserDTO volunteer = resolveVolunteer(mission.getVolunteerId());
-        MissionResponse response = missionMapper.toResponseWithDetails(mission, volunteer);
+        SosDTO sos = resolveSos(mission.getSosRequestId());
+        MissionResponse response = missionMapper.toResponseWithDetails(mission, volunteer, sos);
 
         missionCache.cacheMission(response);
         return response;
@@ -52,5 +56,10 @@ public class GetMissionUseCase {
             log.warn("Could not resolve volunteer {}: {}", volunteerId, e.getMessage());
             return null;
         }
+    }
+
+    private SosDTO resolveSos(UUID sosRequestId) {
+        if (sosRequestId == null) return null;
+        return sosFacade.getSosRequestById(sosRequestId).orElse(null);
     }
 }

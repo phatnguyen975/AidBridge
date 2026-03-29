@@ -1,10 +1,10 @@
 package com.drc.aidbridge.modules.user.internal.mapper;
 
 import com.drc.aidbridge.modules.user.UserDTO;
+import com.drc.aidbridge.modules.user.internal.cache.SessionCacheRedisSchema;
 import com.drc.aidbridge.modules.user.internal.entity.User;
 import com.drc.aidbridge.modules.user.internal.web.dto.AuthResponse;
 import com.drc.aidbridge.modules.user.internal.web.dto.UserResponse;
-import com.drc.aidbridge.redis.SessionCacheRedisSchema;
 import org.springframework.stereotype.Component;
 
 @Component
