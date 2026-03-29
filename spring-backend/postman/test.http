@@ -24,13 +24,41 @@ Content-Type: application/json
 ### 3. Create SOS (❗ DÁN TOKEN VÀO ĐÂY)
 POST http://localhost:8080/api/victim/sos-requests
 Content-Type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwNDcyNDFmOS0wNWZmLTRlMzktYjI5NS1mZDY4MzZjY2RmNTUiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6IjA1ZDBmYTg4LTc2M2ItNDEzOC05YzY5LWRjZGU0ZWVhYzlkZCIsImlhdCI6MTc3NDAyMDU5MSwiZXhwIjoxNzc0MDIxNDkxfQ.VvKqgENlwktStwSwbYgpOgPSoSlb0An7IV4MmUcM1GnUbPEz-Spr8CU5qI32mauEUYIKbshM_158rEZqBHqE3dHpqm-XpXIfDn5nRDPcQYxILGjxiWo4PVDRCRWCq34vhJTO6wuA0JVfD3A9Zz3kniGuL96CKG8XpM4fmpMDK2ldADu_A7HNCRDPqevYVJh3PozsX66EtbBhQlw7P4qUBkc6PkEkiVVyrO77eHK6TJTUrCz-Ged3v5tPTbIPkpp9jBvvAmlPAV4IGDIFNCHaAdJyszBdLvl4xKBnW075CNtbdiquhPrbVa6jmWhFdyuerNMtFANk2xTULHtki0a0Xg
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwNDcyNDFmOS0wNWZmLTRlMzktYjI5NS1mZDY4MzZjY2RmNTUiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6Ijg4MmMwOWRmLTIzMTEtNDE5ZS1iNTMzLTM3NTA2MmQyNzY5MiIsImlhdCI6MTc3NDYyNzY2NSwiZXhwIjoxNzc0NjI4NTY1fQ.cAMHl554Q7zipxD5l6bdfxhm9CiuLNXojivfB0NwqNBDpGrMrA2frpozKLoLnhOztcgEmq3IK0ow5bGXWfRW2qEuxoYJfR0BDnZzhXmh_Za9qydkP767_1f4as4rR_PQCaA72LGckPYYPSSkpTZ78HPNlpen_nZCk5ZadP-_Lh-E5QqGGotUm0tIj_Y9QaUXVWEMkI2qu4ogxcaWx-DhfZpDBiHWvlFz16dKaiUZWfdF2Bfj5eD7zqwVTAKwUpwakUsre1O0KK0ncbAcBHY1GYu3zO1XJY--fBWDwHccn_UfMf_RrfKmv51XNVT0OI1xB0NWO5PzDWhucj9n1WdVuQ
 
 {
   "lat": 10.123456,
   "lng": 106.123456,
   "description": "Help needed",
   "peopleCount": 2
+}
+
+###
+
+### 3.1 Create Aid Request (❗ DÁN TOKEN VÀO ĐÂY)
+POST http://localhost:8080/api/victim/aid-requests
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwNDcyNDFmOS0wNWZmLTRlMzktYjI5NS1mZDY4MzZjY2RmNTUiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6IjYzYzcwYWM3LWEzNjYtNDZhZS05NGY2LWYwY2MyNDk4OGE3NCIsImlhdCI6MTc3NDYzMDczNiwiZXhwIjoxNzc0NjMxNjM2fQ.Ehnh0hyitTT46kHthfZunq15JMVRhuC3VnNVDXO8so-ehbmqQsUS_cJqW86iDx6bF0vLNSBq_okk7Y8Bm1Q1mUyRmIl_gbQhdYJCxr6iYomoyTzBYS3yoZeXQYlKrZOIUbQsNqm2wIJTwC-hOIsZgqL8eem9LQKjSiaQP2dkvxiUd-4wZhrKAevGQoNKUYUQgOsRO4doF9_mJ94Q08mMakxJCyK28WknVGOdsp_pxIUXCLC0GMSlvzRQ-XfIO9ead9NLNa8RiFGZeYuzM-cznMmSnnEt39PF45wHJ-ZdutHTcSA-1jyHkOF1yuRUMHfX0WUwkmbBbwHzKZY8_1p_iA
+
+{
+  "lat": 10.762622,
+  "lng": 106.660172,
+  "address": "123 Example St, District 1",
+  "adultsCount": 2,
+  "elderlyCount": 0,
+  "childrenCount": 1,
+  "notes": "Need rice and bread",
+  "urgencyLevel": "HIGH",
+  "items": [
+    {
+      "itemCategoryId": "19ba8ca0-e43a-4aca-92aa-0183e2f32311",
+      "quantity": 10
+    },
+    {
+      "itemCategoryId": "44d487ba-8c24-4863-96f6-bc54a322a286",
+      "quantity": 5
+    }
+  ]
 }
 
 ###
@@ -55,4 +83,24 @@ Content-Type: application/json
   "lng": 106.6826,
   "address": "Quận 1",
   "description": "Cần giúp đỡ"
+}
+
+### 6. Test get aid request detail (❗ DÁN TOKEN VÀO ĐÂY)
+GET http://localhost:8080/api/victim/aid-requests/f35f1954-612f-4dd0-b449-088446e94519 
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwNDcyNDFmOS0wNWZmLTRlMzktYjI5NS1mZDY4MzZjY2RmNTUiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6ImQ3ZjIyNzNlLTEwODEtNGUwYy1hOTkzLWI4NjBmYzI2ZDgxMyIsImlhdCI6MTc3NDY5NDkwNSwiZXhwIjoxNzc0Njk1ODA1fQ.IE96JMreMYX3JW8QGjWwQMwIeD2-nRK7A-6q1eX0bGS4bSxWujwSIYQeDyISLp3Xapyak2pafvn9AM0-XTHdVDiQh9TBW5oXDnoD1i0PWEV8UlImJu2Qhdp8hAuYfpf4enZRIcGeyUubkT-4yPWmKdXpf3dQ9e70MDMgygiOUb4wN4WMX5ywS3jXmbZoEQA00rNaPdxwizNdnI2B3WI7n4N2JrApV2fOXkFuYyG4XuweLxJPpoIWds7fJmWs6YOVxin0PSxoCxDJ8E21CaOZVXjYv2zb0ugYatvjouKF5Yd9cNyQGEnhRrnDALUF2QV3_3SJkqHm4PhytjXmEOCfDA
+
+
+### 7. Test get aid request list (❗ DÁN TOKEN VÀO ĐÂY)
+GET http://localhost:8080/api/victim/aid-requests
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwNDcyNDFmOS0wNWZmLTRlMzktYjI5NS1mZDY4MzZjY2RmNTUiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6ImQ3ZjIyNzNlLTEwODEtNGUwYy1hOTkzLWI4NjBmYzI2ZDgxMyIsImlhdCI6MTc3NDY5NDkwNSwiZXhwIjoxNzc0Njk1ODA1fQ.IE96JMreMYX3JW8QGjWwQMwIeD2-nRK7A-6q1eX0bGS4bSxWujwSIYQeDyISLp3Xapyak2pafvn9AM0-XTHdVDiQh9TBW5oXDnoD1i0PWEV8UlImJu2Qhdp8hAuYfpf4enZRIcGeyUubkT-4yPWmKdXpf3dQ9e70MDMgygiOUb4wN4WMX5ywS3jXmbZoEQA00rNaPdxwizNdnI2B3WI7n4N2JrApV2fOXkFuYyG4XuweLxJPpoIWds7fJmWs6YOVxin0PSxoCxDJ8E21CaOZVXjYv2zb0ugYatvjouKF5Yd9cNyQGEnhRrnDALUF2QV3_3SJkqHm4PhytjXmEOCfDA
+
+### 8. Cancel Aid Request (❗ DÁN TOKEN VÀO ĐÂY)
+POST http://localhost:8080/api/victim/aid-requests/f35f1954-612f-4dd0-b449-088446e94519/cancel
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwNDcyNDFmOS0wNWZmLTRlMzktYjI5NS1mZDY4MzZjY2RmNTUiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6IjdmOWQ1MGM0LWRhZWMtNDUyZS1hNTcxLWE3ZjlmYmI4MzlmOSIsImlhdCI6MTc3NDY5NjQyNiwiZXhwIjoxNzc0Njk3MzI2fQ.QhoR65ICc_rHIVcf0Fds8XGr73jMyixK7rp5j48frFKpng_HxvzjFCbMxjZHz2Qc51KzJasYIh1ZtqPaAfDYRuxrGvG5W3HGTWkyjZCrhe5ve4a1LhNwz-VEMNCR11ivOUNLAtQKd1S8DWcgVTZa4lh1pRVJJ3CXblZn2BLcAGeB6i5xnXvB8CeuffldjElkZh6dwxJIufDv12YChajp5E7BSmz3XIYUDYMH35E0qltnI9DfyvV_4s12uOBj04daUDgw9rPbvBygZuyv54WVbcT8_1evRIuk1aQL2q40vEl1DgyPVlxVpjW9kG5wKV7_9ZKaoKKtVn4QBCCxdY7dJA
+
+{
+  "reason": "Request cancelled by user"
 }
