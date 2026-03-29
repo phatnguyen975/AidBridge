@@ -9,7 +9,7 @@
         android:icon="@drawable/ic_warehouse"
         android:title="@string/nav_inventory" />
     <item
-        android:id="@+id/staffTaskListFragment"
+        android:id="@+id/staffTasksFragment"
         android:icon="@drawable/ic_mission"
         android:title="@string/nav_mission" />
     <item

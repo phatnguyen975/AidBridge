@@ -5,18 +5,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 
-import com.drc.aidbridge.databinding.FragmentStaffTaskListBinding;
+import com.drc.aidbridge.databinding.FragmentStaffTasksBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class StaffTaskListFragment extends BaseFragment<FragmentStaffTaskListBinding> {
+public class StaffTasksFragment extends BaseFragment<FragmentStaffTasksBinding> {
 
     @Nullable
     @Override
-    protected FragmentStaffTaskListBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
-        return FragmentStaffTaskListBinding.inflate(inflater, container, false);
+    protected FragmentStaffTasksBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
+        return FragmentStaffTasksBinding.inflate(inflater, container, false);
     }
 
     @Override

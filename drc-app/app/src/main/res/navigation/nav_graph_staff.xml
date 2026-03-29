@@ -21,9 +21,9 @@
     </fragment>
 
     <fragment
-        android:id="@+id/staffTaskListFragment"
-        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffTaskListFragment"
-        android:label="StaffTaskListFragment" />
+        android:id="@+id/staffTasksFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffTasksFragment"
+        android:label="StaffTasksFragment" />
 
     <fragment
         android:id="@+id/staffMapFragment"
