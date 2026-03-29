@@ -118,7 +118,7 @@ dependencies {
     // JUnit Platform Launcher - required for Gradle to execute JUnit 5 test suites
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    
 }
 
 tasks.named('test') {
