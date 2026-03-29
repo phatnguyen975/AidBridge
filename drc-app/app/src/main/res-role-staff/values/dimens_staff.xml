@@ -130,4 +130,36 @@
     <dimen name="staff_detail_error_badge_padding_v">4dp</dimen>
     <dimen name="staff_detail_status_icon_size">20dp</dimen>
     <dimen name="staff_detail_list_container_height">300dp</dimen>
+
+    <!-- Staff tasks -->
+    <dimen name="staff_tasks_screen_padding">16dp</dimen>
+    <dimen name="staff_tasks_tab_margin_top">8dp</dimen>
+    <dimen name="staff_tasks_tab_container_padding">2dp</dimen>
+    <dimen name="staff_tasks_tab_text_size">13sp</dimen>
+    <dimen name="staff_tasks_list_margin_top">12dp</dimen>
+    <dimen name="staff_tasks_progress_margin_vertical">8dp</dimen>
+    <dimen name="staff_task_item_padding">16dp</dimen>
+    <dimen name="staff_task_item_margin_bottom">12dp</dimen>
+    <dimen name="staff_task_item_eta_size">14sp</dimen>
+    <dimen name="staff_task_item_status_chip_text_size">12sp</dimen>
+    <dimen name="staff_task_item_chip_padding_h">10dp</dimen>
+    <dimen name="staff_task_item_chip_padding_v">4dp</dimen>
+    <dimen name="staff_task_item_code_margin_top">8dp</dimen>
+    <dimen name="staff_task_item_code_text_size">18sp</dimen>
+    <dimen name="staff_task_item_bottom_margin_top">8dp</dimen>
+    <dimen name="staff_task_item_icon_size">16dp</dimen>
+    <dimen name="staff_task_item_person_gap">6dp</dimen>
+    <dimen name="staff_task_item_person_size">13sp</dimen>
+    <dimen name="staff_task_item_detail_size">14sp</dimen>
+    <dimen name="staff_task_sheet_handle_width">40dp</dimen>
+    <dimen name="staff_task_sheet_handle_height">4dp</dimen>
+    <dimen name="staff_task_sheet_header_margin_top">16dp</dimen>
+    <dimen name="staff_task_sheet_title_text_size">18sp</dimen>
+    <dimen name="staff_task_sheet_person_margin_top">16dp</dimen>
+    <dimen name="staff_task_sheet_phone_margin_top">4dp</dimen>
+    <dimen name="staff_task_sheet_section_margin_top">16dp</dimen>
+    <dimen name="staff_task_sheet_expected_title_size">16sp</dimen>
+    <dimen name="staff_task_sheet_expected_item_size">14sp</dimen>
+    <dimen name="staff_task_sheet_expected_item_margin_bottom">4dp</dimen>
+    <dimen name="staff_task_sheet_close_margin_top">16dp</dimen>
 </resources>

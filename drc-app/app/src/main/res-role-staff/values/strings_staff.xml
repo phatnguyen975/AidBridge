@@ -81,4 +81,23 @@
     <string name="staff_detail_unit_bag">bao</string>
     <string name="staff_detail_unit_bundle">kiện</string>
     <string name="staff_detail_unit_pack">hộp</string>
+
+    <!-- Staff tasks -->
+    <string name="staff_tasks_title">NHIỆM VỤ</string>
+    <string name="staff_tasks_tab_export">Sắp đến lấy hàng</string>
+    <string name="staff_tasks_tab_import">Sắp đến ký gửi</string>
+    <string name="staff_task_status_incoming">Đang đến</string>
+    <string name="staff_task_status_completed">Đã hoàn thành</string>
+    <string name="staff_task_detail_btn_close">ĐÓNG</string>
+    <string name="staff_task_expected_items">Danh sách dự kiến</string>
+
+    <string name="staff_task_detail_link">Chi tiết</string>
+    <string name="staff_task_eta_format">Đến trong %1$dp</string>
+    <string name="staff_task_code_export_format">DON-%1$d</string>
+    <string name="staff_task_code_import_format">KYG-%1$d</string>
+    <string name="staff_task_person_export_format">Tình nguyện viên %1$d</string>
+    <string name="staff_task_person_import_format">Mạnh thường quân %1$d</string>
+    <string name="staff_task_phone_format">0901 11%1$03d</string>
+    <string name="staff_task_item_summary_format">%1$s - %2$d %3$s</string>
+    <string name="staff_task_detail_item_bullet_format">• %1$s</string>
 </resources>
