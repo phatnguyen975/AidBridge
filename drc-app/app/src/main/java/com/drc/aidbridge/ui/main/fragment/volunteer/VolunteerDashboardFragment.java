@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
@@ -12,6 +13,7 @@ import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVolunteerDashboardBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -36,6 +38,22 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
         binding.switchOnlineStatus.setChecked(true);
 
         setupClickListeners();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!isAdded() || getActivity() == null) {
+            return;
+        }
+
+        BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottom_nav);
+        if (bottomNav != null) {
+            MenuItem dashboardItem = bottomNav.getMenu().findItem(R.id.volunteerDashboardFragment);
+            if (dashboardItem != null) {
+                dashboardItem.setChecked(true);
+            }
+        }
     }
 
     @Override

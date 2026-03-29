@@ -60,8 +60,8 @@ public class VolunteerCurrentSosMissionFragment extends BaseFragment<FragmentVol
 
         binding.btnArrived.setOnClickListener(v -> {
             volunteerTaskViewModel.completeMission();
-            showToast(getString(R.string.volunteer_current_mission_toast_arrived));
-            // TODO: Điều hướng sang màn hình Xác nhận cứu hộ sau khi tích hợp API.
+            showToast(getString(R.string.volunteer_current_mission_toast_completed));
+            navigateSafely(R.id.action_current_sos_mission_to_dashboard);
         });
     }
 

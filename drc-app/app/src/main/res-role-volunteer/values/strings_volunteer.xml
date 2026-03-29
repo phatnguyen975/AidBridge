@@ -120,5 +120,6 @@
     <string name="volunteer_current_mission_btn_arrived">Tôi đã đến nơi</string>
     <string name="volunteer_current_mission_btn_hint">Xác nhận vị trí của bạn để chuyển sang bước tiếp theo</string>
     <string name="volunteer_current_mission_toast_arrived">Đã xác nhận đến vị trí nạn nhân</string>
+    <string name="volunteer_current_mission_toast_completed">Nhiệm vụ đã hoàn thành</string>
     <string name="volunteer_current_mission_dialer_not_found">Không tìm thấy ứng dụng gọi điện</string>
 </resources>

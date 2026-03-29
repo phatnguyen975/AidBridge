@@ -54,5 +54,6 @@ public class VolunteerTaskViewModel extends BaseViewModel {
 
     public void completeMission() {
         isMissionAccepted.setValue(false);
+        isMissionIgnored.setValue(true);
     }
 }
