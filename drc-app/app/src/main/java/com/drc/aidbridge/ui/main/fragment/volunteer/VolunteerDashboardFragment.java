@@ -80,7 +80,7 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
     }
 
     private void setupClickListeners() {
-        String mockNotiType = "SUPPLY";
+        String mockNotiType = "RESCUE";
 
         binding.switchOnlineStatus.setOnCheckedChangeListener((buttonView, isChecked) -> {
             updateStatusUI(isChecked);

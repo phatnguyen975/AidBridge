@@ -3,6 +3,7 @@ package com.drc.aidbridge.ui.main.fragment.volunteer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -18,7 +19,7 @@ import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class VolunteerSosAcceptanceFragment extends BaseFragment<FragmentVolunteerMissionAcceptanceBinding> {
+public class VoluteerMissionAcceptanceFragment extends BaseFragment<FragmentVolunteerMissionAcceptanceBinding> {
 
     public static final String ARG_MISSION_TYPE = "missionType";
     public static final String MISSION_TYPE_RESCUE = "RESCUE";
@@ -33,8 +34,8 @@ public class VolunteerSosAcceptanceFragment extends BaseFragment<FragmentVolunte
     private VolunteerTaskViewModel volunteerTaskViewModel;
 
     @NonNull
-    public static VolunteerSosAcceptanceFragment newInstance(@NonNull String missionType) {
-        VolunteerSosAcceptanceFragment fragment = new VolunteerSosAcceptanceFragment();
+    public static VoluteerMissionAcceptanceFragment newInstance(@NonNull String missionType) {
+        VoluteerMissionAcceptanceFragment fragment = new VoluteerMissionAcceptanceFragment();
         Bundle args = new Bundle();
         args.putString(ARG_MISSION_TYPE, missionType);
         fragment.setArguments(args);
@@ -68,8 +69,8 @@ public class VolunteerSosAcceptanceFragment extends BaseFragment<FragmentVolunte
 
     @Override
     protected void observeViewModel() {
-        // TODO: Inject ViewModel và observe LiveData để cập nhật dữ liệu nhiệm vụ từ
-        // UseCase
+        // TODO: Inject ViewModel va observe LiveData de cap nhat du lieu nhiem vu tu
+        // UseCase.
     }
 
     @Override
@@ -81,14 +82,16 @@ public class VolunteerSosAcceptanceFragment extends BaseFragment<FragmentVolunte
     private void applyMissionTypeUI() {
         if (MISSION_TYPE_SUPPLY.equalsIgnoreCase(missionType)) {
             binding.cardMissionBadge.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.hub_blue));
-            binding.tvMissionBadge.setText(R.string.volunteer_sos_acceptance_mission_badge_supply);
+            binding.tvMissionBadge.setText(R.string.volunteer_mission_acceptance_mission_badge_supply);
             binding.tvMissionTitle.setText(R.string.volunteer_sos_acceptance_mission_title_supply);
+            binding.cardSupplyItems.setVisibility(View.VISIBLE);
             return;
         }
 
         binding.cardMissionBadge.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.sos_red));
         binding.tvMissionBadge.setText(R.string.volunteer_sos_acceptance_mission_badge);
         binding.tvMissionTitle.setText(R.string.volunteer_sos_acceptance_mission_title);
+        binding.cardSupplyItems.setVisibility(View.GONE);
     }
 
     private void setupClickListeners() {
@@ -99,6 +102,11 @@ public class VolunteerSosAcceptanceFragment extends BaseFragment<FragmentVolunte
         });
 
         binding.btnAccept.setOnClickListener(v -> {
+            if (MISSION_TYPE_SUPPLY.equalsIgnoreCase(missionType)) {
+                showToast(getString(R.string.volunteer_mission_acceptance_supply_todo_toast));
+                return;
+            }
+
             volunteerTaskViewModel.acceptMission(MOCK_MISSION_ID);
             showToast(getString(R.string.volunteer_sos_acceptance_toast_accept_success));
             navigateSafely(R.id.action_sos_acceptance_to_current_sos_mission);

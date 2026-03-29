@@ -95,6 +95,11 @@
     <string name="volunteer_sos_acceptance_icon_desc">Biểu tượng thông tin nhiệm vụ</string>
     <string name="volunteer_sos_acceptance_accept_icon_desc">Biểu tượng chấp nhận nhiệm vụ</string>
     <string name="volunteer_sos_acceptance_decline_icon_desc">Biểu tượng từ chối nhiệm vụ</string>
+    <string name="volunteer_mission_acceptance_mission_badge_supply">TIẾP TẾ</string>
+    <string name="volunteer_mission_acceptance_supply_icon_desc">Biểu tượng vật phẩm tiếp tế</string>
+    <string name="volunteer_mission_acceptance_supply_items_label">Vật phẩm tiếp tế</string>
+    <string name="volunteer_mission_acceptance_supply_items_value">Thuốc, Quần áo, Thức ăn, Nước uống, Khác</string>
+    <string name="volunteer_mission_acceptance_supply_todo_toast">Chức năng chuyển sang màn hình tiếp tế đang được phát triển (TODO)</string>
 
     <!-- Volunteer Current SOS Mission -->
     <string name="volunteer_current_mission_title">Nhiệm vụ hiện tại</string>

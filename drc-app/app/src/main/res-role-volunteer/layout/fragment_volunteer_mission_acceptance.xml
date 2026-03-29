@@ -291,6 +291,59 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardSupplyItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_sm"
+                        android:visibility="gone"
+                        app:cardBackgroundColor="@color/volunteer_acceptance_info_box_bg"
+                        app:cardCornerRadius="@dimen/radius_md"
+                        app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                        app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/volunteer_sos_acceptance_info_box_padding">
+
+                            <ImageView
+                                android:id="@+id/ivSupplyIcon"
+                                android:layout_width="@dimen/volunteer_sos_acceptance_icon_size"
+                                android:layout_height="@dimen/volunteer_sos_acceptance_icon_size"
+                                android:contentDescription="@string/volunteer_mission_acceptance_supply_icon_desc"
+                                android:src="@drawable/ic_truck"
+                                app:tint="@color/volunteer_acceptance_text_secondary" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/spacing_sm"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tvSupplyItemsLabel"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/volunteer_mission_acceptance_supply_items_label"
+                                    android:textColor="@color/volunteer_acceptance_text_secondary"
+                                    android:textSize="@dimen/volunteer_sos_acceptance_label_text_size" />
+
+                                <TextView
+                                    android:id="@+id/tvSupplyItemsValue"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:text="@string/volunteer_mission_acceptance_supply_items_value"
+                                    android:textColor="@color/volunteer_acceptance_text_primary"
+                                    android:textSize="@dimen/text_sm" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardAddressInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
