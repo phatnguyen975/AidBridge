@@ -102,4 +102,32 @@
     <dimen name="staff_scanner_outer_frame_size">248dp</dimen>
     <dimen name="staff_scanner_inner_frame_size">208dp</dimen>
     <dimen name="staff_scanner_corner_size">24dp</dimen>
+
+    <!-- Staff import/export detail -->
+    <dimen name="staff_detail_screen_padding">16dp</dimen>
+    <dimen name="staff_detail_hero_height">180dp</dimen>
+    <dimen name="staff_detail_card_padding">16dp</dimen>
+    <dimen name="staff_detail_card_radius">16dp</dimen>
+    <dimen name="staff_detail_card_stroke">1dp</dimen>
+    <dimen name="staff_detail_status_chip_radius">12dp</dimen>
+    <dimen name="staff_detail_status_chip_padding_h">10dp</dimen>
+    <dimen name="staff_detail_status_chip_padding_v">4dp</dimen>
+    <dimen name="staff_detail_status_text_size">12sp</dimen>
+    <dimen name="staff_detail_hub_text_size">20sp</dimen>
+    <dimen name="staff_detail_row_icon_size">20dp</dimen>
+    <dimen name="staff_detail_row_gap">10dp</dimen>
+    <dimen name="staff_detail_row_label_size">11sp</dimen>
+    <dimen name="staff_detail_row_value_size">16sp</dimen>
+    <dimen name="staff_detail_list_title_size">18sp</dimen>
+    <dimen name="staff_detail_count_badge_size">24dp</dimen>
+    <dimen name="staff_detail_count_badge_text_size">12sp</dimen>
+    <dimen name="staff_detail_item_margin_bottom">12dp</dimen>
+    <dimen name="staff_detail_item_image_size">64dp</dimen>
+    <dimen name="staff_detail_item_name_size">16sp</dimen>
+    <dimen name="staff_detail_item_meta_size">13sp</dimen>
+    <dimen name="staff_detail_item_badge_size">12sp</dimen>
+    <dimen name="staff_detail_error_badge_padding_h">8dp</dimen>
+    <dimen name="staff_detail_error_badge_padding_v">4dp</dimen>
+    <dimen name="staff_detail_status_icon_size">20dp</dimen>
+    <dimen name="staff_detail_list_container_height">300dp</dimen>
 </resources>
