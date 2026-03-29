@@ -11,14 +11,14 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
-import com.drc.aidbridge.databinding.FragmentVolunteerSosAcceptanceBinding;
+import com.drc.aidbridge.databinding.FragmentVolunteerMissionAcceptanceBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class VolunteerSosAcceptanceFragment extends BaseFragment<FragmentVolunteerSosAcceptanceBinding> {
+public class VolunteerSosAcceptanceFragment extends BaseFragment<FragmentVolunteerMissionAcceptanceBinding> {
 
     public static final String ARG_MISSION_TYPE = "missionType";
     public static final String MISSION_TYPE_RESCUE = "RESCUE";
@@ -53,9 +53,9 @@ public class VolunteerSosAcceptanceFragment extends BaseFragment<FragmentVolunte
     }
 
     @Override
-    protected FragmentVolunteerSosAcceptanceBinding inflateBinding(LayoutInflater inflater,
+    protected FragmentVolunteerMissionAcceptanceBinding inflateBinding(LayoutInflater inflater,
             @Nullable ViewGroup container) {
-        return FragmentVolunteerSosAcceptanceBinding.inflate(inflater, container, false);
+        return FragmentVolunteerMissionAcceptanceBinding.inflate(inflater, container, false);
     }
 
     @Override

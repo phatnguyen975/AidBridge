@@ -13,7 +13,7 @@
     <string name="volunteer_dashboard_completed_count_placeholder">128</string>
     <string name="volunteer_dashboard_notif_title">Thông báo mới</string>
     <string name="volunteer_dashboard_see_all">Xem tất cả</string>
-    <string name="volunteer_dashboard_emergency_title">Cứu hộ khẩn cấp!</string>
+    <string name="volunteer_dashboard_emergency_title">Nhiệm vụ khẩn cấp!</string>
     <string name="volunteer_dashboard_emergency_details_placeholder">Quận 1 - Cách bạn 1.2km</string>
     <string name="volunteer_dashboard_btn_details">Xem chi tiết</string>
     <string name="volunteer_dashboard_btn_logout">Đăng xuất</string>
