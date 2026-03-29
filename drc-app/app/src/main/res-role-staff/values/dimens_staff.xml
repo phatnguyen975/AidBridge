@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Staff profile -->
+    <dimen name="staff_profile_toolbar_height">56dp</dimen>
+    <dimen name="staff_profile_toolbar_logo_size">36dp</dimen>
+    <dimen name="staff_profile_toolbar_title_text_size">18sp</dimen>
+
+    <dimen name="staff_profile_screen_padding">16dp</dimen>
+    <dimen name="staff_profile_card_radius">16dp</dimen>
+    <dimen name="staff_profile_card_stroke_width">1dp</dimen>
+    <dimen name="staff_profile_card_content_padding">16dp</dimen>
+    <dimen name="staff_profile_card_spacing">16dp</dimen>
+
+    <dimen name="staff_profile_avatar_size">80dp</dimen>
+    <dimen name="staff_profile_active_dot_size">16dp</dimen>
+    <dimen name="staff_profile_active_dot_offset">2dp</dimen>
+    <dimen name="staff_active_dot_stroke_width">1dp</dimen>
+    <dimen name="staff_profile_avatar_text_margin_start">16dp</dimen>
+    <dimen name="staff_profile_name_text_size">20sp</dimen>
+    <dimen name="staff_profile_role_text_size">14sp</dimen>
+    <dimen name="staff_profile_role_margin_top">4dp</dimen>
+
+    <dimen name="staff_profile_status_title_text_size">16sp</dimen>
+    <dimen name="staff_profile_status_subtitle_text_size">12sp</dimen>
+    <dimen name="staff_profile_status_subtitle_margin_top">4dp</dimen>
+    <dimen name="staff_profile_status_indicator_margin_top">16dp</dimen>
+    <dimen name="staff_profile_status_indicator_gap">8dp</dimen>
+    <dimen name="staff_profile_status_indicator_padding_horizontal">12dp</dimen>
+    <dimen name="staff_profile_status_indicator_padding_vertical">10dp</dimen>
+    <dimen name="staff_profile_status_icon_size">20dp</dimen>
+    <dimen name="staff_profile_status_icon_text_gap">8dp</dimen>
+    <dimen name="staff_profile_status_small_text_size">12sp</dimen>
+    <dimen name="staff_status_indicator_corner">14dp</dimen>
+    <dimen name="staff_status_indicator_stroke">1dp</dimen>
+
+    <dimen name="staff_profile_info_row_padding">16dp</dimen>
+    <dimen name="staff_profile_info_icon_size">40dp</dimen>
+    <dimen name="staff_profile_info_icon_inner_padding">10dp</dimen>
+    <dimen name="staff_profile_phone_icon_inner_padding">8dp</dimen>
+    <dimen name="staff_profile_info_text_margin_start">12dp</dimen>
+    <dimen name="staff_profile_info_label_text_size">11sp</dimen>
+    <dimen name="staff_profile_info_value_text_size">16sp</dimen>
+    <dimen name="staff_profile_info_value_margin_top">4dp</dimen>
+    <dimen name="staff_profile_divider_thickness">1dp</dimen>
+
+    <dimen name="staff_profile_logout_margin_top">24dp</dimen>
+    <dimen name="staff_profile_logout_icon_padding">8dp</dimen>
+
+    <!-- Staff inventory -->
+    <dimen name="staff_inventory_screen_padding">16dp</dimen>
+    <dimen name="staff_inventory_header_logo_size">36dp</dimen>
+    <dimen name="staff_inventory_header_title_text_size">18sp</dimen>
+    <dimen name="staff_inventory_search_top_margin">12dp</dimen>
+    <dimen name="staff_inventory_search_corner_radius">14dp</dimen>
+    <dimen name="staff_inventory_search_stroke_width">2dp</dimen>
+    <dimen name="staff_inventory_search_text_horizontal_padding">2dp</dimen>
+    <dimen name="staff_inventory_search_vertical_padding">12dp</dimen>
+    <dimen name="staff_inventory_filter_top_margin">8dp</dimen>
+    <dimen name="staff_inventory_chip_spacing">8dp</dimen>
+    <dimen name="staff_inventory_chip_stroke_width">1dp</dimen>
+    <dimen name="staff_inventory_list_header_top_padding">16dp</dimen>
+    <dimen name="staff_inventory_list_header_bottom_padding">12dp</dimen>
+    <dimen name="staff_inventory_list_title_text_size">18sp</dimen>
+    <dimen name="staff_inventory_refresh_icon_size">14dp</dimen>
+    <dimen name="staff_inventory_refresh_text_margin_start">4dp</dimen>
+    <dimen name="staff_inventory_refresh_text_size">12sp</dimen>
+    <dimen name="staff_inventory_list_bottom_padding">80dp</dimen>
+    <dimen name="staff_inventory_pagination_margin_bottom">16dp</dimen>
+    <dimen name="staff_inventory_bottom_bar_margin_bottom">16dp</dimen>
+    <dimen name="staff_inventory_action_button_gap">8dp</dimen>
+    <dimen name="staff_inventory_action_text_size">14sp</dimen>
+    <dimen name="staff_inventory_action_icon_size">18dp</dimen>
+    <dimen name="staff_inventory_action_icon_padding">8dp</dimen>
+    <dimen name="staff_inventory_action_stroke_width">1dp</dimen>
+
+    <dimen name="staff_inventory_item_margin_bottom">12dp</dimen>
+    <dimen name="staff_inventory_item_corner_radius">14dp</dimen>
+    <dimen name="staff_inventory_item_stroke_width">1dp</dimen>
+    <dimen name="staff_inventory_item_min_height">92dp</dimen>
+    <dimen name="staff_inventory_item_content_padding">12dp</dimen>
+    <dimen name="staff_inventory_left_border_width">4dp</dimen>
+    <dimen name="staff_inventory_item_image_size">56dp</dimen>
+    <dimen name="staff_inventory_item_image_margin_start">8dp</dimen>
+    <dimen name="staff_inventory_item_middle_margin_start">12dp</dimen>
+    <dimen name="staff_inventory_item_middle_margin_end">8dp</dimen>
+    <dimen name="staff_inventory_item_name_text_size">15sp</dimen>
+    <dimen name="staff_inventory_item_category_margin_top">4dp</dimen>
+    <dimen name="staff_inventory_item_category_text_size">12sp</dimen>
+    <dimen name="staff_inventory_item_status_text_size">11sp</dimen>
+    <dimen name="staff_inventory_item_status_min_height">26dp</dimen>
+    <dimen name="staff_inventory_item_status_stroke_width">1dp</dimen>
+    <dimen name="staff_inventory_item_status_chip_start_end_padding">6dp</dimen>
+    <dimen name="staff_inventory_item_status_text_horizontal_padding">2dp</dimen>
+    <dimen name="staff_inventory_item_quantity_margin_top">8dp</dimen>
+    <dimen name="staff_inventory_item_quantity_text_size">20sp</dimen>
+    <dimen name="staff_inventory_item_unit_margin_start">4dp</dimen>
+    <dimen name="staff_inventory_item_unit_text_size">12sp</dimen>
+
+    <!-- Staff scanner -->
+    <dimen name="staff_scanner_back_icon_size">20dp</dimen>
+    <dimen name="staff_scanner_frame_top_margin">24dp</dimen>
+    <dimen name="staff_scanner_outer_frame_size">248dp</dimen>
+    <dimen name="staff_scanner_inner_frame_size">208dp</dimen>
+    <dimen name="staff_scanner_corner_size">24dp</dimen>
+
+    <!-- Staff import/export detail -->
+    <dimen name="staff_detail_screen_padding">16dp</dimen>
+    <dimen name="staff_detail_hero_height">180dp</dimen>
+    <dimen name="staff_detail_card_padding">16dp</dimen>
+    <dimen name="staff_detail_card_radius">16dp</dimen>
+    <dimen name="staff_detail_card_stroke">1dp</dimen>
+    <dimen name="staff_detail_status_chip_radius">12dp</dimen>
+    <dimen name="staff_detail_status_chip_padding_h">10dp</dimen>
+    <dimen name="staff_detail_status_chip_padding_v">4dp</dimen>
+    <dimen name="staff_detail_status_text_size">12sp</dimen>
+    <dimen name="staff_detail_hub_text_size">20sp</dimen>
+    <dimen name="staff_detail_row_icon_size">20dp</dimen>
+    <dimen name="staff_detail_row_gap">10dp</dimen>
+    <dimen name="staff_detail_row_label_size">11sp</dimen>
+    <dimen name="staff_detail_row_value_size">16sp</dimen>
+    <dimen name="staff_detail_list_title_size">18sp</dimen>
+    <dimen name="staff_detail_count_badge_size">24dp</dimen>
+    <dimen name="staff_detail_count_badge_text_size">12sp</dimen>
+    <dimen name="staff_detail_item_margin_bottom">12dp</dimen>
+    <dimen name="staff_detail_item_image_size">64dp</dimen>
+    <dimen name="staff_detail_item_name_size">16sp</dimen>
+    <dimen name="staff_detail_item_meta_size">13sp</dimen>
+    <dimen name="staff_detail_item_badge_size">12sp</dimen>
+    <dimen name="staff_detail_error_badge_padding_h">8dp</dimen>
+    <dimen name="staff_detail_error_badge_padding_v">4dp</dimen>
+    <dimen name="staff_detail_status_icon_size">20dp</dimen>
+    <dimen name="staff_detail_list_container_height">300dp</dimen>
+
+    <!-- Staff tasks -->
+    <dimen name="staff_tasks_screen_padding">16dp</dimen>
+    <dimen name="staff_tasks_tab_margin_top">8dp</dimen>
+    <dimen name="staff_tasks_tab_container_padding">2dp</dimen>
+    <dimen name="staff_tasks_tab_text_size">13sp</dimen>
+    <dimen name="staff_tasks_list_margin_top">12dp</dimen>
+    <dimen name="staff_tasks_progress_margin_vertical">8dp</dimen>
+    <dimen name="staff_task_item_padding">16dp</dimen>
+    <dimen name="staff_task_item_margin_bottom">12dp</dimen>
+    <dimen name="staff_task_item_eta_size">14sp</dimen>
+    <dimen name="staff_task_item_status_chip_text_size">12sp</dimen>
+    <dimen name="staff_task_item_chip_padding_h">10dp</dimen>
+    <dimen name="staff_task_item_chip_padding_v">4dp</dimen>
+    <dimen name="staff_task_item_code_margin_top">8dp</dimen>
+    <dimen name="staff_task_item_code_text_size">18sp</dimen>
+    <dimen name="staff_task_item_bottom_margin_top">8dp</dimen>
+    <dimen name="staff_task_item_icon_size">16dp</dimen>
+    <dimen name="staff_task_item_person_gap">6dp</dimen>
+    <dimen name="staff_task_item_person_size">13sp</dimen>
+    <dimen name="staff_task_item_detail_size">14sp</dimen>
+    <dimen name="staff_task_sheet_handle_width">40dp</dimen>
+    <dimen name="staff_task_sheet_handle_height">4dp</dimen>
+    <dimen name="staff_task_sheet_header_margin_top">16dp</dimen>
+    <dimen name="staff_task_sheet_title_text_size">18sp</dimen>
+    <dimen name="staff_task_sheet_person_margin_top">16dp</dimen>
+    <dimen name="staff_task_sheet_phone_margin_top">4dp</dimen>
+    <dimen name="staff_task_sheet_section_margin_top">16dp</dimen>
+    <dimen name="staff_task_sheet_expected_title_size">16sp</dimen>
+    <dimen name="staff_task_sheet_expected_item_size">14sp</dimen>
+    <dimen name="staff_task_sheet_expected_item_margin_bottom">4dp</dimen>
+    <dimen name="staff_task_sheet_close_margin_top">16dp</dimen>
+</resources>

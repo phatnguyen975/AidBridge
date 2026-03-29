@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Staff profile -->
+    <string name="staff_profile_header_title">CÁ NHÂN</string>
+    <string name="staff_profile_name">Nguyễn Văn A</string>
+    <string name="staff_profile_role">Nhân viên quản lý kho</string>
+    <string name="staff_profile_status_title">Trạng thái hoạt động</string>
+    <string name="staff_profile_status_subtitle">Sẵn sàng nhận nhiệm vụ mới</string>
+    <string name="staff_profile_ready">Sẵn sàng</string>
+    <string name="staff_profile_offline">Ngoại tuyến</string>
+    <string name="staff_profile_phone_label">SỐ ĐIỆN THOẠI</string>
+    <string name="staff_profile_phone_value">0901 234 567</string>
+    <string name="staff_profile_email_label">EMAIL</string>
+    <string name="staff_profile_email_value">nguyenvana@drc.gov.vn</string>
+    <string name="staff_profile_join_date_label">NGÀY BẮT ĐẦU THAM GIA</string>
+    <string name="staff_profile_join_date_value">15/05/2023</string>
+    <string name="staff_profile_logout">ĐĂNG XUẤT</string>
+    <string name="staff_profile_avatar_desc">Ảnh đại diện nhân viên</string>
+
+    <!-- Staff inventory -->
+    <string name="staff_inventory_title">QUẢN LÝ TỒN KHO</string>
+    <string name="staff_inventory_search_hint">Tìm kiếm nhu yếu phẩm...</string>
+    <string name="staff_inventory_chip_all">Tất cả</string>
+    <string name="staff_inventory_chip_food">Thực phẩm</string>
+    <string name="staff_inventory_chip_water">Nước uống</string>
+    <string name="staff_inventory_chip_medical">Y tế</string>
+    <string name="staff_inventory_list_title">Danh sách vật tư</string>
+    <string name="staff_inventory_updated_ago">5 phút trước</string>
+    <string name="staff_inventory_status_shortage">Thiếu hụt</string>
+    <string name="staff_inventory_status_low_stock">Sắp hết</string>
+    <string name="staff_inventory_status_stable">Ổn định</string>
+    <string name="staff_inventory_action_stock_in">Nhập kho</string>
+    <string name="staff_inventory_action_stock_out">Xuất kho</string>
+
+    <!-- Staff scanner -->
+    <string name="staff_scan_title_import">QUÉT MÃ NHẬP KHO</string>
+    <string name="staff_scan_title_export">QUÉT MÃ XUẤT KHO</string>
+    <string name="staff_scan_inst_import">Đưa mã QR của Mạnh thường quân vào khung hình để quét</string>
+    <string name="staff_scan_inst_export">Đưa mã QR của Tình nguyện viên vào khung hình để quét</string>
+    <string name="staff_scan_subtext">Đảm bảo mã QR nằm trong khung hình và đủ ánh sáng</string>
+    <string name="staff_scan_manual_btn">NHẬP MÃ THỦ CÔNG</string>
+    <string name="staff_manual_title">NHẬP MÃ THỦ CÔNG</string>
+    <string name="staff_manual_hint">VD: DON-12345</string>
+    <string name="staff_action_confirm">XÁC NHẬN</string>
+
+    <!-- Staff import/export detail -->
+    <string name="staff_export_detail_title">CHI TIẾT XUẤT KHO</string>
+    <string name="staff_import_detail_title">CHI TIẾT NHẬP KHO</string>
+    <string name="staff_detail_processing">ĐANG XỬ LÝ</string>
+    <string name="staff_detail_role_volunteer">TÌNH NGUYỆN VIÊN</string>
+    <string name="staff_detail_role_sponsor">MẠNH THƯỜNG QUÂN</string>
+    <string name="staff_detail_destination">ĐIỂM ĐẾN</string>
+    <string name="staff_detail_total_prepare">TỔNG HÀNG</string>
+    <string name="staff_detail_item_list">Danh sách vật tư</string>
+    <string name="staff_detail_stock_prefix">Kho:</string>
+    <string name="staff_detail_export_prefix">Xuất:</string>
+    <string name="staff_detail_donation_prefix">Quyên góp:</string>
+    <string name="staff_detail_insufficient">KHÔNG ĐỦ TỒN KHO</string>
+    <string name="staff_detail_confirm_export">XÁC NHẬN XUẤT KHO</string>
+    <string name="staff_detail_confirm_import">XÁC NHẬN NHẬP KHO</string>
+
+    <string name="staff_detail_task_id_mock">TASK-20260329</string>
+    <string name="staff_detail_hub_name_mock">Trạm Quận 7</string>
+    <string name="staff_detail_volunteer_name_mock">Nguyễn Văn C</string>
+    <string name="staff_detail_sponsor_name_mock">Lê Thị B</string>
+    <string name="staff_detail_destination_address_mock">Khu dân cư Tân Thuận, Q7</string>
+    <string name="staff_detail_total_value_mock">35 kiện</string>
+    <string name="staff_detail_time_mock">14:30</string>
+    <string name="staff_detail_item_count_mock">3</string>
+    <string name="staff_detail_status_icon_desc">Trạng thái vật tư</string>
+    <string name="staff_detail_item_noodle">Mì gói cứu trợ</string>
+    <string name="staff_detail_item_water">Nước uống đóng chai</string>
+    <string name="staff_detail_item_milk">Sữa dinh dưỡng</string>
+    <string name="staff_detail_item_rice_format">Gạo dự trữ %1$d</string>
+    <string name="staff_detail_item_blanket_format">Chăn mỏng %1$d</string>
+    <string name="staff_detail_item_raincoat_format">Áo mưa %1$d</string>
+    <string name="staff_detail_item_medical_format">Thuốc y tế %1$d</string>
+    <string name="staff_detail_item_nutrition_format">Bột dinh dưỡng %1$d</string>
+    <string name="staff_detail_item_rescue_blanket_format">Chăn cứu hộ %1$d</string>
+    <string name="staff_detail_unit_box">thùng</string>
+    <string name="staff_detail_unit_bag">bao</string>
+    <string name="staff_detail_unit_bundle">kiện</string>
+    <string name="staff_detail_unit_pack">hộp</string>
+
+    <!-- Staff tasks -->
+    <string name="staff_tasks_title">NHIỆM VỤ</string>
+    <string name="staff_tasks_tab_export">Sắp đến lấy hàng</string>
+    <string name="staff_tasks_tab_import">Sắp đến ký gửi</string>
+    <string name="staff_task_status_incoming">Đang đến</string>
+    <string name="staff_task_status_completed">Đã hoàn thành</string>
+    <string name="staff_task_detail_btn_close">ĐÓNG</string>
+    <string name="staff_task_expected_items">Danh sách dự kiến</string>
+
+    <string name="staff_task_detail_link">Chi tiết</string>
+    <string name="staff_task_eta_format">Đến trong %1$dp</string>
+    <string name="staff_task_code_export_format">DON-%1$d</string>
+    <string name="staff_task_code_import_format">KYG-%1$d</string>
+    <string name="staff_task_person_export_format">Tình nguyện viên %1$d</string>
+    <string name="staff_task_person_import_format">Mạnh thường quân %1$d</string>
+    <string name="staff_task_phone_format">0901 11%1$03d</string>
+    <string name="staff_task_item_summary_format">%1$s - %2$d %3$s</string>
+    <string name="staff_task_detail_item_bullet_format">• %1$s</string>
+</resources>

@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/staff_profile_toolbar_height"
+        android:paddingStart="@dimen/staff_detail_screen_padding"
+        android:paddingEnd="@dimen/staff_detail_screen_padding">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="@dimen/staff_scanner_back_icon_size"
+            android:layout_height="@dimen/staff_scanner_back_icon_size"
+            android:contentDescription="@string/btn_back"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/text_primary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/staff_export_detail_title"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/staff_profile_toolbar_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/staff_profile_divider_thickness"
+        app:dividerColor="@color/border_default"
+        app:dividerThickness="@dimen/staff_profile_divider_thickness" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:paddingStart="@dimen/staff_detail_screen_padding"
+        android:paddingTop="@dimen/staff_detail_screen_padding"
+        android:paddingEnd="@dimen/staff_detail_screen_padding"
+        android:paddingBottom="@dimen/spacing_sm">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/bg_surface_elevated"
+                app:cardCornerRadius="@dimen/staff_detail_card_radius"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/border_default"
+                app:strokeWidth="@dimen/staff_detail_card_stroke">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/staff_detail_hero_height"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/ic_launcher" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/staff_detail_card_padding">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tv_task_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/staff_detail_task_id_mock"
+                            android:textColor="@color/color_primary"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_staff_detail_status_chip"
+                            android:paddingStart="@dimen/staff_detail_status_chip_padding_h"
+                            android:paddingTop="@dimen/staff_detail_status_chip_padding_v"
+                            android:paddingEnd="@dimen/staff_detail_status_chip_padding_h"
+                            android:paddingBottom="@dimen/staff_detail_status_chip_padding_v"
+                            android:text="@string/staff_detail_processing"
+                            android:textColor="@color/color_primary"
+                            android:textSize="@dimen/staff_detail_status_text_size"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/tv_hub_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:layout_marginBottom="@dimen/staff_detail_screen_padding"
+                        android:text="@string/staff_detail_hub_name_mock"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/staff_detail_hub_text_size"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/staff_profile_divider_thickness"
+                        app:dividerColor="@color/border_default"
+                        app:dividerThickness="@dimen/staff_profile_divider_thickness" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/staff_detail_row_icon_size"
+                            android:layout_height="@dimen/staff_detail_row_icon_size"
+                            android:contentDescription="@string/staff_detail_role_volunteer"
+                            android:src="@drawable/ic_person"
+                            app:tint="@color/text_secondary" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/staff_detail_row_gap"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/staff_detail_role_volunteer"
+                                android:textAllCaps="true"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/staff_detail_row_label_size" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/staff_detail_volunteer_name_mock"
+                                android:textColor="@color/text_primary"
+                                android:textSize="@dimen/staff_detail_row_value_size"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/staff_detail_row_icon_size"
+                            android:layout_height="@dimen/staff_detail_row_icon_size"
+                            android:contentDescription="@string/staff_detail_destination"
+                            android:src="@drawable/ic_map_pin"
+                            app:tint="@color/text_secondary" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/staff_detail_row_gap"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/staff_detail_destination"
+                                android:textAllCaps="true"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/staff_detail_row_label_size" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/staff_detail_destination_address_mock"
+                                android:textColor="@color/text_primary"
+                                android:textSize="@dimen/staff_detail_row_value_size"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/staff_profile_divider_thickness"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        app:dividerColor="@color/border_default"
+                        app:dividerThickness="@dimen/staff_profile_divider_thickness" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/staff_detail_screen_padding"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/staff_detail_row_icon_size"
+                            android:layout_height="@dimen/staff_detail_row_icon_size"
+                            android:contentDescription="@string/staff_detail_total_prepare"
+                            android:src="@drawable/ic_boxes"
+                            app:tint="@color/text_secondary" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/staff_detail_row_gap"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/staff_detail_total_prepare"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/staff_detail_row_label_size" />
+
+                            <TextView
+                                android:id="@+id/tv_total_value"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/staff_detail_total_value_mock"
+                                android:textColor="@color/text_primary"
+                                android:textSize="@dimen/staff_detail_row_value_size"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="@dimen/staff_detail_row_icon_size"
+                            android:layout_height="@dimen/staff_detail_row_icon_size"
+                            android:contentDescription="@string/staff_inventory_updated_ago"
+                            android:src="@drawable/ic_history"
+                            app:tint="@color/text_secondary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_xs"
+                            android:text="@string/staff_detail_time_mock"
+                            android:textColor="@color/text_secondary"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/spacing_sm"
+                android:paddingBottom="@dimen/spacing_sm">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/staff_detail_item_list"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/staff_detail_list_title_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_item_count"
+                    android:layout_width="@dimen/staff_detail_count_badge_size"
+                    android:layout_height="@dimen/staff_detail_count_badge_size"
+                    android:background="@drawable/bg_staff_detail_count_badge"
+                    android:gravity="center"
+                    android:text="@string/staff_detail_item_count_mock"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/staff_detail_count_badge_text_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/staff_detail_list_container_height"
+                android:layout_marginBottom="@dimen/spacing_sm">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_items"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="true"
+                    android:paddingBottom="@dimen/spacing_sm" />
+
+                <ProgressBar
+                    android:id="@+id/progress_pagination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_confirm"
+        style="@style/Widget.AidBridge.Button.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/staff_detail_screen_padding"
+        android:layout_marginEnd="@dimen/staff_detail_screen_padding"
+        android:layout_marginBottom="@dimen/staff_detail_screen_padding"
+        android:text="@string/staff_detail_confirm_export"
+        android:paddingVertical="@dimen/spacing_md" />
+
+</LinearLayout>
