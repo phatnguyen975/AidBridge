@@ -1,5 +1,6 @@
 package com.drc.aidbridge.ui.main.fragment.staff;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
@@ -72,8 +73,14 @@ public class StaffInventoryFragment extends BaseFragment<FragmentStaffInventoryB
     }
 
     private void setupActionButtons() {
-        binding.btnStockIn.setOnClickListener(v -> navigateToDestinationSafely(R.id.staffScannerFragment));
-        binding.btnStockOut.setOnClickListener(v -> navigateToDestinationSafely(R.id.staffScannerFragment));
+        binding.btnStockIn.setOnClickListener(v -> navigateToScanner("import"));
+        binding.btnStockOut.setOnClickListener(v -> navigateToScanner("export"));
+    }
+
+    private void navigateToScanner(String mode) {
+        Bundle bundle = new Bundle();
+        bundle.putString("mode", mode);
+        navigateSafely(R.id.action_staffInventoryFragment_to_staffScannerFragment, bundle);
     }
 
     private void setupPagination() {

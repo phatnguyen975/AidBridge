@@ -34,4 +34,14 @@
         android:id="@+id/staffScannerFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffScannerFragment"
         android:label="StaffScannerFragment" />
+
+    <fragment
+        android:id="@+id/staffImportDetailFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffImportDetailFragment"
+        android:label="StaffImportDetailFragment" />
+
+    <fragment
+        android:id="@+id/staffExportDetailFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffExportDetailFragment"
+        android:label="StaffExportDetailFragment" />
 </navigation>

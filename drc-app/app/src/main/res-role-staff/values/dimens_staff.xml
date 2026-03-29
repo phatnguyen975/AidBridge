@@ -95,4 +95,11 @@
     <dimen name="staff_inventory_item_quantity_text_size">20sp</dimen>
     <dimen name="staff_inventory_item_unit_margin_start">4dp</dimen>
     <dimen name="staff_inventory_item_unit_text_size">12sp</dimen>
+
+    <!-- Staff scanner -->
+    <dimen name="staff_scanner_back_icon_size">20dp</dimen>
+    <dimen name="staff_scanner_frame_top_margin">24dp</dimen>
+    <dimen name="staff_scanner_outer_frame_size">248dp</dimen>
+    <dimen name="staff_scanner_inner_frame_size">208dp</dimen>
+    <dimen name="staff_scanner_corner_size">24dp</dimen>
 </resources>

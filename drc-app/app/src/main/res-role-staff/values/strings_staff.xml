@@ -31,4 +31,15 @@
     <string name="staff_inventory_status_stable">Ổn định</string>
     <string name="staff_inventory_action_stock_in">Nhập kho</string>
     <string name="staff_inventory_action_stock_out">Xuất kho</string>
+
+    <!-- Staff scanner -->
+    <string name="staff_scan_title_import">QUÉT MÃ NHẬP KHO</string>
+    <string name="staff_scan_title_export">QUÉT MÃ XUẤT KHO</string>
+    <string name="staff_scan_inst_import">Đưa mã QR của Mạnh thường quân vào khung hình để quét</string>
+    <string name="staff_scan_inst_export">Đưa mã QR của Tình nguyện viên vào khung hình để quét</string>
+    <string name="staff_scan_subtext">Đảm bảo mã QR nằm trong khung hình và đủ ánh sáng</string>
+    <string name="staff_scan_manual_btn">NHẬP MÃ THỦ CÔNG</string>
+    <string name="staff_manual_title">NHẬP MÃ THỦ CÔNG</string>
+    <string name="staff_manual_hint">VD: DON-12345</string>
+    <string name="staff_action_confirm">XÁC NHẬN</string>
 </resources>
