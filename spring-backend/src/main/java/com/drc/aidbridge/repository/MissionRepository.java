@@ -17,6 +17,8 @@ public interface MissionRepository extends JpaRepository<Mission, UUID> {
 
     Optional<Mission> findBySosRequestId(UUID sosRequestId);
 
+    Optional<Mission> findByAidRequestId(UUID aidRequestId);
+
     // Filter by single field
     Page<Mission> findByMissionType(MissionType missionType, Pageable pageable);
 

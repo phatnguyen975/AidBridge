@@ -1,7 +1,6 @@
 package com.drc.aidbridge.modules.user.internal.usecase;
 
 import com.drc.aidbridge.exception.ResourceNotFoundException;
-import com.drc.aidbridge.modules.user.internal.entity.User;
 import com.drc.aidbridge.modules.user.internal.repository.UserJpaRepository;
 import com.drc.aidbridge.modules.user.internal.web.dto.ForgotPasswordRequest;
 import com.drc.aidbridge.redis.OtpRedisSchema;
@@ -20,7 +19,7 @@ public class ForgotPasswordUseCase {
     private final EmailService emailService;
 
     public void execute(ForgotPasswordRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Email not registered"));
 
         String otp = otpRedisSchema.generateOtp(
