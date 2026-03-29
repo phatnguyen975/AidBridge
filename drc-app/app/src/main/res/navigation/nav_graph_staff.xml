@@ -3,15 +3,45 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_staff"
-    app:startDestination="@id/staffDashboardFragment">
+    app:startDestination="@id/staffProfileFragment">
 
     <fragment
-        android:id="@+id/staffDashboardFragment"
-        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffDashboardFragment"
-        android:label="StaffDashboardFragment" />
+        android:id="@+id/staffProfileFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffProfileFragment"
+        android:label="StaffProfileFragment" />
 
     <fragment
-        android:id="@+id/mapFragment"
+        android:id="@+id/staffInventoryFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffInventoryFragment"
+        android:label="StaffInventoryFragment">
+
+        <action
+            android:id="@+id/action_staffInventoryFragment_to_staffScannerFragment"
+            app:destination="@id/staffScannerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/staffTasksFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffTasksFragment"
+        android:label="StaffTasksFragment" />
+
+    <fragment
+        android:id="@+id/staffMapFragment"
         android:name="com.drc.aidbridge.ui.map.fragment.StaffMapFragment"
-        android:label="MapFragment" />
+        android:label="StaffMapFragment" />
+
+    <fragment
+        android:id="@+id/staffScannerFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffScannerFragment"
+        android:label="StaffScannerFragment" />
+
+    <fragment
+        android:id="@+id/staffImportDetailFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffImportDetailFragment"
+        android:label="StaffImportDetailFragment" />
+
+    <fragment
+        android:id="@+id/staffExportDetailFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.staff.StaffExportDetailFragment"
+        android:label="StaffExportDetailFragment" />
 </navigation>
