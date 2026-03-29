@@ -37,7 +37,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnArrivedDepot"
+            android:id="@+id/btnAction"
             style="@style/Widget.Material3.Button"
             android:layout_width="match_parent"
             android:layout_height="@dimen/volunteer_sos_acceptance_button_height"
@@ -149,6 +149,7 @@
                         android:orientation="horizontal">
 
                         <View
+                            android:id="@+id/viewProgressSegment1"
                             android:layout_width="0dp"
                             android:layout_height="@dimen/volunteer_delivery_mission_progress_segment_height"
                             android:layout_weight="1"
@@ -159,6 +160,7 @@
                             android:layout_height="1dp" />
 
                         <View
+                            android:id="@+id/viewProgressSegment2"
                             android:layout_width="0dp"
                             android:layout_height="@dimen/volunteer_delivery_mission_progress_segment_height"
                             android:layout_weight="1"
@@ -169,6 +171,7 @@
                             android:layout_height="1dp" />
 
                         <View
+                            android:id="@+id/viewProgressSegment3"
                             android:layout_width="0dp"
                             android:layout_height="@dimen/volunteer_delivery_mission_progress_segment_height"
                             android:layout_weight="1"
@@ -179,6 +182,7 @@
                             android:layout_height="1dp" />
 
                         <View
+                            android:id="@+id/viewProgressSegment4"
                             android:layout_width="0dp"
                             android:layout_height="@dimen/volunteer_delivery_mission_progress_segment_height"
                             android:layout_weight="1"
@@ -237,6 +241,7 @@
                         android:orientation="vertical">
 
                         <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardTimelineStep1Icon"
                             android:layout_width="@dimen/volunteer_delivery_mission_timeline_icon_size"
                             android:layout_height="@dimen/volunteer_delivery_mission_timeline_icon_size"
                             app:cardBackgroundColor="@color/volunteer_acceptance_accept_button_bg"
@@ -252,6 +257,7 @@
                         </com.google.android.material.card.MaterialCardView>
 
                         <View
+                            android:id="@+id/viewTimelineConnector1"
                             android:layout_width="@dimen/volunteer_delivery_mission_timeline_connector_width"
                             android:layout_height="@dimen/volunteer_delivery_mission_timeline_connector_height"
                             android:background="@color/volunteer_acceptance_accept_button_bg" />
@@ -266,6 +272,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tvTimelineStep1Title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/volunteer_delivery_mission_step_1_title"
@@ -274,6 +281,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvTimelineStep1Desc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/spacing_xs"
@@ -295,6 +303,7 @@
                         android:orientation="vertical">
 
                         <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardTimelineStep2Icon"
                             android:layout_width="@dimen/volunteer_delivery_mission_timeline_icon_size"
                             android:layout_height="@dimen/volunteer_delivery_mission_timeline_icon_size"
                             app:cardBackgroundColor="@color/volunteer_acceptance_decline_button_stroke"
@@ -310,6 +319,7 @@
                         </com.google.android.material.card.MaterialCardView>
 
                         <View
+                            android:id="@+id/viewTimelineConnector2"
                             android:layout_width="@dimen/volunteer_delivery_mission_timeline_connector_width"
                             android:layout_height="@dimen/volunteer_delivery_mission_timeline_connector_height"
                             android:background="@color/volunteer_acceptance_decline_button_stroke" />
@@ -325,6 +335,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tvTimelineStep2Title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/volunteer_delivery_mission_step_2_title"
@@ -333,6 +344,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvTimelineStep2Desc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/spacing_xs"
@@ -354,6 +366,7 @@
                         android:orientation="vertical">
 
                         <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardTimelineStep3Icon"
                             android:layout_width="@dimen/volunteer_delivery_mission_timeline_icon_size"
                             android:layout_height="@dimen/volunteer_delivery_mission_timeline_icon_size"
                             app:cardBackgroundColor="@color/volunteer_acceptance_decline_button_stroke"
@@ -369,6 +382,7 @@
                         </com.google.android.material.card.MaterialCardView>
 
                         <View
+                            android:id="@+id/viewTimelineConnector3"
                             android:layout_width="@dimen/volunteer_delivery_mission_timeline_connector_width"
                             android:layout_height="@dimen/volunteer_delivery_mission_timeline_connector_height"
                             android:background="@color/volunteer_acceptance_decline_button_stroke" />
@@ -384,6 +398,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tvTimelineStep3Title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/volunteer_delivery_mission_step_3_title"
@@ -392,6 +407,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvTimelineStep3Desc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/spacing_xs"
@@ -413,6 +429,7 @@
                         android:orientation="vertical">
 
                         <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardTimelineStep4Icon"
                             android:layout_width="@dimen/volunteer_delivery_mission_timeline_icon_size"
                             android:layout_height="@dimen/volunteer_delivery_mission_timeline_icon_size"
                             app:cardBackgroundColor="@color/volunteer_acceptance_decline_button_stroke"
@@ -437,6 +454,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tvTimelineStep4Title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/volunteer_delivery_mission_step_4_title"
@@ -445,6 +463,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvTimelineStep4Desc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/spacing_xs"
@@ -496,6 +515,7 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/tvRecipientNameValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_md"
@@ -505,6 +525,7 @@
                         android:textSize="@dimen/text_sm" />
 
                     <TextView
+                        android:id="@+id/tvRecipientPhoneValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_xs"
@@ -541,6 +562,7 @@
                         android:textSize="@dimen/text_sm" />
 
                     <TextView
+                        android:id="@+id/tvRecipientNoteValue"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_xs"
@@ -582,6 +604,7 @@
                             app:tint="@color/volunteer_acceptance_text_secondary" />
 
                         <TextView
+                            android:id="@+id/tvOrderDetailTitle"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/spacing_sm"
@@ -593,7 +616,7 @@
                     </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnViewOrderDetail"
+                        android:id="@+id/btnSeeDetails"
                         style="@style/Widget.Material3.Button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

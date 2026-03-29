@@ -28,6 +28,7 @@ public class VoluteerMissionAcceptanceFragment extends BaseFragment<FragmentVolu
     private static final long TIMER_TOTAL_MS = 60_000L;
     private static final long TIMER_INTERVAL_MS = 1_000L;
     private static final String MOCK_MISSION_ID = "MISSION_RESCUE_001";
+    private static final String MOCK_SUPPLY_MISSION_ID = "MISSION_SUPPLY_001";
 
     private String missionType = MISSION_TYPE_RESCUE;
     private CountDownTimer missionCountDownTimer;
@@ -103,7 +104,9 @@ public class VoluteerMissionAcceptanceFragment extends BaseFragment<FragmentVolu
 
         binding.btnAccept.setOnClickListener(v -> {
             if (MISSION_TYPE_SUPPLY.equalsIgnoreCase(missionType)) {
-                showToast(getString(R.string.volunteer_mission_acceptance_supply_todo_toast));
+                volunteerTaskViewModel.acceptMission(MOCK_SUPPLY_MISSION_ID);
+                showToast(getString(R.string.volunteer_sos_acceptance_toast_accept_success));
+                navigateSafely(R.id.action_sos_acceptance_to_delivery_mission);
                 return;
             }
 

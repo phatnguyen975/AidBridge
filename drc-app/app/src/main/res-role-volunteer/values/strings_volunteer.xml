@@ -96,7 +96,12 @@
     <string name="volunteer_delivery_mission_order_detail_title">Vật phẩm cần tiếp tế</string>
     <string name="volunteer_delivery_mission_btn_view_detail">Xem chi tiết</string>
     <string name="volunteer_delivery_mission_btn_arrived_depot">Tôi đã đến trạm</string>
+    <string name="volunteer_delivery_mission_btn_loaded_items">Tôi đã lấy hàng cứu trợ</string>
+    <string name="volunteer_delivery_mission_btn_arrived_victim_home">Tôi đã đến nhà nạn nhân</string>
+    <string name="volunteer_delivery_mission_btn_completed">Hoàn tất nhiệm vụ</string>
     <string name="volunteer_delivery_mission_arrived_hint">Vui lòng xác nhận khi bạn đã có mặt tại điểm tập kết hàng hóa.</string>
+    <string name="volunteer_delivery_mission_toast_completed">Nhiệm vụ hoàn thành</string>
+    <string name="volunteer_delivery_mission_toast_detail_todo">Chức năng xem chi tiết đơn hàng đang phát triển</string>
 
     <!-- Volunteer SOS Acceptance -->
     <string name="volunteer_sos_acceptance_title">Nhiệm vụ mới</string>
