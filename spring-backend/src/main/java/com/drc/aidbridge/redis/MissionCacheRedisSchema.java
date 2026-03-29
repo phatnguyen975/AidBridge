@@ -1,7 +1,7 @@
 package com.drc.aidbridge.redis;
 
-import com.drc.aidbridge.dto.response.MissionResponseDto;
-import com.drc.aidbridge.dto.response.MissionTrackingResponseDto;
+import com.drc.aidbridge.modules.mission.internal.web.dto.MissionResponse;
+import com.drc.aidbridge.modules.mission.internal.web.dto.MissionTrackingResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -53,7 +53,7 @@ public class MissionCacheRedisSchema {
      * Only caches missions with active status (ASSIGNED, PICKING_UP, PICKED_UP,
      * IN_TRANSIT).
      */
-    public void cacheMission(MissionResponseDto mission) {
+    public void cacheMission(MissionResponse mission) {
         if (!isActiveStatus(mission.getStatus().name())) {
             log.debug("Mission {} not cached - status {} is not active", mission.getId(), mission.getStatus());
             return;
@@ -72,13 +72,13 @@ public class MissionCacheRedisSchema {
     /**
      * Get cached mission by ID.
      */
-    public Optional<MissionResponseDto> getCachedMission(UUID missionId) {
+    public Optional<MissionResponse> getCachedMission(UUID missionId) {
         try {
             String key = buildMissionKey(missionId);
             String json = redisTemplate.opsForValue().get(key);
             if (json != null) {
                 log.debug("Cache hit for mission {}", missionId);
-                return Optional.of(objectMapper.readValue(json, MissionResponseDto.class));
+                return Optional.of(objectMapper.readValue(json, MissionResponse.class));
             }
             log.debug("Cache miss for mission {}", missionId);
         } catch (JsonProcessingException e) {
@@ -115,7 +115,7 @@ public class MissionCacheRedisSchema {
      * Cache mission tracking data.
      * Short TTL since location updates frequently.
      */
-    public void cacheTracking(MissionTrackingResponseDto tracking) {
+    public void cacheTracking(MissionTrackingResponse tracking) {
         try {
             String key = buildTrackingKey(tracking.getMissionId());
             String json = objectMapper.writeValueAsString(tracking);
@@ -129,12 +129,12 @@ public class MissionCacheRedisSchema {
     /**
      * Get cached tracking data.
      */
-    public Optional<MissionTrackingResponseDto> getCachedTracking(UUID missionId) {
+    public Optional<MissionTrackingResponse> getCachedTracking(UUID missionId) {
         try {
             String key = buildTrackingKey(missionId);
             String json = redisTemplate.opsForValue().get(key);
             if (json != null) {
-                return Optional.of(objectMapper.readValue(json, MissionTrackingResponseDto.class));
+                return Optional.of(objectMapper.readValue(json, MissionTrackingResponse.class));
             }
         } catch (JsonProcessingException e) {
             log.error("Failed to deserialize cached tracking for mission {}", missionId, e);
