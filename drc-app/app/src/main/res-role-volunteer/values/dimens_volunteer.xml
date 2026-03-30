@@ -19,6 +19,8 @@
     <dimen name="volunteer_dashboard_notification_icon_padding">8dp</dimen>
     <dimen name="volunteer_dashboard_notification_overlay_icon_size">60dp</dimen>
     <dimen name="volunteer_dashboard_button_corner_radius">8dp</dimen>
+    <dimen name="volunteer_dashboard_separator_height">1dp</dimen>
+    <dimen name="volunteer_dashboard_account_item_icon_size">20dp</dimen>
 
     <!-- Volunteer Mission History Item Dimensions -->
     <dimen name="volunteer_mission_history_card_stroke_width">1dp</dimen>

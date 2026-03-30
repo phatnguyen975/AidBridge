@@ -17,6 +17,8 @@
     <string name="volunteer_dashboard_emergency_details_placeholder">Quận 1 - Cách bạn 1.2km</string>
     <string name="volunteer_dashboard_btn_details">Xem chi tiết</string>
     <string name="volunteer_dashboard_btn_logout">Đăng xuất</string>
+    <string name="volunteer_dashboard_account_settings_title">Cài đặt tài khoản</string>
+    <string name="volunteer_dashboard_account_security">Tài khoản &amp; Bảo mật</string>
 
     <!-- Volunteer Dashboard Toasts -->
     <string name="volunteer_dashboard_toast_mode_ready">Chế độ: Sẵn sàng</string>
@@ -27,6 +29,7 @@
     <string name="volunteer_dashboard_toast_see_all_notifications">Xem tất cả thông báo</string>
     <string name="volunteer_dashboard_toast_view_mission_detail">Xem chi tiết nhiệm vụ cứu hộ</string>
     <string name="volunteer_dashboard_toast_logout">Xử lý đăng xuất</string>
+    <string name="volunteer_dashboard_toast_personal_info_todo">Tính năng Thông tin cá nhân đang được phát triển</string>
 
     <!-- Volunteer Mission History Item -->
     <string name="volunteer_mission_history_category_emergency">Cứu hộ khẩn cấp</string>

@@ -108,7 +108,10 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
             navigateSafely(R.id.action_dashboard_to_sos_acceptance, bundle);
         });
 
-        binding.btnLogout.setOnClickListener(
+        binding.layoutAccountSecurity.setOnClickListener(
+                v -> showToast(getString(R.string.volunteer_dashboard_toast_personal_info_todo)));
+
+        binding.layoutLogout.setOnClickListener(
                 v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_logout)));
     }
 
