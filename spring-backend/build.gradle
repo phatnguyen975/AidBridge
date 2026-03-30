@@ -109,6 +109,12 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     // ===========================
+    // Cloud Storage (Cloudinary)
+    // ===========================
+    // Cloudinary SDK - image/video upload, transformation, and CDN delivery
+    implementation 'com.cloudinary:cloudinary-http5:2.3.2'
+
+    // ===========================
     // Testing
     // ===========================
     // Spring Boot Test - JUnit 5, Mockito, MockMvc, @SpringBootTest, @DataJpaTest
