@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -15,7 +16,7 @@ import java.util.UUID;
 public class NotificationFacadeImpl implements NotificationFacade {
 
     private final EmailService emailService;
-    private final FCMService fcmService;
+    private final Optional<FCMService> fcmService;
 
     @Override
     public void sendEmail(String to, String otp) {
@@ -34,22 +35,29 @@ public class NotificationFacadeImpl implements NotificationFacade {
 
     @Override
     public void notifyMissionPickupConfirmed(UUID missionId, String volunteerName) {
-        FCMService.MissionNotification notification =
-                fcmService.createPickupConfirmedNotification(missionId, volunteerName);
-        log.info("Prepared pickup notification for mission {} with type {}", missionId, notification.getType());
+        fcmService.ifPresentOrElse(service -> {
+            FCMService.MissionNotification notification =
+                    service.createPickupConfirmedNotification(missionId, volunteerName);
+            log.info("Prepared pickup notification for mission {} with type {}", missionId, notification.getType());
+        }, () -> log.warn("FCM service unavailable, skipping pickup notification for mission {}", missionId));
     }
 
     @Override
     public void notifyMissionCompleted(UUID missionId, String volunteerName) {
-        FCMService.MissionNotification notification =
-                fcmService.createMissionCompletedNotification(missionId, volunteerName);
-        log.info("Prepared completion notification for mission {} with type {}", missionId, notification.getType());
+        fcmService.ifPresentOrElse(service -> {
+            FCMService.MissionNotification notification =
+                    service.createMissionCompletedNotification(missionId, volunteerName);
+            log.info("Prepared completion notification for mission {} with type {}", missionId, notification.getType());
+        }, () -> log.warn("FCM service unavailable, skipping completion notification for mission {}", missionId));
     }
 
     @Override
     public void notifyMissionCancelled(UUID missionId, String reason) {
-        FCMService.MissionNotification notification =
-                fcmService.createMissionCancelledNotification(missionId, reason);
-        log.info("Prepared cancellation notification for mission {} with type {}", missionId, notification.getType());
+        fcmService.ifPresentOrElse(service -> {
+            FCMService.MissionNotification notification =
+                service.createMissionCancelledNotification(missionId, reason);
+            log.info("Prepared cancellation notification for mission {} with type {}", missionId,
+                notification.getType());
+        }, () -> log.warn("FCM service unavailable, skipping cancellation notification for mission {}", missionId));
     }
 }
