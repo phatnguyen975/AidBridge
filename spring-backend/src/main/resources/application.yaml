@@ -56,3 +56,11 @@ firebase:
   project-id: ${FIREBASE_PROJECT_ID:aidbridge-5613d}
   service-account:
     path: ${FIREBASE_SERVICE_ACCOUNT_PATH:firebase-service-account.json}
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+swagger-ui:
+  path: /swagger-ui.html
+  operationsSorter: method
+  tagsSorter: alpha
+
