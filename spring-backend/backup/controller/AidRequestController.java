@@ -1,0 +1,60 @@
+package com.drc.aidbridge.controller;
+
+import com.drc.aidbridge.dto.request.CancelAidRequestDto;
+import com.drc.aidbridge.dto.request.CreateAidRequestDto;
+import com.drc.aidbridge.dto.response.AidRequestResponseDto;
+import com.drc.aidbridge.dto.response.ApiResponse;
+import com.drc.aidbridge.dto.response.PaginatedResponseDto;
+import com.drc.aidbridge.service.AidRequestService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/victim/aid-requests")
+@RequiredArgsConstructor
+public class AidRequestController {
+
+    private final AidRequestService aidRequestService;
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<AidRequestResponseDto>> createAidRequest(
+            @Valid @RequestBody CreateAidRequestDto request,
+            @AuthenticationPrincipal UUID userId) {
+
+        AidRequestResponseDto response = aidRequestService.createAidRequest(userId, request);
+        return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<AidRequestResponseDto>> getAidRequest(@PathVariable UUID id) {
+        AidRequestResponseDto response = aidRequestService.getAidRequest(id);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<ApiResponse<AidRequestResponseDto>> cancelAidRequest(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UUID userId,
+            @RequestBody(required = false) CancelAidRequestDto request) {
+        if (request == null) {
+            request = new CancelAidRequestDto();
+        }
+
+        AidRequestResponseDto response = aidRequestService.cancelAidRequest(userId, id, request);
+        return ResponseEntity.ok(ApiResponse.success("Aid request cancelled", response));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<PaginatedResponseDto<AidRequestResponseDto>>> listAidRequests(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "limit", defaultValue = "20") int limit) {
+        PaginatedResponseDto<AidRequestResponseDto> response = aidRequestService.listAidRequests(page, limit);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+}
+
