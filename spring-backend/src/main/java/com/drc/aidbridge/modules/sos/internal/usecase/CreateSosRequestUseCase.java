@@ -22,12 +22,12 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class CreateSosRequestUseCase {
-
+    
     private final SosJpaRepository sosRequestRepository;
     private final UserFacade userFacade;
     private final MissionFacade missionFacade;
     private final SosMapper sosMapper;
-
+    
     @Transactional
     public SosRequestResponse execute(UUID requesterId, CreateSosRequest createDto) {
         UserDTO requester = userFacade.getUserById(requesterId);

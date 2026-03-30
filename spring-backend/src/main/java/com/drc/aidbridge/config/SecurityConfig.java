@@ -46,6 +46,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/ws/**").permitAll() // WebSocket handshake
+                        // Permit for springdoc OpenAPI
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/api/victim/sos-requests/**").authenticated()
                         // Role-based endpoint authorization
                         // ADMIN - full system access

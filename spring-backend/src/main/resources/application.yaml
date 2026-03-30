@@ -61,3 +61,11 @@ cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME:your-cloud-name}
   api-key: ${CLOUDINARY_API_KEY:your-api-key}
   api-secret: ${CLOUDINARY_API_SECRET:your-api-secret}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+swagger-ui:
+  path: /swagger-ui.html
+  operationsSorter: method
+  tagsSorter: alpha

@@ -47,6 +47,8 @@ info:
     name: AidBridge Team
 
 servers:
+  - url: http://localhost:8080/api
+    description: Local development
   - url: https://api.aidbridge.com/v1
     description: Production
   - url: https://staging-api.aidbridge.com/v1
