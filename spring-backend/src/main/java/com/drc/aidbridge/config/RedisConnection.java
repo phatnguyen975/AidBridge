@@ -29,7 +29,6 @@ public class RedisConnection {
             throw new IllegalStateException("RedisConnection has not been initialized yet");
         }
         return instance;
-        
     }
 
     @EventListener(ApplicationReadyEvent.class)

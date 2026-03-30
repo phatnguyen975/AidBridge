@@ -4,12 +4,12 @@ import com.drc.aidbridge.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -36,13 +36,17 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/", "/favicon.ico", "/error").permitAll()
                         // Public endpoints - no authentication required
                         .requestMatchers("/api/health/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/ws/**").permitAll() // WebSocket handshake
-                        .requestMatchers("/api/sos").permitAll()
+                .requestMatchers("/api/victim/sos-requests/**").authenticated()
                         // Role-based endpoint authorization
                         // ADMIN - full system access
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -51,7 +55,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/staff/**").hasAnyRole("STAFF", "ADMIN")
 
                         // VOLUNTEER - mission handling
-                        .requestMatchers("/api/volunteer/**").hasAnyRole("VOLUNTEER", "STAFF", "ADMIN")
+                        .requestMatchers("/api/volunteers/**").hasAnyRole("VOLUNTEER", "STAFF", "ADMIN")
 
                         // SPONSOR - donation management
                         .requestMatchers("/api/sponsor/**").hasAnyRole("SPONSOR", "STAFF", "ADMIN")
@@ -66,14 +70,5 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    /**
-     * BCrypt password encoder with strength 12.
-     * Higher strength = more secure but slower.
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
     }
 }

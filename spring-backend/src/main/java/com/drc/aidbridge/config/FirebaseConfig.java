@@ -6,6 +6,8 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -25,6 +27,7 @@ import java.io.InputStream;
  */
 @Slf4j
 @Configuration
+@ConditionalOnProperty(value = "firebase.enabled", havingValue = "true")
 public class FirebaseConfig {
 
     @Value("${firebase.service-account.path:firebase-service-account.json}")
@@ -34,6 +37,7 @@ public class FirebaseConfig {
     private String projectId;
 
     @Bean
+    @ConditionalOnMissingBean(FirebaseMessaging.class)
     public FirebaseMessaging firebaseMessaging() throws IOException {
         // Check if FirebaseApp already initialized
         if (FirebaseApp.getApps().isEmpty()) {
