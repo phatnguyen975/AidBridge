@@ -59,6 +59,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     // Jackson - JSON serialization for Redis schemas
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+    // Jackson JSR310 - Java 8 date/time type support (LocalDateTime, ZonedDateTime, etc.)
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
     // ===========================
     // Email Service
@@ -116,7 +118,7 @@ dependencies {
     // JUnit Platform Launcher - required for Gradle to execute JUnit 5 test suites
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    
 }
 
 tasks.named('test') {
