@@ -81,4 +81,12 @@
     <dimen name="volunteer_delivery_mission_timeline_connector_width">2dp</dimen>
     <dimen name="volunteer_delivery_mission_timeline_connector_height">36dp</dimen>
     <dimen name="volunteer_delivery_mission_recipient_value_size">16sp</dimen>
+
+    <!-- Volunteer Supply Detail Dimensions -->
+    <dimen name="volunteer_supply_detail_qr_size">220dp</dimen>
+    <dimen name="volunteer_supply_detail_qr_inner_padding">16dp</dimen>
+    <dimen name="volunteer_supply_detail_qr_corner_radius">14dp</dimen>
+    <dimen name="volunteer_supply_detail_chevron_size">20dp</dimen>
+    <dimen name="volunteer_supply_detail_group_title_size">18sp</dimen>
+    <dimen name="volunteer_supply_detail_quantity_column_width">92dp</dimen>
 </resources>

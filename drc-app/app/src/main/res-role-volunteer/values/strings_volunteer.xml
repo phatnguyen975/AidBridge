@@ -103,6 +103,53 @@
     <string name="volunteer_delivery_mission_toast_completed">Nhiệm vụ hoàn thành</string>
     <string name="volunteer_delivery_mission_toast_detail_todo">Chức năng xem chi tiết đơn hàng đang phát triển</string>
 
+    <!-- Volunteer Supply Detail -->
+    <string name="volunteer_supply_detail_title">Vật phẩm chi tiết</string>
+    <string name="volunteer_supply_detail_back_content_desc">Quay lại màn trước</string>
+    <string name="volunteer_supply_detail_qr_content_desc">Mã QR tiếp tế</string>
+    <string name="volunteer_supply_detail_qr_hint">đưa mã qr này cho nhân viên trạm</string>
+    <string name="volunteer_supply_detail_section_title">Chi tiết vật phẩm</string>
+    <string name="volunteer_supply_detail_chevron_content_desc">Mở rộng hoặc thu gọn danh mục</string>
+    <string name="volunteer_supply_detail_column_type">Loại</string>
+    <string name="volunteer_supply_detail_column_quantity">Số lượng</string>
+
+    <string name="volunteer_supply_detail_group_drug">Thuốc</string>
+    <string name="volunteer_supply_detail_group_clothes">Quần áo</string>
+    <string name="volunteer_supply_detail_group_food">Thức ăn</string>
+    <string name="volunteer_supply_detail_group_water">Nước uống</string>
+    <string name="volunteer_supply_detail_group_other">Khác</string>
+
+    <string name="volunteer_supply_detail_drug_item_type_1">Cảm/sốt</string>
+    <string name="volunteer_supply_detail_drug_item_type_2">Tiêu hóa</string>
+    <string name="volunteer_supply_detail_drug_item_type_3">Băng gạc</string>
+    <string name="volunteer_supply_detail_drug_item_quantity_1">10 vỉ</string>
+    <string name="volunteer_supply_detail_drug_item_quantity_2">5 vỉ</string>
+    <string name="volunteer_supply_detail_drug_item_quantity_3">2 cái</string>
+
+    <string name="volunteer_supply_detail_clothes_item_type_1">Bộ</string>
+    <string name="volunteer_supply_detail_clothes_item_type_2">Chăn màn</string>
+    <string name="volunteer_supply_detail_clothes_item_type_3">Áo mưa</string>
+    <string name="volunteer_supply_detail_clothes_item_quantity_1">2 bộ</string>
+    <string name="volunteer_supply_detail_clothes_item_quantity_2">1 cái</string>
+    <string name="volunteer_supply_detail_clothes_item_quantity_3">3 cái</string>
+
+    <string name="volunteer_supply_detail_food_item_type_1">Gạo</string>
+    <string name="volunteer_supply_detail_food_item_type_2">Mì tôm</string>
+    <string name="volunteer_supply_detail_food_item_type_3">Đồ hộp</string>
+    <string name="volunteer_supply_detail_food_item_quantity_1">5 kg</string>
+    <string name="volunteer_supply_detail_food_item_quantity_2">2 thùng</string>
+    <string name="volunteer_supply_detail_food_item_quantity_3">10 hộp</string>
+
+    <string name="volunteer_supply_detail_water_item_type_1">Nước đóng chai</string>
+    <string name="volunteer_supply_detail_water_item_type_2">Sữa</string>
+    <string name="volunteer_supply_detail_water_item_type_3">Nước điện giải</string>
+    <string name="volunteer_supply_detail_water_item_quantity_1">1 thùng</string>
+    <string name="volunteer_supply_detail_water_item_quantity_2">1 thùng</string>
+    <string name="volunteer_supply_detail_water_item_quantity_3">1 thùng</string>
+
+    <string name="volunteer_supply_detail_other_item_type_1">Tã</string>
+    <string name="volunteer_supply_detail_other_item_quantity_1">1 bịch</string>
+
     <!-- Volunteer SOS Acceptance -->
     <string name="volunteer_sos_acceptance_title">Nhiệm vụ mới</string>
     <string name="volunteer_sos_acceptance_timer_minutes_value">00</string>

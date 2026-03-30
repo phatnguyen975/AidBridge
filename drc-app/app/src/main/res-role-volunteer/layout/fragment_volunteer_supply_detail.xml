@@ -1,0 +1,860 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/volunteer_acceptance_bg">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarSupplyDetail"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/volunteer_acceptance_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="@dimen/volunteer_current_mission_toolbar_icon_button_size"
+                android:layout_height="@dimen/volunteer_current_mission_toolbar_icon_button_size"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/volunteer_supply_detail_back_content_desc"
+                android:padding="@dimen/spacing_sm"
+                android:src="?attr/homeAsUpIndicator"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/volunteer_acceptance_text_primary" />
+
+            <TextView
+                android:id="@+id/tvSupplyDetailTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/volunteer_supply_detail_title"
+                android:textColor="@color/volunteer_acceptance_text_primary"
+                android:textSize="@dimen/volunteer_current_mission_toolbar_title_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollSupplyDetail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbarSupplyDetail">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/spacing_lg">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardQrSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_md"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:layout_marginEnd="@dimen/spacing_md"
+                app:cardBackgroundColor="@color/volunteer_acceptance_mission_card_bg"
+                app:cardCornerRadius="@dimen/radius_lg"
+                app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_md">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardQrCodeInner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@android:color/white"
+                        app:cardCornerRadius="@dimen/volunteer_supply_detail_qr_corner_radius"
+                        app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                        app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
+
+                        <ImageView
+                            android:id="@+id/ivQrCode"
+                            android:layout_width="@dimen/volunteer_supply_detail_qr_size"
+                            android:layout_height="@dimen/volunteer_supply_detail_qr_size"
+                            android:contentDescription="@string/volunteer_supply_detail_qr_content_desc"
+                            android:padding="@dimen/volunteer_supply_detail_qr_inner_padding"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/qr_code" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:id="@+id/tvQrHint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:gravity="center"
+                        android:text="@string/volunteer_supply_detail_qr_hint"
+                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                        android:textSize="@dimen/text_md"
+                        android:textStyle="italic" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSupplyItems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_md"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:layout_marginEnd="@dimen/spacing_md"
+                app:cardBackgroundColor="@color/volunteer_acceptance_mission_card_bg"
+                app:cardCornerRadius="@dimen/radius_lg"
+                app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_md">
+
+                    <TextView
+                        android:id="@+id/tvSupplyDetailSectionTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/volunteer_supply_detail_section_title"
+                        android:textColor="@color/volunteer_acceptance_text_primary"
+                        android:textSize="@dimen/text_lg"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardGroupDrug"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_md"
+                        app:cardBackgroundColor="@color/volunteer_acceptance_info_box_bg"
+                        app:cardCornerRadius="@dimen/radius_md"
+                        app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                        app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/spacing_sm">
+
+                            <LinearLayout
+                                android:id="@+id/layoutHeaderDrug"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvHeaderDrug"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/volunteer_supply_detail_group_drug"
+                                    android:textColor="@color/volunteer_acceptance_text_primary"
+                                    android:textSize="@dimen/volunteer_supply_detail_group_title_size"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:id="@+id/ivChevronDrug"
+                                    android:layout_width="@dimen/volunteer_supply_detail_chevron_size"
+                                    android:layout_height="@dimen/volunteer_supply_detail_chevron_size"
+                                    android:contentDescription="@string/volunteer_supply_detail_chevron_content_desc"
+                                    android:src="@android:drawable/arrow_down_float"
+                                    app:tint="@color/volunteer_acceptance_text_secondary" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/layoutItemsDrug"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_sm"
+                                android:orientation="vertical"
+                                android:visibility="visible">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_column_type"
+                                        android:textColor="@color/volunteer_acceptance_text_muted"
+                                        android:textSize="@dimen/text_sm"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_column_quantity"
+                                        android:textColor="@color/volunteer_acceptance_text_muted"
+                                        android:textSize="@dimen/text_sm"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvDrugItemType1"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_drug_item_type_1"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/text_sm" />
+
+                                    <TextView
+                                        android:id="@+id/tvDrugItemQty1"
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_drug_item_quantity_1"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/text_sm" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvDrugItemType2"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_drug_item_type_2"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/text_sm" />
+
+                                    <TextView
+                                        android:id="@+id/tvDrugItemQty2"
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_drug_item_quantity_2"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/text_sm" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvDrugItemType3"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_drug_item_type_3"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/text_sm" />
+
+                                    <TextView
+                                        android:id="@+id/tvDrugItemQty3"
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_drug_item_quantity_3"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/text_sm" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardGroupClothes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        app:cardBackgroundColor="@color/volunteer_acceptance_info_box_bg"
+                        app:cardCornerRadius="@dimen/radius_md"
+                        app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                        app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/spacing_sm">
+
+                            <LinearLayout
+                                android:id="@+id/layoutHeaderClothes"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvHeaderClothes"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/volunteer_supply_detail_group_clothes"
+                                    android:textColor="@color/volunteer_acceptance_text_primary"
+                                    android:textSize="@dimen/volunteer_supply_detail_group_title_size"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:id="@+id/ivChevronClothes"
+                                    android:layout_width="@dimen/volunteer_supply_detail_chevron_size"
+                                    android:layout_height="@dimen/volunteer_supply_detail_chevron_size"
+                                    android:contentDescription="@string/volunteer_supply_detail_chevron_content_desc"
+                                    android:src="@android:drawable/arrow_down_float"
+                                    app:tint="@color/volunteer_acceptance_text_secondary" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/layoutItemsClothes"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_sm"
+                                android:orientation="vertical"
+                                android:visibility="visible">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_column_type"
+                                        android:textColor="@color/volunteer_acceptance_text_muted"
+                                        android:textSize="@dimen/text_sm"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_column_quantity"
+                                        android:textColor="@color/volunteer_acceptance_text_muted"
+                                        android:textSize="@dimen/text_sm"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvClothesItemType1"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_clothes_item_type_1"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/text_sm" />
+
+                                    <TextView
+                                        android:id="@+id/tvClothesItemQty1"
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_clothes_item_quantity_1"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/text_sm" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvClothesItemType2"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_clothes_item_type_2"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/text_sm" />
+
+                                    <TextView
+                                        android:id="@+id/tvClothesItemQty2"
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_clothes_item_quantity_2"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/text_sm" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvClothesItemType3"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_clothes_item_type_3"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/text_sm" />
+
+                                    <TextView
+                                        android:id="@+id/tvClothesItemQty3"
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_clothes_item_quantity_3"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/text_sm" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardGroupFood"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        app:cardBackgroundColor="@color/volunteer_acceptance_info_box_bg"
+                        app:cardCornerRadius="@dimen/radius_md"
+                        app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                        app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/spacing_sm">
+
+                            <LinearLayout
+                                android:id="@+id/layoutHeaderFood"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvHeaderFood"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/volunteer_supply_detail_group_food"
+                                    android:textColor="@color/volunteer_acceptance_text_primary"
+                                    android:textSize="@dimen/volunteer_supply_detail_group_title_size"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:id="@+id/ivChevronFood"
+                                    android:layout_width="@dimen/volunteer_supply_detail_chevron_size"
+                                    android:layout_height="@dimen/volunteer_supply_detail_chevron_size"
+                                    android:contentDescription="@string/volunteer_supply_detail_chevron_content_desc"
+                                    android:src="@android:drawable/arrow_down_float"
+                                    app:tint="@color/volunteer_acceptance_text_secondary" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/layoutItemsFood"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_sm"
+                                android:orientation="vertical"
+                                android:visibility="visible">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_column_type"
+                                        android:textColor="@color/volunteer_acceptance_text_muted"
+                                        android:textSize="@dimen/text_sm"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_column_quantity"
+                                        android:textColor="@color/volunteer_acceptance_text_muted"
+                                        android:textSize="@dimen/text_sm"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvFoodItemType1"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_food_item_type_1"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/text_sm" />
+
+                                    <TextView
+                                        android:id="@+id/tvFoodItemQty1"
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_food_item_quantity_1"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/text_sm" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvFoodItemType2"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_food_item_type_2"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/text_sm" />
+
+                                    <TextView
+                                        android:id="@+id/tvFoodItemQty2"
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_food_item_quantity_2"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/text_sm" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvFoodItemType3"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_food_item_type_3"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/text_sm" />
+
+                                    <TextView
+                                        android:id="@+id/tvFoodItemQty3"
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_food_item_quantity_3"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/text_sm" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardGroupWater"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        app:cardBackgroundColor="@color/volunteer_acceptance_info_box_bg"
+                        app:cardCornerRadius="@dimen/radius_md"
+                        app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                        app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/spacing_sm">
+
+                            <LinearLayout
+                                android:id="@+id/layoutHeaderWater"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvHeaderWater"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/volunteer_supply_detail_group_water"
+                                    android:textColor="@color/volunteer_acceptance_text_primary"
+                                    android:textSize="@dimen/volunteer_supply_detail_group_title_size"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:id="@+id/ivChevronWater"
+                                    android:layout_width="@dimen/volunteer_supply_detail_chevron_size"
+                                    android:layout_height="@dimen/volunteer_supply_detail_chevron_size"
+                                    android:contentDescription="@string/volunteer_supply_detail_chevron_content_desc"
+                                    android:src="@android:drawable/arrow_down_float"
+                                    app:tint="@color/volunteer_acceptance_text_secondary" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/layoutItemsWater"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_sm"
+                                android:orientation="vertical"
+                                android:visibility="visible">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_column_type"
+                                        android:textColor="@color/volunteer_acceptance_text_muted"
+                                        android:textSize="@dimen/text_sm"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_column_quantity"
+                                        android:textColor="@color/volunteer_acceptance_text_muted"
+                                        android:textSize="@dimen/text_sm"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvWaterItemType1"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_water_item_type_1"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/text_sm" />
+
+                                    <TextView
+                                        android:id="@+id/tvWaterItemQty1"
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_water_item_quantity_1"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/text_sm" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvWaterItemType2"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_water_item_type_2"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/text_sm" />
+
+                                    <TextView
+                                        android:id="@+id/tvWaterItemQty2"
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_water_item_quantity_2"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/text_sm" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvWaterItemType3"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_water_item_type_3"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/text_sm" />
+
+                                    <TextView
+                                        android:id="@+id/tvWaterItemQty3"
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_water_item_quantity_3"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/text_sm" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardGroupOther"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        app:cardBackgroundColor="@color/volunteer_acceptance_info_box_bg"
+                        app:cardCornerRadius="@dimen/radius_md"
+                        app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                        app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/spacing_sm">
+
+                            <LinearLayout
+                                android:id="@+id/layoutHeaderOther"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvHeaderOther"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/volunteer_supply_detail_group_other"
+                                    android:textColor="@color/volunteer_acceptance_text_primary"
+                                    android:textSize="@dimen/volunteer_supply_detail_group_title_size"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:id="@+id/ivChevronOther"
+                                    android:layout_width="@dimen/volunteer_supply_detail_chevron_size"
+                                    android:layout_height="@dimen/volunteer_supply_detail_chevron_size"
+                                    android:contentDescription="@string/volunteer_supply_detail_chevron_content_desc"
+                                    android:src="@android:drawable/arrow_down_float"
+                                    app:tint="@color/volunteer_acceptance_text_secondary" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/layoutItemsOther"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_sm"
+                                android:orientation="vertical"
+                                android:visibility="visible">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_column_type"
+                                        android:textColor="@color/volunteer_acceptance_text_muted"
+                                        android:textSize="@dimen/text_sm"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_column_quantity"
+                                        android:textColor="@color/volunteer_acceptance_text_muted"
+                                        android:textSize="@dimen/text_sm"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvOtherItemType1"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/volunteer_supply_detail_other_item_type_1"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/text_sm" />
+
+                                    <TextView
+                                        android:id="@+id/tvOtherItemQty1"
+                                        android:layout_width="@dimen/volunteer_supply_detail_quantity_column_width"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:text="@string/volunteer_supply_detail_other_item_quantity_1"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/text_sm" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
