@@ -123,8 +123,7 @@ public class VolunteerDeliveryMissionFragment extends BaseFragment<FragmentVolun
             volunteerTaskViewModel.setCurrentDeliveryStep(currentStep + 1);
         });
 
-        binding.btnSeeDetails.setOnClickListener(
-                v -> showToast(getString(R.string.volunteer_delivery_mission_toast_detail_todo)));
+        binding.btnSeeDetails.setOnClickListener(v -> navigateSafely(R.id.action_delivery_to_supplyDetail));
     }
 
     private void updateUIByStep(int currentStep) {

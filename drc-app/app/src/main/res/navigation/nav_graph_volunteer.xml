@@ -70,10 +70,19 @@
         android:label="Volunteer Delivery Mission" >
 
         <action
+            android:id="@+id/action_delivery_to_supplyDetail"
+            app:destination="@id/volunteerSupplyDetailFragment" />
+
+        <action
             android:id="@+id/action_delivery_mission_to_dashboard"
             app:destination="@id/volunteerDashboardFragment" />
 
     </fragment>
+
+    <fragment
+        android:id="@+id/volunteerSupplyDetailFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerSupplyDetailFragment"
+        android:label="Volunteer Supply Detail" />
 
     <fragment
         android:id="@+id/volunteerCurrentSosMissionFragment"
