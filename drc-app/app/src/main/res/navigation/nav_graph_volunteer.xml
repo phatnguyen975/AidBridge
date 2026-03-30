@@ -33,6 +33,10 @@
             android:id="@+id/action_mission_list_to_current_sos_mission"
             app:destination="@id/volunteerCurrentSosMissionFragment" />
 
+        <action
+            android:id="@+id/action_mission_list_to_delivery_mission"
+            app:destination="@id/volunteerDeliveryMissionFragment" />
+
     </fragment>
 
     <fragment

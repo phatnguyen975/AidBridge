@@ -26,7 +26,6 @@ public class VolunteerDeliveryMissionFragment extends BaseFragment<FragmentVolun
 
     private static final int TOTAL_STEPS = 4;
 
-    private int currentStep = 1;
     private VolunteerTaskViewModel volunteerTaskViewModel;
 
     private View[] progressSegments;
@@ -45,9 +44,10 @@ public class VolunteerDeliveryMissionFragment extends BaseFragment<FragmentVolun
     protected void setupViews() {
         volunteerTaskViewModel = new ViewModelProvider(requireActivity()).get(VolunteerTaskViewModel.class);
         initUiReferences();
-        mockDeliveryData();
         setupClickListeners();
-        updateUIByStep();
+
+        Integer initialStep = volunteerTaskViewModel.getCurrentDeliveryStep().getValue();
+        updateUIByStep(initialStep == null ? 1 : initialStep);
     }
 
     @Override
@@ -68,7 +68,10 @@ public class VolunteerDeliveryMissionFragment extends BaseFragment<FragmentVolun
 
     @Override
     protected void observeViewModel() {
-        // TODO: Observe API-backed state when delivery workflow is integrated.
+        volunteerTaskViewModel.getCurrentDeliveryStep().observe(getViewLifecycleOwner(), step -> {
+            int currentValue = step == null ? 1 : step;
+            updateUIByStep(currentValue);
+        });
     }
 
     private void initUiReferences() {
@@ -109,20 +112,22 @@ public class VolunteerDeliveryMissionFragment extends BaseFragment<FragmentVolun
 
     private void setupClickListeners() {
         binding.btnAction.setOnClickListener(v -> {
+            Integer stepValue = volunteerTaskViewModel.getCurrentDeliveryStep().getValue();
+            int currentStep = stepValue == null ? 1 : stepValue;
+
             if (currentStep >= TOTAL_STEPS) {
                 finishDeliveryMission();
                 return;
             }
 
-            currentStep++;
-            updateUIByStep();
+            volunteerTaskViewModel.setCurrentDeliveryStep(currentStep + 1);
         });
 
         binding.btnSeeDetails.setOnClickListener(
                 v -> showToast(getString(R.string.volunteer_delivery_mission_toast_detail_todo)));
     }
 
-    private void updateUIByStep() {
+    private void updateUIByStep(int currentStep) {
         int activeColor = ContextCompat.getColor(requireContext(), R.color.volunteer_acceptance_accept_button_bg);
         int inactiveColor = ContextCompat.getColor(requireContext(),
                 R.color.volunteer_acceptance_decline_button_stroke);
@@ -165,12 +170,5 @@ public class VolunteerDeliveryMissionFragment extends BaseFragment<FragmentVolun
         volunteerTaskViewModel.completeMission();
         showToast(getString(R.string.volunteer_delivery_mission_toast_completed));
         navigateSafely(R.id.action_delivery_mission_to_dashboard);
-    }
-
-    private void mockDeliveryData() {
-        binding.tvRecipientNameValue.setText(R.string.volunteer_delivery_mission_recipient_name_value);
-        binding.tvRecipientPhoneValue.setText(R.string.volunteer_delivery_mission_recipient_phone_value);
-        binding.tvRecipientNoteValue.setText(R.string.volunteer_delivery_mission_recipient_note_value);
-        binding.tvOrderDetailTitle.setText(R.string.volunteer_delivery_mission_order_detail_title);
     }
 }

@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class VolunteerMissionFragment extends BaseFragment<FragmentVolunteerMissionBinding> {
 
     private VolunteerTaskViewModel volunteerTaskViewModel;
-    private boolean hasRoutedToCurrentMission;
+    private Integer lastRoutedActionId;
 
     @Nullable
     @Override
@@ -30,43 +30,58 @@ public class VolunteerMissionFragment extends BaseFragment<FragmentVolunteerMiss
     protected void setupViews() {
         volunteerTaskViewModel = new ViewModelProvider(requireActivity()).get(VolunteerTaskViewModel.class);
         showRouterLoading(true);
-
-        Boolean currentAcceptedState = volunteerTaskViewModel.getIsMissionAccepted().getValue();
-        if (currentAcceptedState != null) {
-            handleMissionAcceptedState(currentAcceptedState);
-        }
+        evaluateMissionRouter();
     }
 
     @Override
     protected void observeViewModel() {
         volunteerTaskViewModel.getIsMissionAccepted().observe(getViewLifecycleOwner(),
-                this::handleMissionAcceptedState);
+                isAccepted -> evaluateMissionRouter());
+        volunteerTaskViewModel.getCurrentMissionType().observe(getViewLifecycleOwner(),
+                missionType -> evaluateMissionRouter());
     }
 
-    private void handleMissionAcceptedState(@Nullable Boolean isAccepted) {
-        boolean missionAccepted = Boolean.TRUE.equals(isAccepted);
-        if (missionAccepted) {
+    private void evaluateMissionRouter() {
+        boolean missionAccepted = Boolean.TRUE.equals(volunteerTaskViewModel.getIsMissionAccepted().getValue());
+        String missionType = volunteerTaskViewModel.getCurrentMissionType().getValue();
+
+        if (!missionAccepted) {
+            lastRoutedActionId = null;
+            showRouterLoading(false);
+            binding.tvMissionPlaceholder.setVisibility(View.VISIBLE);
+            binding.tvMissionRouterHint.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        if (VoluteerMissionAcceptanceFragment.MISSION_TYPE_RESCUE.equalsIgnoreCase(missionType)) {
             showRouterLoading(true);
-            routeToCurrentMissionIfNeeded();
+            routeByActionIfNeeded(R.id.action_mission_list_to_current_sos_mission);
             return;
         }
 
-        hasRoutedToCurrentMission = false;
-        showRouterLoading(false);
-        binding.tvMissionPlaceholder.setVisibility(View.VISIBLE);
-        binding.tvMissionRouterHint.setVisibility(View.VISIBLE);
+        if (VoluteerMissionAcceptanceFragment.MISSION_TYPE_SUPPLY.equalsIgnoreCase(missionType)) {
+            showRouterLoading(true);
+            routeByActionIfNeeded(R.id.action_mission_list_to_delivery_mission);
+            return;
+        }
+
+        // Keep loading visible while waiting for mission type hydration to avoid UI
+        // flicker.
+        showRouterLoading(true);
     }
 
-    private void routeToCurrentMissionIfNeeded() {
-        if (hasRoutedToCurrentMission) {
+    private void routeByActionIfNeeded(int actionId) {
+        if (lastRoutedActionId != null && lastRoutedActionId == actionId) {
             return;
         }
 
-        hasRoutedToCurrentMission = true;
-        navigateSafely(R.id.action_mission_list_to_current_sos_mission);
+        lastRoutedActionId = actionId;
+        navigateSafely(actionId);
     }
 
     private void showRouterLoading(boolean isLoading) {
         binding.progressMissionRouter.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        binding.tvMissionPlaceholder.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+        binding.tvMissionRouterHint.setVisibility(isLoading ? View.GONE : View.VISIBLE);
     }
 }

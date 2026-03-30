@@ -104,13 +104,13 @@ public class VoluteerMissionAcceptanceFragment extends BaseFragment<FragmentVolu
 
         binding.btnAccept.setOnClickListener(v -> {
             if (MISSION_TYPE_SUPPLY.equalsIgnoreCase(missionType)) {
-                volunteerTaskViewModel.acceptMission(MOCK_SUPPLY_MISSION_ID);
+                volunteerTaskViewModel.acceptMission(MOCK_SUPPLY_MISSION_ID, MISSION_TYPE_SUPPLY);
                 showToast(getString(R.string.volunteer_sos_acceptance_toast_accept_success));
                 navigateSafely(R.id.action_sos_acceptance_to_delivery_mission);
                 return;
             }
 
-            volunteerTaskViewModel.acceptMission(MOCK_MISSION_ID);
+            volunteerTaskViewModel.acceptMission(MOCK_MISSION_ID, MISSION_TYPE_RESCUE);
             showToast(getString(R.string.volunteer_sos_acceptance_toast_accept_success));
             navigateSafely(R.id.action_sos_acceptance_to_current_sos_mission);
         });
