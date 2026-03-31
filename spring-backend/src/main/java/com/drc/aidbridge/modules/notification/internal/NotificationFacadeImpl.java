@@ -9,15 +9,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationFacadeImpl implements NotificationFacade {
-
-    private final EmailService emailService;
+     
+    private final EmailService emailService; 
     private final Optional<FCMService> fcmService;
-
+    
     @Override
     public void sendEmail(String to, String otp) {
         emailService.sendOtpEmail(to, otp);
