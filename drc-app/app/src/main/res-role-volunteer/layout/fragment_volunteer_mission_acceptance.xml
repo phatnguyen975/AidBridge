@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/volunteer_acceptance_bg">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvScreenTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/volunteer_sos_acceptance_horizontal_padding"
+                android:layout_marginTop="@dimen/volunteer_sos_acceptance_header_top_margin"
+                android:layout_marginEnd="@dimen/volunteer_sos_acceptance_horizontal_padding"
+                android:gravity="center"
+                android:text="@string/volunteer_sos_acceptance_title"
+                android:textAllCaps="true"
+                android:textColor="@color/volunteer_acceptance_text_primary"
+                android:textSize="@dimen/volunteer_sos_acceptance_title_text_size"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/layoutTimerSection"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/volunteer_sos_acceptance_horizontal_padding"
+                android:layout_marginTop="@dimen/volunteer_sos_acceptance_timer_section_top_margin"
+                android:layout_marginEnd="@dimen/volunteer_sos_acceptance_horizontal_padding"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvScreenTitle">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="@dimen/volunteer_sos_acceptance_timer_card_size"
+                        android:layout_height="@dimen/volunteer_sos_acceptance_timer_card_size"
+                        app:cardBackgroundColor="@color/volunteer_acceptance_timer_card_bg"
+                        app:cardCornerRadius="@dimen/volunteer_sos_acceptance_timer_card_radius">
+
+                        <TextView
+                            android:id="@+id/tvTimerMinutesValue"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/volunteer_sos_acceptance_timer_minutes_value"
+                            android:textColor="@color/volunteer_acceptance_timer_value_inactive"
+                            android:textSize="@dimen/volunteer_sos_acceptance_timer_value_size"
+                            android:textStyle="bold" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:gravity="center"
+                        android:text="@string/volunteer_sos_acceptance_timer_minutes_label"
+                        android:textAllCaps="true"
+                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                        android:textSize="@dimen/volunteer_sos_acceptance_timer_unit_size" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/volunteer_sos_acceptance_timer_gap"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="@dimen/volunteer_sos_acceptance_timer_card_size"
+                        android:layout_height="@dimen/volunteer_sos_acceptance_timer_card_size"
+                        app:cardBackgroundColor="@color/volunteer_acceptance_timer_card_bg"
+                        app:cardCornerRadius="@dimen/volunteer_sos_acceptance_timer_card_radius">
+
+                        <TextView
+                            android:id="@+id/tvTimerSecondsValue"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/volunteer_sos_acceptance_timer_seconds_value"
+                            android:textColor="@color/volunteer_acceptance_timer_value_active"
+                            android:textSize="@dimen/volunteer_sos_acceptance_timer_value_size"
+                            android:textStyle="bold" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:gravity="center"
+                        android:text="@string/volunteer_sos_acceptance_timer_seconds_label"
+                        android:textAllCaps="true"
+                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                        android:textSize="@dimen/volunteer_sos_acceptance_timer_unit_size" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvTimerDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/volunteer_sos_acceptance_horizontal_padding"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:layout_marginEnd="@dimen/volunteer_sos_acceptance_horizontal_padding"
+                android:gravity="center"
+                android:text="@string/volunteer_sos_acceptance_timer_description"
+                android:textColor="@color/volunteer_acceptance_timer_label"
+                android:textSize="@dimen/volunteer_sos_acceptance_timer_desc_size"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutTimerSection" />
+
+            <FrameLayout
+                android:id="@+id/mapContainer"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/volunteer_sos_acceptance_map_height"
+                android:layout_marginStart="@dimen/volunteer_sos_acceptance_horizontal_padding"
+                android:layout_marginTop="@dimen/volunteer_sos_acceptance_map_top_margin"
+                android:layout_marginEnd="@dimen/volunteer_sos_acceptance_horizontal_padding"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTimerDescription">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:cardBackgroundColor="@color/volunteer_acceptance_map_placeholder_bg"
+                    app:cardCornerRadius="@dimen/volunteer_sos_acceptance_map_radius">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/volunteer_sos_acceptance_map_placeholder"
+                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                        android:textSize="@dimen/volunteer_sos_acceptance_map_placeholder_size"
+                        android:textStyle="bold" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginStart="@dimen/spacing_sm"
+                    android:layout_marginBottom="@dimen/spacing_sm"
+                    app:cardBackgroundColor="@color/volunteer_acceptance_distance_badge_bg"
+                    app:cardCornerRadius="@dimen/volunteer_sos_acceptance_distance_badge_radius">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/spacing_sm"
+                        android:paddingTop="@dimen/spacing_xs"
+                        android:paddingEnd="@dimen/spacing_sm"
+                        android:paddingBottom="@dimen/spacing_xs"
+                        android:text="@string/volunteer_sos_acceptance_distance"
+                        android:textColor="@color/volunteer_acceptance_text_primary"
+                        android:textSize="@dimen/volunteer_sos_acceptance_distance_text_size" />
+                </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/missionCardBottom"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/volunteer_sos_acceptance_horizontal_padding"
+                android:layout_marginTop="@dimen/volunteer_sos_acceptance_card_top_margin"
+                android:layout_marginEnd="@dimen/volunteer_sos_acceptance_horizontal_padding"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                app:cardBackgroundColor="@color/volunteer_acceptance_mission_card_bg"
+                app:cardCornerRadius="@dimen/volunteer_sos_acceptance_card_radius"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mapContainer"
+                app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
+
+                <LinearLayout
+                    android:id="@+id/layoutMissionContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/volunteer_sos_acceptance_card_padding">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardMissionBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/volunteer_acceptance_badge_urgent"
+                        app:cardCornerRadius="@dimen/radius_full">
+
+                        <TextView
+                            android:id="@+id/tvMissionBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:paddingStart="@dimen/spacing_sm"
+                            android:paddingTop="@dimen/spacing_xs"
+                            android:paddingEnd="@dimen/spacing_sm"
+                            android:paddingBottom="@dimen/spacing_xs"
+                            android:text="@string/volunteer_sos_acceptance_mission_badge"
+                            android:textAllCaps="true"
+                            android:textColor="@color/volunteer_acceptance_text_primary"
+                            android:textSize="@dimen/volunteer_sos_acceptance_mission_badge_text_size"
+                            android:textStyle="bold" />
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:id="@+id/tvMissionTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:text="@string/volunteer_sos_acceptance_mission_title"
+                        android:textColor="@color/volunteer_acceptance_text_primary"
+                        android:textSize="@dimen/volunteer_sos_acceptance_mission_title_size"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardVictimInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:layout_marginBottom="@dimen/spacing_sm"
+                        app:cardBackgroundColor="@color/volunteer_acceptance_info_box_bg"
+                        app:cardCornerRadius="@dimen/radius_md"
+                        app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                        app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/volunteer_sos_acceptance_info_box_padding">
+
+                            <ImageView
+                                android:id="@+id/ivVictimAvatar"
+                                android:layout_width="@dimen/volunteer_sos_acceptance_avatar_size"
+                                android:layout_height="@dimen/volunteer_sos_acceptance_avatar_size"
+                                android:contentDescription="@string/volunteer_sos_acceptance_icon_desc"
+                                android:padding="@dimen/spacing_sm"
+                                android:src="@android:drawable/ic_menu_myplaces"
+                                app:tint="@color/volunteer_acceptance_text_secondary" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/spacing_sm"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Nạn nhân"
+                                    android:textColor="@color/volunteer_acceptance_text_secondary"
+                                    android:textSize="@dimen/volunteer_sos_acceptance_label_text_size" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:text="Nguyễn Văn A"
+                                    android:textColor="@color/volunteer_acceptance_text_primary"
+                                    android:textSize="@dimen/volunteer_sos_acceptance_value_text_size"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardSupplyItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_sm"
+                        android:visibility="gone"
+                        app:cardBackgroundColor="@color/volunteer_acceptance_info_box_bg"
+                        app:cardCornerRadius="@dimen/radius_md"
+                        app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                        app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/volunteer_sos_acceptance_info_box_padding">
+
+                            <ImageView
+                                android:id="@+id/ivSupplyIcon"
+                                android:layout_width="@dimen/volunteer_sos_acceptance_icon_size"
+                                android:layout_height="@dimen/volunteer_sos_acceptance_icon_size"
+                                android:contentDescription="@string/volunteer_mission_acceptance_supply_icon_desc"
+                                android:src="@drawable/ic_truck"
+                                app:tint="@color/volunteer_acceptance_text_secondary" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/spacing_sm"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tvSupplyItemsLabel"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/volunteer_mission_acceptance_supply_items_label"
+                                    android:textColor="@color/volunteer_acceptance_text_secondary"
+                                    android:textSize="@dimen/volunteer_sos_acceptance_label_text_size" />
+
+                                <TextView
+                                    android:id="@+id/tvSupplyItemsValue"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/spacing_xs"
+                                    android:text="@string/volunteer_mission_acceptance_supply_items_value"
+                                    android:textColor="@color/volunteer_acceptance_text_primary"
+                                    android:textSize="@dimen/text_sm" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardAddressInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/volunteer_acceptance_info_box_bg"
+                        app:cardCornerRadius="@dimen/radius_md"
+                        app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                        app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/volunteer_sos_acceptance_info_box_padding">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/ivLocationIcon"
+                                    android:layout_width="@dimen/volunteer_sos_acceptance_icon_size"
+                                    android:layout_height="@dimen/volunteer_sos_acceptance_icon_size"
+                                    android:contentDescription="@string/volunteer_sos_acceptance_icon_desc"
+                                    android:src="@android:drawable/ic_menu_mylocation"
+                                    app:tint="@color/volunteer_acceptance_text_secondary" />
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/spacing_sm"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvAddressLabel"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Địa chỉ"
+                                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                                        android:textSize="@dimen/volunteer_sos_acceptance_label_text_size" />
+
+                                    <TextView
+                                        android:id="@+id/tvAddressValue"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/spacing_xs"
+                                        android:text="123 Đường ABC, Quận XYZ"
+                                        android:textColor="@color/volunteer_acceptance_text_primary"
+                                        android:textSize="@dimen/volunteer_sos_acceptance_value_text_size"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tvAddressNote"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_sm"
+                                android:text="Nhà cổng xanh, đối diện tiệm thuốc"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/volunteer_sos_acceptance_note_value_text_size"
+                                android:textStyle="italic" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:id="@+id/actionButtonsContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/volunteer_sos_acceptance_horizontal_padding"
+                android:layout_marginEnd="@dimen/volunteer_sos_acceptance_horizontal_padding"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:layout_marginBottom="@dimen/spacing_md"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/missionCardBottom"
+                app:layout_constraintVertical_bias="0.0">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAccept"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/volunteer_sos_acceptance_button_height"
+                    android:text="@string/volunteer_sos_acceptance_btn_accept"
+                    android:textAllCaps="false"
+                    android:textColor="@color/volunteer_acceptance_text_primary"
+                    android:textSize="@dimen/volunteer_sos_acceptance_button_text_size"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/volunteer_acceptance_accept_button_bg"
+                    app:cornerRadius="@dimen/volunteer_sos_acceptance_button_radius"
+                    app:icon="@drawable/ic_check_circle"
+                    app:iconGravity="textStart"
+                    app:iconPadding="@dimen/spacing_sm"
+                    app:iconSize="@dimen/volunteer_sos_acceptance_button_icon_size"
+                    app:iconTint="@color/volunteer_acceptance_text_primary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDecline"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/volunteer_sos_acceptance_button_height"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:text="@string/volunteer_sos_acceptance_btn_decline"
+                    android:textAllCaps="false"
+                    android:textColor="@color/volunteer_acceptance_text_primary"
+                    android:textSize="@dimen/volunteer_sos_acceptance_button_text_size"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/volunteer_acceptance_decline_button_bg"
+                    app:cornerRadius="@dimen/volunteer_sos_acceptance_button_radius"
+                    app:icon="@android:drawable/ic_menu_close_clear_cancel"
+                    app:iconGravity="textStart"
+                    app:iconPadding="@dimen/spacing_sm"
+                    app:iconSize="@dimen/volunteer_sos_acceptance_button_icon_size"
+                    app:iconTint="@color/volunteer_acceptance_text_primary"
+                    app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
+                    app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

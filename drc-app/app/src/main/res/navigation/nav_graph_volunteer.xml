@@ -8,16 +8,92 @@
     <fragment
         android:id="@+id/volunteerDashboardFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerDashboardFragment"
-        android:label="Volunteer Dashboard" />
+        android:label="Volunteer Dashboard" >
+
+        <action
+            android:id="@+id/action_dashboard_to_history"
+            app:destination="@id/volunteerMissionHistoryFragment" />
+
+        <action
+            android:id="@+id/action_dashboard_to_sos_acceptance"
+            app:destination="@id/volunteerSosAcceptanceFragment" />
+
+        <action
+            android:id="@+id/action_dashboard_to_current_sos_mission"
+            app:destination="@id/volunteerCurrentSosMissionFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/volunteerMissionListFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerMissionFragment"
-        android:label="Volunteer Missions" />
+        android:label="Volunteer Missions" >
+
+        <action
+            android:id="@+id/action_mission_list_to_current_sos_mission"
+            app:destination="@id/volunteerCurrentSosMissionFragment" />
+
+        <action
+            android:id="@+id/action_mission_list_to_delivery_mission"
+            app:destination="@id/volunteerDeliveryMissionFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/volunteerMapFragment"
         android:name="com.drc.aidbridge.ui.map.fragment.VolunteerMapFragment"
         android:label="Volunteer Map" />
+
+    <fragment
+        android:id="@+id/volunteerMissionHistoryFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerHistoryFragment"
+        android:label="Volunteer Mission History" />
+
+    <fragment
+        android:id="@+id/volunteerSosAcceptanceFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VoluteerMissionAcceptanceFragment"
+        android:label="Volunteer Sos Acceptance" >
+
+        <action
+            android:id="@+id/action_sos_acceptance_to_current_sos_mission"
+            app:destination="@id/volunteerCurrentSosMissionFragment" />
+
+        <action
+            android:id="@+id/action_sos_acceptance_to_delivery_mission"
+            app:destination="@id/volunteerDeliveryMissionFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/volunteerDeliveryMissionFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerDeliveryMissionFragment"
+        android:label="Volunteer Delivery Mission" >
+
+        <action
+            android:id="@+id/action_delivery_to_supplyDetail"
+            app:destination="@id/volunteerSupplyDetailFragment" />
+
+        <action
+            android:id="@+id/action_delivery_mission_to_dashboard"
+            app:destination="@id/volunteerDashboardFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/volunteerSupplyDetailFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerSupplyDetailFragment"
+        android:label="Volunteer Supply Detail" />
+
+    <fragment
+        android:id="@+id/volunteerCurrentSosMissionFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerCurrentSosMissionFragment"
+        android:label="Volunteer Current SoS Mission" >
+
+        <action
+            android:id="@+id/action_current_sos_mission_to_dashboard"
+            app:destination="@id/volunteerDashboardFragment" />
+
+    </fragment>
+
 
 </navigation>
