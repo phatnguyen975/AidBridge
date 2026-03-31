@@ -6,6 +6,10 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
+/**
+ * ViewModel for Admin Dashboard screen.
+ * Currently UI-only and reserved for future backend/use case integration.
+ */
 @HiltViewModel
 public class AdminDashboardViewModel extends BaseViewModel {
 
