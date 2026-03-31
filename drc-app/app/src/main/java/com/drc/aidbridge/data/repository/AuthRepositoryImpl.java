@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.drc.aidbridge.data.remote.api.AuthApiService;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.dto.response.AuthResponse;
+import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 import com.drc.aidbridge.data.remote.dto.response.UserDto;
 import com.drc.aidbridge.data.remote.dto.request.ForgotPasswordRequest;
 import com.drc.aidbridge.data.remote.dto.request.LoginRequest;
@@ -55,28 +56,50 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
 
         // TODO: Re-enable actual API call once backend is ready.
         /*
-        authApiService.login(request).enqueue(new Callback<AuthResponse>() {
+        authApiService.login(request).enqueue(new Callback<BaseResponse<AuthResponse>>() {
             @Override
-            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+            public void onResponse(Call<BaseResponse<AuthResponse>> call,
+                                   Response<BaseResponse<AuthResponse>> response) {
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
 
-                AuthResponse body = response.body();
-                if (body == null || body.getUser() == null) {
+                BaseResponse<AuthResponse> baseResponse = response.body();
+                if (baseResponse == null) {
                     result.postValue(NetworkResultWrapper.error("Phản hồi đăng nhập không hợp lệ."));
                     return;
                 }
 
-                persistAuthData(body);
-                User user = userMapper.mapToDomain(body.getUser());
+                if (!baseResponse.isSuccess()) {
+                    String apiMessage = baseResponse.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                        apiMessage != null && !apiMessage.isEmpty()
+                            ? apiMessage
+                            : "Đăng nhập thất bại."
+                    ));
+                    return;
+                }
+
+                AuthResponse data = baseResponse.getData();
+                if (data == null || data.getUser() == null) {
+                    String apiMessage = baseResponse.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                        apiMessage != null && !apiMessage.isEmpty()
+                            ? apiMessage
+                            : "Phản hồi đăng nhập không hợp lệ."
+                    ));
+                    return;
+                }
+
+                persistAuthData(data);
+                User user = userMapper.mapToDomain(data.getUser());
                 tokenManager.saveUserInfo(user.getId(), user.getName(), user.getEmail(), user.getRole().name());
                 result.postValue(NetworkResultWrapper.success(user));
             }
 
             @Override
-            public void onFailure(Call<AuthResponse> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<AuthResponse>> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error("Không thể kết nối máy chủ: " + safeMessage(t)));
             }
         });
@@ -108,19 +131,36 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
 
         // TODO: Re-enable actual API call once backend is ready.
         /*
-        authApiService.register(request).enqueue(new Callback<AuthResponse>() {
+        authApiService.register(request).enqueue(new Callback<BaseResponse<AuthResponse>>() {
             @Override
-            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+            public void onResponse(Call<BaseResponse<AuthResponse>> call,
+                                   Response<BaseResponse<AuthResponse>> response) {
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
 
-                AuthResponse body = response.body();
-                if (body != null) {
-                    persistAuthData(body);
-                    if (body.getUser() != null) {
-                        User user = userMapper.mapToDomain(body.getUser());
+                BaseResponse<AuthResponse> baseResponse = response.body();
+                if (baseResponse == null) {
+                    result.postValue(NetworkResultWrapper.error("Phản hồi đăng ký không hợp lệ."));
+                    return;
+                }
+
+                if (!baseResponse.isSuccess()) {
+                    String apiMessage = baseResponse.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                        apiMessage != null && !apiMessage.isEmpty()
+                            ? apiMessage
+                            : "Đăng ký thất bại."
+                    ));
+                    return;
+                }
+
+                AuthResponse data = baseResponse.getData();
+                if (data != null) {
+                    persistAuthData(data);
+                    if (data.getUser() != null) {
+                        User user = userMapper.mapToDomain(data.getUser());
                         tokenManager.saveUserInfo(user.getId(), user.getName(), user.getEmail(), user.getRole().name());
                     }
                 }
@@ -129,7 +169,7 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
             }
 
             @Override
-            public void onFailure(Call<AuthResponse> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<AuthResponse>> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error("Đăng ký thất bại: " + safeMessage(t)));
             }
         });
@@ -147,19 +187,36 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
 
         // TODO: Re-enable actual API call once backend is ready.
         /*
-        authApiService.verifyOtp(request).enqueue(new Callback<AuthResponse>() {
+        authApiService.verifyOtp(request).enqueue(new Callback<BaseResponse<AuthResponse>>() {
             @Override
-            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+            public void onResponse(Call<BaseResponse<AuthResponse>> call,
+                                   Response<BaseResponse<AuthResponse>> response) {
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
 
-                AuthResponse body = response.body();
-                if (body != null) {
-                    persistAuthData(body);
-                    if (body.getUser() != null) {
-                        User user = userMapper.mapToDomain(body.getUser());
+                BaseResponse<AuthResponse> baseResponse = response.body();
+                if (baseResponse == null) {
+                    result.postValue(NetworkResultWrapper.error("Phản hồi xác thực OTP không hợp lệ."));
+                    return;
+                }
+
+                if (!baseResponse.isSuccess()) {
+                    String apiMessage = baseResponse.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                        apiMessage != null && !apiMessage.isEmpty()
+                            ? apiMessage
+                            : "Xác thực OTP thất bại."
+                    ));
+                    return;
+                }
+
+                AuthResponse data = baseResponse.getData();
+                if (data != null) {
+                    persistAuthData(data);
+                    if (data.getUser() != null) {
+                        User user = userMapper.mapToDomain(data.getUser());
                         tokenManager.saveUserInfo(user.getId(), user.getName(), user.getEmail(), user.getRole().name());
                     }
                 }
@@ -168,7 +225,7 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
             }
 
             @Override
-            public void onFailure(Call<AuthResponse> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<AuthResponse>> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error("Xác thực OTP thất bại: " + safeMessage(t)));
             }
         });
@@ -186,18 +243,35 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
 
         // TODO: Re-enable actual API call once backend is ready.
         /*
-        authApiService.resendOtp(request).enqueue(new Callback<Void>() {
+        authApiService.resendOtp(request).enqueue(new Callback<BaseResponse<Void>>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
+
+                BaseResponse<Void> baseResponse = response.body();
+                if (baseResponse == null) {
+                    result.postValue(NetworkResultWrapper.error("Phản hồi gửi lại OTP không hợp lệ."));
+                    return;
+                }
+
+                if (!baseResponse.isSuccess()) {
+                    String apiMessage = baseResponse.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                        apiMessage != null && !apiMessage.isEmpty()
+                            ? apiMessage
+                            : "Gửi lại OTP thất bại."
+                    ));
+                    return;
+                }
+
                 result.postValue(NetworkResultWrapper.success(Boolean.TRUE));
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error("Gửi lại OTP thất bại: " + safeMessage(t)));
             }
         });
@@ -215,18 +289,35 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
 
         // TODO: Re-enable actual API call once backend is ready.
         /*
-        authApiService.forgotPassword(request).enqueue(new Callback<Void>() {
+        authApiService.forgotPassword(request).enqueue(new Callback<BaseResponse<Void>>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
+
+                BaseResponse<Void> baseResponse = response.body();
+                if (baseResponse == null) {
+                    result.postValue(NetworkResultWrapper.error("Phản hồi quên mật khẩu không hợp lệ."));
+                    return;
+                }
+
+                if (!baseResponse.isSuccess()) {
+                    String apiMessage = baseResponse.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                        apiMessage != null && !apiMessage.isEmpty()
+                            ? apiMessage
+                            : "Không gửi được OTP."
+                    ));
+                    return;
+                }
+
                 result.postValue(NetworkResultWrapper.success(request.getEmail()));
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error("Không gửi được OTP: " + safeMessage(t)));
             }
         });
@@ -244,18 +335,35 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
 
         // TODO: Re-enable actual API call once backend is ready.
         /*
-        authApiService.verifyResetOtp(request).enqueue(new Callback<Void>() {
+        authApiService.verifyResetOtp(request).enqueue(new Callback<BaseResponse<Void>>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
+
+                BaseResponse<Void> baseResponse = response.body();
+                if (baseResponse == null) {
+                    result.postValue(NetworkResultWrapper.error("Phản hồi xác thực OTP không hợp lệ."));
+                    return;
+                }
+
+                if (!baseResponse.isSuccess()) {
+                    String apiMessage = baseResponse.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                        apiMessage != null && !apiMessage.isEmpty()
+                            ? apiMessage
+                            : "Xác thực OTP thất bại."
+                    ));
+                    return;
+                }
+
                 result.postValue(NetworkResultWrapper.success(request.getEmail()));
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error("Xác thực OTP thất bại: " + safeMessage(t)));
             }
         });
@@ -273,18 +381,40 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
 
         // TODO: Re-enable actual API call once backend is ready.
         /*
-        authApiService.resetPassword(request).enqueue(new Callback<Void>() {
+        authApiService.resetPassword(request).enqueue(new Callback<BaseResponse<Void>>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
-                result.postValue(NetworkResultWrapper.success("Đổi mật khẩu thành công"));
+
+                BaseResponse<Void> baseResponse = response.body();
+                if (baseResponse == null) {
+                    result.postValue(NetworkResultWrapper.error("Phản hồi đổi mật khẩu không hợp lệ."));
+                    return;
+                }
+
+                if (!baseResponse.isSuccess()) {
+                    String apiMessage = baseResponse.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                        apiMessage != null && !apiMessage.isEmpty()
+                            ? apiMessage
+                            : "Đổi mật khẩu thất bại."
+                    ));
+                    return;
+                }
+
+                String apiMessage = baseResponse.getMessage();
+                result.postValue(NetworkResultWrapper.success(
+                    apiMessage != null && !apiMessage.isEmpty()
+                        ? apiMessage
+                        : "Đổi mật khẩu thành công"
+                ));
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error("Đổi mật khẩu thất bại: " + safeMessage(t)));
             }
         });

@@ -2,6 +2,7 @@ package com.drc.aidbridge.data.remote.interceptor;
 
 import com.drc.aidbridge.data.remote.api.AuthApiService;
 import com.drc.aidbridge.data.remote.dto.response.AuthResponse;
+import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 import com.drc.aidbridge.utils.Constants;
 import com.drc.aidbridge.utils.TokenManager;
 
@@ -75,25 +76,32 @@ public class TokenRefreshInterceptor implements Interceptor {
             body.put("refreshToken", refreshToken);
 
             // Resolve AuthApiService now (safe — Retrofit is fully constructed by this point)
-            Call<AuthResponse> refreshCall = lazyAuthApiService.get().refreshToken(body);
-            retrofit2.Response<AuthResponse> refreshResponse = refreshCall.execute();
+            Call<BaseResponse<AuthResponse>> refreshCall = lazyAuthApiService.get().refreshToken(body);
+            retrofit2.Response<BaseResponse<AuthResponse>> refreshResponse = refreshCall.execute();
 
-            if (refreshResponse.isSuccessful() && refreshResponse.body() != null) {
-                response.close();
+            if (refreshResponse.isSuccessful()) {
+                BaseResponse<AuthResponse> baseResponse = refreshResponse.body();
+                if (baseResponse != null && baseResponse.isSuccess() && baseResponse.getData() != null) {
+                    response.close();
 
-                AuthResponse authResponse = refreshResponse.body();
+                    AuthResponse authResponse = baseResponse.getData();
 
-                // Save the newly obtained tokens to EncryptedSharedPreferences
-                tokenManager.saveTokens(
-                        authResponse.getAccessToken(),
-                        authResponse.getRefreshToken()
-                );
+                    // Save the newly obtained tokens to EncryptedSharedPreferences
+                    tokenManager.saveTokens(
+                            authResponse.getAccessToken(),
+                            authResponse.getRefreshToken()
+                    );
 
-                // Retry the original failed request with the new access token
-                Request retryRequest = originalRequest.newBuilder()
-                        .header("Authorization", "Bearer " + authResponse.getAccessToken())
-                        .build();
-                return chain.proceed(retryRequest);
+                    // Retry the original failed request with the new access token
+                    Request retryRequest = originalRequest.newBuilder()
+                            .header("Authorization", "Bearer " + authResponse.getAccessToken())
+                            .build();
+                    return chain.proceed(retryRequest);
+                }
+
+                // API returns business-level failure or empty data
+                tokenManager.clearAll();
+                return response;
             } else {
                 // Refresh token also rejected — clear session and force re-login
                 tokenManager.clearAll();

@@ -371,20 +371,124 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Logout Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLogout"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-            android:layout_width="wrap_content"
+        <!-- Account Settings Section -->
+        <LinearLayout
+            android:id="@+id/layoutAccountSettings"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_xl"
-            android:text="@string/volunteer_dashboard_btn_logout"
-            android:textAllCaps="false"
-            android:textColor="@color/sos_red"
-            app:icon="@drawable/ic_logout"
-            app:iconTint="@color/sos_red"
+            android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardEmergency" />
+            app:layout_constraintTop_toBottomOf="@id/cardEmergency">
+
+            <TextView
+                android:id="@+id/tvAccountSettingsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/volunteer_dashboard_account_settings_title"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/volunteer_dashboard_section_title_size"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/viewSeparatorTop"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/volunteer_dashboard_separator_height"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:background="@color/text_secondary"
+                android:alpha="0.35" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutAccountSecurity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/spacing_md"
+                android:paddingBottom="@dimen/spacing_md">
+
+                <ImageView
+                    android:id="@+id/ivAccountSecurity"
+                    android:layout_width="@dimen/volunteer_dashboard_account_item_icon_size"
+                    android:layout_height="@dimen/volunteer_dashboard_account_item_icon_size"
+                    android:contentDescription="@string/volunteer_dashboard_account_security"
+                    android:src="@android:drawable/ic_menu_myplaces"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/text_primary" />
+
+                <TextView
+                    android:id="@+id/tvAccountSecurity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_md"
+                    android:text="@string/volunteer_dashboard_account_security"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/volunteer_dashboard_text_user_role_size"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/ivAccountSecurityChevron"
+                    app:layout_constraintStart_toEndOf="@id/ivAccountSecurity"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/ivAccountSecurityChevron"
+                    android:layout_width="@dimen/volunteer_dashboard_account_item_icon_size"
+                    android:layout_height="@dimen/volunteer_dashboard_account_item_icon_size"
+                    android:contentDescription="@string/volunteer_dashboard_account_settings_title"
+                    android:src="@drawable/ic_chevron_right"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/text_secondary"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/viewSeparatorMiddle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/volunteer_dashboard_separator_height"
+                android:background="@color/text_secondary"
+                android:alpha="0.35" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutLogout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/spacing_md"
+                android:paddingBottom="@dimen/spacing_md">
+
+                <ImageView
+                    android:id="@+id/ivLogout"
+                    android:layout_width="@dimen/volunteer_dashboard_account_item_icon_size"
+                    android:layout_height="@dimen/volunteer_dashboard_account_item_icon_size"
+                    android:contentDescription="@string/volunteer_dashboard_btn_logout"
+                    android:src="@drawable/ic_logout"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/sos_red" />
+
+                <TextView
+                    android:id="@+id/tvLogout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_md"
+                    android:text="@string/volunteer_dashboard_btn_logout"
+                    android:textColor="@color/sos_red"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/volunteer_dashboard_text_user_role_size"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/ivLogout"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/viewSeparatorBottom"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/volunteer_dashboard_separator_height"
+                android:background="@color/text_secondary"
+                android:alpha="0.35" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
