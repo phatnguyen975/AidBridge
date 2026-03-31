@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="volunteer_acceptance_bg">#061C35</color>
+    <color name="volunteer_acceptance_text_primary">#FFFFFF</color>
+    <color name="volunteer_acceptance_text_secondary">#8FB4DC</color>
+    <color name="volunteer_acceptance_text_muted">#6E9BC7</color>
+    <color name="volunteer_acceptance_timer_card_bg">#0D325D</color>
+    <color name="volunteer_acceptance_timer_value_active">#FFFFFF</color>
+    <color name="volunteer_acceptance_timer_value_inactive">#288DFA</color>
+    <color name="volunteer_acceptance_timer_label">#6AA7E8</color>
+    <color name="volunteer_acceptance_map_placeholder_bg">#2A3C52</color>
+    <color name="volunteer_acceptance_distance_badge_bg">#243544</color>
+    <color name="volunteer_acceptance_mission_card_bg">#0A2748</color>
+    <color name="volunteer_acceptance_badge_urgent">#EF4444</color>
+    <color name="volunteer_acceptance_info_box_bg">#12385E</color>
+    <color name="volunteer_acceptance_accept_button_bg">#2F86E8</color>
+    <color name="volunteer_acceptance_decline_button_bg">#EF4444</color>
+    <color name="volunteer_acceptance_decline_button_stroke">#1E507C</color>
+
+    <!-- Volunteer Current SOS Mission Colors -->
+    <color name="volunteer_current_mission_urgent_label_bg">#D8FCE0</color>
+    <color name="volunteer_current_mission_urgent_label_text">#1E8E3E</color>
+    <color name="volunteer_current_mission_header_icon_tint">#60A5FA</color>
+    <color name="volunteer_current_mission_health_dot">#FACC15</color>
+    <color name="volunteer_current_mission_note_bg">#1A2D45</color>
+    <color name="volunteer_current_mission_note_stroke">#FACC15</color>
+</resources>

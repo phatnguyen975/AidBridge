@@ -2,7 +2,6 @@ package com.drc.aidbridge.modules.sos.internal.usecase;
 
 import com.drc.aidbridge.modules.shared.enums.SosStatus;
 import com.drc.aidbridge.modules.shared.enums.UrgencyLevel;
-import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.mission.MissionDTO;
 import com.drc.aidbridge.modules.mission.MissionFacade;
 import com.drc.aidbridge.modules.sos.internal.entity.SosRequest;

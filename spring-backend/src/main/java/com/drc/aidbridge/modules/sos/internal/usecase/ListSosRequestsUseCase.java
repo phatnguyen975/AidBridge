@@ -1,7 +1,6 @@
 package com.drc.aidbridge.modules.sos.internal.usecase;
 
 import com.drc.aidbridge.modules.mission.MissionFacade;
-import com.drc.aidbridge.modules.sos.internal.entity.SosRequest;
 import com.drc.aidbridge.modules.sos.internal.mapper.SosMapper;
 import com.drc.aidbridge.modules.sos.internal.repository.SosJpaRepository;
 import com.drc.aidbridge.modules.sos.internal.web.dto.SosRequestResponse;
