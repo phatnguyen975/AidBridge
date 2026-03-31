@@ -1,7 +1,10 @@
 HELP.md
 .gradle
 build/
+.gradle-home/
 application-local.yaml
+src/main/resources/firebase-service-account.json
+src/main/resources/certs/private.pem
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
