@@ -1,4 +1,4 @@
-package com.drc.aidbridge.config;
+package com.drc.aidbridge.modules.attachment.internal.config;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -8,9 +8,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Binds Cloudinary credentials from application.yaml and exposes a singleton SDK bean.
- */
 @Configuration
 @ConfigurationProperties(prefix = "cloudinary")
 @Getter
