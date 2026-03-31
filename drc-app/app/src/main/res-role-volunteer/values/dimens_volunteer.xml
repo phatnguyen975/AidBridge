@@ -19,4 +19,88 @@
     <dimen name="volunteer_dashboard_notification_icon_padding">8dp</dimen>
     <dimen name="volunteer_dashboard_notification_overlay_icon_size">60dp</dimen>
     <dimen name="volunteer_dashboard_button_corner_radius">8dp</dimen>
+    <dimen name="volunteer_dashboard_separator_height">1dp</dimen>
+    <dimen name="volunteer_dashboard_account_item_icon_size">20dp</dimen>
+
+    <!-- Volunteer Mission History Item Dimensions -->
+    <dimen name="volunteer_mission_history_card_stroke_width">1dp</dimen>
+    <dimen name="volunteer_mission_history_badge_icon_size">14dp</dimen>
+    <dimen name="volunteer_mission_history_badge_text_size">11sp</dimen>
+    <dimen name="volunteer_mission_history_location_text_size">16sp</dimen>
+    <dimen name="volunteer_mission_history_datetime_text_size">13sp</dimen>
+
+    <!-- Volunteer SOS Acceptance Dimensions -->
+    <dimen name="volunteer_sos_acceptance_horizontal_padding">20dp</dimen>
+    <dimen name="volunteer_sos_acceptance_header_top_margin">16dp</dimen>
+    <dimen name="volunteer_sos_acceptance_title_text_size">28sp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_section_top_margin">18dp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_card_size">72dp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_gap">14dp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_card_radius">16dp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_value_size">34sp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_unit_size">12sp</dimen>
+    <dimen name="volunteer_sos_acceptance_timer_desc_size">16sp</dimen>
+    <dimen name="volunteer_sos_acceptance_map_top_margin">18dp</dimen>
+    <dimen name="volunteer_sos_acceptance_map_height">190dp</dimen>
+    <dimen name="volunteer_sos_acceptance_map_radius">16dp</dimen>
+    <dimen name="volunteer_sos_acceptance_map_placeholder_size">16sp</dimen>
+    <dimen name="volunteer_sos_acceptance_distance_badge_radius">18dp</dimen>
+    <dimen name="volunteer_sos_acceptance_distance_text_size">14sp</dimen>
+    <dimen name="volunteer_sos_acceptance_card_top_margin">14dp</dimen>
+    <dimen name="volunteer_sos_acceptance_card_radius">18dp</dimen>
+    <dimen name="volunteer_sos_acceptance_card_padding">16dp</dimen>
+    <dimen name="volunteer_sos_acceptance_mission_badge_text_size">12sp</dimen>
+    <dimen name="volunteer_sos_acceptance_mission_title_size">16sp</dimen>
+    <dimen name="volunteer_sos_acceptance_mission_id_size">12sp</dimen>
+    <dimen name="volunteer_sos_acceptance_info_box_radius">14dp</dimen>
+    <dimen name="volunteer_sos_acceptance_info_box_padding">12dp</dimen>
+    <dimen name="volunteer_sos_acceptance_avatar_size">48dp</dimen>
+    <dimen name="volunteer_sos_acceptance_icon_size">48dp</dimen>
+    <dimen name="volunteer_sos_acceptance_label_text_size">14sp</dimen>
+    <dimen name="volunteer_sos_acceptance_value_text_size">20sp</dimen>
+    <dimen name="volunteer_sos_acceptance_note_value_text_size">15sp</dimen>
+    <dimen name="volunteer_sos_acceptance_button_height">56dp</dimen>
+    <dimen name="volunteer_sos_acceptance_button_radius">12dp</dimen>
+    <dimen name="volunteer_sos_acceptance_button_text_size">16sp</dimen>
+    <dimen name="volunteer_sos_acceptance_button_icon_size">18dp</dimen>
+
+    <!-- Volunteer Current SOS Mission Dimensions -->
+    <dimen name="volunteer_current_mission_toolbar_icon_button_size">40dp</dimen>
+    <dimen name="volunteer_current_mission_toolbar_title_size">18sp</dimen>
+    <dimen name="volunteer_current_mission_map_height">200dp</dimen>
+    <dimen name="volunteer_current_mission_request_title_size">20sp</dimen>
+    <dimen name="volunteer_current_mission_loading_size">18dp</dimen>
+    <dimen name="volunteer_current_mission_header_icon_size">20dp</dimen>
+    <dimen name="volunteer_current_mission_health_dot_size">10dp</dimen>
+
+    <!-- Volunteer Delivery Mission Dimensions -->
+    <dimen name="volunteer_delivery_mission_map_height">180dp</dimen>
+    <dimen name="volunteer_delivery_mission_title_size">18sp</dimen>
+    <dimen name="volunteer_delivery_mission_progress_text_size">15sp</dimen>
+    <dimen name="volunteer_delivery_mission_progress_segment_height">8dp</dimen>
+    <dimen name="volunteer_delivery_mission_timeline_indicator_width">40dp</dimen>
+    <dimen name="volunteer_delivery_mission_timeline_icon_size">34dp</dimen>
+    <dimen name="volunteer_delivery_mission_timeline_connector_width">2dp</dimen>
+    <dimen name="volunteer_delivery_mission_timeline_connector_height">36dp</dimen>
+    <dimen name="volunteer_delivery_mission_recipient_value_size">16sp</dimen>
+
+    <!-- Volunteer Supply Detail Dimensions -->
+    <dimen name="volunteer_supply_detail_qr_size">220dp</dimen>
+    <dimen name="volunteer_supply_detail_qr_inner_padding">16dp</dimen>
+    <dimen name="volunteer_supply_detail_qr_corner_radius">14dp</dimen>
+    <dimen name="volunteer_supply_detail_chevron_size">20dp</dimen>
+    <dimen name="volunteer_supply_detail_group_title_size">18sp</dimen>
+    <dimen name="volunteer_supply_detail_quantity_column_width">92dp</dimen>
+
+    <!-- Volunteer Personal Info Dimensions -->
+    <dimen name="volunteer_personal_info_toolbar_height">56dp</dimen>
+    <dimen name="volunteer_personal_info_toolbar_icon_size">24dp</dimen>
+    <dimen name="volunteer_personal_info_toolbar_spacer_width">40dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_frame_size">112dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_card_size">100dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_corner_radius">50dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_edit_button_size">30dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_edit_corner_radius">15dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_edit_icon_size">16dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_edit_margin">10dp</dimen>
 </resources>

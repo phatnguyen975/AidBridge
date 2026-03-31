@@ -13,10 +13,12 @@
     <string name="volunteer_dashboard_completed_count_placeholder">128</string>
     <string name="volunteer_dashboard_notif_title">Thông báo mới</string>
     <string name="volunteer_dashboard_see_all">Xem tất cả</string>
-    <string name="volunteer_dashboard_emergency_title">Cứu hộ khẩn cấp!</string>
+    <string name="volunteer_dashboard_emergency_title">Nhiệm vụ khẩn cấp!</string>
     <string name="volunteer_dashboard_emergency_details_placeholder">Quận 1 - Cách bạn 1.2km</string>
     <string name="volunteer_dashboard_btn_details">Xem chi tiết</string>
     <string name="volunteer_dashboard_btn_logout">Đăng xuất</string>
+    <string name="volunteer_dashboard_account_settings_title">Cài đặt tài khoản</string>
+    <string name="volunteer_dashboard_account_security">Tài khoản &amp; Bảo mật</string>
 
     <!-- Volunteer Dashboard Toasts -->
     <string name="volunteer_dashboard_toast_mode_ready">Chế độ: Sẵn sàng</string>
@@ -27,4 +29,210 @@
     <string name="volunteer_dashboard_toast_see_all_notifications">Xem tất cả thông báo</string>
     <string name="volunteer_dashboard_toast_view_mission_detail">Xem chi tiết nhiệm vụ cứu hộ</string>
     <string name="volunteer_dashboard_toast_logout">Xử lý đăng xuất</string>
+    <string name="volunteer_dashboard_toast_personal_info_todo">Tính năng Thông tin cá nhân đang được phát triển</string>
+
+    <!-- Volunteer Mission History Item -->
+    <string name="volunteer_mission_history_category_emergency">Cứu hộ khẩn cấp</string>
+    <string name="volunteer_mission_history_category_supply">Giao hàng tiếp tế</string>
+    <string name="volunteer_mission_history_location_placeholder">12 Nguyen Hue, Ben Nghe, Quan 1</string>
+    <string name="volunteer_mission_history_location_placeholder_second">45 Le Loi, Ben Thanh, Quan 1</string>
+    <string name="volunteer_mission_history_location_placeholder_third">12 Tran Hung Dao, Cau Ong Lanh, Quan 1</string>
+    <string name="volunteer_mission_history_datetime_placeholder">15/10/2023 • 08:30 sáng</string>
+    <string name="volunteer_mission_history_datetime_placeholder_second">16/10/2023 • 02:10 chiều</string>
+    <string name="volunteer_mission_history_datetime_placeholder_third">17/10/2023 • 06:45 sáng</string>
+    <string name="volunteer_mission_history_category_icon_content_desc">Biểu tượng danh mục nhiệm vụ</string>
+    <string name="volunteer_mission_history_photo_content_desc">Ảnh minh họa nhiệm vụ</string>
+
+    <!-- Volunteer History Screen -->
+    <string name="volunteer_history_toolbar_title">Lịch sử Nhiệm vụ</string>
+    <string name="volunteer_history_back_content_desc">Quay lại</string>
+    <string name="volunteer_history_filter_all">Tất cả</string>
+    <string name="volunteer_history_filter_rescue">Cứu hộ</string>
+    <string name="volunteer_history_filter_delivery">Giao hàng</string>
+    <string name="volunteer_history_completed_label">Nhiệm vụ đã hoàn thành</string>
+
+    <!-- Volunteer History Mock Data -->
+    <string name="volunteer_mission_type_rescue">Cứu hộ</string>
+    <string name="volunteer_mission_type_delivery">Giao hàng</string>
+    <string name="volunteer_mission_dummy_location_1">12 Nguyen Hue, Ben Nghe, Quan 1</string>
+    <string name="volunteer_mission_dummy_location_2">45 Le Loi, Ben Thanh, Quan 1</string>
+    <string name="volunteer_mission_dummy_location_3">88 Hai Ba Trung, Da Kao, Quan 1</string>
+    <string name="volunteer_mission_dummy_location_4">120 Pasteur, Ben Nghe, Quan 1</string>
+    <string name="volunteer_mission_dummy_location_5">22 Vo Thi Sau, Da Kao, Quan 3</string>
+    <string name="volunteer_mission_dummy_location_6">35 Nguyen Thi Minh Khai, Ben Thanh, Quan 1</string>
+    <string name="volunteer_mission_dummy_time_1">Trang %1$d • 07:30 sáng</string>
+    <string name="volunteer_mission_dummy_time_2">Trang %1$d • 09:15 sáng</string>
+    <string name="volunteer_mission_dummy_time_3">Trang %1$d • 11:40 trưa</string>
+    <string name="volunteer_mission_dummy_time_4">Trang %1$d • 02:10 chiều</string>
+    <string name="volunteer_mission_dummy_time_5">Trang %1$d • 05:00 chiều</string>
+    <string name="volunteer_mission_dummy_time_6">Trang %1$d • 08:20 tối</string>
+
+    <!-- Volunteer Mission Router -->
+    <string name="volunteer_mission_router_placeholder">Danh sách nhiệm vụ sẽ hiển thị tại đây</string>
+    <string name="volunteer_mission_router_checking_hint">Đang kiểm tra trạng thái nhiệm vụ hiện tại...</string>
+
+    <!-- Volunteer Delivery Mission -->
+    <string name="volunteer_delivery_mission_title">Nhiệm vụ hiện tại</string>
+    <string name="volunteer_delivery_mission_progress_title">Giao hàng cứu trợ</string>
+    <string name="volunteer_delivery_mission_order_code">Mã đơn: #DEL-88291</string>
+    <string name="volunteer_delivery_mission_progress_value">1/4 TIẾN ĐỘ</string>
+    <string name="volunteer_delivery_mission_map_placeholder">Map Placeholder</string>
+    <string name="volunteer_delivery_mission_timeline_title">Trình tự thực hiện</string>
+    <string name="volunteer_delivery_mission_step_icon_desc">Biểu tượng bước giao hàng</string>
+    <string name="volunteer_delivery_mission_step_1_title">Đến trạm tiếp nhận</string>
+    <string name="volunteer_delivery_mission_step_1_desc">Đang di chuyển đến điểm kho</string>
+    <string name="volunteer_delivery_mission_step_2_title">Lấy hàng cứu trợ</string>
+    <string name="volunteer_delivery_mission_step_2_desc">Chờ hoàn thành bước trước</string>
+    <string name="volunteer_delivery_mission_step_3_title">Đến nhà nạn nhân</string>
+    <string name="volunteer_delivery_mission_step_3_desc">Chờ hoàn thành bước trước</string>
+    <string name="volunteer_delivery_mission_step_4_title">Hoàn thành</string>
+    <string name="volunteer_delivery_mission_step_4_desc">Chờ hoàn thành bước trước</string>
+    <string name="volunteer_delivery_mission_recipient_icon_desc">Biểu tượng thông tin người nhận</string>
+    <string name="volunteer_delivery_mission_recipient_title">Thông tin người nhận</string>
+    <string name="volunteer_delivery_mission_recipient_name_label">Họ và tên</string>
+    <string name="volunteer_delivery_mission_recipient_name_value">Nguyễn Văn An</string>
+    <string name="volunteer_delivery_mission_recipient_phone_label">Số điện thoại</string>
+    <string name="volunteer_delivery_mission_recipient_phone_value">090 123 4567</string>
+    <string name="volunteer_delivery_mission_recipient_note_label">Địa chỉ / Ghi chú</string>
+    <string name="volunteer_delivery_mission_recipient_note_value">Nhà 3 tầng màu vàng, gần chân cầu Ông Lãnh. Khu vực đang ngập nhẹ, cần mang ủng.</string>
+    <string name="volunteer_delivery_mission_order_detail_icon_desc">Biểu tượng chi tiết đơn hàng</string>
+    <string name="volunteer_delivery_mission_order_detail_title">Vật phẩm cần tiếp tế</string>
+    <string name="volunteer_delivery_mission_btn_view_detail">Xem chi tiết</string>
+    <string name="volunteer_delivery_mission_btn_arrived_depot">Tôi đã đến trạm</string>
+    <string name="volunteer_delivery_mission_btn_loaded_items">Tôi đã lấy hàng cứu trợ</string>
+    <string name="volunteer_delivery_mission_btn_arrived_victim_home">Tôi đã đến nhà nạn nhân</string>
+    <string name="volunteer_delivery_mission_btn_completed">Hoàn tất nhiệm vụ</string>
+    <string name="volunteer_delivery_mission_arrived_hint">Vui lòng xác nhận khi bạn đã có mặt tại điểm tập kết hàng hóa.</string>
+    <string name="volunteer_delivery_mission_toast_completed">Nhiệm vụ hoàn thành</string>
+    <string name="volunteer_delivery_mission_toast_detail_todo">Chức năng xem chi tiết đơn hàng đang phát triển</string>
+
+    <!-- Volunteer Supply Detail -->
+    <string name="volunteer_supply_detail_title">Vật phẩm chi tiết</string>
+    <string name="volunteer_supply_detail_back_content_desc">Quay lại màn trước</string>
+    <string name="volunteer_supply_detail_qr_content_desc">Mã QR tiếp tế</string>
+    <string name="volunteer_supply_detail_qr_hint">đưa mã qr này cho nhân viên trạm</string>
+    <string name="volunteer_supply_detail_section_title">Chi tiết vật phẩm</string>
+    <string name="volunteer_supply_detail_chevron_content_desc">Mở rộng hoặc thu gọn danh mục</string>
+    <string name="volunteer_supply_detail_column_type">Loại</string>
+    <string name="volunteer_supply_detail_column_quantity">Số lượng</string>
+
+    <string name="volunteer_supply_detail_group_drug">Thuốc</string>
+    <string name="volunteer_supply_detail_group_clothes">Quần áo</string>
+    <string name="volunteer_supply_detail_group_food">Thức ăn</string>
+    <string name="volunteer_supply_detail_group_water">Nước uống</string>
+    <string name="volunteer_supply_detail_group_other">Khác</string>
+
+    <string name="volunteer_supply_detail_drug_item_type_1">Cảm/sốt</string>
+    <string name="volunteer_supply_detail_drug_item_type_2">Tiêu hóa</string>
+    <string name="volunteer_supply_detail_drug_item_type_3">Băng gạc</string>
+    <string name="volunteer_supply_detail_drug_item_quantity_1">10 vỉ</string>
+    <string name="volunteer_supply_detail_drug_item_quantity_2">5 vỉ</string>
+    <string name="volunteer_supply_detail_drug_item_quantity_3">2 cái</string>
+
+    <string name="volunteer_supply_detail_clothes_item_type_1">Bộ</string>
+    <string name="volunteer_supply_detail_clothes_item_type_2">Chăn màn</string>
+    <string name="volunteer_supply_detail_clothes_item_type_3">Áo mưa</string>
+    <string name="volunteer_supply_detail_clothes_item_quantity_1">2 bộ</string>
+    <string name="volunteer_supply_detail_clothes_item_quantity_2">1 cái</string>
+    <string name="volunteer_supply_detail_clothes_item_quantity_3">3 cái</string>
+
+    <string name="volunteer_supply_detail_food_item_type_1">Gạo</string>
+    <string name="volunteer_supply_detail_food_item_type_2">Mì tôm</string>
+    <string name="volunteer_supply_detail_food_item_type_3">Đồ hộp</string>
+    <string name="volunteer_supply_detail_food_item_quantity_1">5 kg</string>
+    <string name="volunteer_supply_detail_food_item_quantity_2">2 thùng</string>
+    <string name="volunteer_supply_detail_food_item_quantity_3">10 hộp</string>
+
+    <string name="volunteer_supply_detail_water_item_type_1">Nước đóng chai</string>
+    <string name="volunteer_supply_detail_water_item_type_2">Sữa</string>
+    <string name="volunteer_supply_detail_water_item_type_3">Nước điện giải</string>
+    <string name="volunteer_supply_detail_water_item_quantity_1">1 thùng</string>
+    <string name="volunteer_supply_detail_water_item_quantity_2">1 thùng</string>
+    <string name="volunteer_supply_detail_water_item_quantity_3">1 thùng</string>
+
+    <string name="volunteer_supply_detail_other_item_type_1">Tã</string>
+    <string name="volunteer_supply_detail_other_item_quantity_1">1 bịch</string>
+
+    <!-- Volunteer Personal Info -->
+    <string name="volunteer_personal_info_back_desc">Quay lại</string>
+    <string name="volunteer_personal_info_screen_title">Thông tin cá nhân</string>
+    <string name="volunteer_personal_info_card_title">Thông tin cá nhân</string>
+    <string name="volunteer_personal_info_avatar_desc">Ảnh đại diện tình nguyện viên</string>
+    <string name="volunteer_personal_info_edit_avatar_desc">Chỉnh sửa ảnh đại diện</string>
+    <string name="volunteer_personal_info_hint_full_name">Họ và tên</string>
+    <string name="volunteer_personal_info_default_full_name">Nguyễn Văn A</string>
+    <string name="volunteer_personal_info_hint_phone">Số điện thoại</string>
+    <string name="volunteer_personal_info_default_phone">090 123 4567</string>
+    <string name="volunteer_personal_info_hint_email">Email</string>
+    <string name="volunteer_personal_info_default_email">volunteer@aidbridge.vn</string>
+    <string name="volunteer_personal_info_btn_update">Cập nhật thông tin</string>
+    <string name="volunteer_personal_info_password_card_title">Đổi mật khẩu</string>
+    <string name="volunteer_personal_info_hint_current_password">Mật khẩu hiện tại</string>
+    <string name="volunteer_personal_info_hint_new_password">Mật khẩu mới</string>
+    <string name="volunteer_personal_info_hint_confirm_new_password">Xác nhận mật khẩu mới</string>
+    <string name="volunteer_personal_info_btn_change_password">Đổi mật khẩu</string>
+    <string name="volunteer_personal_info_toast_update_success">Cập nhật thông tin thành công</string>
+    <string name="volunteer_personal_info_toast_change_password_success">Đổi mật khẩu thành công</string>
+    <string name="volunteer_personal_info_toast_change_password_mismatch">Xác nhận mật khẩu không khớp</string>
+    <string name="volunteer_personal_info_toast_change_password_empty">Vui lòng nhập đầy đủ mật khẩu mới và xác nhận</string>
+
+    <!-- Volunteer SOS Acceptance -->
+    <string name="volunteer_sos_acceptance_title">Nhiệm vụ mới</string>
+    <string name="volunteer_sos_acceptance_timer_minutes_value">00</string>
+    <string name="volunteer_sos_acceptance_timer_seconds_value">60</string>
+    <string name="volunteer_sos_acceptance_timer_minutes_label">Phút</string>
+    <string name="volunteer_sos_acceptance_timer_seconds_label">Giây</string>
+    <string name="volunteer_sos_acceptance_timer_description">Thời gian xác nhận còn lại</string>
+    <string name="volunteer_sos_acceptance_map_placeholder">Map Placeholder</string>
+    <string name="volunteer_sos_acceptance_distance">1.5 km</string>
+    <string name="volunteer_sos_acceptance_mission_badge">Khẩn cấp</string>
+    <string name="volunteer_sos_acceptance_mission_id">ID: #DRC-2024</string>
+    <string name="volunteer_sos_acceptance_mission_title">Nhiệm vụ cứu hộ</string>
+    <string name="volunteer_sos_acceptance_victim_label">Nạn nhân</string>
+    <string name="volunteer_sos_acceptance_victim_name">Nguyễn Văn A</string>
+    <string name="volunteer_sos_acceptance_address_label">Địa chỉ</string>
+    <string name="volunteer_sos_acceptance_address_value">123 Đường ABC, Quận XYZ</string>
+    <string name="volunteer_sos_acceptance_note_label">Ghi chú vị trí</string>
+    <string name="volunteer_sos_acceptance_note_value">&quot;Nhà cổng xanh, đối diện tiệm thuốc&quot;</string>
+    <string name="volunteer_sos_acceptance_btn_accept">Chấp nhận nhiệm vụ</string>
+    <string name="volunteer_sos_acceptance_btn_decline">Từ chối</string>
+    <string name="volunteer_sos_acceptance_mission_badge_supply">Tiếp tế</string>
+    <string name="volunteer_sos_acceptance_mission_title_supply">Tiếp tế nhu yếu phẩm</string>
+    <string name="volunteer_sos_acceptance_toast_accept_success">Bạn đã chấp nhận nhiệm vụ thành công</string>
+    <string name="volunteer_sos_acceptance_toast_decline_success">Bạn đã từ chối nhiệm vụ thành công</string>
+    <string name="volunteer_sos_acceptance_icon_desc">Biểu tượng thông tin nhiệm vụ</string>
+    <string name="volunteer_sos_acceptance_accept_icon_desc">Biểu tượng chấp nhận nhiệm vụ</string>
+    <string name="volunteer_sos_acceptance_decline_icon_desc">Biểu tượng từ chối nhiệm vụ</string>
+    <string name="volunteer_mission_acceptance_mission_badge_supply">TIẾP TẾ</string>
+    <string name="volunteer_mission_acceptance_supply_icon_desc">Biểu tượng vật phẩm tiếp tế</string>
+    <string name="volunteer_mission_acceptance_supply_items_label">Vật phẩm tiếp tế</string>
+    <string name="volunteer_mission_acceptance_supply_items_value">Thuốc, Quần áo, Thức ăn, Nước uống, Khác</string>
+    <string name="volunteer_mission_acceptance_supply_todo_toast">Chức năng chuyển sang màn hình tiếp tế đang được phát triển (TODO)</string>
+
+    <!-- Volunteer Current SOS Mission -->
+    <string name="volunteer_current_mission_title">Nhiệm vụ hiện tại</string>
+    <string name="volunteer_current_mission_back_content_desc">Quay lại</string>
+    <string name="volunteer_current_mission_badge_rescue">CỨU HỘ</string>
+    <string name="volunteer_current_mission_urgent_label">Khẩn cấp</string>
+    <string name="volunteer_current_mission_request_title">Yêu cầu: Giải cứu người dân</string>
+    <string name="volunteer_current_mission_area">Khu vực Quận 8, TP. Hồ Chí Minh</string>
+    <string name="volunteer_current_mission_map_placeholder">Map Navigation Placeholder</string>
+    <string name="volunteer_current_mission_progress_start">Đến nhà</string>
+    <string name="volunteer_current_mission_progress_end">Hoàn thành</string>
+    <string name="volunteer_current_mission_status_text">Đang thực hiện: Đến nhà nạn nhân</string>
+    <string name="volunteer_current_mission_victim_info_icon_desc">Biểu tượng thông tin nạn nhân</string>
+    <string name="volunteer_current_mission_victim_info_title">Thông tin nạn nhân</string>
+    <string name="volunteer_current_mission_victim_name">Nguyễn Văn A</string>
+    <string name="volunteer_current_mission_victim_phone">090 123 4567</string>
+    <string name="volunteer_current_mission_call_victim_desc">Gọi cho nạn nhân</string>
+    <string name="volunteer_current_mission_victim_address">Địa chỉ: 123 Đường ABC, Quận XYZ</string>
+    <string name="volunteer_current_mission_health_label">Tình trạng sức khỏe</string>
+    <string name="volunteer_current_mission_health_value">Ổn định, đang lo lắng</string>
+    <string name="volunteer_current_mission_important_note_label">GHI CHÚ QUAN TRỌNG</string>
+    <string name="volunteer_current_mission_important_note_value">Mắc kẹt trên mái nhà do nước dâng cao</string>
+    <string name="volunteer_current_mission_btn_arrived">Tôi đã đến nơi</string>
+    <string name="volunteer_current_mission_btn_hint">Xác nhận vị trí của bạn để chuyển sang bước tiếp theo</string>
+    <string name="volunteer_current_mission_toast_arrived">Đã xác nhận đến vị trí nạn nhân</string>
+    <string name="volunteer_current_mission_toast_completed">Nhiệm vụ đã hoàn thành</string>
+    <string name="volunteer_current_mission_dialer_not_found">Không tìm thấy ứng dụng gọi điện</string>
 </resources>

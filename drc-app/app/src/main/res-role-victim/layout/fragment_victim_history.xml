@@ -77,30 +77,42 @@
             android:textColorHint="@color/text_hint" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvHistory"
+    <FrameLayout
+        android:id="@+id/contentContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/spacing_md"
-        android:clipToPadding="false"
-        android:paddingStart="@dimen/spacing_md"
-        android:paddingTop="@dimen/spacing_md"
-        android:paddingEnd="@dimen/spacing_md"
-        android:paddingBottom="@dimen/spacing_md"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tilFilter" />
+        app:layout_constraintTop_toBottomOf="@id/tilFilter">
 
-    <ProgressBar
-        android:id="@+id/paginationProgress"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginBottom="@dimen/spacing_md"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvHistory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="@dimen/spacing_md"
+            android:paddingTop="@dimen/spacing_md"
+            android:paddingEnd="@dimen/spacing_md"
+            android:paddingBottom="@dimen/spacing_md" />
+
+        <ProgressBar
+            android:id="@+id/initialLoadingProgress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/paginationProgress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="@dimen/spacing_md"
+            android:visibility="gone" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
