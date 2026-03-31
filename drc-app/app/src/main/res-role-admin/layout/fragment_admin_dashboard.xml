@@ -44,6 +44,16 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <View
+        android:id="@+id/headerDivider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/white"
+        android:alpha="0.1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_admin_dashboard_header" />
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll_admin_dashboard"
         android:layout_width="0dp"
@@ -216,8 +226,8 @@
                             android:layout_width="@dimen/admin_stat_icon_size"
                             android:layout_height="@dimen/admin_stat_icon_size"
                             android:contentDescription="@string/admin_stat_today_missions"
-                            android:src="@drawable/ic_admin_nav_ai"
-                            android:tint="@color/admin_stat_icon_tint" />
+                            android:src="@drawable/ic_admin_mission"
+                            app:tint="@color/admin_stat_icon_tint" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -258,8 +268,8 @@
                             android:layout_width="@dimen/admin_stat_icon_size"
                             android:layout_height="@dimen/admin_stat_icon_size"
                             android:contentDescription="@string/admin_stat_distributed_items"
-                            android:src="@drawable/ic_map"
-                            android:tint="@color/admin_stat_icon_tint" />
+                            android:src="@drawable/ic_truck"
+                            app:tint="@color/admin_stat_icon_tint" />
 
                         <TextView
                             android:layout_width="wrap_content"
