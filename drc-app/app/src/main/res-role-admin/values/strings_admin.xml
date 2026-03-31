@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="admin_nav_dashboard">Dashboard</string>
+    <string name="admin_nav_ai">AI</string>
+    <string name="admin_nav_profile">Cá nhân</string>
+
+    <string name="admin_dashboard_screen_title">ADMIN DASHBOARD SCREEN</string>
+    <string name="admin_ai_screen_title">ADMIN AI SUMMARY SCREEN</string>
+    <string name="admin_profile_screen_title">ADMIN PROFILE SCREEN</string>
+</resources>

@@ -8,10 +8,10 @@
     android:padding="@dimen/admin_screen_padding">
 
     <TextView
-        android:id="@+id/text_admin_dashboard_title"
+        android:id="@+id/text_admin_profile_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/admin_dashboard_screen_title"
+        android:text="@string/admin_profile_screen_title"
         android:textColor="@color/admin_text_primary"
         android:textSize="@dimen/admin_screen_title_text_size"
         app:layout_constraintBottom_toBottomOf="parent"

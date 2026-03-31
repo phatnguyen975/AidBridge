@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="admin_screen_padding">16dp</dimen>
+    <dimen name="admin_screen_title_text_size">20sp</dimen>
+    <dimen name="admin_nav_icon_size">24dp</dimen>
+</resources>

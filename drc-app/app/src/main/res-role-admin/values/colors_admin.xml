@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="admin_screen_background">#0F172A</color>
+    <color name="admin_text_primary">#FFFFFF</color>
+    <color name="admin_nav_icon_tint">#FFFFFF</color>
+</resources>

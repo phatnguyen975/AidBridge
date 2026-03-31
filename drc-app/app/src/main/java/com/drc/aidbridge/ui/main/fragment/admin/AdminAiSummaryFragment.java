@@ -6,23 +6,23 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 
 import com.drc.aidbridge.R;
-import com.drc.aidbridge.databinding.FragmentAdminDashboardBinding;
+import com.drc.aidbridge.databinding.FragmentAdminAiSummaryBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class AdminDashboardFragment extends BaseFragment<FragmentAdminDashboardBinding> {
+public class AdminAiSummaryFragment extends BaseFragment<FragmentAdminAiSummaryBinding> {
 
     @Nullable
     @Override
-    protected FragmentAdminDashboardBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
-        return FragmentAdminDashboardBinding.inflate(inflater, container, false);
+    protected FragmentAdminAiSummaryBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
+        return FragmentAdminAiSummaryBinding.inflate(inflater, container, false);
     }
 
     @Override
     protected void setupViews() {
-        binding.textAdminDashboardTitle.setText(getString(R.string.admin_dashboard_screen_title));
+        binding.textAdminAiSummaryTitle.setText(getString(R.string.admin_ai_screen_title));
     }
 
     @Override
