@@ -69,8 +69,27 @@ public class JwtService {
         return claims;
     }
 
+    public Claims validateAccessToken(String token) throws JwtException {
+        Claims claims = parseToken(token);
+        String jti = claims.getId();
+        if (isBlacklisted(jti)) {
+            throw new JwtException("Token has been revoked");
+        }
+
+        String type = claims.get("type", String.class);
+        if (!"access".equals(type)) {
+            throw new JwtException("Invalid token type: expected access token");
+        }
+
+        return claims;
+    }
+
     public UUID extractUserId(Claims claims) {
         return UUID.fromString(claims.getSubject());
+    }
+
+    public String extractRole(Claims claims) {
+        return claims.get("role", String.class);
     }
 
     public void revokeToken(String token) {
