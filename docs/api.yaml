@@ -17,6 +17,31 @@ info:
 
     ## Database Version
     This API is aligned with database schema v4.0
+
+    ## Caching Strategy
+
+    The API uses Redis for caching frequently accessed data. Cache behavior is documented
+    per-endpoint. General principles:
+
+    ### Cache Patterns
+    | Pattern | TTL | Use Case |
+    |---------|-----|----------|
+    | `mission:active:{id}` | 5m | Single active mission details |
+    | `mission:active:list:{hash}` | 2m | Active missions list with filters |
+    | `mission:stats:{scope}:{range}` | 5m | Aggregated statistics |
+    | `user:{id}:active_missions` | 2m | User's active missions |
+
+    ### Cache Invalidation
+    - Write operations (POST/PUT/DELETE) invalidate relevant cache entries
+    - Status changes trigger broadcast invalidation via Redis pub/sub
+    - Clients should respect `cached_at` timestamps for cache-aware UX
+
+    ### Endpoints NOT Cached
+    - Audit trails (dispatch attempts, inventory logs)
+    - Real-time data (tracking, chat)
+    - Write operations
+    - Paginated history queries
+
   version: 1.0.0
   contact:
     name: AidBridge Team
@@ -824,9 +849,15 @@ components:
 
     MissionListResponse:
       type: object
+      description: |
+        Response for list missions endpoint.
+        Cache: Not cached - data changes frequently with real-time status updates.
       properties:
         success:
           type: boolean
+        message:
+          type: string
+          example: "Missions retrieved successfully"
         data:
           type: object
           properties:
@@ -839,9 +870,19 @@ components:
 
     MissionDetailResponse:
       type: object
+      description: |
+        Response for single mission detail.
+        Cache Strategy (Redis):
+          - Key: mission:{id}
+          - TTL: 5 minutes for active missions (status IN ['ASSIGNED', 'PICKING_UP', 'PICKED_UP', 'IN_TRANSIT'])
+          - No cache for completed/cancelled missions
+          - Invalidate on: status change, volunteer assignment, pickup/complete/cancel actions
       properties:
         success:
           type: boolean
+        message:
+          type: string
+          example: "Mission retrieved successfully"
         data:
           allOf:
             - $ref: '#/components/schemas/Mission'
@@ -859,6 +900,392 @@ components:
                   $ref: '#/components/schemas/SosRequest'
                 aid_request:
                   $ref: '#/components/schemas/AidRequest'
+
+    MissionPickupResponse:
+      type: object
+      description: |
+        Response for pickup confirmation.
+        Cache: Invalidates mission:{id} cache after successful pickup.
+        Triggers: Supabase Realtime status update + FCM notification to victim.
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: "Pickup confirmed successfully"
+        data:
+          allOf:
+            - $ref: '#/components/schemas/Mission'
+            - type: object
+              properties:
+                picked_up_at:
+                  type: string
+                  format: date-time
+                qr_verified:
+                  type: boolean
+                  description: Whether pickup was verified via QR code
+
+    MissionCompleteResponse:
+      type: object
+      description: |
+        Response for mission completion.
+        Cache: Removes mission:{id} from active cache.
+        Triggers:
+          - Supabase Realtime status update
+          - FCM notification to victim
+          - Update volunteer stats in PostgreSQL
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: "Mission completed successfully"
+        data:
+          allOf:
+            - $ref: '#/components/schemas/Mission'
+            - type: object
+              properties:
+                completed_at:
+                  type: string
+                  format: date-time
+                confirmation_image_url:
+                  type: string
+                  description: URL of uploaded confirmation image
+                volunteer_stats:
+                  type: object
+                  properties:
+                    total_missions_completed:
+                      type: integer
+                    points_earned:
+                      type: integer
+
+    MissionCancelResponse:
+      type: object
+      description: |
+        Response for mission cancellation.
+        Cache: Removes mission:{id} from active cache.
+        Triggers:
+          - Supabase Realtime status update
+          - FCM notification to relevant parties
+          - Re-dispatch if victim still needs help (for RESCUE missions)
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: "Mission cancelled"
+        data:
+          allOf:
+            - $ref: '#/components/schemas/Mission'
+            - type: object
+              properties:
+                cancelled_at:
+                  type: string
+                  format: date-time
+                cancellation_reason:
+                  type: string
+                will_redispatch:
+                  type: boolean
+                  description: Whether system will attempt to find another volunteer
+
+    MissionTrackingResponse:
+      type: object
+      description: |
+        Response for mission tracking endpoint.
+        Cache Strategy (Redis):
+          - Volunteer location: from Redis geo data (volunteer:locations)
+          - Real-time updates via Supabase Realtime WebSocket
+          - ETA calculated from cached route data
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+          example: "Tracking info retrieved"
+        data:
+          type: object
+          properties:
+            mission_id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/MissionStatus'
+            volunteer:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                full_name:
+                  type: string
+                avatar_url:
+                  type: string
+                current_lat:
+                  type: number
+                current_lng:
+                  type: number
+                last_updated:
+                  type: string
+                  format: date-time
+            destination:
+              $ref: '#/components/schemas/Location'
+            destination_address:
+              type: string
+            eta_minutes:
+              type: integer
+              description: Estimated time of arrival in minutes
+            distance_km:
+              type: number
+              description: Remaining distance in kilometers
+            websocket_channel:
+              type: string
+              description: Supabase Realtime channel for live updates
+
+    CreateMissionRequest:
+      type: object
+      required: [mission_type]
+      description: |
+        Create a new mission. For RESCUE missions, sos_request_id is required.
+        For DELIVERY missions, aid_request_id and hub_id are required.
+      properties:
+        mission_type:
+          $ref: '#/components/schemas/MissionType'
+        sos_request_id:
+          type: string
+          format: uuid
+          description: Required for RESCUE missions
+        aid_request_id:
+          type: string
+          format: uuid
+          description: Required for DELIVERY missions
+        hub_id:
+          type: string
+          format: uuid
+          description: Required for DELIVERY missions
+        volunteer_id:
+          type: string
+          format: uuid
+          description: Optional - pre-assign to a specific volunteer
+        priority_score:
+          type: number
+          format: double
+          description: Higher score = higher priority
+          minimum: 0
+          maximum: 100
+
+    AcceptMissionRequest:
+      type: object
+      properties:
+        dispatch_attempt_id:
+          type: string
+          format: uuid
+          description: The dispatch attempt being responded to
+        current_lat:
+          type: number
+          format: double
+          description: Volunteer's current latitude
+        current_lng:
+          type: number
+          format: double
+          description: Volunteer's current longitude
+
+    RejectMissionRequest:
+      type: object
+      required: [reason]
+      properties:
+        dispatch_attempt_id:
+          type: string
+          format: uuid
+          description: The dispatch attempt being responded to
+        reason:
+          type: string
+          enum: [BUSY, TOO_FAR, PERSONAL, OTHER]
+          description: Reason for rejection
+        reason_detail:
+          type: string
+          description: Additional details for OTHER reason
+
+    AssignMissionRequest:
+      type: object
+      required: [volunteer_id]
+      properties:
+        volunteer_id:
+          type: string
+          format: uuid
+          description: Volunteer to assign the mission to
+
+    StartMissionRequest:
+      type: object
+      properties:
+        current_lat:
+          type: number
+          format: double
+          description: Volunteer's starting latitude
+        current_lng:
+          type: number
+          format: double
+          description: Volunteer's starting longitude
+
+    MyMissionsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            active:
+              type: array
+              description: Currently active missions (ASSIGNED, PICKING_UP, PICKED_UP, IN_TRANSIT)
+              items:
+                $ref: '#/components/schemas/Mission'
+            pending:
+              type: array
+              description: Pending dispatch requests waiting for response
+              items:
+                type: object
+                properties:
+                  dispatch_attempt:
+                    $ref: '#/components/schemas/DispatchAttempt'
+                  mission:
+                    $ref: '#/components/schemas/Mission'
+                  expires_at:
+                    type: string
+                    format: date-time
+                    description: Dispatch timeout deadline
+            history:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Mission'
+                pagination:
+                  $ref: '#/components/schemas/Pagination'
+
+    DispatchAttemptsListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                allOf:
+                  - $ref: '#/components/schemas/DispatchAttempt'
+                  - type: object
+                    properties:
+                      volunteer:
+                        $ref: '#/components/schemas/VolunteerBrief'
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+    ActiveMissionsResponse:
+      type: object
+      description: |
+        Active missions response. This endpoint is cached in Redis for 2 minutes.
+        Cache key: mission:active:list:{filters_hash}
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Mission'
+            stats:
+              type: object
+              properties:
+                total_active:
+                  type: integer
+                by_type:
+                  type: object
+                  properties:
+                    rescue:
+                      type: integer
+                    delivery:
+                      type: integer
+                by_status:
+                  type: object
+                  additionalProperties:
+                    type: integer
+            cached_at:
+              type: string
+              format: date-time
+              description: Timestamp when data was cached
+
+    MissionStatsResponse:
+      type: object
+      description: |
+        Mission statistics. Cached in Redis for 5 minutes.
+        Cache key: mission:stats:{hub_id|all}:{date_range}
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            period:
+              type: object
+              properties:
+                from:
+                  type: string
+                  format: date-time
+                to:
+                  type: string
+                  format: date-time
+            totals:
+              type: object
+              properties:
+                created:
+                  type: integer
+                completed:
+                  type: integer
+                cancelled:
+                  type: integer
+                in_progress:
+                  type: integer
+            by_type:
+              type: object
+              properties:
+                rescue:
+                  type: object
+                  properties:
+                    created:
+                      type: integer
+                    completed:
+                      type: integer
+                    avg_completion_minutes:
+                      type: number
+                delivery:
+                  type: object
+                  properties:
+                    created:
+                      type: integer
+                    completed:
+                      type: integer
+                    avg_completion_minutes:
+                      type: number
+            dispatch_stats:
+              type: object
+              properties:
+                total_attempts:
+                  type: integer
+                acceptance_rate:
+                  type: number
+                  description: Percentage of accepted dispatches
+                avg_response_time_seconds:
+                  type: number
+                timeout_rate:
+                  type: number
+            cached_at:
+              type: string
+              format: date-time
 
     TrackingResponse:
       type: object
@@ -2990,20 +3417,34 @@ paths:
     get:
       tags: [Missions]
       summary: List missions
+      description: |
+        Get a paginated list of missions with optional filters.
+
+        **Cache Strategy:**
+        - Not cached - mission list data changes frequently
+        - For real-time updates, subscribe to Supabase Realtime channel `missions`
+        - Filter by status to reduce response size
+
+        **Access Control:**
+        - VOLUNTEER: Can only see their assigned missions
+        - STAFF/ADMIN: Can see all missions (optionally filter by hub)
       operationId: listMissions
       security:
         - BearerAuth: []
       parameters:
         - name: mission_type
           in: query
+          description: Filter by mission type (RESCUE or DELIVERY)
           schema:
             $ref: '#/components/schemas/MissionType'
         - name: status
           in: query
+          description: Filter by mission status
           schema:
             $ref: '#/components/schemas/MissionStatus'
         - name: volunteer_id
           in: query
+          description: Filter by assigned volunteer (Staff/Admin only)
           schema:
             type: string
             format: uuid
@@ -3017,18 +3458,75 @@ paths:
           schema:
             type: integer
             default: 20
+            maximum: 100
       responses:
         '200':
-          description: Missions list
+          description: Missions list retrieved successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/MissionListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags: [Missions]
+      summary: Create a new mission (Staff/Admin only)
+      description: |
+        Create a new mission from an SOS request or Aid request.
+        This will trigger the dispatch process to find available volunteers.
+
+        **No Cache** - Write operation
+
+        **Side Effects:**
+        - Creates dispatch_attempts for nearby volunteers
+        - Triggers FCM push notifications (high priority)
+        - Adds to Redis dispatch queue
+        - Updates SOS/Aid request status to DISPATCHING
+      operationId: createMission
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMissionRequest'
+      responses:
+        '201':
+          description: Mission created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissionDetailResponse'
+        '400':
+          description: Invalid request (e.g., SOS request already has mission)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Referenced SOS/Aid request not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /missions/{id}:
     get:
       tags: [Missions]
       summary: Get mission details
+      description: |
+        Get detailed information about a specific mission.
+
+        **Cache Strategy:**
+        - Active missions (non-terminal status): Cached in Redis `mission:active:{id}` (TTL: 5 minutes)
+        - Completed/Cancelled missions: Not cached (fetch from PostgreSQL)
+        - Cache invalidated on status change
       operationId: getMission
       security:
         - BearerAuth: []
@@ -3057,6 +3555,18 @@ paths:
     post:
       tags: [Missions]
       summary: Confirm pickup at hub (DELIVERY mission)
+      description: |
+        Volunteer confirms picking up items at the hub for a DELIVERY mission.
+        QR code verification is optional but recommended.
+
+        **Cache Strategy:**
+        - Invalidates: `mission:{id}` cache in Redis
+        - Updates mission status to PICKED_UP
+
+        **Side Effects:**
+        - Broadcasts status update via Supabase Realtime
+        - Sends FCM notification to victim (high priority)
+        - Updates hub inventory (decrements reserved items)
       operationId: confirmMissionPickup
       security:
         - BearerAuth: []
@@ -3075,19 +3585,45 @@ paths:
               properties:
                 qr_code_token:
                   type: string
-                  description: QR code scanned at hub
+                  description: QR code scanned at hub for verification
       responses:
         '200':
           description: Pickup confirmed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MissionDetailResponse'
+                $ref: '#/components/schemas/MissionPickupResponse'
+        '400':
+          description: Invalid mission state (not in ASSIGNED status) or invalid QR code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Mission not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /missions/{id}/complete:
     post:
       tags: [Missions]
       summary: Complete mission with confirmation
+      description: |
+        Volunteer marks the mission as completed with a confirmation image.
+        Required for both RESCUE and DELIVERY missions.
+
+        **Cache Strategy:**
+        - Removes: `mission:{id}` from active cache in Redis
+        - Mission moves to completed state (no longer cached)
+
+        **Side Effects:**
+        - Uploads confirmation image to Cloud Storage
+        - Broadcasts status update via Supabase Realtime
+        - Sends FCM notification to victim
+        - Updates volunteer stats (total_tasks_completed, points)
+        - Updates SOS/Aid request status to RESOLVED
       operationId: completeMission
       security:
         - BearerAuth: []
@@ -3109,20 +3645,46 @@ paths:
                 confirmation_image:
                   type: string
                   format: binary
+                  description: Photo proof of delivery/rescue completion
                 notes:
                   type: string
+                  description: Optional notes about the completion
       responses:
         '200':
-          description: Mission completed
+          description: Mission completed successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MissionDetailResponse'
+                $ref: '#/components/schemas/MissionCompleteResponse'
+        '400':
+          description: Invalid mission state or missing confirmation image
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Mission not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /missions/{id}/cancel:
     post:
       tags: [Missions]
       summary: Cancel mission
+      description: |
+        Cancel an active mission. Can be initiated by volunteer or staff.
+
+        **Cache Strategy:**
+        - Removes: `mission:{id}` from active cache in Redis
+        - Mission moves to cancelled state (no longer cached)
+
+        **Side Effects:**
+        - Broadcasts status update via Supabase Realtime
+        - Sends FCM notification to victim
+        - For RESCUE missions: triggers re-dispatch if sos_request still active
+        - Returns reserved inventory to hub (for DELIVERY missions)
       operationId: cancelMission
       security:
         - BearerAuth: []
@@ -3143,18 +3705,44 @@ paths:
               properties:
                 cancellation_reason:
                   type: string
+                  description: Reason for cancellation
+                  example: "Vehicle breakdown"
       responses:
         '200':
           description: Mission cancelled
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MissionDetailResponse'
+                $ref: '#/components/schemas/MissionCancelResponse'
+        '400':
+          description: Invalid mission state (already completed or cancelled)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Mission not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /missions/{id}/tracking:
     get:
       tags: [Missions]
       summary: Get real-time tracking info
+      description: |
+        Get current tracking information for an active mission including
+        volunteer's live location, ETA, and distance remaining.
+
+        **Cache Strategy:**
+        - Volunteer location: Read from Redis `volunteer:locations` (geo data)
+        - Location updates every 10 seconds via mobile app
+        - ETA/distance calculated from cached route data (TTL: 30 seconds)
+
+        **Real-time Updates:**
+        - Subscribe to Supabase Realtime channel `missions:{id}` for live updates
+        - Returns websocket_channel URL for client subscription
       operationId: getMissionTracking
       security:
         - BearerAuth: []
@@ -3171,7 +3759,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TrackingResponse'
+                $ref: '#/components/schemas/MissionTrackingResponse'
+        '400':
+          description: Mission is not in trackable state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Mission not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /missions/{id}/chat:
     get:
@@ -3261,6 +3861,339 @@ paths:
                 $ref: '#/components/schemas/RatingResponse'
         '400':
           description: Mission not completed or already rated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ---------- Additional Mission Endpoints ----------
+  /missions/my:
+    get:
+      tags: [Missions]
+      summary: Get my missions (volunteer)
+      description: |
+        Get current volunteer's missions including active, pending dispatch requests, and history.
+
+        **Cache Strategy:**
+        - Active missions: Cached in Redis `user:{user_id}:active_missions` (TTL: 2 minutes)
+        - Pending dispatches: Not cached (real-time from Redis dispatch queue)
+        - History: Not cached (paginated from PostgreSQL)
+      operationId: getMyMissions
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: include_history
+          in: query
+          description: Include completed/cancelled missions history
+          schema:
+            type: boolean
+            default: true
+        - name: history_page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: history_limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Volunteer's missions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyMissionsResponse'
+
+  /missions/active:
+    get:
+      tags: [Missions]
+      summary: Get active missions (cached)
+      description: |
+        Get all currently active missions. Useful for staff dashboard and monitoring.
+
+        **Cache Strategy:**
+        - Cached in Redis `mission:active:list:{filters_hash}` (TTL: 2 minutes)
+        - Invalidated on mission status change
+        - Returns `cached_at` timestamp for client-side cache management
+      operationId: getActiveMissions
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: mission_type
+          in: query
+          schema:
+            $ref: '#/components/schemas/MissionType'
+        - name: hub_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: include_stats
+          in: query
+          description: Include aggregated statistics
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Active missions list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveMissionsResponse'
+
+  /missions/stats:
+    get:
+      tags: [Missions]
+      summary: Get mission statistics (cached)
+      description: |
+        Get aggregated mission statistics for reporting and analytics.
+
+        **Cache Strategy:**
+        - Cached in Redis `mission:stats:{hub_id|all}:{date_range}` (TTL: 5 minutes)
+        - Heavy query - always use cache when possible
+        - Returns `cached_at` timestamp
+      operationId: getMissionStats
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hub_id
+          in: query
+          description: Filter by hub (optional)
+          schema:
+            type: string
+            format: uuid
+        - name: from_date
+          in: query
+          description: Start date for statistics
+          schema:
+            type: string
+            format: date
+        - name: to_date
+          in: query
+          description: End date for statistics
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Mission statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissionStatsResponse'
+
+  /missions/{id}/accept:
+    post:
+      tags: [Missions]
+      summary: Accept dispatch request (volunteer)
+      description: |
+        Volunteer accepts a dispatch request for the mission.
+
+        **Side Effects:**
+        - Updates mission status to ASSIGNED
+        - Updates dispatch_attempt response to ACCEPTED
+        - Invalidates Redis cache for active missions
+        - Triggers FCM notification to requester
+        - Broadcasts via Supabase Realtime
+      operationId: acceptMission
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcceptMissionRequest'
+      responses:
+        '200':
+          description: Mission accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissionDetailResponse'
+        '400':
+          description: Mission already assigned or dispatch expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict - mission was assigned to another volunteer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /missions/{id}/reject:
+    post:
+      tags: [Missions]
+      summary: Reject dispatch request (volunteer)
+      description: |
+        Volunteer rejects a dispatch request.
+
+        **Side Effects:**
+        - Updates dispatch_attempt response to REJECTED
+        - System will dispatch to next available volunteer
+      operationId: rejectMission
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RejectMissionRequest'
+      responses:
+        '200':
+          description: Mission rejected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Invalid dispatch attempt or already responded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /missions/{id}/assign:
+    put:
+      tags: [Missions]
+      summary: Manually assign volunteer (Staff/Admin only)
+      description: |
+        Manually assign a volunteer to a mission without going through dispatch queue.
+
+        **Side Effects:**
+        - Updates mission status to ASSIGNED
+        - Creates dispatch_attempt with type MANUAL
+        - Invalidates Redis cache
+        - Triggers FCM notification to volunteer and requester
+      operationId: assignMission
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignMissionRequest'
+      responses:
+        '200':
+          description: Mission assigned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissionDetailResponse'
+        '400':
+          description: Mission already assigned or volunteer not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /missions/{id}/start:
+    post:
+      tags: [Missions]
+      summary: Start mission (volunteer on the way)
+      description: |
+        Volunteer indicates they have started the mission and are on their way.
+        For DELIVERY missions, this means heading to the hub.
+        For RESCUE missions, this means heading to the victim location.
+
+        **Side Effects:**
+        - Updates mission started_at timestamp
+        - Broadcasts real-time location tracking
+        - Updates Redis cache
+      operationId: startMission
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartMissionRequest'
+      responses:
+        '200':
+          description: Mission started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissionDetailResponse'
+        '400':
+          description: Mission not in ASSIGNED status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /missions/{id}/dispatch-attempts:
+    get:
+      tags: [Missions]
+      summary: Get dispatch attempt history
+      description: |
+        Get all dispatch attempts for a mission. Useful for debugging dispatch issues.
+
+        **No Cache** - Audit trail data, always fetch from PostgreSQL
+      operationId: getMissionDispatchAttempts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Dispatch attempts list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DispatchAttemptsListResponse'
+        '404':
+          description: Mission not found
           content:
             application/json:
               schema:

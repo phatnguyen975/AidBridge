@@ -1,2 +1,7 @@
 .vscode/
 .idea/
+
+# Firebase Service Account (Security - never commit!)
+**/firebase-service-account*.json
+**/firebase-adminsdk-*.json
+**/*firebase*.json

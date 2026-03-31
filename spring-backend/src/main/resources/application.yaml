@@ -24,6 +24,13 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      leak-detection-threshold: 2000
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
   jpa:
     hibernate:
       ddl-auto: update
@@ -56,6 +63,12 @@ firebase:
   project-id: ${FIREBASE_PROJECT_ID:aidbridge-5613d}
   service-account:
     path: ${FIREBASE_SERVICE_ACCOUNT_PATH:firebase-service-account.json}
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:your-cloud-name}
+  api-key: ${CLOUDINARY_API_KEY:your-api-key}
+  api-secret: ${CLOUDINARY_API_SECRET:your-api-secret}
+
 springdoc:
   api-docs:
     path: /v3/api-docs
@@ -63,4 +76,3 @@ swagger-ui:
   path: /swagger-ui.html
   operationsSorter: method
   tagsSorter: alpha
-
