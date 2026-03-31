@@ -1,78 +1,120 @@
-# Instructions for Android Frontend
+# AidBridge - Frontend Instruction
 
-You are an Expert Android Architect. When generating code, refactoring, or answering questions related to the `drc-app/` directory, you **MUST** adhere strictly to the following rules. Failure to do so will break the project's Clean Architecture.
+This file is the strict execution rulebook for AI coding assistants working in `drc-app/`.
 
-## 1. General Rules
+## MANDATORY PREREQUISITE (READ FIRST - BLOCKING)
 
-1. **Architecture:** Follow the MVVM pattern and Clean Architecture. Always separate business logic into ViewModels and data fetching into Repositories.
-2. **Libraries:** Use Retrofit for API calls, Room for local database, and Dagger-Hilt for dependency injection.
-3. **Context Awareness:** Before implementing a feature, always refer to `AidBridge/docs/main/requirements.md` for business rules, `AidBridge/docs/main/tech_stack.md` for tool constraints, and `AidBridge/docs/main/project_structure.md` for architectural decisions.
-4. **Explanation:** Provide brief, clear explanations in Vietnamese for the generated code.
-5. **Code Style:** Follow standard Java code conventions and Android best practices. Use meaningful variable names and include comments where necessary.
-6. **Error Handling:** Implement proper error handling and user feedback for network requests and database operations.
-7. **Performance:** Optimize for performance and battery efficiency, especially for location tracking features.
-8. **Security:** Ensure secure handling of user data and API keys, following best practices for Android security.
-9. **UI/UX:** Ensure that the UI is user-friendly and responsive across different screen sizes. Follow Material Design guidelines where applicable.
-10. **Testing:** Write unit tests for ViewModels and UseCases, and integration tests for Repositories where possible. Use Mockito or similar libraries for mocking dependencies.
+1. STOP. Before generating any code or answering any question, you MUST read and ingest all files below:
+   - `docs/frontend_architecture.md` (read full file).
+   - `docs/main/requirements.md` (read full file).
+   - `docs/main/project_structure.md` (read only the `drc-app/` frontend section).
+   - `docs/main/tech_stack.md` (read only the Frontend section).
+2. If you cannot access these files automatically, you MUST ask the user to provide their contents before proceeding.
+3. Do not continue implementation until this prerequisite is completed.
 
-## 2. Absolute Tech Stack Constraints
+## 1. General Coding and UI Rules
 
-- **Language:** Write ALL code in Java (Java 17). **ABSOLUTELY NO KOTLIN.**
-- **UI Toolkit:** Use standard XML Layouts + ViewBinding. **ABSOLUTELY NO JETPACK COMPOSE.**
-- **Libraries:** Dagger-Hilt (DI), Retrofit (Network), Room (Local DB), Jetpack Navigation Component (Routing).
+1. Write idiomatic, maintainable Java with clear naming and small focused methods.
+2. Keep architecture boundaries strict: UI code in Fragment, state in ViewModel, business rules in UseCase, data orchestration in Repository.
+3. Null safety is mandatory:
+   - Always guard nullable inputs/outputs from API, Bundle, and DB.
+   - Do not assume non-null for `BaseResponse.getData()` and `BaseResponse.getMessage()`.
+   - Use explicit fallback messages for null/blank error text.
+4. UI responsiveness is mandatory:
+   - Prefer `ConstraintLayout` for complex screens to reduce deep view nesting.
+   - Use `RecyclerView` for dynamic lists; avoid heavy nested layouts.
+   - Do not block the main thread with network or database operations.
+5. Use Material Design 3 components and project themes/styles:
+   - Prefer `com.google.android.material.*` widgets for buttons, tabs, text fields, sheets.
+   - Reuse existing styles before creating new ones.
+6. Standard error handling is required:
+   - Normalize errors in repository layer.
+   - Surface UI-safe messages through `NetworkResultWrapper` states.
+   - Avoid leaking transport/exception details directly to UI.
 
-## 3. Architecture Rules (Refer to `AidBridge/docs/frontend_guide.md`)
+## 2. Zero-Tolerance Tech Rules
 
-You must follow the established MVVM + Clean Architecture flow:
-`Fragment -> ViewModel -> UseCase -> Repository Interface -> Repository Impl -> API/Local`
+1. Use Java 17 only.
+2. Kotlin is forbidden.
+3. Use XML Layout + ViewBinding only.
+4. Jetpack Compose is forbidden.
+5. Use existing stack: Hilt, Retrofit, Room, LiveData, Navigation Component.
 
-- **Dumb Fragments:** Fragments MUST NOT contain business logic, data mapping, or validation logic. They only bind UI and forward intents.
-- **ViewModel & LiveData:** ViewModels must expose state via `LiveData`. API calls must be triggered using `Transformations.switchMap`.
-- **Event Handling:** ALWAYS use the `NetworkResultWrapper.hasBeenHandled()` pattern with `BaseFragment.resultObserver()` to handle one-time UI events (Navigation, Toasts) to prevent duplicate triggers on backstack navigation.
-- **Safe Navigation:** Never use raw `navController.navigate()`. Always use `navigateSafely()` and `popBackStackSafely()` from `BaseFragment`.
-- **API Parsing Rule:** The backend returns a wrapped JSON (`{success, message, data}`). All Retrofit interface methods MUST return `Call<BaseResponse<T>>`. The Repository MUST unwrap this, check `isSuccess()`, map the inner DTO to a Domain Model, and post it to the ViewModel using `NetworkResultWrapper`.
+Any violation is a blocking failure.
 
-## 4. UI and Resource Conventions (STRICT)
+## 3. Mandatory Architecture Flow
 
-Do not hardcode anything in XML or Java files.
+Follow this exact flow:
 
-- **Icons & Images:**
-  - **First choice:** Use Android's built-in system icons (`@android:drawable/ic_...`) wherever a standard icon fits (e.g., location, menu, person) to save APK size.
-  - **Second choice:** If a custom icon is needed, generate an XML Vector Drawable and place it in the correct feature resource folder (e.g., `res-common-ui/drawable/`).
-- **Colors & Themes:** - NEVER hardcode hex colors (e.g., `#FF0000`).
-  - Always use colors defined in `colors.xml` (e.g., `@color/color_primary`, `@color/text_secondary`) or create new ones as needed.
-  - Reuse predefined styles from `themes.xml` (e.g., `style="@style/Widget.AidBridge.Button.Primary"`) or create new ones as needed.
-- **Strings & Typography:**
-  - NEVER hardcode text strings in UI or Toasts.
-  - Role-specific strings MUST be placed in `res-role-<role>/values/strings_<role>.xml` (example: `res-role-victim/values/strings_victim.xml`).
-  - Only truly global/shared strings may remain in `res/values/strings.xml`.
-- **Dimensions:**
-  - NEVER hardcode dimensions in XML/Java.
-  - Role-specific dimensions MUST be placed in `res-role-<role>/values/dimens_<role>.xml` (example: `res-role-victim/values/dimens_victim.xml`).
-  - Only truly global/shared dimensions may remain in `res/values/dimens.xml`.
+```text
+Fragment -> ViewModel -> UseCase -> Repository Interface -> Repository Impl -> API/Local
+```
 
-## 5. File Placement & Project Structure
+Rules:
 
-The project uses feature-based resource sets. You must place files in their exact designated locations:
+1. Fragments are dumb UI only.
+2. Fragments must not contain business rules, validation rules, or data mapping.
+3. Fragments must not call Retrofit/Room/Repository directly.
+4. ViewModels must expose state through LiveData.
+5. ViewModels must trigger use cases via `Transformations.switchMap` (trigger-based pattern).
+6. Repository implementation must unwrap `BaseResponse<T>` and map to `NetworkResultWrapper<T>`.
+7. One-time UI events must use `NetworkResultWrapper.hasBeenHandled()` and `BaseFragment.resultObserver()`.
 
-- **Java code:** Follow the `ui/<feature>`, `domain/usecase/<feature>`, `data/repository` structure.
-- **XML Layouts & Drawables:** Place them in the specific `res-*` directories (`res-auth`, `res-guest`, `res-role-victim`, `res-common-ui`), NOT just the default `res` folder.
-- **Role Values Files (MANDATORY):**
-  - Role-specific values files MUST be stored inside the role resource set, for example:
-    - `res-role-victim/values/strings_victim.xml`
-    - `res-role-victim/values/dimens_victim.xml`
-  - Do NOT place role-specific strings/dimens in global `res/values/`.
+## 4. Navigation Safety (Critical)
 
-## 6. Context & Documentation Awareness
+Never call raw `navController.navigate()` in Fragments.
 
-Before writing code or proposing solutions, you MUST read and align with the following documents:
+Use only safe helpers from `BaseFragment`:
 
-- **`AidBridge/docs/frontend_guide.md`**: For the exact folder tree, layer responsibilities, and coding standards.
-- **`AidBridge/docs/frontend_plan.md`**: To know the current phase. **DO NOT generate Map, GPS, or WebSocket code if we are in Phase 1-4/**
-- **`AidBridge/docs/main/requirements.md`**: For business logic, role behaviors, and terminology.
-- **`AidBridge/docs/main/project_structure.md`**: For backend API alignment.
+1. `navigateSafely(...)`
+2. `navigateToDestinationSafely(...)`
+3. `popBackStackSafely(...)`
 
-## 7. Output Format
+Do not bypass these helpers. This mandate exists to prevent fast-click and stale-backstack crashes.
 
-- Provide brief, clear explanations in **Vietnamese**.
-- Ensure generated code includes standard JavaDoc/comments in **English** for complex UseCase or Repository logic.
+## 5. Role Isolation Requirements
+
+1. Role fragments -> `ui/main/fragment/<role_name>/`
+2. Role viewmodels -> `ui/main/viewmodel/<role_name>/`
+3. Role adapters -> `ui/main/adapter/<role_name>/`
+4. Role navigation must remain in its dedicated role graph.
+5. Do not implement direct cross-role feature coupling.
+
+## 6. No Hardcoding Law
+
+Do not hardcode UI values in Java or XML.
+
+1. No hardcoded user-facing text.
+2. No hardcoded dimensions.
+3. No hardcoded hex colors.
+
+Use resources only:
+
+1. Strings -> `@string/...` / `getString(...)`
+2. Dimensions -> `@dimen/...`
+3. Colors -> `@color/...`
+
+Role-specific resources must stay in role source-sets:
+
+1. Layouts: `app/src/main/res-role-<role>/layout/`
+2. Drawables: `app/src/main/res-role-<role>/drawable/`
+3. Strings: `app/src/main/res-role-<role>/values/strings_<role>.xml`
+4. Dimens: `app/src/main/res-role-<role>/values/dimens_<role>.xml`
+
+Do not move role-specific resources to global `res/values` unless they are truly shared by all roles.
+
+## 7. API Wrapper Enforcement
+
+1. Retrofit interfaces must use `BaseResponse<T>` as the server wrapper.
+2. Repository implementation must check in order:
+   - HTTP success.
+   - `body != null`.
+   - `body.isSuccess()`.
+   - `body.getData()` / `body.getMessage()` with null safety.
+3. Repository outputs to presentation must use `NetworkResultWrapper` states.
+
+## 8. Output and Explanation Rules
+
+1. Explain changes briefly and clearly in Vietnamese.
+2. For complex UseCase/Repository logic, include standard JavaDoc/comments in English.
+3. Keep edits minimal and architecture-safe.
