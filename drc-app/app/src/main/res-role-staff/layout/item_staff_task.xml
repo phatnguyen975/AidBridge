@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.AidBridge.Card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/staff_task_item_margin_bottom"
+    app:cardBackgroundColor="@color/bg_surface_elevated">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/staff_task_item_padding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/staff_task_item_icon_size"
+                android:layout_height="@dimen/staff_task_item_icon_size"
+                android:contentDescription="@string/staff_inventory_updated_ago"
+                android:src="@drawable/ic_history"
+                app:tint="@color/color_primary" />
+
+            <TextView
+                android:id="@+id/tv_eta"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/staff_task_item_person_gap"
+                android:layout_weight="1"
+                android:textColor="@color/color_primary"
+                android:textSize="@dimen/staff_task_item_eta_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_staff_detail_status_chip"
+                android:paddingStart="@dimen/staff_task_item_chip_padding_h"
+                android:paddingTop="@dimen/staff_task_item_chip_padding_v"
+                android:paddingEnd="@dimen/staff_task_item_chip_padding_h"
+                android:paddingBottom="@dimen/staff_task_item_chip_padding_v"
+                android:textColor="@color/color_primary"
+                android:textSize="@dimen/staff_task_item_status_chip_text_size"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_task_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/staff_task_item_code_margin_top"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/staff_task_item_code_text_size"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/staff_task_item_bottom_margin_top"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/staff_task_item_icon_size"
+                android:layout_height="@dimen/staff_task_item_icon_size"
+                android:contentDescription="@string/staff_detail_role_volunteer"
+                android:src="@drawable/ic_person"
+                app:tint="@color/text_secondary" />
+
+            <TextView
+                android:id="@+id/tv_person_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/staff_task_item_person_gap"
+                android:layout_weight="1"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/staff_task_item_person_size" />
+
+            <TextView
+                android:id="@+id/tv_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/staff_task_detail_link"
+                android:textColor="@color/color_primary"
+                android:textSize="@dimen/staff_task_item_detail_size"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

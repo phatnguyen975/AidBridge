@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/staff_inventory_item_margin_bottom"
+    app:cardBackgroundColor="@color/bg_surface_elevated"
+    app:cardCornerRadius="@dimen/staff_inventory_item_corner_radius"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/border_default"
+    app:strokeWidth="@dimen/staff_inventory_item_stroke_width">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/staff_inventory_item_min_height"
+        android:padding="@dimen/staff_inventory_item_content_padding">
+
+        <View
+            android:id="@+id/view_left_border"
+            android:layout_width="@dimen/staff_inventory_left_border_width"
+            android:layout_height="0dp"
+            android:background="@color/safe_green"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_item_thumbnail"
+            android:layout_width="@dimen/staff_inventory_item_image_size"
+            android:layout_height="@dimen/staff_inventory_item_image_size"
+            android:layout_marginStart="@dimen/staff_inventory_item_image_margin_start"
+            android:contentDescription="@string/staff_inventory_title"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/view_left_border"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearance="@style/ShapeAppearance.Material3.SmallComponent" />
+
+        <LinearLayout
+            android:id="@+id/layout_middle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/staff_inventory_item_middle_margin_start"
+            android:layout_marginEnd="@dimen/staff_inventory_item_middle_margin_end"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@id/iv_item_thumbnail"
+            app:layout_constraintEnd_toStartOf="@id/layout_right"
+            app:layout_constraintStart_toEndOf="@id/iv_item_thumbnail"
+            app:layout_constraintTop_toTopOf="@id/iv_item_thumbnail">
+
+            <TextView
+                android:id="@+id/tv_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/staff_inventory_item_name_text_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_category_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/staff_inventory_item_category_margin_top"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/staff_inventory_item_category_text_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@id/iv_item_thumbnail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/iv_item_thumbnail">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:chipStartPadding="@dimen/staff_inventory_item_status_chip_start_end_padding"
+                app:chipEndPadding="@dimen/staff_inventory_item_status_chip_start_end_padding"
+                app:textStartPadding="@dimen/staff_inventory_item_status_text_horizontal_padding"
+                app:textEndPadding="@dimen/staff_inventory_item_status_text_horizontal_padding"
+                android:textSize="@dimen/staff_inventory_item_status_text_size"
+                android:textStyle="bold"
+                app:chipMinHeight="@dimen/staff_inventory_item_status_min_height"
+                app:chipStrokeWidth="@dimen/staff_inventory_item_status_stroke_width"
+                app:ensureMinTouchTargetSize="false" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/staff_inventory_item_quantity_margin_top"
+                android:gravity="bottom"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_quantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/staff_inventory_item_quantity_text_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/staff_inventory_item_unit_margin_start"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/staff_inventory_item_unit_text_size" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
