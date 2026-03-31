@@ -1,0 +1,349 @@
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
+CREATE TABLE public.aid_request_items (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    aid_request_id uuid NOT NULL,
+    item_category_id uuid NOT NULL,
+    quantity integer NOT NULL CHECK (quantity > 0),
+    description text,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT aid_request_items_pkey PRIMARY KEY (id),
+    CONSTRAINT aid_request_items_aid_request_id_fkey FOREIGN KEY (aid_request_id) REFERENCES public.aid_requests(id),
+    CONSTRAINT aid_request_items_item_category_id_fkey FOREIGN KEY (item_category_id) REFERENCES public.item_categories(id)
+);
+CREATE TABLE public.aid_requests (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    requester_id uuid NOT NULL,
+    status character varying NOT NULL DEFAULT 'PENDING'::aid_status,
+    lat numeric NOT NULL,
+    lng numeric NOT NULL,
+    address character varying,
+    description text,
+    number_elderly integer NOT NULL DEFAULT 0,
+    number_adult integer NOT NULL DEFAULT 0,
+    number_children integer NOT NULL DEFAULT 0,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT aid_requests_pkey PRIMARY KEY (id),
+    CONSTRAINT aid_requests_requester_id_fkey FOREIGN KEY (requester_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.chat_messages (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    mission_id uuid NOT NULL,
+    sender_id uuid NOT NULL,
+    message_type character varying NOT NULL DEFAULT 'TEXT'::character varying,
+    message_text text,
+    image_url character varying,
+    is_read boolean NOT NULL DEFAULT false,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT chat_messages_pkey PRIMARY KEY (id),
+    CONSTRAINT chat_messages_mission_id_fkey FOREIGN KEY (mission_id) REFERENCES public.missions(id),
+    CONSTRAINT chat_messages_sender_id_fkey FOREIGN KEY (sender_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.dispatch_attempts (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    mission_id uuid NOT NULL,
+    volunteer_id uuid NOT NULL,
+    dispatch_type character varying NOT NULL,
+    batch_number integer NOT NULL DEFAULT 1,
+    radius_km numeric,
+    response USER - DEFINED NOT NULL DEFAULT 'PENDING'::dispatch_response,
+    responded_at timestamp with time zone,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT dispatch_attempts_pkey PRIMARY KEY (id),
+    CONSTRAINT dispatch_attempts_mission_id_fkey FOREIGN KEY (mission_id) REFERENCES public.missions(id),
+    CONSTRAINT dispatch_attempts_volunteer_id_fkey FOREIGN KEY (volunteer_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.donation_items (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    donation_id uuid NOT NULL,
+    item_category_id uuid NOT NULL,
+    quantity integer NOT NULL CHECK (quantity > 0),
+    unit character varying,
+    description text,
+    expiry_date date,
+    image_url character varying,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT donation_items_pkey PRIMARY KEY (id),
+    CONSTRAINT donation_items_donation_id_fkey FOREIGN KEY (donation_id) REFERENCES public.donations(id),
+    CONSTRAINT donation_items_item_category_id_fkey FOREIGN KEY (item_category_id) REFERENCES public.item_categories(id)
+);
+CREATE TABLE public.donations (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    sponsor_id uuid NOT NULL,
+    hub_id uuid NOT NULL,
+    qr_code_token character varying UNIQUE,
+    status USER - DEFINED NOT NULL DEFAULT 'REGISTERED'::donation_status,
+    notes text,
+    received_at timestamp with time zone,
+    received_by uuid,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT donations_pkey PRIMARY KEY (id),
+    CONSTRAINT donations_sponsor_id_fkey FOREIGN KEY (sponsor_id) REFERENCES public.users(id),
+    CONSTRAINT donations_hub_id_fkey FOREIGN KEY (hub_id) REFERENCES public.hubs(id),
+    CONSTRAINT donations_received_by_fkey FOREIGN KEY (received_by) REFERENCES public.users(id)
+);
+CREATE TABLE public.help_requests (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    name_victim character varying,
+    address character varying,
+    phone_number character varying,
+    lat numeric,
+    lng numeric,
+    status character varying NOT NULL DEFAULT 'PENDING'::character varying,
+    description text,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT help_requests_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.hub_accepted_categories (
+    hub_id uuid NOT NULL,
+    item_category_id uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT hub_accepted_categories_pkey PRIMARY KEY (hub_id, item_category_id),
+    CONSTRAINT hub_accepted_categories_hub_id_fkey FOREIGN KEY (hub_id) REFERENCES public.hubs(id),
+    CONSTRAINT hub_accepted_categories_item_category_id_fkey FOREIGN KEY (item_category_id) REFERENCES public.item_categories(id)
+);
+CREATE TABLE public.hub_inventories (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    hub_id uuid NOT NULL,
+    item_category_id uuid NOT NULL,
+    current_quantity integer NOT NULL DEFAULT 0 CHECK (current_quantity >= 0),
+    low_stock_threshold integer NOT NULL DEFAULT 10,
+    last_restocked_at timestamp with time zone,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT hub_inventories_pkey PRIMARY KEY (id),
+    CONSTRAINT hub_inventories_hub_id_fkey FOREIGN KEY (hub_id) REFERENCES public.hubs(id),
+    CONSTRAINT hub_inventories_item_category_id_fkey FOREIGN KEY (item_category_id) REFERENCES public.item_categories(id)
+);
+CREATE TABLE public.hub_staff (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    hub_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    is_available boolean NOT NULL DEFAULT true,
+    assigned_at timestamp with time zone NOT NULL DEFAULT now(),
+    unassigned_at timestamp with time zone,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT hub_staff_pkey PRIMARY KEY (id),
+    CONSTRAINT hub_staff_hub_id_fkey FOREIGN KEY (hub_id) REFERENCES public.hubs(id),
+    CONSTRAINT hub_staff_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.hubs (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    name character varying NOT NULL,
+    address character varying,
+    lat numeric NOT NULL,
+    lng numeric NOT NULL,
+    phone_number character varying,
+    image_url character varying,
+    status USER - DEFINED NOT NULL DEFAULT 'ACTIVE'::hub_status,
+    operating_hours character varying,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT hubs_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.inventory_logs (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    hub_inventory_id uuid NOT NULL,
+    change_type character varying NOT NULL,
+    quantity_delta integer NOT NULL CHECK (quantity_delta <> 0),
+    quantity_after integer NOT NULL,
+    reference_type character varying,
+    reference_id uuid,
+    notes text,
+    created_by uuid,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT inventory_logs_pkey PRIMARY KEY (id),
+    CONSTRAINT inventory_logs_hub_inventory_id_fkey FOREIGN KEY (hub_inventory_id) REFERENCES public.hub_inventories(id),
+    CONSTRAINT inventory_logs_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.users(id)
+);
+CREATE TABLE public.item_categories (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    parent_id uuid,
+    name character varying NOT NULL,
+    unit character varying NOT NULL,
+    icon_url character varying,
+    is_leaf boolean NOT NULL DEFAULT true,
+    sort_order integer DEFAULT 0,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT item_categories_pkey PRIMARY KEY (id),
+    CONSTRAINT item_categories_parent_id_fkey FOREIGN KEY (parent_id) REFERENCES public.item_categories(id)
+);
+CREATE TABLE public.missions (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    mission_type USER - DEFINED NOT NULL,
+    sos_request_id uuid,
+    aid_request_id uuid,
+    help_request_id uuid,
+    volunteer_id uuid,
+    hub_id uuid,
+    status USER - DEFINED NOT NULL DEFAULT 'PENDING'::mission_status,
+    qr_code_token character varying UNIQUE,
+    priority_score numeric DEFAULT 0.00,
+    victim_lat numeric,
+    victim_lng numeric,
+    cancellation_reason text,
+    image_url character varying,
+    comment text,
+    started_at timestamp with time zone,
+    completed_at timestamp with time zone,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    accepted_at timestamp with time zone,
+    cancelled_at timestamp with time zone,
+    confirmation_image_url character varying,
+    picked_up_at timestamp with time zone,
+    CONSTRAINT missions_pkey PRIMARY KEY (id),
+    CONSTRAINT missions_sos_request_id_fkey FOREIGN KEY (sos_request_id) REFERENCES public.sos_requests(id),
+    CONSTRAINT missions_aid_request_id_fkey FOREIGN KEY (aid_request_id) REFERENCES public.aid_requests(id),
+    CONSTRAINT missions_help_request_id_fkey FOREIGN KEY (help_request_id) REFERENCES public.help_requests(id),
+    CONSTRAINT missions_volunteer_id_fkey FOREIGN KEY (volunteer_id) REFERENCES public.users(id),
+    CONSTRAINT missions_hub_id_fkey FOREIGN KEY (hub_id) REFERENCES public.hubs(id)
+);
+CREATE TABLE public.notifications (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    user_id uuid NOT NULL,
+    title character varying NOT NULL,
+    body text,
+    related_type character varying,
+    related_id uuid,
+    is_read boolean NOT NULL DEFAULT false,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT notifications_pkey PRIMARY KEY (id),
+    CONSTRAINT notifications_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.ratings (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    mission_id uuid NOT NULL UNIQUE,
+    rater_id uuid NOT NULL,
+    ratee_id uuid NOT NULL,
+    score integer NOT NULL CHECK (
+        score >= 1
+        AND score <= 5
+    ),
+    comment text,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT ratings_pkey PRIMARY KEY (id),
+    CONSTRAINT ratings_mission_id_fkey FOREIGN KEY (mission_id) REFERENCES public.missions(id),
+    CONSTRAINT ratings_rater_id_fkey FOREIGN KEY (rater_id) REFERENCES public.users(id),
+    CONSTRAINT ratings_ratee_id_fkey FOREIGN KEY (ratee_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.refresh_tokens (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    user_id uuid NOT NULL,
+    token_hash character varying NOT NULL,
+    device_info character varying,
+    is_revoked boolean NOT NULL DEFAULT false,
+    expires_at timestamp with time zone NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT refresh_tokens_pkey PRIMARY KEY (id),
+    CONSTRAINT refresh_tokens_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.shelters (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    hub_id uuid,
+    name character varying NOT NULL,
+    address character varying,
+    lat numeric NOT NULL,
+    lng numeric NOT NULL,
+    max_capacity integer NOT NULL,
+    current_capacity integer NOT NULL DEFAULT 0,
+    phone_number character varying,
+    image_url character varying,
+    is_active boolean NOT NULL DEFAULT true,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT shelters_pkey PRIMARY KEY (id),
+    CONSTRAINT shelters_hub_id_fkey FOREIGN KEY (hub_id) REFERENCES public.hubs(id)
+);
+CREATE TABLE public.sos_requests (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    requester_id uuid,
+    urgency USER - DEFINED NOT NULL DEFAULT 'MEDIUM'::urgency_level,
+    status USER - DEFINED NOT NULL DEFAULT 'PENDING'::sos_status,
+    lat double precision NOT NULL,
+    lng double precision NOT NULL,
+    address character varying,
+    description text,
+    people_count integer NOT NULL DEFAULT 1 CHECK (people_count > 0),
+    image_url character varying,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    urgency_level character varying NOT NULL CHECK (
+        urgency_level::text = ANY (
+            ARRAY ['CRITICAL'::character varying, 'HIGH'::character varying, 'MEDIUM'::character varying, 'LOW'::character varying]::text []
+        )
+    ),
+    CONSTRAINT sos_requests_pkey PRIMARY KEY (id),
+    CONSTRAINT sos_requests_requester_id_fkey FOREIGN KEY (requester_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.sponsor_profiles (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    user_id uuid NOT NULL UNIQUE,
+    organization_name character varying,
+    organization_type character varying,
+    donation_count integer NOT NULL DEFAULT 0,
+    total_donated_value numeric DEFAULT 0.00,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT sponsor_profiles_pkey PRIMARY KEY (id),
+    CONSTRAINT sponsor_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.staff (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    user_id uuid NOT NULL UNIQUE,
+    start_date date NOT NULL DEFAULT CURRENT_DATE,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT staff_pkey PRIMARY KEY (id),
+    CONSTRAINT staff_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.system_config (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    config_key character varying NOT NULL UNIQUE,
+    config_value text NOT NULL,
+    description character varying,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    CONSTRAINT system_config_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.users (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    email character varying UNIQUE,
+    phone_number character varying UNIQUE,
+    password_hash character varying NOT NULL,
+    full_name character varying,
+    avatar_url character varying,
+    role character varying NOT NULL DEFAULT 'VICTIM'::user_role,
+    is_active boolean NOT NULL DEFAULT true,
+    is_verified boolean NOT NULL DEFAULT false,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    fcm_token character varying,
+    CONSTRAINT users_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.volunteer_profiles (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    user_id uuid NOT NULL UNIQUE,
+    is_online boolean NOT NULL DEFAULT false,
+    current_lat numeric,
+    current_lng numeric,
+    avg_rating numeric DEFAULT 0.00,
+    total_tasks_completed integer NOT NULL DEFAULT 0,
+    badge USER - DEFINED DEFAULT 'BRONZE'::badge_level,
+    last_location_update timestamp with time zone,
+    created_at timestamp with time zone NOT NULL DEFAULT now(),
+    updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    avg_response_seconds integer NOT NULL,
+    vehicle_type character varying CHECK (
+        vehicle_type::text = ANY (
+            ARRAY ['MOTORBIKE'::character varying, 'CAR'::character varying, 'TRUCK'::character varying, 'BICYCLE'::character varying, 'WALK'::character varying]::text []
+        )
+    ),
+    CONSTRAINT volunteer_profiles_pkey PRIMARY KEY (id),
+    CONSTRAINT volunteer_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+);
