@@ -2,5 +2,18 @@
 <resources>
     <color name="admin_screen_background">#0F172A</color>
     <color name="admin_text_primary">#FFFFFF</color>
+    <color name="admin_text_secondary">#A5B4CF</color>
     <color name="admin_nav_icon_tint">#FFFFFF</color>
+
+    <color name="admin_action_button_text">#FFFFFF</color>
+    <color name="admin_action_button_primary_bg">#1D72FF</color>
+    <color name="admin_action_button_secondary_bg">#243043</color>
+
+    <color name="admin_stat_card_bg">#182538</color>
+    <color name="admin_stat_card_stroke">#2D3D55</color>
+    <color name="admin_stat_icon_tint">#7CB7FF</color>
+
+    <color name="admin_chart_card_bg">#142033</color>
+    <color name="admin_chart_card_stroke">#2C3B53</color>
+    <color name="admin_chart_bar">#39A0FF</color>
 </resources>

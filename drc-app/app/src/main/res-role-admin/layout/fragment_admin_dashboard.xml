@@ -4,19 +4,406 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/admin_screen_background"
-    android:padding="@dimen/admin_screen_padding">
+    android:background="@color/admin_screen_background">
 
-    <TextView
-        android:id="@+id/text_admin_dashboard_title"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_admin_dashboard_header"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/admin_dashboard_screen_title"
-        android:textColor="@color/admin_text_primary"
-        android:textSize="@dimen/admin_screen_title_text_size"
+        android:layout_marginStart="@dimen/admin_screen_padding"
+        android:layout_marginTop="@dimen/admin_screen_padding"
+        android:layout_marginEnd="@dimen/admin_screen_padding"
+        android:paddingTop="@dimen/admin_header_vertical_padding"
+        android:paddingBottom="@dimen/admin_header_vertical_padding"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/image_admin_logo"
+            android:layout_width="@dimen/admin_logo_size"
+            android:layout_height="@dimen/admin_logo_size"
+            android:contentDescription="@string/admin_logo_content_description"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text_admin_dashboard_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/admin_dashboard_title"
+            android:textColor="@color/admin_text_primary"
+            android:textSize="@dimen/admin_screen_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_admin_dashboard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/admin_section_spacing"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/admin_screen_padding"
+        android:paddingEnd="@dimen/admin_screen_padding"
+        android:paddingBottom="@dimen/admin_screen_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/layout_admin_dashboard_header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/layout_admin_action_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_admin_open_map"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/admin_action_open_relief_map"
+                    android:textAllCaps="false"
+                    android:textColor="@color/admin_action_button_text"
+                    android:textSize="@dimen/admin_action_button_text_size"
+                    app:backgroundTint="@color/admin_action_button_primary_bg"
+                    app:cornerRadius="@dimen/admin_action_button_radius" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_admin_manage_hub"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/admin_action_button_spacing"
+                    android:layout_weight="1"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/admin_action_manage_hubs"
+                    android:textAllCaps="false"
+                    android:textColor="@color/admin_action_button_text"
+                    android:textSize="@dimen/admin_action_button_text_size"
+                    app:backgroundTint="@color/admin_action_button_secondary_bg"
+                    app:cornerRadius="@dimen/admin_action_button_radius" />
+
+            </LinearLayout>
+
+            <GridLayout
+                android:id="@+id/grid_admin_stats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_section_spacing"
+                android:columnCount="2"
+                android:rowCount="2"
+                android:useDefaultMargins="false">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="@dimen/admin_stat_card_gap"
+                    android:layout_marginBottom="@dimen/admin_stat_card_gap"
+                    app:cardBackgroundColor="@color/admin_stat_card_bg"
+                    app:cardCornerRadius="@dimen/admin_stat_card_radius"
+                    app:strokeColor="@color/admin_stat_card_stroke"
+                    app:strokeWidth="@dimen/admin_stat_card_stroke_width">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/admin_stat_card_padding">
+
+                        <ImageView
+                            android:layout_width="@dimen/admin_stat_icon_size"
+                            android:layout_height="@dimen/admin_stat_icon_size"
+                            android:contentDescription="@string/admin_stat_total_hubs"
+                            android:src="@drawable/ic_admin_nav_dashboard"
+                            android:tint="@color/admin_stat_icon_tint" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/admin_stat_text_spacing"
+                            android:text="@string/admin_stat_total_hubs"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="@dimen/admin_stat_label_text_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/admin_stat_value_spacing"
+                            android:text="@string/admin_stat_total_hubs_value"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_stat_value_text_size"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginBottom="@dimen/admin_stat_card_gap"
+                    app:cardBackgroundColor="@color/admin_stat_card_bg"
+                    app:cardCornerRadius="@dimen/admin_stat_card_radius"
+                    app:strokeColor="@color/admin_stat_card_stroke"
+                    app:strokeWidth="@dimen/admin_stat_card_stroke_width">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/admin_stat_card_padding">
+
+                        <ImageView
+                            android:layout_width="@dimen/admin_stat_icon_size"
+                            android:layout_height="@dimen/admin_stat_icon_size"
+                            android:contentDescription="@string/admin_stat_volunteers"
+                            android:src="@drawable/ic_admin_nav_profile"
+                            android:tint="@color/admin_stat_icon_tint" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/admin_stat_text_spacing"
+                            android:text="@string/admin_stat_volunteers"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="@dimen/admin_stat_label_text_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/admin_stat_value_spacing"
+                            android:text="@string/admin_stat_volunteers_value"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_stat_value_text_size"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="@dimen/admin_stat_card_gap"
+                    app:cardBackgroundColor="@color/admin_stat_card_bg"
+                    app:cardCornerRadius="@dimen/admin_stat_card_radius"
+                    app:strokeColor="@color/admin_stat_card_stroke"
+                    app:strokeWidth="@dimen/admin_stat_card_stroke_width">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/admin_stat_card_padding">
+
+                        <ImageView
+                            android:layout_width="@dimen/admin_stat_icon_size"
+                            android:layout_height="@dimen/admin_stat_icon_size"
+                            android:contentDescription="@string/admin_stat_today_missions"
+                            android:src="@drawable/ic_admin_nav_ai"
+                            android:tint="@color/admin_stat_icon_tint" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/admin_stat_text_spacing"
+                            android:text="@string/admin_stat_today_missions"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="@dimen/admin_stat_label_text_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/admin_stat_value_spacing"
+                            android:text="@string/admin_stat_today_missions_value"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_stat_value_text_size"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    app:cardBackgroundColor="@color/admin_stat_card_bg"
+                    app:cardCornerRadius="@dimen/admin_stat_card_radius"
+                    app:strokeColor="@color/admin_stat_card_stroke"
+                    app:strokeWidth="@dimen/admin_stat_card_stroke_width">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/admin_stat_card_padding">
+
+                        <ImageView
+                            android:layout_width="@dimen/admin_stat_icon_size"
+                            android:layout_height="@dimen/admin_stat_icon_size"
+                            android:contentDescription="@string/admin_stat_distributed_items"
+                            android:src="@drawable/ic_map"
+                            android:tint="@color/admin_stat_icon_tint" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/admin_stat_text_spacing"
+                            android:text="@string/admin_stat_distributed_items"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="@dimen/admin_stat_label_text_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/admin_stat_value_spacing"
+                            android:text="@string/admin_stat_distributed_items_value"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_stat_value_text_size"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+            </GridLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_admin_chart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_section_spacing"
+                app:cardBackgroundColor="@color/admin_chart_card_bg"
+                app:cardCornerRadius="@dimen/admin_chart_card_radius"
+                app:strokeColor="@color/admin_chart_card_stroke"
+                app:strokeWidth="@dimen/admin_chart_card_stroke_width">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/admin_chart_card_padding">
+
+                    <TextView
+                        android:id="@+id/text_admin_chart_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/admin_chart_title"
+                        android:textColor="@color/admin_text_primary"
+                        android:textSize="@dimen/admin_chart_title_text_size"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/admin_chart_top_spacing"
+                        android:gravity="bottom"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <View
+                                android:layout_width="@dimen/admin_chart_bar_width"
+                                android:layout_height="@dimen/admin_chart_bar_height_medical"
+                                android:background="@drawable/bg_admin_chart_bar" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/admin_chart_label_top_spacing"
+                                android:text="@string/admin_chart_label_medical"
+                                android:textColor="@color/admin_text_secondary"
+                                android:textSize="@dimen/admin_chart_label_text_size" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <View
+                                android:layout_width="@dimen/admin_chart_bar_width"
+                                android:layout_height="@dimen/admin_chart_bar_height_food"
+                                android:background="@drawable/bg_admin_chart_bar" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/admin_chart_label_top_spacing"
+                                android:text="@string/admin_chart_label_food"
+                                android:textColor="@color/admin_text_secondary"
+                                android:textSize="@dimen/admin_chart_label_text_size" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <View
+                                android:layout_width="@dimen/admin_chart_bar_width"
+                                android:layout_height="@dimen/admin_chart_bar_height_water"
+                                android:background="@drawable/bg_admin_chart_bar" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/admin_chart_label_top_spacing"
+                                android:text="@string/admin_chart_label_water"
+                                android:textColor="@color/admin_text_secondary"
+                                android:textSize="@dimen/admin_chart_label_text_size" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <View
+                                android:layout_width="@dimen/admin_chart_bar_width"
+                                android:layout_height="@dimen/admin_chart_bar_height_clothes"
+                                android:background="@drawable/bg_admin_chart_bar" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/admin_chart_label_top_spacing"
+                                android:text="@string/admin_chart_label_clothes"
+                                android:textColor="@color/admin_text_secondary"
+                                android:textSize="@dimen/admin_chart_label_text_size" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

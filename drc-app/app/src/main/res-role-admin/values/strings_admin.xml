@@ -5,6 +5,30 @@
     <string name="admin_nav_profile">Cá nhân</string>
 
     <string name="admin_dashboard_screen_title">ADMIN DASHBOARD SCREEN</string>
+    <string name="admin_dashboard_title">Bảng quản trị</string>
+    <string name="admin_logo_content_description">Logo ứng dụng AidBridge</string>
+
+    <string name="admin_action_open_relief_map">Xem bản đồ cứu trợ</string>
+    <string name="admin_action_manage_hubs">Quản lý trạm</string>
+
+    <string name="admin_stat_total_hubs">TỔNG SỐ TRẠM</string>
+    <string name="admin_stat_total_hubs_value">12</string>
+    <string name="admin_stat_volunteers">TÌNH NGUYỆN VIÊN</string>
+    <string name="admin_stat_volunteers_value">1.2K</string>
+    <string name="admin_stat_today_missions">NHIỆM VỤ HÔM NAY</string>
+    <string name="admin_stat_today_missions_value">156</string>
+    <string name="admin_stat_distributed_items">VẬT PHẨM PHÂN PHỐI</string>
+    <string name="admin_stat_distributed_items_value">45K unit</string>
+
+    <string name="admin_chart_title">Số lượng hàng theo loại</string>
+    <string name="admin_chart_label_medical">Y TẾ</string>
+    <string name="admin_chart_label_food">THỰC PHẨM</string>
+    <string name="admin_chart_label_water">NƯỚC</string>
+    <string name="admin_chart_label_clothes">QUẦN ÁO</string>
+
+    <string name="admin_dashboard_open_map_todo">Màn hình bản đồ cứu trợ đang được hoàn thiện</string>
+    <string name="admin_dashboard_manage_hubs_todo">Màn hình quản lý trạm đang được hoàn thiện</string>
+
     <string name="admin_ai_screen_title">ADMIN AI SUMMARY SCREEN</string>
     <string name="admin_profile_screen_title">ADMIN PROFILE SCREEN</string>
 </resources>

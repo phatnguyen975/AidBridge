@@ -3,4 +3,36 @@
     <dimen name="admin_screen_padding">16dp</dimen>
     <dimen name="admin_screen_title_text_size">20sp</dimen>
     <dimen name="admin_nav_icon_size">24dp</dimen>
+
+    <dimen name="admin_header_vertical_padding">8dp</dimen>
+    <dimen name="admin_logo_size">36dp</dimen>
+    <dimen name="admin_section_spacing">16dp</dimen>
+
+    <dimen name="admin_action_button_radius">12dp</dimen>
+    <dimen name="admin_action_button_text_size">14sp</dimen>
+    <dimen name="admin_action_button_spacing">12dp</dimen>
+
+    <dimen name="admin_stat_card_gap">12dp</dimen>
+    <dimen name="admin_stat_card_padding">12dp</dimen>
+    <dimen name="admin_stat_card_radius">16dp</dimen>
+    <dimen name="admin_stat_card_stroke_width">1dp</dimen>
+    <dimen name="admin_stat_icon_size">20dp</dimen>
+    <dimen name="admin_stat_text_spacing">10dp</dimen>
+    <dimen name="admin_stat_value_spacing">4dp</dimen>
+    <dimen name="admin_stat_label_text_size">12sp</dimen>
+    <dimen name="admin_stat_value_text_size">22sp</dimen>
+
+    <dimen name="admin_chart_card_padding">16dp</dimen>
+    <dimen name="admin_chart_card_radius">18dp</dimen>
+    <dimen name="admin_chart_card_stroke_width">1dp</dimen>
+    <dimen name="admin_chart_title_text_size">16sp</dimen>
+    <dimen name="admin_chart_top_spacing">16dp</dimen>
+    <dimen name="admin_chart_bar_width">32dp</dimen>
+    <dimen name="admin_chart_bar_height_medical">72dp</dimen>
+    <dimen name="admin_chart_bar_height_food">92dp</dimen>
+    <dimen name="admin_chart_bar_height_water">64dp</dimen>
+    <dimen name="admin_chart_bar_height_clothes">78dp</dimen>
+    <dimen name="admin_chart_label_top_spacing">8dp</dimen>
+    <dimen name="admin_chart_label_text_size">12sp</dimen>
+    <dimen name="admin_chart_bar_radius">8dp</dimen>
 </resources>
