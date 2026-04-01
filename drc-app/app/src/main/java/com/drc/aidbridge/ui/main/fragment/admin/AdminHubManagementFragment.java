@@ -77,6 +77,13 @@ public class AdminHubManagementFragment extends BaseFragment<FragmentAdminHubMan
     }
 
     @Override
+    public void onViewHubDetails(@NonNull AdminHubManagementViewModel.Hub hub) {
+        String hubName = getString(hub.nameResId);
+        showToast(getString(R.string.admin_hub_mgmt_toast_open_details, hubName));
+        navigateToDestinationSafely(R.id.adminHubDetailFragment);
+    }
+
+    @Override
     public void onToggleHubStatus(@NonNull AdminHubManagementViewModel.Hub hub) {
         viewModel.toggleHubStatus(hub.id);
         String hubName = getString(hub.nameResId);
