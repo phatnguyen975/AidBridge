@@ -61,7 +61,10 @@ public class AdminDashboardFragment extends BaseFragment<FragmentAdminDashboardB
     }
 
     private void onManageHubClicked(View view) {
-        showToast(getString(R.string.admin_dashboard_manage_hubs_todo));
+        boolean navigated = navigateToDestinationSafely(R.id.adminHubManagementFragment);
+        if (!navigated) {
+            showToast(getString(R.string.admin_dashboard_manage_hubs_todo));
+        }
     }
 
     private void renderInventoryChart(@Nullable float[] values) {
@@ -86,7 +89,7 @@ public class AdminDashboardFragment extends BaseFragment<FragmentAdminDashboardB
         binding.barChartInventory.getDescription().setEnabled(false);
         binding.barChartInventory.getLegend().setEnabled(true);
         binding.barChartInventory.getLegend()
-            .setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
         binding.barChartInventory.setDrawGridBackground(false);
 
         XAxis xAxis = binding.barChartInventory.getXAxis();

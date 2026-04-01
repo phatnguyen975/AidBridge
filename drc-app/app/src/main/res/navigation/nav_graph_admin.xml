@@ -19,4 +19,9 @@
         android:id="@+id/nav_admin_profile"
         android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminProfileFragment"
         android:label="@string/admin_nav_profile" />
+
+    <fragment
+        android:id="@+id/adminHubManagementFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminHubManagementFragment"
+        android:label="@string/admin_hub_mgmt_title" />
 </navigation>
