@@ -1,5 +1,6 @@
 package com.drc.aidbridge.utils;
 
+import com.drc.aidbridge.BuildConfig;
 import java.util.regex.Pattern;
 
 /**
@@ -11,7 +12,7 @@ public final class Constants {
     }
 
     // === Network ===
-    public static final String BASE_URL = "http://10.0.2.2:8080/api/";
+    public static final String BASE_URL = BuildConfig.BASE_URL;
     public static final int CONNECT_TIMEOUT = 30;
     public static final int READ_TIMEOUT = 30;
     public static final int WRITE_TIMEOUT = 30;
