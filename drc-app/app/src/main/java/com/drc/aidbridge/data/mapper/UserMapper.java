@@ -26,7 +26,8 @@ public class UserMapper implements BaseMapper<UserDto, User> {
                 dto.getEmail(),
                 dto.getPhone(),
                 UserRole.fromStringSafe(dto.getRole()),
-                dto.getAvatarUrl()
+                dto.getAvatarUrl(),
+                dto.isVerified()
         );
     }
 
@@ -42,7 +43,8 @@ public class UserMapper implements BaseMapper<UserDto, User> {
                 domainModel.getEmail(),
                 domainModel.getPhone(),
                 domainModel.getRole().name(),
-                domainModel.getAvatarUrl()
+                domainModel.getAvatarUrl(),
+                domainModel.isVerified()
         );
     }
 }

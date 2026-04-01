@@ -6,6 +6,7 @@ import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.enums.UserRole;
+import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.domain.usecase.auth.RegisterUseCase;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseViewModel;
@@ -23,7 +24,7 @@ public class RegisterViewModel extends BaseViewModel {
     private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
     private final MutableLiveData<RegisterParams> registerTrigger = new MutableLiveData<>();
 
-    private final LiveData<NetworkResultWrapper<String>> registerResult;
+    private final LiveData<NetworkResultWrapper<User>> registerResult;
 
     @Inject
     public RegisterViewModel(RegisterUseCase registerUseCase) {
@@ -48,7 +49,7 @@ public class RegisterViewModel extends BaseViewModel {
         return validationError;
     }
 
-    public LiveData<NetworkResultWrapper<String>> getRegisterResult() {
+    public LiveData<NetworkResultWrapper<User>> getRegisterResult() {
         return registerResult;
     }
 
