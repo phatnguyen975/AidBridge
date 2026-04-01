@@ -27,12 +27,11 @@
     <string name="btn_register">ĐĂNG KÝ NGAY</string>
     <string name="link_have_account">Đã có tài khoản?</string>
     <string name="link_login_now">Đăng nhập</string>
-    <string name="error_terms_not_agreed">Bạn phải đồng ý với điều khoản để tiếp tục.</string>
+    <string name="error_terms_not_agreed">Bạn phải đồng ý với các điều khoản để tiếp tục.</string>
 
     <!-- OTP Screen -->
     <string name="screen_title_otp">Xác thực OTP</string>
     <string name="otp_title">Nhập mã OTP</string>
-    <string name="otp_description">Vui lòng nhập mã OTP 6 chữ số vừa được gửi đến</string>
     <string name="otp_resend_countdown">Chưa nhận được mã? Gửi lại (59s)</string>
     <string name="otp_resend_countdown_template">Chưa nhận được mã? Gửi lại (%ds)</string>
     <string name="otp_resend_now">Gửi lại ngay</string>
@@ -45,12 +44,13 @@
     <string name="otp_success_title">Xác thực thành công</string>
     <string name="otp_success_message">Tài khoản của bạn đã được xác minh. Chào mừng bạn đến với AidBridge.</string>
     <string name="error_otp_length">Vui lòng nhập đủ 6 chữ số.</string>
+    <string name="otp_back_locked_message">Bạn cần xác thực OTP. Vui lòng kiểm tra email để tiếp tục.</string>
 
     <!-- Forgot Password Flow -->
     <string name="forgot_title">Quên mật khẩu</string>
     <string name="forgot_subtitle">Nhập email đã đăng ký, chúng tôi sẽ gửi mã OTP để đặt lại mật khẩu.</string>
     <string name="forgot_btn_send_otp">GỬI MÃ OTP</string>
-    <string name="forgot_otp_description">Nhập mã OTP 6 chữ số đã được gửi đến email của bạn:</string>
+    <string name="otp_description">Nhập mã OTP 6 chữ số đã được gửi đến email của bạn:</string>
     <string name="forgot_new_password_title">Tạo mật khẩu mới</string>
     <string name="forgot_new_password_subtitle">Nhập mật khẩu mới cho tài khoản của bạn.</string>
     <string name="label_new_password">MẬT KHẨU MỚI</string>

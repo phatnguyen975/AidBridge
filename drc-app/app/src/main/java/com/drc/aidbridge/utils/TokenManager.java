@@ -84,6 +84,11 @@ public class TokenManager {
         return prefs.getBoolean(Constants.KEY_USER_VERIFIED, false);
     }
 
+    /** Marks the current user as verified */
+    public void markUserAsVerified() {
+        prefs.edit().putBoolean(Constants.KEY_USER_VERIFIED, true).apply();
+    }
+
     /** Clears ALL stored tokens. */
     public void clearTokens() {
         prefs.edit()

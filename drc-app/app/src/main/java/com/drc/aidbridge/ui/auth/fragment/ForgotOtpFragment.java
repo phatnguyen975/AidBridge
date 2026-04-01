@@ -3,7 +3,6 @@ package com.drc.aidbridge.ui.auth.fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
@@ -80,24 +79,30 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
             if (validation.getErrorField() == ValidationResult.Field.OTP) {
                 clearOtpBoxes();
             } else {
-                showToast(validation.getErrorMessage());
+                showTopSnackbar(binding.getRoot(), validation.getErrorMessage(), true);
             }
         });
 
         viewModel.getVerifyResult().observe(getViewLifecycleOwner(),
-                resultObserver(binding.btnVerify,
+                resultObserver(
                         ignored -> navigateToNewPassword(),
                         this::showNetworkError));
 
         viewModel.getResendResult().observe(getViewLifecycleOwner(),
-            resultObserver(binding.tvResend,
+            resultObserver(
                 ignored -> showResendSuccess(),
                 this::showNetworkError));
     }
 
     @Override
-    protected ProgressBar getLoadingView() {
-        return binding.progressBar;
+    protected void onLoadingStateChanged(boolean isLoading) {
+        applyActionLoadingState(
+            binding.btnVerify,
+            binding.progressVerifyInline,
+            binding.tvVerifyButtonText,
+            isLoading,
+            R.string.btn_confirm
+        );
     }
 
     private void setupClickListeners() {
@@ -111,20 +116,21 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
     }
 
     private void attemptVerifyOtp() {
+        clearInputFocusAndHideKeyboard();
         String otp = otpInputController.collectOtp();
         if (otp.length() < 6) {
-            showToast(getString(R.string.error_otp_length));
+            showTopSnackbar(binding.getRoot(), getString(R.string.error_otp_length), true);
             return;
         }
         viewModel.verify(otp);
     }
 
     private void showNetworkError(String message) {
-        showToast(message);
+        showTopSnackbar(binding.getRoot(), message, true);
     }
 
     private void showResendSuccess() {
-        showToast(getString(R.string.otp_resend_now));
+        showTopSnackbar(binding.getRoot(), getString(R.string.otp_resend_now), false);
     }
 
     private void clearOtpBoxes() {
