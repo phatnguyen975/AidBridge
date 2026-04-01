@@ -1,6 +1,7 @@
 package com.drc.aidbridge.ui.main.fragment.admin;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
