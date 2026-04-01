@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/admin_hub_item_spacing_medium"
+    app:cardBackgroundColor="@color/admin_inventory_category_card_bg"
+    app:cardCornerRadius="@dimen/admin_inventory_category_radius"
+    app:strokeColor="@color/admin_inventory_category_card_stroke"
+    app:strokeWidth="@dimen/admin_inventory_category_stroke">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/admin_inventory_category_padding">
+
+        <LinearLayout
+            android:id="@+id/layout_category_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/image_category_icon"
+                android:layout_width="@dimen/admin_inventory_category_icon_size"
+                android:layout_height="@dimen/admin_inventory_category_icon_size"
+                android:contentDescription="@string/admin_hub_mgmt_hub_icon_desc"
+                android:tint="@color/admin_stat_icon_tint" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/admin_hub_item_spacing_medium"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_category_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/admin_text_primary"
+                    android:textSize="@dimen/admin_inventory_category_title_text_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/text_category_threshold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                    android:textColor="@color/admin_text_secondary"
+                    android:textSize="@dimen/admin_inventory_category_sub_text_size" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_category_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/admin_hub_item_badge_padding_horizontal"
+                android:paddingTop="@dimen/admin_hub_item_badge_padding_vertical"
+                android:paddingEnd="@dimen/admin_hub_item_badge_padding_horizontal"
+                android:paddingBottom="@dimen/admin_hub_item_badge_padding_vertical"
+                android:textSize="@dimen/admin_inventory_badge_text_size"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_inventory_children"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

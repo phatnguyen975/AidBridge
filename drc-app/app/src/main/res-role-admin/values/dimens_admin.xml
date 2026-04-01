@@ -67,4 +67,24 @@
 
     <dimen name="admin_hub_mgmt_fab_margin">20dp</dimen>
     <dimen name="admin_hub_mgmt_list_bottom_padding">88dp</dimen>
+
+    <dimen name="admin_hub_detail_map_height">140dp</dimen>
+    <dimen name="admin_hub_detail_card_radius">16dp</dimen>
+    <dimen name="admin_hub_detail_card_stroke">1dp</dimen>
+    <dimen name="admin_hub_detail_card_padding">14dp</dimen>
+    <dimen name="admin_hub_detail_badge_radius">10dp</dimen>
+    <dimen name="admin_hub_detail_badge_text_size">11sp</dimen>
+    <dimen name="admin_hub_detail_button_height">44dp</dimen>
+    <dimen name="admin_hub_detail_stat_card_height">88dp</dimen>
+
+    <dimen name="admin_inventory_category_icon_size">20dp</dimen>
+    <dimen name="admin_inventory_category_padding">12dp</dimen>
+    <dimen name="admin_inventory_category_radius">14dp</dimen>
+    <dimen name="admin_inventory_category_stroke">1dp</dimen>
+    <dimen name="admin_inventory_category_title_text_size">15sp</dimen>
+    <dimen name="admin_inventory_category_sub_text_size">12sp</dimen>
+    <dimen name="admin_inventory_badge_radius">10dp</dimen>
+    <dimen name="admin_inventory_badge_text_size">11sp</dimen>
+    <dimen name="admin_inventory_child_padding_horizontal">12dp</dimen>
+    <dimen name="admin_inventory_child_padding_vertical">8dp</dimen>
 </resources>

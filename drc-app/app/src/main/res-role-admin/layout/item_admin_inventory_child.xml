@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/admin_hub_item_spacing_small"
+    android:background="@drawable/bg_admin_inventory_row"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/admin_inventory_child_padding_horizontal"
+    android:paddingTop="@dimen/admin_inventory_child_padding_vertical"
+    android:paddingEnd="@dimen/admin_inventory_child_padding_horizontal"
+    android:paddingBottom="@dimen/admin_inventory_child_padding_vertical">
+
+    <TextView
+        android:id="@+id/text_inventory_item_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/admin_text_secondary"
+        android:textSize="@dimen/admin_inventory_category_sub_text_size" />
+
+    <TextView
+        android:id="@+id/text_inventory_item_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/admin_text_primary"
+        android:textSize="@dimen/admin_inventory_category_sub_text_size"
+        android:textStyle="bold" />
+
+</LinearLayout>

@@ -43,4 +43,18 @@
     <color name="admin_button_success_bg">#1F7A4A</color>
 
     <color name="admin_fab_bg">#1D72FF</color>
+
+    <color name="admin_detail_card_bg">#162437</color>
+    <color name="admin_detail_card_stroke">#2B3C55</color>
+    <color name="admin_detail_map_bg">#1D3046</color>
+    <color name="admin_detail_badge_active_bg">#143D2D</color>
+    <color name="admin_detail_badge_active_text">#7DFFB7</color>
+
+    <color name="admin_inventory_category_card_bg">#162437</color>
+    <color name="admin_inventory_category_card_stroke">#2B3C55</color>
+    <color name="admin_inventory_row_bg">#1E3047</color>
+    <color name="admin_inventory_badge_ok_bg">#143D2D</color>
+    <color name="admin_inventory_badge_ok_text">#7DFFB7</color>
+    <color name="admin_inventory_badge_low_bg">#5C3B14</color>
+    <color name="admin_inventory_badge_low_text">#FFCC80</color>
 </resources>

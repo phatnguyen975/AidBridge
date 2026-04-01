@@ -66,6 +66,51 @@
     <string name="admin_hub_mock_inventory_thu_duc">6.150 đơn vị</string>
     <string name="admin_hub_mock_inventory_binh_thanh">12.600 đơn vị</string>
 
+    <string name="admin_hub_detail_back">Quay lại Quản lý trạm</string>
+    <string name="admin_hub_detail_hub_name">Hub Quận 1</string>
+    <string name="admin_hub_detail_status_active">HOẠT ĐỘNG</string>
+    <string name="admin_hub_detail_address">Địa chỉ: 12 Nguyễn Huệ, Quận 1, TP.HCM</string>
+    <string name="admin_hub_detail_manager">Quản lý: Nguyễn Văn Điều phối</string>
+    <string name="admin_hub_detail_map_desc">Bản đồ vị trí trạm trung chuyển</string>
+    <string name="admin_hub_detail_button_add_inventory">Thêm vật tư</string>
+    <string name="admin_hub_detail_inventory_toast">Mở chức năng thêm vật tư cho trạm</string>
+    <string name="admin_hub_detail_section_reserve">Mức dự trữ</string>
+    <string name="admin_hub_detail_threshold_format">Tối thiểu: %1$s units</string>
+    <string name="admin_hub_detail_badge_ok">ĐỦ</string>
+    <string name="admin_hub_detail_badge_low">CẦN BỔ SUNG</string>
+    <string name="admin_hub_detail_stat_total_import">TỔNG NHẬP KHO</string>
+    <string name="admin_hub_detail_stat_total_import_value">1.240 đơn vị</string>
+    <string name="admin_hub_detail_stat_relief_runs">LƯỢT CỨU TRỢ</string>
+    <string name="admin_hub_detail_stat_relief_runs_value">386 lượt</string>
+
+    <string name="admin_hub_category_medicine">Thuốc</string>
+    <string name="admin_hub_category_clothes">Quần áo</string>
+    <string name="admin_hub_category_food">Thức ăn</string>
+    <string name="admin_hub_category_water">Nước uống</string>
+    <string name="admin_hub_category_other">Khác</string>
+
+    <string name="admin_hub_item_medicine_fever">Cảm/sốt</string>
+    <string name="admin_hub_item_medicine_digestive">Tiêu hóa</string>
+    <string name="admin_hub_item_medicine_bandage">Băng gạc</string>
+    <string name="admin_hub_item_clothes_set">Bộ</string>
+    <string name="admin_hub_item_clothes_blanket">Chăn màn</string>
+    <string name="admin_hub_item_clothes_raincoat">Áo mưa</string>
+    <string name="admin_hub_item_food_rice">Gạo</string>
+    <string name="admin_hub_item_food_noodle">Mì tôm</string>
+    <string name="admin_hub_item_food_canned">Đồ hộp</string>
+    <string name="admin_hub_item_water_bottle">Nước đóng chai</string>
+    <string name="admin_hub_item_water_milk">Sữa</string>
+    <string name="admin_hub_item_water_electrolyte">Nước điện giải</string>
+    <string name="admin_hub_item_other_diaper">Tã</string>
+
+    <string name="admin_hub_unit_strip">vỉ</string>
+    <string name="admin_hub_unit_piece">cái</string>
+    <string name="admin_hub_unit_set">bộ</string>
+    <string name="admin_hub_unit_kg">kg</string>
+    <string name="admin_hub_unit_box">hộp</string>
+    <string name="admin_hub_unit_carton">thùng</string>
+    <string name="admin_hub_item_quantity_format">%1$d %2$s</string>
+
     <string name="admin_ai_screen_title">ADMIN AI SUMMARY SCREEN</string>
     <string name="admin_profile_screen_title">ADMIN PROFILE SCREEN</string>
 </resources>
