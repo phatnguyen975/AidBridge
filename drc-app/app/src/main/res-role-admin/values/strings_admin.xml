@@ -72,7 +72,7 @@
     <string name="admin_hub_detail_address">Địa chỉ: 12 Nguyễn Huệ, Quận 1, TP.HCM</string>
     <string name="admin_hub_detail_manager">Quản lý: Nguyễn Văn Điều phối</string>
     <string name="admin_hub_detail_map_desc">Bản đồ vị trí trạm trung chuyển</string>
-    <string name="admin_hub_detail_button_add_inventory">Thêm vật tư</string>
+    <string name="admin_hub_detail_button_add_inventory">Thêm / Cập nhật loại vật tư</string>
     <string name="admin_hub_detail_inventory_toast">Mở chức năng thêm vật tư cho trạm</string>
     <string name="admin_hub_detail_section_reserve">Mức dự trữ</string>
     <string name="admin_hub_detail_threshold_format">Tối thiểu: %1$s units</string>
@@ -110,6 +110,40 @@
     <string name="admin_hub_unit_box">hộp</string>
     <string name="admin_hub_unit_carton">thùng</string>
     <string name="admin_hub_item_quantity_format">%1$d %2$s</string>
+
+    <string name="admin_add_supply_type_title">Thêm vật tư</string>
+    <string name="admin_add_supply_type_back">Quay lại Chi tiết trạm</string>
+    <string name="admin_add_supply_type_category_label">Chọn loại vật tư</string>
+    <string name="admin_add_supply_type_unit_label">Đơn vị</string>
+    <string name="admin_add_supply_type_min_level_label">Mức tối thiểu</string>
+    <string name="admin_add_supply_type_note_label">Ghi chú</string>
+    <string name="admin_add_supply_type_min_level_hint">Nhập số lượng định mức</string>
+    <string name="admin_add_supply_type_note_hint">Mô tả định mức cho loại vật tư này</string>
+    <string name="admin_add_supply_type_save_button">Lưu vật tư</string>
+    <string name="admin_add_supply_type_toast_updated">Cập nhật thành công Mức tối thiểu và Ghi chú cho loại %1$s</string>
+    <string name="admin_add_supply_type_toast_added">Đã thêm loại vật tư %1$s vào kho của trạm</string>
+    <string name="admin_add_supply_type_toast_invalid_min">Vui lòng nhập Mức tối thiểu hợp lệ</string>
+
+    <string-array name="admin_add_supply_type_categories">
+        <item>@string/admin_hub_category_medicine</item>
+        <item>@string/admin_hub_category_clothes</item>
+        <item>@string/admin_hub_category_food</item>
+        <item>@string/admin_hub_category_water</item>
+        <item>@string/admin_hub_category_other</item>
+    </string-array>
+
+    <string-array name="admin_add_supply_type_units">
+        <item>@string/admin_hub_unit_strip</item>
+        <item>@string/admin_hub_unit_set</item>
+        <item>@string/admin_hub_unit_carton</item>
+        <item>@string/admin_hub_unit_carton</item>
+        <item>@string/admin_hub_unit_piece</item>
+    </string-array>
+
+    <string-array name="admin_add_supply_type_existing_mock">
+        <item>@string/admin_hub_category_medicine</item>
+        <item>@string/admin_hub_category_water</item>
+    </string-array>
 
     <string name="admin_ai_screen_title">ADMIN AI SUMMARY SCREEN</string>
     <string name="admin_profile_screen_title">ADMIN PROFILE SCREEN</string>

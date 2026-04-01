@@ -87,4 +87,12 @@
     <dimen name="admin_inventory_badge_text_size">11sp</dimen>
     <dimen name="admin_inventory_child_padding_horizontal">12dp</dimen>
     <dimen name="admin_inventory_child_padding_vertical">8dp</dimen>
+
+    <dimen name="admin_add_supply_type_field_spacing">8dp</dimen>
+    <dimen name="admin_add_supply_type_section_spacing">16dp</dimen>
+    <dimen name="admin_add_supply_type_spinner_height">52dp</dimen>
+    <dimen name="admin_add_supply_type_spinner_radius">12dp</dimen>
+    <dimen name="admin_add_supply_type_spinner_padding_horizontal">12dp</dimen>
+    <dimen name="admin_add_supply_type_spinner_text_size">15sp</dimen>
+    <dimen name="admin_add_supply_type_save_button_height">52dp</dimen>
 </resources>
