@@ -160,6 +160,12 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
 
     // ===========================
+    // Charting
+    // ===========================
+    // MPAndroidChart - chart library for BarChart, LineChart, PieChart and data visualization UI
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    // ===========================
     // Secure Storage
     // ===========================
     // Security Crypto - EncryptedSharedPreferences for AES-256 storage of JWT access/refresh tokens

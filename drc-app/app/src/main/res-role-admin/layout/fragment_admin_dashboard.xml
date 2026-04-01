@@ -306,7 +306,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="@dimen/admin_chart_card_padding">
+                    android:paddingStart="@dimen/admin_chart_card_padding"
+                    android:paddingTop="@dimen/admin_chart_card_padding"
+                    android:paddingEnd="@dimen/admin_chart_card_padding"
+                    android:paddingBottom="@dimen/admin_chart_card_padding_bottom">
 
                     <TextView
                         android:id="@+id/text_admin_chart_title"
@@ -317,98 +320,12 @@
                         android:textSize="@dimen/admin_chart_title_text_size"
                         android:textStyle="bold" />
 
-                    <LinearLayout
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/bar_chart_inventory"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/admin_chart_height"
                         android:layout_marginTop="@dimen/admin_chart_top_spacing"
-                        android:gravity="bottom"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
-
-                            <View
-                                android:layout_width="@dimen/admin_chart_bar_width"
-                                android:layout_height="@dimen/admin_chart_bar_height_medical"
-                                android:background="@drawable/bg_admin_chart_bar" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/admin_chart_label_top_spacing"
-                                android:text="@string/admin_chart_label_medical"
-                                android:textColor="@color/admin_text_secondary"
-                                android:textSize="@dimen/admin_chart_label_text_size" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
-
-                            <View
-                                android:layout_width="@dimen/admin_chart_bar_width"
-                                android:layout_height="@dimen/admin_chart_bar_height_food"
-                                android:background="@drawable/bg_admin_chart_bar" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/admin_chart_label_top_spacing"
-                                android:text="@string/admin_chart_label_food"
-                                android:textColor="@color/admin_text_secondary"
-                                android:textSize="@dimen/admin_chart_label_text_size" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
-
-                            <View
-                                android:layout_width="@dimen/admin_chart_bar_width"
-                                android:layout_height="@dimen/admin_chart_bar_height_water"
-                                android:background="@drawable/bg_admin_chart_bar" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/admin_chart_label_top_spacing"
-                                android:text="@string/admin_chart_label_water"
-                                android:textColor="@color/admin_text_secondary"
-                                android:textSize="@dimen/admin_chart_label_text_size" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
-
-                            <View
-                                android:layout_width="@dimen/admin_chart_bar_width"
-                                android:layout_height="@dimen/admin_chart_bar_height_clothes"
-                                android:background="@drawable/bg_admin_chart_bar" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/admin_chart_label_top_spacing"
-                                android:text="@string/admin_chart_label_clothes"
-                                android:textColor="@color/admin_text_secondary"
-                                android:textSize="@dimen/admin_chart_label_text_size" />
-                        </LinearLayout>
-
-                    </LinearLayout>
+                        android:contentDescription="@string/admin_chart_title" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
