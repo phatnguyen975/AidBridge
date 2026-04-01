@@ -1,0 +1,219 @@
+@baseUrl = http://localhost:8080/api
+@token = REPLACE_WITH_ACCESS_TOKEN
+@missionId = REPLACE_WITH_MISSION_UUID
+@chatPage = 1
+@chatLimit = 20
+
+### Mission Samples Library (comment only)
+# S-400 Bad Request
+# {
+#   "success": false,
+#   "error": {
+#     "code": "VALIDATION_ERROR",
+#     "message": "Invalid input data",
+#     "details": [
+#       { "field": "cancellation_reason", "message": "must not be blank" }
+#     ]
+#   }
+# }
+#
+# S-401 Unauthorized
+# {
+#   "success": false,
+#   "error": {
+#     "code": "UNAUTHORIZED",
+#     "message": "Authentication required"
+#   }
+# }
+#
+# S-404 Not Found
+# {
+#   "success": false,
+#   "error": {
+#     "code": "NOT_FOUND",
+#     "message": "Mission not found"
+#   }
+# }
+
+### Missions - List
+# Expected: 200
+# Sample 200:
+# {
+#   "success": true,
+#   "data": {
+#     "items": [
+#       {
+#         "id": "8f6d3f86-8586-4f6b-844b-18e9862f75e7",
+#         "mission_type": "DELIVERY",
+#         "status": "ASSIGNED",
+#         "created_at": "2026-03-30T10:20:00Z"
+#       }
+#     ],
+#     "pagination": { "page": 1, "limit": 20, "total": 1, "total_pages": 1 }
+#   }
+# }
+GET {{baseUrl}}/missions?mission_type=DELIVERY&status=ASSIGNED&page=1&limit=20
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Missions - Detail
+# Expected: 200 or 404
+# Sample 200:
+# {
+#   "success": true,
+#   "data": {
+#     "id": "8f6d3f86-8586-4f6b-844b-18e9862f75e7",
+#     "status": "ASSIGNED",
+#     "items": [
+#       { "id": "0a3d", "item_category_id": "food", "quantity": 10 }
+#     ]
+#   }
+# }
+# Sample 404: see S-404
+GET {{baseUrl}}/missions/{{missionId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Missions - Confirm Pickup
+# Expected: 200
+# Sample 200:
+# {
+#   "success": true,
+#   "data": {
+#     "id": "8f6d3f86-8586-4f6b-844b-18e9862f75e7",
+#     "status": "PICKED_UP",
+#     "picked_up_at": "2026-03-31T08:30:00Z"
+#   }
+# }
+# Sample 400: see S-400
+POST {{baseUrl}}/missions/{{missionId}}/pickup
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "qr_code_token": "REPLACE_WITH_QR_TOKEN"
+}
+
+### Missions - Complete (multipart)
+# Expected: 200
+# Sample 200:
+# {
+#   "success": true,
+#   "data": {
+#     "id": "8f6d3f86-8586-4f6b-844b-18e9862f75e7",
+#     "status": "COMPLETED",
+#     "completed_at": "2026-03-31T09:00:00Z"
+#   }
+# }
+POST {{baseUrl}}/missions/{{missionId}}/complete
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MissionBoundary
+
+--MissionBoundary
+Content-Disposition: form-data; name="confirmation_image"; filename="proof.jpg"
+Content-Type: image/jpeg
+
+< ./proof.jpg
+--MissionBoundary
+Content-Disposition: form-data; name="notes"
+
+Delivered successfully
+--MissionBoundary--
+
+### Missions - Cancel
+# Expected: 200
+# Sample 200:
+# {
+#   "success": true,
+#   "data": {
+#     "id": "8f6d3f86-8586-4f6b-844b-18e9862f75e7",
+#     "status": "CANCELLED",
+#     "cancellation_reason": "Volunteer unavailable"
+#   }
+# }
+# Sample 400: see S-400
+POST {{baseUrl}}/missions/{{missionId}}/cancel
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cancellation_reason": "Volunteer unavailable"
+}
+
+### Missions - Tracking
+# Expected: 200
+# Sample 200:
+# {
+#   "success": true,
+#   "data": {
+#     "mission_id": "8f6d3f86-8586-4f6b-844b-18e9862f75e7",
+#     "status": "IN_TRANSIT",
+#     "eta_minutes": 12,
+#     "distance_km": 4.6
+#   }
+# }
+GET {{baseUrl}}/missions/{{missionId}}/tracking
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Missions - Chat List
+# Expected: 200
+# Sample 200:
+# {
+#   "success": true,
+#   "data": {
+#     "items": [
+#       {
+#         "id": "msg-1",
+#         "message_type": "TEXT",
+#         "message_text": "On my way",
+#         "created_at": "2026-03-31T08:45:00Z"
+#       }
+#     ],
+#     "pagination": { "page": 1, "limit": 20, "total": 1, "total_pages": 1 }
+#   }
+# }
+GET {{baseUrl}}/missions/{{missionId}}/chat?page={{chatPage}}&limit={{chatLimit}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Missions - Send Chat Message
+# Expected: 201
+# Sample 201:
+# {
+#   "success": true,
+#   "data": {
+#     "id": "msg-2",
+#     "message_type": "TEXT",
+#     "message_text": "I am arriving in 10 minutes"
+#   }
+# }
+POST {{baseUrl}}/missions/{{missionId}}/chat
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "message_type": "TEXT",
+  "message_text": "I am arriving in 10 minutes"
+}
+
+### Missions - Rate
+# Expected: 201 or 400
+# Sample 201:
+# {
+#   "success": true,
+#   "data": {
+#     "id": "rate-1",
+#     "score": 5,
+#     "comment": "Great support"
+#   }
+# }
+# Sample 400: see S-400
+POST {{baseUrl}}/missions/{{missionId}}/rating
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "score": 5,
+  "comment": "Great support"
+}
