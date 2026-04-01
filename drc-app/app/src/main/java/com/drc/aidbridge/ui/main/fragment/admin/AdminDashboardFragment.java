@@ -1,7 +1,6 @@
 package com.drc.aidbridge.ui.main.fragment.admin;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
@@ -39,9 +38,7 @@ public class AdminDashboardFragment extends BaseFragment<FragmentAdminDashboardB
     protected void setupViews() {
         viewModel = new ViewModelProvider(this).get(AdminDashboardViewModel.class);
         binding.textAdminDashboardTitle.setText(getString(R.string.admin_dashboard_title));
-
-        binding.buttonAdminOpenMap.setOnClickListener(this::onOpenMapClicked);
-        binding.buttonAdminManageHub.setOnClickListener(this::onManageHubClicked);
+        setupClickListeners();
     }
 
     @Override
@@ -56,11 +53,16 @@ public class AdminDashboardFragment extends BaseFragment<FragmentAdminDashboardB
         viewModel.loadInventoryData();
     }
 
-    private void onOpenMapClicked(View view) {
+    private void setupClickListeners() {
+        binding.buttonAdminOpenMap.setOnClickListener(v -> onOpenMapClicked());
+        binding.buttonAdminManageHub.setOnClickListener(v -> onManageHubClicked());
+    }
+
+    private void onOpenMapClicked() {
         showToast(getString(R.string.admin_dashboard_open_map_todo));
     }
 
-    private void onManageHubClicked(View view) {
+    private void onManageHubClicked() {
         boolean navigated = navigateToDestinationSafely(R.id.adminHubManagementFragment);
         if (!navigated) {
             showToast(getString(R.string.admin_dashboard_manage_hubs_todo));

@@ -44,9 +44,6 @@ public class AdminHubManagementFragment extends BaseFragment<FragmentAdminHubMan
         binding.recyclerAdminHubs.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerAdminHubs.setAdapter(hubAdapter);
 
-        binding.buttonAdminHubBack.setOnClickListener(v -> popBackStackSafely());
-        binding.fabAdminAddHub.setOnClickListener(v -> showToast(getString(R.string.admin_hub_mgmt_toast_add_new)));
-
         binding.editTextAdminHubSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -62,7 +59,13 @@ public class AdminHubManagementFragment extends BaseFragment<FragmentAdminHubMan
             }
         });
 
+        setupClickListeners();
         viewModel.loadMockHubs();
+    }
+
+    private void setupClickListeners() {
+        binding.buttonAdminHubBack.setOnClickListener(v -> popBackStackSafely());
+        binding.fabAdminAddHub.setOnClickListener(v -> showToast(getString(R.string.admin_hub_mgmt_toast_add_new)));
     }
 
     @Override

@@ -35,11 +35,14 @@ public class AdminHubDetailFragment extends BaseFragment<FragmentAdminHubDetailB
         binding.recyclerAdminHubInventory.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerAdminHubInventory.setAdapter(inventoryAdapter);
 
+        setupClickListeners();
+        viewModel.loadMockInventory();
+    }
+
+    private void setupClickListeners() {
         binding.buttonAdminHubDetailBack.setOnClickListener(v -> popBackStackSafely());
         binding.buttonAddInventory
                 .setOnClickListener(v -> showToast(getString(R.string.admin_hub_detail_inventory_toast)));
-
-        viewModel.loadMockInventory();
     }
 
     @Override
