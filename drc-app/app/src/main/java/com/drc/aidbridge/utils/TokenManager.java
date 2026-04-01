@@ -54,12 +54,13 @@ public class TokenManager {
     }
 
     /** Caches user metadata locally after login for quick access throughout the app. */
-    public void saveUserInfo(String userId, String userName, String email, String role) {
+    public void saveUserInfo(String userId, String userName, String email, String role, boolean verified) {
         prefs.edit()
                 .putString(Constants.KEY_USER_ID, userId)
                 .putString(Constants.KEY_USER_NAME, userName)
                 .putString(Constants.KEY_USER_EMAIL, email)
                 .putString(Constants.KEY_USER_ROLE, role)
+                .putBoolean(Constants.KEY_USER_VERIFIED, verified)
                 .apply();
     }
 
@@ -76,6 +77,11 @@ public class TokenManager {
     /** Returns the cached user email. */
     public String getUserEmail() {
         return prefs.getString(Constants.KEY_USER_EMAIL, null);
+    }
+
+    /** Returns the cached verified state of the current user. */
+    public boolean isUserVerified() {
+        return prefs.getBoolean(Constants.KEY_USER_VERIFIED, false);
     }
 
     /** Clears ALL stored tokens. */

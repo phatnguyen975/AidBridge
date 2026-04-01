@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "794397443051",
-    "project_id": "your-project-id",
-    "storage_bucket": "your-project-id.firebasestorage.app"
+    "project_number": "<your_project_number>",
+    "project_id": "<your_project_id>",
+    "storage_bucket": "<your_project_id>.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:794397443051:android:3ab70f4dcad92a0c230fae",
+        "mobilesdk_app_id": "1:<your_project_number>:android:<your_android_client_id>",
         "android_client_info": {
-          "package_name": "com.drc.aidbridge"
+          "package_name": "<your_package_name>"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "your-api-key"
+          "current_key": "<your_api_key>"
         }
       ],
       "services": {

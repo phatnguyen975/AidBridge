@@ -69,8 +69,6 @@ public class TokenRefreshInterceptor implements Interceptor {
                 return response;
             }
 
-            // TODO: Re-enable refresh-token API once backend is ready.
-            /*
             // Build the refresh request body
             Map<String, String> body = new HashMap<>();
             body.put("refreshToken", refreshToken);
@@ -107,11 +105,6 @@ public class TokenRefreshInterceptor implements Interceptor {
                 tokenManager.clearAll();
                 return response;
             }
-            */
-
-            // Test mode: disable refresh-token API and force re-login on 401.
-            tokenManager.clearAll();
-            return response;
         }
 
         return response;

@@ -29,6 +29,7 @@ public final class Constants {
     public static final String KEY_USER_ID = "user_id";
     public static final String KEY_USER_NAME = "user_name";
     public static final String KEY_USER_EMAIL = "user_email";
+    public static final String KEY_USER_VERIFIED = "user_verified";
 
     // === Room Database ===
     public static final String DB_NAME = "aidbridge_db";
