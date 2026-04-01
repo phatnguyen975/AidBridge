@@ -41,11 +41,13 @@
     <string name="admin_hub_mgmt_status_suspended">SUSPENDED</string>
     <string name="admin_hub_mgmt_inventory_format">Tồn kho: %1$s</string>
     <string name="admin_hub_mgmt_btn_edit">Chỉnh sửa</string>
+    <string name="admin_hub_mgmt_btn_details">Xem chi tiết</string>
     <string name="admin_hub_mgmt_btn_deactivate">Vô hiệu hóa</string>
     <string name="admin_hub_mgmt_btn_activate">Kích hoạt lại</string>
     <string name="admin_hub_mgmt_fab_desc">Thêm trạm mới</string>
 
     <string name="admin_hub_mgmt_toast_open_edit">Mở chỉnh sửa cho %1$s</string>
+    <string name="admin_hub_mgmt_toast_open_details">Chuyển sang màn hình chi tiết trạm: %1$s</string>
     <string name="admin_hub_mgmt_toast_add_new">Mở form thêm mới trạm trung chuyển</string>
     <string name="admin_hub_mgmt_toast_status_changed">Đã cập nhật trạng thái %1$s: %2$s</string>
 

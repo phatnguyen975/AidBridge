@@ -35,7 +35,7 @@
                     android:layout_gravity="center"
                     android:contentDescription="@string/admin_hub_mgmt_hub_icon_desc"
                     android:src="@drawable/ic_admin_hub"
-                    android:tint="@color/admin_stat_icon_tint" />
+                    app:tint="@color/admin_stat_icon_tint" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -102,11 +102,11 @@
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_hub_edit"
+                android:id="@+id/button_hub_details"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/admin_hub_item_button_height"
                 android:layout_weight="1"
-                android:text="@string/admin_hub_mgmt_btn_edit"
+                android:text="@string/admin_hub_mgmt_btn_details"
                 android:textAllCaps="false"
                 android:textColor="@color/admin_button_edit_text"
                 android:textSize="@dimen/admin_hub_item_sub_text_size"

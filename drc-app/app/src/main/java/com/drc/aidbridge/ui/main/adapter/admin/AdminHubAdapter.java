@@ -3,6 +3,7 @@ package com.drc.aidbridge.ui.main.adapter.admin;
 import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -87,14 +88,17 @@ public class AdminHubAdapter extends RecyclerView.Adapter<AdminHubAdapter.AdminH
                                 binding.getRoot().getContext(), R.color.admin_button_success_bg)));
             }
 
-            binding.buttonHubEdit.setOnClickListener(v -> listener.onEditHub(hub));
+            binding.buttonHubDetails.setOnClickListener(v -> {
+                String hubName = binding.getRoot().getContext().getString(hub.nameResId);
+                String message = binding.getRoot().getContext()
+                        .getString(R.string.admin_hub_mgmt_toast_open_details, hubName);
+                Toast.makeText(binding.getRoot().getContext(), message, Toast.LENGTH_SHORT).show();
+            });
             binding.buttonHubToggleStatus.setOnClickListener(v -> listener.onToggleHubStatus(hub));
         }
     }
 
     public interface HubActionListener {
-        void onEditHub(@NonNull AdminHubManagementViewModel.Hub hub);
-
         void onToggleHubStatus(@NonNull AdminHubManagementViewModel.Hub hub);
     }
 }

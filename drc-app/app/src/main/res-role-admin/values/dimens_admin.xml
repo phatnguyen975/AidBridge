@@ -66,4 +66,5 @@
     <dimen name="admin_hub_item_button_radius">10dp</dimen>
 
     <dimen name="admin_hub_mgmt_fab_margin">20dp</dimen>
+    <dimen name="admin_hub_mgmt_list_bottom_padding">88dp</dimen>
 </resources>

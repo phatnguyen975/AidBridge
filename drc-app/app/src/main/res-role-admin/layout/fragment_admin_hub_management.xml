@@ -166,7 +166,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/admin_section_spacing"
         android:clipToPadding="false"
-        android:paddingBottom="@dimen/admin_hub_mgmt_fab_margin"
+        android:paddingBottom="@dimen/admin_hub_mgmt_list_bottom_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
