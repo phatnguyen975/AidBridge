@@ -42,7 +42,7 @@ public class AdminHubDetailFragment extends BaseFragment<FragmentAdminHubDetailB
     private void setupClickListeners() {
         binding.buttonAdminHubDetailBack.setOnClickListener(v -> popBackStackSafely());
         binding.buttonAddInventory
-                .setOnClickListener(v -> showToast(getString(R.string.admin_hub_detail_inventory_toast)));
+                .setOnClickListener(v -> navigateToDestinationSafely(R.id.adminAddSupplyTypeFragment));
     }
 
     @Override
