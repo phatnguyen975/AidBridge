@@ -29,6 +29,41 @@
     <string name="admin_dashboard_open_map_todo">Màn hình bản đồ cứu trợ đang được hoàn thiện</string>
     <string name="admin_dashboard_manage_hubs_todo">Màn hình quản lý trạm đang được hoàn thiện</string>
 
+    <string name="admin_hub_mgmt_title">Quản lý trạm trung chuyển</string>
+    <string name="admin_hub_mgmt_back">Quay lại Dashboard</string>
+    <string name="admin_hub_mgmt_search_hint">Tìm kiếm theo tên trạm hoặc địa điểm...</string>
+    <string name="admin_hub_mgmt_summary_total_hubs">TỔNG SỐ TRẠM</string>
+    <string name="admin_hub_mgmt_summary_total_hubs_value">12</string>
+    <string name="admin_hub_mgmt_summary_active_hubs">ĐANG HOẠT ĐỘNG</string>
+    <string name="admin_hub_mgmt_summary_active_hubs_value">9</string>
+    <string name="admin_hub_mgmt_hub_icon_desc">Biểu tượng trạm trung chuyển</string>
+    <string name="admin_hub_mgmt_status_active">ACTIVE</string>
+    <string name="admin_hub_mgmt_status_suspended">SUSPENDED</string>
+    <string name="admin_hub_mgmt_inventory_format">Tồn kho: %1$s</string>
+    <string name="admin_hub_mgmt_btn_edit">Chỉnh sửa</string>
+    <string name="admin_hub_mgmt_btn_deactivate">Vô hiệu hóa</string>
+    <string name="admin_hub_mgmt_btn_activate">Kích hoạt lại</string>
+    <string name="admin_hub_mgmt_fab_desc">Thêm trạm mới</string>
+
+    <string name="admin_hub_mgmt_toast_open_edit">Mở chỉnh sửa cho %1$s</string>
+    <string name="admin_hub_mgmt_toast_add_new">Mở form thêm mới trạm trung chuyển</string>
+    <string name="admin_hub_mgmt_toast_status_changed">Đã cập nhật trạng thái %1$s: %2$s</string>
+
+    <string name="admin_hub_mock_name_q1">Hub Q1</string>
+    <string name="admin_hub_mock_name_q7">Hub Q7</string>
+    <string name="admin_hub_mock_name_thu_duc">Hub Thủ Đức</string>
+    <string name="admin_hub_mock_name_binh_thanh">Hub Bình Thạnh</string>
+
+    <string name="admin_hub_mock_address_q1">12 Nguyễn Huệ, Quận 1</string>
+    <string name="admin_hub_mock_address_q7">220 Nguyễn Thị Thập, Quận 7</string>
+    <string name="admin_hub_mock_address_thu_duc">09 Võ Văn Ngân, TP Thủ Đức</string>
+    <string name="admin_hub_mock_address_binh_thanh">88 Điện Biên Phủ, Bình Thạnh</string>
+
+    <string name="admin_hub_mock_inventory_q1">18.200 đơn vị</string>
+    <string name="admin_hub_mock_inventory_q7">9.700 đơn vị</string>
+    <string name="admin_hub_mock_inventory_thu_duc">6.150 đơn vị</string>
+    <string name="admin_hub_mock_inventory_binh_thanh">12.600 đơn vị</string>
+
     <string name="admin_ai_screen_title">ADMIN AI SUMMARY SCREEN</string>
     <string name="admin_profile_screen_title">ADMIN PROFILE SCREEN</string>
 </resources>

@@ -37,4 +37,33 @@
     <dimen name="admin_chart_label_top_spacing">8dp</dimen>
     <dimen name="admin_chart_label_text_size">12sp</dimen>
     <dimen name="admin_chart_bar_radius">8dp</dimen>
+
+    <dimen name="admin_hub_mgmt_header_back_size">36dp</dimen>
+    <dimen name="admin_hub_mgmt_search_height">48dp</dimen>
+    <dimen name="admin_hub_mgmt_search_radius">14dp</dimen>
+    <dimen name="admin_hub_mgmt_search_icon_size">20dp</dimen>
+    <dimen name="admin_hub_mgmt_summary_spacing">12dp</dimen>
+    <dimen name="admin_hub_mgmt_summary_card_radius">16dp</dimen>
+    <dimen name="admin_hub_mgmt_summary_card_padding">12dp</dimen>
+    <dimen name="admin_hub_mgmt_summary_card_stroke">1dp</dimen>
+    <dimen name="admin_hub_mgmt_summary_value_text_size">24sp</dimen>
+
+    <dimen name="admin_hub_item_card_radius">16dp</dimen>
+    <dimen name="admin_hub_item_card_stroke">1dp</dimen>
+    <dimen name="admin_hub_item_padding">12dp</dimen>
+    <dimen name="admin_hub_item_icon_box_size">42dp</dimen>
+    <dimen name="admin_hub_item_icon_size">20dp</dimen>
+    <dimen name="admin_hub_item_icon_box_radius">10dp</dimen>
+    <dimen name="admin_hub_item_badge_radius">10dp</dimen>
+    <dimen name="admin_hub_item_badge_padding_horizontal">10dp</dimen>
+    <dimen name="admin_hub_item_badge_padding_vertical">3dp</dimen>
+    <dimen name="admin_hub_item_badge_text_size">11sp</dimen>
+    <dimen name="admin_hub_item_spacing_small">6dp</dimen>
+    <dimen name="admin_hub_item_spacing_medium">10dp</dimen>
+    <dimen name="admin_hub_item_title_text_size">16sp</dimen>
+    <dimen name="admin_hub_item_sub_text_size">13sp</dimen>
+    <dimen name="admin_hub_item_button_height">40dp</dimen>
+    <dimen name="admin_hub_item_button_radius">10dp</dimen>
+
+    <dimen name="admin_hub_mgmt_fab_margin">20dp</dimen>
 </resources>
