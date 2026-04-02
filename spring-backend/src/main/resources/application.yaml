@@ -1,14 +1,14 @@
 server:
   port: 8080
 
+app:
+  name: AidBridge
+
 jwt:
-  rsa:
-    public-key: classpath:certs/public.pem
-    private-key: classpath:certs/private.pem
   access-token:
-    expiration-ms: 900000
+    expiration-ms: 900000 # 15 minutes
   refresh-token:
-    expiration-ms: 604800000
+    expiration-ms: 604800000 # 7 days
 
 spring:
   application:
@@ -24,6 +24,14 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      leak-detection-threshold: 2000
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -36,8 +44,6 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${MAIL_USERNAME:your-email@gmail.com}
-    password: ${MAIL_PASSWORD:your-app-password}
     properties:
       mail:
         smtp:
@@ -48,11 +54,11 @@ spring:
           timeout: 5000
           writetimeout: 5000
 
-app:
-  name: AidBridge
+springdoc:
+  api-docs:
+    path: /v3/api-docs
 
-firebase:
-  enabled: ${FIREBASE_ENABLED:false}
-  project-id: ${FIREBASE_PROJECT_ID:aidbridge-5613d}
-  service-account:
-    path: ${FIREBASE_SERVICE_ACCOUNT_PATH:firebase-service-account.json}
+swagger-ui:
+  path: /swagger-ui.html
+  operationsSorter: method
+  tagsSorter: alpha

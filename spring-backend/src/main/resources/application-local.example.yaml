@@ -1,9 +1,36 @@
 spring:
   datasource:
-    url: your_db_url
-    username: your_db_username
-    password: your_db_password
+    url: your_database_url
+    username: your_database_username
+    password: your_database_password
+
+  data:
+    redis:
+      url: your_redis_url
 
   mail:
-    username: your_email
-    password: your_app_password
+    username: your_email_username
+    password: your_email_app_password
+  jpa:
+    show-sql: false
+
+jwt:
+  rsa:
+    public-key: path_to_your_public_key
+    private-key: path_to_your_private_key
+
+firebase:
+  enabled: false
+  project-id: your_firebase_project_id
+  service-account:
+    path: path_to_your_firebase_service_account
+
+cloudinary:
+  cloud-name: your_cloud_name
+  api-key: your_api_key
+  api-secret: your_api_secret
+
+logging:
+  level:
+    root: WARN
+    com.drc.aidbridge: INFO

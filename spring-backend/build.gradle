@@ -108,6 +108,15 @@ dependencies {
     // Lombok annotation processor - must run BEFORE MapStruct to expose generated accessors
     annotationProcessor 'org.projectlombok:lombok'
 
+
+    // SpringDoc OpenAPI - generates interactive API documentation at /swagger-ui.html
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2'
+    // ===========================
+    // Cloud Storage (Cloudinary)
+    // ===========================
+    // Cloudinary SDK - image/video upload, transformation, and CDN delivery
+    implementation 'com.cloudinary:cloudinary-http5:2.3.2'
+
     // ===========================
     // Testing
     // ===========================

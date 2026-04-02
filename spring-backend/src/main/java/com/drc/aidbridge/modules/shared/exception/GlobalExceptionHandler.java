@@ -42,6 +42,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(ex.getMessage()));
     }
 
+    @ExceptionHandler(CloudinaryOperationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCloudinaryOperationException(CloudinaryOperationException ex) {
+        log.error("Cloudinary operation failed: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(ApiResponse.error(ex.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
         String errors = ex.getBindingResult().getFieldErrors().stream()

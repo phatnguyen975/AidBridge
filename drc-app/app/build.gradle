@@ -6,6 +6,15 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+// Load local.properties to read API_BASE_URL for Retrofit configuration
+Properties properties = new Properties()
+def localPropertiesFile = project.rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    properties.load(localPropertiesFile.newDataInputStream())
+}
+// API_BASE_URL is the base URL for the backend API; defaults to localhost for emulator testing
+def localBaseUrl = properties.getProperty("API_BASE_URL", "http://10.0.2.2:8080/api/")
+
 android {
     namespace 'com.drc.aidbridge'
     compileSdk {
@@ -21,6 +30,9 @@ android {
 
         // HiltTestRunner replaces default runner to support Hilt injection in instrumented tests
         testInstrumentationRunner "com.google.dagger.hilt.android.testing.HiltTestRunner"
+
+        // BASE_URL is injected into BuildConfig at compile time; used by Retrofit to configure API client
+        buildConfigField "String", "BASE_URL", "\"${localBaseUrl}\""
     }
 
     buildTypes {
@@ -33,6 +45,8 @@ android {
     buildFeatures {
         // ViewBinding generates a binding class for each XML layout - replaces findViewById()
         viewBinding true
+        // buildConfig generates a BuildConfig class with constants defined in build.gradle
+        buildConfig true
     }
 
     compileOptions {

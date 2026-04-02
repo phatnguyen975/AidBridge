@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.dto.request.RegisterRequest;
 import com.drc.aidbridge.domain.enums.UserRole;
+import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.domain.usecase.validation.AuthInputValidator;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
@@ -50,7 +51,7 @@ public class RegisterUseCase {
         return inputValidator.requireRole(role);
     }
 
-    public LiveData<NetworkResultWrapper<String>> execute(
+    public LiveData<NetworkResultWrapper<User>> execute(
             String name, String email, String phone, String password, UserRole role) {
         return authRepository.register(new RegisterRequest(
                 inputValidator.normalizeText(name),
