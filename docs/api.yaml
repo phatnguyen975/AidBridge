@@ -319,10 +319,6 @@ components:
           type: string
           format: uri
           maxLength: 500
-        # Volunteer-specific
-        vehicle_type:
-          $ref: '#/components/schemas/VehicleType'
-
     LoginRequest:
       type: object
       required: [password]

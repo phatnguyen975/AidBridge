@@ -7,7 +7,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -17,12 +20,15 @@ public class UserController {
     private final RegisterUserUseCase registerUserUseCase;
     private final LoginUserUseCase loginUserUseCase;
     private final VerifyOtpUseCase verifyOtpUseCase;
-    private final ResendOtpUseCase resendOtpUseCase;
+    private final RequestOtpUseCase requestOtpUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
     private final LogoutUserUseCase logoutUserUseCase;
-    private final ForgotPasswordUseCase forgotPasswordUseCase;
     private final ResetPasswordUseCase resetPasswordUseCase;
+    private final ChangePasswordUseCase changePasswordUseCase;
 
+    /**
+     * POST /auth/register - Đăng ký user mới
+     */
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthResponse>> register(
             @Valid @RequestBody RegisterRequest request) {
@@ -31,6 +37,9 @@ public class UserController {
                 .body(ApiResponse.success("Registration successful. Please verify your email.", response));
     }
 
+    /**
+     * POST /auth/login - Đăng nhập
+     */
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponse>> login(
             @Valid @RequestBody LoginRequest request) {
@@ -38,27 +47,19 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("Login successful", response));
     }
 
-    @PostMapping("/verify-otp")
-    public ResponseEntity<ApiResponse<AuthResponse>> verifyOtp(
-            @Valid @RequestBody OtpVerifyRequest request) {
-        AuthResponse response = verifyOtpUseCase.execute(request);
-        return ResponseEntity.ok(ApiResponse.success("Email verified successfully", response));
-    }
-
-    @PostMapping("/resend-otp")
-    public ResponseEntity<ApiResponse<Void>> resendOtp(
-            @Valid @RequestBody ResendOtpRequest request) {
-        resendOtpUseCase.execute(request);
-        return ResponseEntity.ok(ApiResponse.success("OTP sent successfully", null));
-    }
-
-    @PostMapping("/refresh-token")
-    public ResponseEntity<ApiResponse<TokenResponse>> refreshToken(
+    /**
+     * POST /auth/refresh - Làm mới access token
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<AuthResponse>> refreshToken(
             @Valid @RequestBody RefreshTokenRequest request) {
-        TokenResponse response = refreshTokenUseCase.execute(request);
+        AuthResponse response = refreshTokenUseCase.execute(request);
         return ResponseEntity.ok(ApiResponse.success("Token refreshed", response));
     }
 
+    /**
+     * POST /auth/logout - Đăng xuất và revoke tokens
+     */
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> logout(
             @RequestHeader(value = "Authorization", required = false) String authHeader,
@@ -67,17 +68,57 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("Logged out successfully", null));
     }
 
-    @PostMapping("/forgot-password")
-    public ResponseEntity<ApiResponse<Void>> forgotPassword(
-            @Valid @RequestBody ForgotPasswordRequest request) {
-        forgotPasswordUseCase.execute(request);
-        return ResponseEntity.ok(ApiResponse.success("Password reset OTP sent", null));
+    /**
+     * POST /auth/otp/request - Yêu cầu gửi OTP
+     * Dùng cho: EMAIL_VERIFY, PHONE_VERIFY, PASSWORD_RESET
+     */
+    @PostMapping("/otp/request")
+    public ResponseEntity<ApiResponse<Void>> requestOtp(
+            @Valid @RequestBody RequestOtpRequest request) {
+        requestOtpUseCase.execute(request);
+        return ResponseEntity.ok(ApiResponse.success("OTP sent successfully", null));
     }
 
-    @PostMapping("/reset-password")
+    /**
+     * POST /auth/otp/verify - Xác thực OTP
+     */
+    @PostMapping("/otp/verify")
+    public ResponseEntity<ApiResponse<AuthResponse>> verifyOtp(
+            @Valid @RequestBody VerifyOtpRequest request) {
+        AuthResponse response = verifyOtpUseCase.execute(request);
+        return ResponseEntity.ok(ApiResponse.success("OTP verified successfully", response));
+    }
+
+    /**
+     * POST /auth/password/reset - Reset password với OTP
+     */
+    @PostMapping("/password/reset")
     public ResponseEntity<ApiResponse<Void>> resetPassword(
             @Valid @RequestBody ResetPasswordRequest request) {
         resetPasswordUseCase.execute(request);
         return ResponseEntity.ok(ApiResponse.success("Password reset successful", null));
+    }
+
+    /**
+     * POST /auth/password/change - Đổi password
+     */
+    @PostMapping("/password/change")
+    public ResponseEntity<ApiResponse<Void>> changePassword(
+            Authentication authentication,
+            @Valid @RequestBody ChangePasswordRequest request) {
+        UUID userId = resolveUserId(authentication);
+        changePasswordUseCase.execute(userId, request);
+        return ResponseEntity.ok(ApiResponse.success("Password changed successfully", null));
+    }
+
+    private UUID resolveUserId(Authentication authentication) {
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw new IllegalArgumentException("Authenticated user is required");
+        }
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UUID userId) {
+            return userId;
+        }
+        return UUID.fromString(principal.toString());
     }
 }
