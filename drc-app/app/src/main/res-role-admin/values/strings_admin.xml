@@ -146,5 +146,29 @@
     </string-array>
 
     <string name="admin_ai_screen_title">ADMIN AI SUMMARY SCREEN</string>
+    <string name="admin_ai_summary_title">Tóm tắt AI</string>
+    <string name="admin_ai_summary_updated_at">Cập nhật lúc 08:30, Hôm nay</string>
+    <string name="admin_ai_summary_report_icon_desc">Biểu tượng báo cáo AI</string>
+    <string name="admin_ai_summary_report_title">Báo cáo cứu trợ hôm nay</string>
+    <string name="admin_ai_summary_goods_value">1.240 kiện hàng</string>
+    <string name="admin_ai_summary_goods_growth">+12%%</string>
+    <string name="admin_ai_summary_people_value">320 người được hỗ trợ</string>
+    <string name="admin_ai_summary_warning_icon_desc">Cảnh báo kho vật tư</string>
+    <string name="admin_ai_summary_alert_water">Hub Quận 7 thiếu nước uống</string>
+    <string name="admin_ai_summary_alert_overload">Hub Thủ Đức đang quá tải tiếp nhận</string>
+    <string name="admin_ai_summary_create_report">Tạo báo cáo</string>
+    <string name="admin_ai_summary_recent_title">HOẠT ĐỘNG GẦN ĐÂY</string>
+    <string name="admin_ai_summary_view_all">Xem tất cả</string>
+    <string name="admin_ai_summary_activity_one_content">Đã điều phối 40 thùng nước về Hub Quận 7</string>
+    <string name="admin_ai_summary_activity_one_time">10p trước</string>
+    <string name="admin_ai_summary_activity_two_content">Đã tạo cảnh báo ưu tiên cho Hub Thủ Đức</string>
+    <string name="admin_ai_summary_activity_two_time">23p trước</string>
+    <string name="admin_ai_summary_activity_three_content">Đã cập nhật mức dự trữ thuốc tại Hub Quận 1</string>
+    <string name="admin_ai_summary_activity_three_time">45p trước</string>
+    <string name="admin_ai_summary_fab_robot_desc">Mở AI Chatbot</string>
+    <string name="admin_ai_summary_toast_generate_report">Đang tạo báo cáo cứu trợ...</string>
+    <string name="admin_ai_summary_toast_open_all_activities">Mở danh sách toàn bộ hoạt động</string>
+    <string name="admin_ai_summary_toast_open_chatbot_failed">Chưa thể mở AI Chatbot lúc này</string>
+    <string name="admin_ai_chatbot_title">AI Chatbot</string>
     <string name="admin_profile_screen_title">ADMIN PROFILE SCREEN</string>
 </resources>

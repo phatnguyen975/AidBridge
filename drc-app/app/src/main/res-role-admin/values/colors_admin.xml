@@ -57,4 +57,9 @@
     <color name="admin_inventory_badge_ok_text">#7DFFB7</color>
     <color name="admin_inventory_badge_low_bg">#5C3B14</color>
     <color name="admin_inventory_badge_low_text">#FFCC80</color>
+
+    <color name="admin_ai_summary_growth">#6EE7B7</color>
+    <color name="admin_ai_summary_warning_water">#FACC15</color>
+    <color name="admin_ai_summary_warning_overload">#FB923C</color>
+    <color name="admin_ai_summary_activity_dot_secondary">#64748B</color>
 </resources>

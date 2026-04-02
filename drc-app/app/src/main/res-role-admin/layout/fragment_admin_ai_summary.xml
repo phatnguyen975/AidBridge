@@ -4,19 +4,431 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/admin_screen_background"
-    android:padding="@dimen/admin_screen_padding">
+    android:background="@color/admin_screen_background">
 
-    <TextView
-        android:id="@+id/text_admin_ai_summary_title"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_admin_ai_summary"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/admin_screen_padding"
+        android:paddingTop="@dimen/admin_screen_padding"
+        android:paddingEnd="@dimen/admin_screen_padding"
+        android:paddingBottom="@dimen/admin_ai_summary_scroll_bottom_padding"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/text_admin_ai_summary_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/admin_ai_summary_title"
+                android:textColor="@color/admin_text_primary"
+                android:textSize="@dimen/admin_screen_title_text_size"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/text_admin_ai_last_updated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_ai_summary_updated_top_margin"
+                android:text="@string/admin_ai_summary_updated_at"
+                android:textColor="@color/admin_text_secondary"
+                android:textSize="@dimen/admin_hub_item_sub_text_size"
+                app:layout_constraintTop_toBottomOf="@id/text_admin_ai_summary_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_admin_ai_summary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_section_spacing"
+                app:cardBackgroundColor="@color/admin_summary_card_bg"
+                app:cardCornerRadius="@dimen/admin_hub_detail_card_radius"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/admin_summary_card_stroke"
+                app:strokeWidth="@dimen/admin_hub_detail_card_stroke"
+                app:layout_constraintTop_toBottomOf="@id/text_admin_ai_last_updated"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/admin_ai_summary_card_padding">
+
+                    <ImageView
+                        android:id="@+id/image_admin_ai_sparkle"
+                        android:layout_width="@dimen/admin_ai_summary_icon_size"
+                        android:layout_height="@dimen/admin_ai_summary_icon_size"
+                        android:contentDescription="@string/admin_ai_summary_report_icon_desc"
+                        android:src="@drawable/ic_admin_sparkle"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/text_admin_ai_report_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/admin_stat_text_spacing"
+                        android:text="@string/admin_ai_summary_report_title"
+                        android:textColor="@color/admin_text_primary"
+                        android:textSize="@dimen/admin_chart_title_text_size"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="@id/image_admin_ai_sparkle"
+                        app:layout_constraintBottom_toBottomOf="@id/image_admin_ai_sparkle"
+                        app:layout_constraintStart_toEndOf="@id/image_admin_ai_sparkle"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_admin_ai_goods"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/admin_ai_summary_card_inner_spacing"
+                        app:cardBackgroundColor="@color/admin_hub_icon_box_bg"
+                        app:cardCornerRadius="@dimen/admin_hub_item_icon_box_radius"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/admin_hub_icon_box_stroke"
+                        app:strokeWidth="@dimen/admin_hub_detail_card_stroke"
+                        app:layout_constraintTop_toBottomOf="@id/image_admin_ai_sparkle"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/card_admin_ai_people"
+                        app:layout_constraintHorizontal_weight="1"
+                        app:layout_constraintHorizontal_chainStyle="spread_inside">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/admin_ai_summary_mini_card_padding">
+
+                            <TextView
+                                android:id="@+id/text_admin_ai_goods_value"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/admin_ai_summary_goods_value"
+                                android:textColor="@color/admin_text_primary"
+                                android:textSize="@dimen/admin_ai_summary_mini_card_value_size"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/text_admin_ai_goods_growth"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/admin_stat_value_spacing"
+                                android:text="@string/admin_ai_summary_goods_growth"
+                                android:textColor="@color/admin_ai_summary_growth"
+                                android:textSize="@dimen/admin_hub_item_sub_text_size"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_admin_ai_people"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/admin_ai_summary_card_inner_spacing"
+                        android:layout_marginTop="@dimen/admin_ai_summary_card_inner_spacing"
+                        app:cardBackgroundColor="@color/admin_hub_icon_box_bg"
+                        app:cardCornerRadius="@dimen/admin_hub_item_icon_box_radius"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/admin_hub_icon_box_stroke"
+                        app:strokeWidth="@dimen/admin_hub_detail_card_stroke"
+                        app:layout_constraintTop_toBottomOf="@id/image_admin_ai_sparkle"
+                        app:layout_constraintStart_toEndOf="@id/card_admin_ai_goods"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_weight="1">
+
+                        <TextView
+                            android:id="@+id/text_admin_ai_people_value"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/admin_ai_summary_mini_card_padding"
+                            android:text="@string/admin_ai_summary_people_value"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_hub_item_sub_text_size"
+                            android:textStyle="bold" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:id="@+id/layout_admin_ai_alerts"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/admin_ai_summary_alert_top_margin"
+                        android:orientation="vertical"
+                        app:layout_constraintTop_toBottomOf="@id/card_admin_ai_goods"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="@dimen/admin_ai_summary_warning_icon_size"
+                                android:layout_height="@dimen/admin_ai_summary_warning_icon_size"
+                                android:contentDescription="@string/admin_ai_summary_warning_icon_desc"
+                                android:src="@drawable/ic_admin_warning_water" />
+
+                            <TextView
+                                android:id="@+id/text_admin_ai_alert_water"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                                android:layout_weight="1"
+                                android:text="@string/admin_ai_summary_alert_water"
+                                android:textColor="@color/admin_text_primary"
+                                android:textSize="@dimen/admin_hub_item_sub_text_size" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="@dimen/admin_ai_summary_warning_icon_size"
+                                android:layout_height="@dimen/admin_ai_summary_warning_icon_size"
+                                android:contentDescription="@string/admin_ai_summary_warning_icon_desc"
+                                android:src="@drawable/ic_admin_warning_overload" />
+
+                            <TextView
+                                android:id="@+id/text_admin_ai_alert_overload"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                                android:layout_weight="1"
+                                android:text="@string/admin_ai_summary_alert_overload"
+                                android:textColor="@color/admin_text_primary"
+                                android:textSize="@dimen/admin_hub_item_sub_text_size" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_admin_ai_create_report"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/admin_hub_detail_button_height"
+                        android:layout_marginTop="@dimen/admin_ai_summary_alert_top_margin"
+                        android:text="@string/admin_ai_summary_create_report"
+                        android:textAllCaps="false"
+                        android:textColor="@color/admin_action_button_text"
+                        android:textSize="@dimen/admin_action_button_text_size"
+                        app:backgroundTint="@color/admin_action_button_primary_bg"
+                        app:cornerRadius="@dimen/admin_action_button_radius"
+                        app:layout_constraintTop_toBottomOf="@id/layout_admin_ai_alerts"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/text_admin_ai_recent_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_section_spacing"
+                android:text="@string/admin_ai_summary_recent_title"
+                android:textColor="@color/admin_text_primary"
+                android:textSize="@dimen/admin_hub_item_sub_text_size"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/card_admin_ai_summary"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/text_admin_ai_view_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/admin_ai_summary_view_all"
+                android:textColor="@color/admin_action_button_primary_bg"
+                android:textSize="@dimen/admin_hub_item_sub_text_size"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="@id/text_admin_ai_recent_title"
+                app:layout_constraintBottom_toBottomOf="@id/text_admin_ai_recent_title"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_admin_ai_recent_activities"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                app:cardBackgroundColor="@color/admin_summary_card_bg"
+                app:cardCornerRadius="@dimen/admin_hub_detail_card_radius"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/admin_summary_card_stroke"
+                app:strokeWidth="@dimen/admin_hub_detail_card_stroke"
+                app:layout_constraintTop_toBottomOf="@id/text_admin_ai_recent_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/admin_ai_summary_card_padding">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <View
+                            android:id="@+id/view_admin_ai_activity_one_dot"
+                            android:layout_width="@dimen/admin_ai_summary_activity_dot_size"
+                            android:layout_height="@dimen/admin_ai_summary_activity_dot_size"
+                            android:background="@drawable/bg_admin_ai_activity_dot_primary"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <TextView
+                            android:id="@+id/text_admin_ai_activity_one_content"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                            android:layout_marginEnd="@dimen/admin_hub_item_spacing_small"
+                            android:text="@string/admin_ai_summary_activity_one_content"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_hub_item_sub_text_size"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/view_admin_ai_activity_one_dot"
+                            app:layout_constraintEnd_toStartOf="@id/text_admin_ai_activity_one_time" />
+
+                        <TextView
+                            android:id="@+id/text_admin_ai_activity_one_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/admin_ai_summary_activity_one_time"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="@dimen/admin_hub_item_sub_text_size"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/admin_hub_item_spacing_medium">
+
+                        <View
+                            android:id="@+id/view_admin_ai_activity_two_dot"
+                            android:layout_width="@dimen/admin_ai_summary_activity_dot_size"
+                            android:layout_height="@dimen/admin_ai_summary_activity_dot_size"
+                            android:background="@drawable/bg_admin_ai_activity_dot_secondary"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <TextView
+                            android:id="@+id/text_admin_ai_activity_two_content"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                            android:layout_marginEnd="@dimen/admin_hub_item_spacing_small"
+                            android:text="@string/admin_ai_summary_activity_two_content"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_hub_item_sub_text_size"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/view_admin_ai_activity_two_dot"
+                            app:layout_constraintEnd_toStartOf="@id/text_admin_ai_activity_two_time" />
+
+                        <TextView
+                            android:id="@+id/text_admin_ai_activity_two_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/admin_ai_summary_activity_two_time"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="@dimen/admin_hub_item_sub_text_size"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/admin_hub_item_spacing_medium">
+
+                        <View
+                            android:id="@+id/view_admin_ai_activity_three_dot"
+                            android:layout_width="@dimen/admin_ai_summary_activity_dot_size"
+                            android:layout_height="@dimen/admin_ai_summary_activity_dot_size"
+                            android:background="@drawable/bg_admin_ai_activity_dot_primary"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <TextView
+                            android:id="@+id/text_admin_ai_activity_three_content"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                            android:layout_marginEnd="@dimen/admin_hub_item_spacing_small"
+                            android:text="@string/admin_ai_summary_activity_three_content"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_hub_item_sub_text_size"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/view_admin_ai_activity_three_dot"
+                            app:layout_constraintEnd_toStartOf="@id/text_admin_ai_activity_three_time" />
+
+                        <TextView
+                            android:id="@+id/text_admin_ai_activity_three_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/admin_ai_summary_activity_three_time"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="@dimen/admin_hub_item_sub_text_size"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_admin_ai_robot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/admin_ai_screen_title"
-        android:textColor="@color/admin_text_primary"
-        android:textSize="@dimen/admin_screen_title_text_size"
+        android:layout_margin="@dimen/admin_hub_mgmt_fab_margin"
+        android:contentDescription="@string/admin_ai_summary_fab_robot_desc"
+        android:src="@drawable/ic_admin_nav_ai"
+        app:backgroundTint="@color/admin_fab_bg"
+        app:tint="@color/admin_text_primary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

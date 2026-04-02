@@ -95,4 +95,15 @@
     <dimen name="admin_add_supply_type_spinner_padding_horizontal">12dp</dimen>
     <dimen name="admin_add_supply_type_spinner_text_size">15sp</dimen>
     <dimen name="admin_add_supply_type_save_button_height">52dp</dimen>
+
+    <dimen name="admin_ai_summary_scroll_bottom_padding">96dp</dimen>
+    <dimen name="admin_ai_summary_updated_top_margin">6dp</dimen>
+    <dimen name="admin_ai_summary_card_padding">14dp</dimen>
+    <dimen name="admin_ai_summary_icon_size">22dp</dimen>
+    <dimen name="admin_ai_summary_card_inner_spacing">10dp</dimen>
+    <dimen name="admin_ai_summary_mini_card_padding">12dp</dimen>
+    <dimen name="admin_ai_summary_mini_card_value_size">18sp</dimen>
+    <dimen name="admin_ai_summary_alert_top_margin">12dp</dimen>
+    <dimen name="admin_ai_summary_warning_icon_size">18dp</dimen>
+    <dimen name="admin_ai_summary_activity_dot_size">10dp</dimen>
 </resources>
