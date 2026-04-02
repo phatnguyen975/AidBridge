@@ -3,7 +3,6 @@ package com.drc.aidbridge.modules.attachment.internal.web;
 import com.drc.aidbridge.modules.attachment.AttachmentDTO;
 import com.drc.aidbridge.modules.attachment.internal.usecase.UploadAttachmentUseCase;
 import com.drc.aidbridge.modules.attachment.internal.web.dto.AttachmentResponse;
-import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,15 +24,14 @@ public class AttachmentController {
     private final UploadAttachmentUseCase uploadAttachmentUseCase;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<AttachmentResponse>> uploadAttachment(
+    public ResponseEntity<AttachmentResponse> uploadAttachment(
             Authentication authentication,
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "reference_type", required = false) String referenceType,
+            @RequestParam(value = "reference_id", required = false) UUID referenceId) {
         UUID userId = resolveUserId(authentication);
-        AttachmentDTO attachment = uploadAttachmentUseCase.execute(userId, file);
-        ApiResponse<AttachmentResponse> response = ApiResponse.<AttachmentResponse>builder()
-                .success(true)
-                .data(AttachmentResponse.from(attachment))
-                .build();
+        AttachmentDTO attachment = uploadAttachmentUseCase.execute(userId, file, referenceType, referenceId);
+        AttachmentResponse response = AttachmentResponse.from(attachment);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
