@@ -112,6 +112,11 @@ dependencies {
     // SpringDoc OpenAPI - generates interactive API documentation at /swagger-ui.html
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2'
     // ===========================
+    // Architecture Testing (ArchUnit)
+    // ===========================
+    // ArchUnit - enforce module boundaries and architecture rules in tests
+    testImplementation 'com.tngtech.archunit:archunit-junit5-engine:1.0.1'
+    // ===========================
     // Cloud Storage (Cloudinary)
     // ===========================
     // Cloudinary SDK - image/video upload, transformation, and CDN delivery
