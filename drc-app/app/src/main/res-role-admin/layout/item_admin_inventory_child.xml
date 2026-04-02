@@ -16,14 +16,14 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textColor="@color/admin_text_secondary"
-        android:textSize="@dimen/admin_inventory_category_sub_text_size" />
+        android:textSize="@dimen/text_md" />
 
     <TextView
         android:id="@+id/text_inventory_item_quantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/admin_text_primary"
-        android:textSize="@dimen/admin_inventory_category_sub_text_size"
+        android:textSize="@dimen/text_md"
         android:textStyle="bold" />
 
 </LinearLayout>

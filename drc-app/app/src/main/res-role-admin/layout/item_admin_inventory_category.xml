@@ -27,7 +27,7 @@
                 android:layout_width="@dimen/admin_inventory_category_icon_size"
                 android:layout_height="@dimen/admin_inventory_category_icon_size"
                 android:contentDescription="@string/admin_hub_mgmt_hub_icon_desc"
-                android:tint="@color/admin_stat_icon_tint" />
+                app:tint="@color/admin_stat_icon_tint" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/admin_text_primary"
-                    android:textSize="@dimen/admin_inventory_category_title_text_size"
+                    android:textSize="@dimen/text_lg"
                     android:textStyle="bold" />
 
                 <TextView
@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
                     android:textColor="@color/admin_text_secondary"
-                    android:textSize="@dimen/admin_inventory_category_sub_text_size" />
+                    android:textSize="@dimen/text_md" />
             </LinearLayout>
 
             <TextView
@@ -61,7 +61,7 @@
                 android:paddingTop="@dimen/admin_hub_item_badge_padding_vertical"
                 android:paddingEnd="@dimen/admin_hub_item_badge_padding_horizontal"
                 android:paddingBottom="@dimen/admin_hub_item_badge_padding_vertical"
-                android:textSize="@dimen/admin_inventory_badge_text_size"
+                android:textSize="@dimen/text_md"
                 android:textStyle="bold" />
 
         </LinearLayout>
