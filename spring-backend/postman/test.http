@@ -64,8 +64,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwNDcyNDFmO
 ###
 
 ### 4. Get list SOS
-GET http://localhost:8080/api/victim/sos-requests
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1Mjk0OWVhNS0yNTU3LTQ0NDItYTU5YS02ZDhhY2E1OGNmNDQiLCJyb2xlIjoiVklDVElNIiwidHlwZSI6ImFjY2VzcyIsImp0aSI6IjdmNmYxN2NkLTIwNTktNDM4Ni05N2UxLThkMDFiYTQ3MzM1NCIsImlhdCI6MTc3NDAxMjk2NSwiZXhwIjoxNzc0MDEzODY1fQ.LAg7Yzf0Jgdb0QWTlcw595IxTzYpDypFgM7etwgwxPyCt09hoEBW5B0VC_NN2XYMEo0cCS1ncxrWC7yizH3lmBWU0zxHipUPmhar5jbRXbPM2N7nAKGVl7o6zVPeZnfkh5zaFNQGQizxrPbIYfT83TqqZ2xUxjgkxfvwGRnfPMw2r8Xb1lzKHLhsvekWBKxkJqJ-u1SzcH_M8eoFxrrNZeT_l6ivw6UwHKRh6Jt8Ntf4sXpE9OXql0M2bFIQd-10a2873FU0RGMF7e_blyoy0tPcXJnWkNrycNAhf8VKsggP1MNKwAdN6peSYsdy92FK9cqpIAX84hVGo84J69f70w
+GET http://localhost:8080/api/sos-request
 
 ###
 
@@ -104,3 +103,6 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwNDcyNDFmO
 {
   "reason": "Request cancelled by user"
 }
+
+
+
