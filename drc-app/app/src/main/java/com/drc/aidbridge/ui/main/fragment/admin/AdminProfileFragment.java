@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentAdminProfileBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
+import com.drc.aidbridge.ui.main.MainActivity;
 import com.drc.aidbridge.ui.main.viewmodel.admin.AdminProfileViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -41,7 +42,7 @@ public class AdminProfileFragment extends BaseFragment<FragmentAdminProfileBindi
         binding.layoutAdminSystemSettings
                 .setOnClickListener(v -> showToast(getString(R.string.admin_profile_toast_system_settings)));
         binding.buttonAdminLogout
-                .setOnClickListener(v -> showToast(getString(R.string.admin_profile_toast_logout_progress)));
+            .setOnClickListener(v -> requestLogout());
     }
 
     @Override
@@ -57,5 +58,11 @@ public class AdminProfileFragment extends BaseFragment<FragmentAdminProfileBindi
                 binding.textAdminProfilePhone.setText(phone);
             }
         });
+    }
+
+    private void requestLogout() {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).requestLogout();
+        }
     }
 }

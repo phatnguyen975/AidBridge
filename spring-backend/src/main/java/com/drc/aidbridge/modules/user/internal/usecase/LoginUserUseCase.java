@@ -36,17 +36,30 @@ public class LoginUserUseCase {
             throw new AuthenticationException("Account is deactivated");
         }
 
-        if (request.getFcmToken() != null) {
-            user.setFcmToken(request.getFcmToken());
+        String sanitizedFcmToken = normalizeOptional(request.getFcmToken());
+        if (sanitizedFcmToken != null) {
+            user.setFcmToken(sanitizedFcmToken);
             userRepository.save(user);
         }
 
         String accessToken = jwtService.generateAccessToken(user.getId(), user.getRole().name());
         String refreshToken = jwtService.generateRefreshToken(user.getId());
 
-        userMapper.cacheUserSession(sessionCacheRedisSchema, user);
+        userMapper.cacheUserSession(
+                sessionCacheRedisSchema,
+                user,
+                normalizeOptional(request.getDeviceId()),
+                sanitizedFcmToken != null ? sanitizedFcmToken : user.getFcmToken());
 
         log.info("User logged in: {}", user.getEmail());
         return userMapper.buildAuthResponse(user, accessToken, refreshToken);
+    }
+
+    private String normalizeOptional(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

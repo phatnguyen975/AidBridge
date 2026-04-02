@@ -20,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding> {
     private ForgotEmailViewModel viewModel;
+    private String submittedEmail = "";
 
     @Override
     protected FragmentForgotEmailBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
@@ -50,9 +51,7 @@ public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding
         });
 
         viewModel.getSendOtpResult().observe(getViewLifecycleOwner(),
-                resultObserver(
-                        ignored -> navigateToOtp(getRawText(binding.tilEmail.getEditText())),
-                        this::showNetworkError));
+            resultObserver(this::handleSendOtpSuccess, this::showNetworkError));
     }
 
     @Override
@@ -73,8 +72,8 @@ public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding
 
     private void attemptSendOtp() {
         clearInputFocusAndHideKeyboard();
-        String email = getRawText(binding.tilEmail.getEditText());
-        viewModel.sendOtp(email);
+        submittedEmail = getRawText(binding.tilEmail.getEditText()).trim().toLowerCase();
+        viewModel.sendOtp(submittedEmail);
     }
 
     private String getRawText(EditText et) {
@@ -96,5 +95,13 @@ public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding
         Bundle args = new Bundle();
         args.putString("email", email);
         navigateSafely(R.id.action_forgotEmailFragment_to_forgotOtpFragment, args);
+    }
+
+    private void handleSendOtpSuccess(String apiMessage) {
+        String successMessage = (apiMessage != null && !apiMessage.trim().isEmpty())
+            ? apiMessage
+            : getString(R.string.otp_resend_success);
+        showTopSnackbar(binding.getRoot(), successMessage, false);
+        navigateToOtp(submittedEmail);
     }
 }

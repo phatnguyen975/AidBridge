@@ -35,7 +35,7 @@ public class ForgotNewPasswordViewModel extends BaseViewModel {
 
         this.changePasswordResult = Transformations.switchMap(
             changePasswordTrigger,
-            params -> this.resetPasswordUseCase.execute(params.email, params.newPassword)
+            params -> this.resetPasswordUseCase.execute(params.email, params.otp, params.newPassword)
         );
     }
 
@@ -52,10 +52,16 @@ public class ForgotNewPasswordViewModel extends BaseViewModel {
         return email != null ? email : "";
     }
 
+    public String getOtp() {
+        String otp = savedStateHandle.get("otp");
+        return otp != null ? otp : "";
+    }
+
 
     public void changePassword(String newPassword, String confirmPassword) {
         String email = getEmail();
-        ValidationResult validation = resetPasswordUseCase.validate(email, newPassword, confirmPassword);
+        String otp = getOtp();
+        ValidationResult validation = resetPasswordUseCase.validate(email, otp, newPassword, confirmPassword);
 
         if (!validation.isValid()) {
             validationError.setValue(validation);
@@ -63,14 +69,16 @@ public class ForgotNewPasswordViewModel extends BaseViewModel {
         }
 
         validationError.setValue(ValidationResult.valid());
-        changePasswordTrigger.setValue(new ChangePasswordParams(email, newPassword));
+        changePasswordTrigger.setValue(new ChangePasswordParams(email, otp, newPassword));
     }
 
     private static class ChangePasswordParams {
         final String email;
+        final String otp;
         final String newPassword;
-        ChangePasswordParams(String email, String newPassword) {
+        ChangePasswordParams(String email, String otp, String newPassword) {
             this.email = email;
+            this.otp = otp;
             this.newPassword = newPassword;
         }
     }

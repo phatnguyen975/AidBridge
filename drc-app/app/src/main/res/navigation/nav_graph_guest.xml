@@ -182,7 +182,19 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/forgotOtpFragment"
+            app:popUpToInclusive="true">
+
+            <argument
+                android:name="email"
+                app:argType="string"
+                android:defaultValue="" />
+            <argument
+                android:name="otp"
+                app:argType="string"
+                android:defaultValue="" />
+        </action>
     </fragment>
 
     <!-- Step 3: Set new password -->
@@ -194,6 +206,10 @@
         <!-- Email passed from ForgotOtpFragment -->
         <argument
             android:name="email"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="otp"
             app:argType="string"
             android:defaultValue="" />
         

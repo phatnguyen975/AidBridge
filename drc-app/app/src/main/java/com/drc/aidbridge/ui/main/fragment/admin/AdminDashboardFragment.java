@@ -44,8 +44,7 @@ public class AdminDashboardFragment extends BaseFragment<FragmentAdminDashboardB
 
     @Override
     protected void observeViewModel() {
-        viewModel.getInventoryData().observe(getViewLifecycleOwner(),
-                resultObserver(this::renderInventoryChart));
+        viewModel.getInventoryData().observe(getViewLifecycleOwner(), resultObserver(this::renderInventoryChart));
     }
 
     @Override

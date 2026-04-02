@@ -50,6 +50,22 @@ public class OtpRedisSchema {
     }
 
     public boolean verifyOtp(OtpPurpose purpose, String identifier, String otp) {
+        return verifyOtpInternal(purpose, identifier, otp, true);
+    }
+
+    /**
+     * Verifies OTP without deleting it on success.
+     * Useful for two-step flows where the same OTP is validated first,
+     * then consumed by a later confirmation endpoint.
+     */
+    public boolean verifyOtpWithoutConsuming(OtpPurpose purpose, String identifier, String otp) {
+        return verifyOtpInternal(purpose, identifier, otp, false);
+    }
+
+    private boolean verifyOtpInternal(OtpPurpose purpose,
+                                      String identifier,
+                                      String otp,
+                                      boolean consumeOnSuccess) {
         if (isBlocked(purpose, identifier)) {
             log.warn("OTP verification blocked for {}:{} - too many attempts", purpose.getValue(), identifier);
             return false;
@@ -59,8 +75,10 @@ public class OtpRedisSchema {
         String storedOtp = redisTemplate.opsForValue().get(key);
 
         if (storedOtp != null && storedOtp.equals(otp)) {
-            redisTemplate.delete(key);
-            deleteAttempts(purpose, identifier);
+            if (consumeOnSuccess) {
+                redisTemplate.delete(key);
+                deleteAttempts(purpose, identifier);
+            }
             log.debug("OTP verified successfully for {}:{}", purpose.getValue(), identifier);
             return true;
         }

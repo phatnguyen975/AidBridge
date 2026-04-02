@@ -23,10 +23,24 @@ public class ResendOtpUseCase {
             throw new ResourceNotFoundException("Email not registered");
         }
 
-        String otp = otpRedisSchema.generateOtp(
-                OtpRedisSchema.OtpPurpose.REGISTRATION, request.getEmail());
-        notificationFacade.sendEmail(request.getEmail(), otp);
+        OtpRedisSchema.OtpPurpose purpose = resolvePurpose(request.getEmail());
 
-        log.info("OTP resent to: {}", request.getEmail());
+        String otp = otpRedisSchema.generateOtp(
+                purpose, request.getEmail());
+
+        if (purpose == OtpRedisSchema.OtpPurpose.PASSWORD_RESET) {
+            notificationFacade.sendPasswordResetEmail(request.getEmail(), otp);
+        } else {
+            notificationFacade.sendEmail(request.getEmail(), otp);
+        }
+
+        log.info("OTP resent to: {} with purpose {}", request.getEmail(), purpose.getValue());
+    }
+
+    private OtpRedisSchema.OtpPurpose resolvePurpose(String email) {
+        if (otpRedisSchema.hasOtp(OtpRedisSchema.OtpPurpose.PASSWORD_RESET, email)) {
+            return OtpRedisSchema.OtpPurpose.PASSWORD_RESET;
+        }
+        return OtpRedisSchema.OtpPurpose.REGISTRATION;
     }
 }

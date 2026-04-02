@@ -80,7 +80,9 @@ public class OtpInputController {
                         && box.getText() != null
                         && box.getText().length() == 0
                         && index > 0) {
-                    boxes.get(index - 1).requestFocus();
+                    EditText previousBox = boxes.get(index - 1);
+                    previousBox.requestFocus();
+                    previousBox.setText("");
                     return true;
                 }
                 return false;

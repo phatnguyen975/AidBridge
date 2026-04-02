@@ -1,5 +1,6 @@
 package com.drc.aidbridge.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -13,12 +14,16 @@ import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.drc.aidbridge.R;
+import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.ActivityMainBinding;
 import com.drc.aidbridge.domain.enums.UserRole;
+import com.drc.aidbridge.domain.usecase.auth.LogoutUseCase;
+import com.drc.aidbridge.ui.auth.AuthActivity;
 import com.drc.aidbridge.ui.base.BaseActivity;
 import com.drc.aidbridge.utils.TokenManager;
 
@@ -36,6 +41,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     @Inject
     TokenManager tokenManager;
+
+    @Inject
+    LogoutUseCase logoutUseCase;
 
     private NavController navController;
 
@@ -272,5 +280,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             this.menuResId = menuResId;
             this.navGraphResId = navGraphResId;
         }
+    }
+
+    public void requestLogout() {
+        LiveData<NetworkResultWrapper<Boolean>> logoutResult = logoutUseCase.execute();
+        logoutResult.observe(this, result -> {
+            if (result == null || result.isLoading() || result.hasBeenHandled()) {
+                return;
+            }
+
+            result.markAsHandled();
+            navigateToAuthShell();
+        });
+    }
+
+    private void navigateToAuthShell() {
+        Intent intent = new Intent(this, AuthActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }

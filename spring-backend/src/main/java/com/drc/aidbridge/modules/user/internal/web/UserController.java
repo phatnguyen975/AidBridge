@@ -20,6 +20,7 @@ public class UserController {
     private final ResendOtpUseCase resendOtpUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
     private final LogoutUserUseCase logoutUserUseCase;
+    private final UpdateFcmTokenUseCase updateFcmTokenUseCase;
     private final ForgotPasswordUseCase forgotPasswordUseCase;
     private final ResetPasswordUseCase resetPasswordUseCase;
 
@@ -65,6 +66,14 @@ public class UserController {
             @RequestBody(required = false) LogoutRequest request) {
         logoutUserUseCase.execute(authHeader, request);
         return ResponseEntity.ok(ApiResponse.success("Logged out successfully", null));
+    }
+
+    @PostMapping("/update-fcm")
+    public ResponseEntity<ApiResponse<Void>> updateFcmToken(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @Valid @RequestBody UpdateFcmTokenRequest request) {
+        updateFcmTokenUseCase.execute(authHeader, request);
+        return ResponseEntity.ok(ApiResponse.success("FCM Token updated successfully", null));
     }
 
     @PostMapping("/forgot-password")
