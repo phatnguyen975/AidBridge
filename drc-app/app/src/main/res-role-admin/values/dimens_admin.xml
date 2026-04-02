@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="admin_screen_padding">16dp</dimen>
+    <dimen name="admin_screen_title_text_size">20sp</dimen>
+    <dimen name="admin_nav_icon_size">24dp</dimen>
+
+    <dimen name="admin_header_vertical_padding">8dp</dimen>
+    <dimen name="admin_logo_size">36dp</dimen>
+    <dimen name="admin_section_spacing">16dp</dimen>
+
+    <dimen name="admin_action_button_radius">12dp</dimen>
+    <dimen name="admin_action_button_text_size">14sp</dimen>
+    <dimen name="admin_action_button_spacing">12dp</dimen>
+
+    <dimen name="admin_stat_card_gap">12dp</dimen>
+    <dimen name="admin_stat_card_padding">12dp</dimen>
+    <dimen name="admin_stat_card_radius">16dp</dimen>
+    <dimen name="admin_stat_card_stroke_width">1dp</dimen>
+    <dimen name="admin_stat_icon_size">20dp</dimen>
+    <dimen name="admin_stat_text_spacing">10dp</dimen>
+    <dimen name="admin_stat_value_spacing">4dp</dimen>
+    <dimen name="admin_stat_label_text_size">12sp</dimen>
+    <dimen name="admin_stat_value_text_size">22sp</dimen>
+
+    <dimen name="admin_chart_card_padding">16dp</dimen>
+    <dimen name="admin_chart_card_radius">18dp</dimen>
+    <dimen name="admin_chart_card_stroke_width">1dp</dimen>
+    <dimen name="admin_chart_title_text_size">16sp</dimen>
+    <dimen name="admin_chart_top_spacing">16dp</dimen>
+    <dimen name="admin_chart_height">280dp</dimen>
+    <dimen name="admin_chart_card_padding_bottom">24dp</dimen>
+    <dimen name="admin_chart_bar_width">32dp</dimen>
+    <dimen name="admin_chart_bar_height_medical">72dp</dimen>
+    <dimen name="admin_chart_bar_height_food">92dp</dimen>
+    <dimen name="admin_chart_bar_height_water">64dp</dimen>
+    <dimen name="admin_chart_bar_height_clothes">78dp</dimen>
+    <dimen name="admin_chart_label_top_spacing">8dp</dimen>
+    <dimen name="admin_chart_label_text_size">12sp</dimen>
+    <dimen name="admin_chart_bar_radius">8dp</dimen>
+
+    <dimen name="admin_hub_mgmt_header_back_size">36dp</dimen>
+    <dimen name="admin_hub_mgmt_search_height">48dp</dimen>
+    <dimen name="admin_hub_mgmt_search_radius">14dp</dimen>
+    <dimen name="admin_hub_mgmt_search_icon_size">20dp</dimen>
+    <dimen name="admin_hub_mgmt_summary_spacing">12dp</dimen>
+    <dimen name="admin_hub_mgmt_summary_card_radius">16dp</dimen>
+    <dimen name="admin_hub_mgmt_summary_card_padding">12dp</dimen>
+    <dimen name="admin_hub_mgmt_summary_card_stroke">1dp</dimen>
+    <dimen name="admin_hub_mgmt_summary_value_text_size">24sp</dimen>
+
+    <dimen name="admin_hub_item_card_radius">16dp</dimen>
+    <dimen name="admin_hub_item_card_stroke">1dp</dimen>
+    <dimen name="admin_hub_item_padding">12dp</dimen>
+    <dimen name="admin_hub_item_icon_box_size">42dp</dimen>
+    <dimen name="admin_hub_item_icon_size">20dp</dimen>
+    <dimen name="admin_hub_item_icon_box_radius">10dp</dimen>
+    <dimen name="admin_hub_item_badge_radius">10dp</dimen>
+    <dimen name="admin_hub_item_badge_padding_horizontal">10dp</dimen>
+    <dimen name="admin_hub_item_badge_padding_vertical">3dp</dimen>
+    <dimen name="admin_hub_item_badge_text_size">11sp</dimen>
+    <dimen name="admin_hub_item_spacing_small">6dp</dimen>
+    <dimen name="admin_hub_item_spacing_medium">10dp</dimen>
+    <dimen name="admin_hub_item_title_text_size">16sp</dimen>
+    <dimen name="admin_hub_item_sub_text_size">13sp</dimen>
+    <dimen name="admin_hub_item_button_height">40dp</dimen>
+    <dimen name="admin_hub_item_button_radius">10dp</dimen>
+
+    <dimen name="admin_hub_mgmt_fab_margin">20dp</dimen>
+    <dimen name="admin_hub_mgmt_list_bottom_padding">88dp</dimen>
+
+    <dimen name="admin_hub_detail_map_height">140dp</dimen>
+    <dimen name="admin_hub_detail_card_radius">16dp</dimen>
+    <dimen name="admin_hub_detail_card_stroke">1dp</dimen>
+    <dimen name="admin_hub_detail_card_padding">14dp</dimen>
+    <dimen name="admin_hub_detail_badge_radius">10dp</dimen>
+    <dimen name="admin_hub_detail_badge_text_size">11sp</dimen>
+    <dimen name="admin_hub_detail_button_height">44dp</dimen>
+    <dimen name="admin_hub_detail_stat_card_height">88dp</dimen>
+
+    <dimen name="admin_inventory_category_icon_size">48dp</dimen>
+    <dimen name="admin_inventory_category_padding">12dp</dimen>
+    <dimen name="admin_inventory_category_radius">14dp</dimen>
+    <dimen name="admin_inventory_category_stroke">1dp</dimen>
+    <dimen name="admin_inventory_category_title_text_size">15sp</dimen>
+    <dimen name="admin_inventory_category_sub_text_size">12sp</dimen>
+    <dimen name="admin_inventory_badge_radius">10dp</dimen>
+    <dimen name="admin_inventory_badge_text_size">11sp</dimen>
+    <dimen name="admin_inventory_child_padding_horizontal">12dp</dimen>
+    <dimen name="admin_inventory_child_padding_vertical">8dp</dimen>
+
+    <dimen name="admin_add_supply_type_field_spacing">8dp</dimen>
+    <dimen name="admin_add_supply_type_section_spacing">16dp</dimen>
+    <dimen name="admin_add_supply_type_spinner_height">52dp</dimen>
+    <dimen name="admin_add_supply_type_spinner_radius">12dp</dimen>
+    <dimen name="admin_add_supply_type_spinner_padding_horizontal">12dp</dimen>
+    <dimen name="admin_add_supply_type_spinner_text_size">15sp</dimen>
+    <dimen name="admin_add_supply_type_save_button_height">52dp</dimen>
+
+    <dimen name="admin_ai_summary_scroll_bottom_padding">96dp</dimen>
+    <dimen name="admin_ai_summary_updated_top_margin">6dp</dimen>
+    <dimen name="admin_ai_summary_card_padding">14dp</dimen>
+    <dimen name="admin_ai_summary_icon_size">22dp</dimen>
+    <dimen name="admin_ai_summary_card_inner_spacing">10dp</dimen>
+    <dimen name="admin_ai_summary_mini_card_padding">12dp</dimen>
+    <dimen name="admin_ai_summary_mini_card_value_size">18sp</dimen>
+    <dimen name="admin_ai_summary_alert_top_margin">12dp</dimen>
+    <dimen name="admin_ai_summary_warning_icon_size">18dp</dimen>
+    <dimen name="admin_ai_summary_activity_dot_size">10dp</dimen>
+
+    <dimen name="admin_chat_header_title_text_size">20sp</dimen>
+    <dimen name="admin_chat_online_dot_size">8dp</dimen>
+    <dimen name="admin_chat_avatar_size">28dp</dimen>
+    <dimen name="admin_chat_message_corner">14dp</dimen>
+    <dimen name="admin_chat_message_max_width">260dp</dimen>
+    <dimen name="admin_chat_action_button_height">34dp</dimen>
+    <dimen name="admin_chat_input_radius">16dp</dimen>
+    <dimen name="admin_chat_input_elevation">3dp</dimen>
+    <dimen name="admin_chat_input_padding">8dp</dimen>
+    <dimen name="admin_chat_input_icon_size">28dp</dimen>
+    <dimen name="admin_chat_send_button_size">34dp</dimen>
+    <dimen name="admin_chat_input_field_height">38dp</dimen>
+
+    <dimen name="admin_profile_title_text_size">24sp</dimen>
+    <dimen name="admin_profile_section_title_text_size">19sp</dimen>
+    <dimen name="admin_profile_label_text_size">15sp</dimen>
+    <dimen name="admin_profile_value_text_size">16sp</dimen>
+    <dimen name="admin_profile_item_text_size">16sp</dimen>
+    <dimen name="admin_profile_logout_text_size">17sp</dimen>
+</resources>

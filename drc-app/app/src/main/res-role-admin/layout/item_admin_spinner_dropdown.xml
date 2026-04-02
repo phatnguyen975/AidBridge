@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:ellipsize="end"
+    android:maxLines="1"
+    android:paddingStart="@dimen/admin_add_supply_type_spinner_padding_horizontal"
+    android:paddingTop="@dimen/admin_add_supply_type_field_spacing"
+    android:paddingEnd="@dimen/admin_add_supply_type_spinner_padding_horizontal"
+    android:paddingBottom="@dimen/admin_add_supply_type_field_spacing"
+    android:textColor="@color/admin_text_primary"
+    android:textSize="@dimen/admin_add_supply_type_spinner_text_size" />

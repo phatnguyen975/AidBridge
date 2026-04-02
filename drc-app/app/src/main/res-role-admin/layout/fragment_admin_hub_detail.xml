@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/admin_screen_background"
+    android:paddingStart="@dimen/admin_screen_padding"
+    android:paddingTop="@dimen/admin_screen_padding"
+    android:paddingEnd="@dimen/admin_screen_padding">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_admin_hub_detail_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/button_admin_hub_detail_back"
+            android:layout_width="@dimen/admin_hub_mgmt_header_back_size"
+            android:layout_height="@dimen/admin_hub_mgmt_header_back_size"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/admin_hub_detail_back"
+            android:padding="@dimen/admin_stat_value_spacing"
+            android:src="@drawable/ic_admin_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/admin_text_primary" />
+
+        <TextView
+            android:id="@+id/text_admin_hub_detail_header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/admin_dashboard_title"
+            android:textColor="@color/admin_text_primary"
+            android:textSize="@dimen/admin_screen_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_admin_hub_detail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/admin_section_spacing"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/admin_hub_mgmt_fab_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_admin_hub_detail_header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_admin_hub_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/admin_detail_card_bg"
+                app:cardCornerRadius="@dimen/admin_hub_detail_card_radius"
+                app:strokeColor="@color/admin_detail_card_stroke"
+                app:strokeWidth="@dimen/admin_hub_detail_card_stroke">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/admin_hub_detail_card_padding">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/admin_hub_detail_map_height"
+                        android:background="@drawable/bg_admin_detail_map_snippet">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/admin_hub_detail_map_desc"
+                            android:src="@drawable/ic_admin_map_marker" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/text_admin_hub_detail_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/admin_hub_detail_hub_name"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_hub_item_title_text_size"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/text_admin_hub_detail_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_admin_detail_badge_active"
+                            android:paddingStart="@dimen/admin_hub_item_badge_padding_horizontal"
+                            android:paddingTop="@dimen/admin_hub_item_badge_padding_vertical"
+                            android:paddingEnd="@dimen/admin_hub_item_badge_padding_horizontal"
+                            android:paddingBottom="@dimen/admin_hub_item_badge_padding_vertical"
+                            android:text="@string/admin_hub_detail_status_active"
+                            android:textColor="@color/admin_detail_badge_active_text"
+                            android:textSize="@dimen/text_md"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/text_admin_hub_detail_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                        android:text="@string/admin_hub_detail_address"
+                        android:textColor="@color/admin_text_secondary"
+                        android:textSize="@dimen/text_md" />
+
+                    <TextView
+                        android:id="@+id/text_admin_hub_detail_manager"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                        android:text="@string/admin_hub_detail_manager"
+                        android:textColor="@color/admin_text_secondary"
+                        android:textSize="@dimen/text_md" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_add_inventory"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/admin_hub_detail_button_height"
+                android:layout_marginTop="@dimen/admin_section_spacing"
+                android:text="@string/admin_hub_detail_button_add_inventory"
+                android:textAllCaps="false"
+                android:textColor="@color/admin_action_button_text"
+                android:textSize="@dimen/text_md"
+                app:backgroundTint="@color/admin_action_button_primary_bg"
+                app:cornerRadius="@dimen/admin_action_button_radius" />
+
+            <TextView
+                android:id="@+id/text_admin_hub_detail_inventory_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_section_spacing"
+                android:text="@string/admin_hub_detail_section_reserve"
+                android:textColor="@color/admin_text_primary"
+                android:textSize="@dimen/admin_screen_title_text_size"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_admin_hub_inventory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                android:nestedScrollingEnabled="false" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_section_spacing"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/admin_hub_detail_stat_card_height"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="@dimen/admin_hub_item_spacing_medium"
+                    app:cardBackgroundColor="@color/admin_detail_card_bg"
+                    app:cardCornerRadius="@dimen/admin_hub_detail_card_radius"
+                    app:strokeColor="@color/admin_detail_card_stroke"
+                    app:strokeWidth="@dimen/admin_hub_detail_card_stroke">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical"
+                        android:padding="@dimen/admin_hub_detail_card_padding">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/admin_hub_detail_stat_total_import"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="@dimen/text_md" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                            android:text="@string/admin_hub_detail_stat_total_import_value"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_hub_item_title_text_size"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/admin_hub_detail_stat_card_height"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/admin_detail_card_bg"
+                    app:cardCornerRadius="@dimen/admin_hub_detail_card_radius"
+                    app:strokeColor="@color/admin_detail_card_stroke"
+                    app:strokeWidth="@dimen/admin_hub_detail_card_stroke">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical"
+                        android:padding="@dimen/admin_hub_detail_card_padding">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/admin_hub_detail_stat_relief_runs"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="@dimen/text_md" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                            android:text="@string/admin_hub_detail_stat_relief_runs_value"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_hub_item_title_text_size"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

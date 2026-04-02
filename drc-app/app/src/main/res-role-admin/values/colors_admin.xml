@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="admin_screen_background">#0F172A</color>
+    <color name="admin_text_primary">#FFFFFF</color>
+    <color name="admin_text_secondary">#A5B4CF</color>
+    <color name="admin_nav_icon_tint">#FFFFFF</color>
+
+    <color name="admin_action_button_text">#FFFFFF</color>
+    <color name="admin_action_button_primary_bg">#1D72FF</color>
+    <color name="admin_action_button_secondary_bg">#243043</color>
+
+    <color name="admin_stat_card_bg">#182538</color>
+    <color name="admin_stat_card_stroke">#2D3D55</color>
+    <color name="admin_stat_icon_tint">#7CB7FF</color>
+
+    <color name="admin_chart_card_bg">#142033</color>
+    <color name="admin_chart_card_stroke">#2C3B53</color>
+    <color name="admin_chart_bar">#39A0FF</color>
+
+    <color name="admin_header_divider">#33FFFFFF</color>
+    <color name="admin_search_bg">#162234</color>
+    <color name="admin_search_border">#31445F</color>
+    <color name="admin_search_hint">#8BA2C2</color>
+    <color name="admin_search_text">#FFFFFF</color>
+
+    <color name="admin_summary_card_bg">#162437</color>
+    <color name="admin_summary_card_stroke">#2B3C55</color>
+
+    <color name="admin_hub_card_bg">#162437</color>
+    <color name="admin_hub_card_stroke">#2B3C55</color>
+    <color name="admin_hub_icon_box_bg">#203147</color>
+    <color name="admin_hub_icon_box_stroke">#35506E</color>
+
+    <color name="admin_badge_active_bg">#143D2D</color>
+    <color name="admin_badge_active_text">#7DFFB7</color>
+    <color name="admin_badge_suspended_bg">#4A1D22</color>
+    <color name="admin_badge_suspended_text">#FFB1B1</color>
+
+    <color name="admin_button_edit_bg">#1D2C43</color>
+    <color name="admin_button_edit_stroke">#36506F</color>
+    <color name="admin_button_edit_text">#CBE2FF</color>
+    <color name="admin_button_danger_bg">#B73737</color>
+    <color name="admin_button_success_bg">#1F7A4A</color>
+
+    <color name="admin_fab_bg">#1D72FF</color>
+
+    <color name="admin_detail_card_bg">#162437</color>
+    <color name="admin_detail_card_stroke">#2B3C55</color>
+    <color name="admin_detail_map_bg">#1D3046</color>
+    <color name="admin_detail_badge_active_bg">#143D2D</color>
+    <color name="admin_detail_badge_active_text">#7DFFB7</color>
+
+    <color name="admin_inventory_category_card_bg">#162437</color>
+    <color name="admin_inventory_category_card_stroke">#2B3C55</color>
+    <color name="admin_inventory_row_bg">#1E3047</color>
+    <color name="admin_inventory_badge_ok_bg">#143D2D</color>
+    <color name="admin_inventory_badge_ok_text">#7DFFB7</color>
+    <color name="admin_inventory_badge_low_bg">#5C3B14</color>
+    <color name="admin_inventory_badge_low_text">#FFCC80</color>
+
+    <color name="admin_ai_summary_growth">#6EE7B7</color>
+    <color name="admin_ai_summary_warning_water">#FACC15</color>
+    <color name="admin_ai_summary_warning_overload">#FB923C</color>
+    <color name="admin_ai_summary_activity_dot_secondary">#64748B</color>
+
+    <color name="admin_chat_online_dot">#34D399</color>
+    <color name="admin_chat_ai_message_bg">#1B2C44</color>
+    <color name="admin_chat_input_bg">#15253A</color>
+    <color name="admin_chat_input_stroke">#2D4768</color>
+    <color name="admin_chat_input_field_bg">#1C2F48</color>
+    <color name="admin_chat_suggested_chip_bg">#1A2A40</color>
+    <color name="admin_chat_suggested_chip_stroke">#34506D</color>
+</resources>

@@ -109,7 +109,7 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
         });
 
         binding.layoutAccountSecurity.setOnClickListener(
-                v -> showToast(getString(R.string.volunteer_dashboard_toast_personal_info_todo)));
+            v -> navigateSafely(R.id.action_dashboard_to_personal_info));
 
         binding.layoutLogout.setOnClickListener(
                 v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_logout)));

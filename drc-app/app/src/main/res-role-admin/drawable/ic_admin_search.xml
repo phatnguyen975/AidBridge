@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/admin_hub_mgmt_search_icon_size"
+    android:height="@dimen/admin_hub_mgmt_search_icon_size"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M11,5a6,6 0,1 0,0 12a6,6 0,1 0,0 -12"
+        android:strokeColor="@color/admin_search_hint"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.8" />
+
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M16,16l4,4"
+        android:strokeColor="@color/admin_search_hint"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.8" />
+</vector>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/admin_screen_background"
+    android:padding="@dimen/admin_screen_padding">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_admin_ai_chatbot_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/button_admin_ai_chatbot_back"
+            android:layout_width="@dimen/admin_hub_mgmt_header_back_size"
+            android:layout_height="@dimen/admin_hub_mgmt_header_back_size"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/admin_ai_chatbot_back"
+            android:padding="@dimen/admin_stat_value_spacing"
+            android:src="@drawable/ic_admin_back"
+            app:tint="@color/admin_text_primary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/text_admin_ai_chatbot_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/admin_ai_chatbot_header_title"
+            android:textColor="@color/admin_text_primary"
+            android:textSize="@dimen/admin_chat_header_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/layout_admin_ai_online_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/admin_stat_value_spacing"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/text_admin_ai_chatbot_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <View
+                android:layout_width="@dimen/admin_chat_online_dot_size"
+                android:layout_height="@dimen/admin_chat_online_dot_size"
+                android:background="@drawable/bg_admin_chat_online_dot" />
+
+            <TextView
+                android:id="@+id/text_admin_ai_chatbot_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                android:text="@string/admin_ai_chatbot_header_subtitle"
+                android:textColor="@color/admin_text_secondary"
+                android:textSize="@dimen/admin_hub_item_sub_text_size" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_admin_ai_chat_messages"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/admin_section_spacing"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/admin_hub_item_spacing_medium"
+        app:layout_constraintTop_toBottomOf="@id/layout_admin_ai_chatbot_header"
+        app:layout_constraintBottom_toTopOf="@id/layout_admin_ai_suggested"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <HorizontalScrollView
+        android:id="@+id/layout_admin_ai_suggested"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/recycler_admin_ai_chat_messages"
+        app:layout_constraintBottom_toTopOf="@id/card_admin_ai_chat_input"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleLine="true"
+            app:chipSpacingHorizontal="@dimen/admin_hub_item_spacing_small">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_admin_ai_suggest_inventory"
+                style="@style/Widget.Material3.Chip.Assist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/admin_ai_chatbot_chip_inventory"
+                android:textColor="@color/admin_text_primary"
+                app:chipBackgroundColor="@color/admin_chat_suggested_chip_bg"
+                app:chipStrokeColor="@color/admin_chat_suggested_chip_stroke"
+                app:chipStrokeWidth="@dimen/admin_hub_detail_card_stroke" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_admin_ai_suggest_maintenance"
+                style="@style/Widget.Material3.Chip.Assist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/admin_ai_chatbot_chip_maintenance"
+                android:textColor="@color/admin_text_primary"
+                app:chipBackgroundColor="@color/admin_chat_suggested_chip_bg"
+                app:chipStrokeColor="@color/admin_chat_suggested_chip_stroke"
+                app:chipStrokeWidth="@dimen/admin_hub_detail_card_stroke" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </HorizontalScrollView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_admin_ai_chat_input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+        app:cardBackgroundColor="@color/admin_chat_input_bg"
+        app:cardCornerRadius="@dimen/admin_chat_input_radius"
+        app:cardElevation="@dimen/admin_chat_input_elevation"
+        app:strokeColor="@color/admin_chat_input_stroke"
+        app:strokeWidth="@dimen/admin_hub_detail_card_stroke"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="@dimen/admin_chat_input_padding">
+
+            <ImageButton
+                android:id="@+id/button_admin_ai_attach"
+                android:layout_width="@dimen/admin_chat_input_icon_size"
+                android:layout_height="@dimen/admin_chat_input_icon_size"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/admin_ai_chatbot_attach"
+                android:src="@drawable/ic_admin_chat_attach"
+                app:tint="@color/admin_text_secondary" />
+
+            <EditText
+                android:id="@+id/edit_text_admin_ai_message"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/admin_chat_input_field_height"
+                android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                android:layout_marginEnd="@dimen/admin_hub_item_spacing_small"
+                android:layout_weight="1"
+                android:background="@drawable/bg_admin_chat_input_field"
+                android:hint="@string/admin_ai_chatbot_input_hint"
+                android:imeOptions="actionSend"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLines="3"
+                android:minHeight="@dimen/admin_chat_input_field_height"
+                android:paddingStart="@dimen/admin_hub_item_spacing_medium"
+                android:paddingEnd="@dimen/admin_hub_item_spacing_medium"
+                android:textColor="@color/admin_text_primary"
+                android:textColorHint="@color/admin_text_secondary"
+                android:textSize="@dimen/admin_hub_item_sub_text_size" />
+
+            <ImageButton
+                android:id="@+id/button_admin_ai_voice"
+                android:layout_width="@dimen/admin_chat_input_icon_size"
+                android:layout_height="@dimen/admin_chat_input_icon_size"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/admin_ai_chatbot_voice"
+                android:src="@drawable/ic_admin_chat_voice"
+                app:tint="@color/admin_text_secondary" />
+
+            <ImageButton
+                android:id="@+id/button_admin_ai_send"
+                android:layout_width="@dimen/admin_chat_send_button_size"
+                android:layout_height="@dimen/admin_chat_send_button_size"
+                android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                android:background="@drawable/bg_admin_chat_send_button"
+                android:contentDescription="@string/admin_ai_chatbot_send"
+                android:padding="@dimen/admin_hub_item_spacing_small"
+                android:src="@drawable/ic_admin_chat_send"
+                app:tint="@color/admin_action_button_text" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
