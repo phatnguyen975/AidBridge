@@ -8,6 +8,7 @@ import com.drc.aidbridge.modules.sos.SosDTO;
 import com.drc.aidbridge.modules.user.UserDTO;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Component
@@ -33,7 +34,7 @@ public class MissionMapper {
 
     // Entity → API response (basic, no nested objects)
     public MissionResponse toResponse(Mission mission) {
-        return MissionResponse.builder()
+        MissionResponse.MissionResponseBuilder responseBuilder = MissionResponse.builder()
                 .id(mission.getId())
                 .missionType(mission.getMissionType())
                 .status(mission.getStatus())
@@ -44,7 +45,14 @@ public class MissionMapper {
                 .hubId(mission.getHubId())
                 .victimLat(mission.getVictimLat())
                 .victimLng(mission.getVictimLng())
-                .qrCodeToken(mission.getQrCodeToken())
+                .qrCodeToken(mission.getQrCodeToken());
+
+        if (mission.getVictimLocation() != null) {
+            responseBuilder.victimLat(BigDecimal.valueOf(mission.getVictimLocation().getY()));
+            responseBuilder.victimLng(BigDecimal.valueOf(mission.getVictimLocation().getX()));
+        }
+
+        return responseBuilder
                 .priorityScore(mission.getPriorityScore())
                 .cancellationReason(mission.getCancellationReason())
                 .confirmationImageUrl(mission.getConfirmationImageUrl())
@@ -115,10 +123,10 @@ public class MissionMapper {
         }
 
         MissionTrackingResponse.Destination destination = null;
-        if (mission.getVictimLat() != null && mission.getVictimLng() != null) {
+        if (mission.getVictimLocation() != null) {
             destination = MissionTrackingResponse.Destination.builder()
-                    .lat(mission.getVictimLat().doubleValue())
-                    .lng(mission.getVictimLng().doubleValue())
+                    .lat(mission.getVictimLocation().getY())
+                    .lng(mission.getVictimLocation().getX())
                     .build();
         }
 

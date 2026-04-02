@@ -5,12 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.UUID;
-
+import java.math.BigDecimal;
 @Getter
 @Builder
 @AllArgsConstructor
 public class SosRequestCreatedEvent {
     private final UUID sosRequestId;
-    private final Double lat;
-    private final Double lng;
+    private final BigDecimal lat;
+    private final BigDecimal lng;
 }

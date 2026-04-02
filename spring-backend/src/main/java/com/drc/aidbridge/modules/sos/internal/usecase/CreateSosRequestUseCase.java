@@ -33,8 +33,7 @@ public class CreateSosRequestUseCase {
         // Create SOS request
         SosRequest sosRequest = SosRequest.builder()
                 .requesterId(UUID.fromString(requester.getId()))
-                .lat(createDto.getLat())
-                .lng(createDto.getLng())
+                .location(SosRequest.createPoint(createDto.getLat(), createDto.getLng()))
                 .address(createDto.getAddress())
                 .description(createDto.getDescription())
                 .peopleCount(createDto.getPeopleCount() != null ? createDto.getPeopleCount() : 1)
@@ -51,6 +50,8 @@ public class CreateSosRequestUseCase {
                 savedSos.getLat(),
                 savedSos.getLng()
         ));
+
+        System.out.println("✅ END execute()");
 
         return sosMapper.toResponse(savedSos, null);
     }
