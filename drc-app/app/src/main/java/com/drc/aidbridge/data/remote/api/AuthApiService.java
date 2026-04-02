@@ -33,13 +33,13 @@ public interface AuthApiService {
     Call<BaseResponse<String>> resendOtp(@Body ForgotPasswordRequest request);
 
     @POST("auth/forgot-password")
-    Call<BaseResponse<Void>> forgotPassword(@Body ForgotPasswordRequest request);
+    Call<BaseResponse<String>> forgotPassword(@Body ForgotPasswordRequest request);
 
     @POST("auth/verify-otp")
-    Call<BaseResponse<Void>> verifyResetOtp(@Body OtpVerifyRequest request);
+    Call<BaseResponse<AuthResponse>> verifyResetOtp(@Body OtpVerifyRequest request);
 
     @POST("auth/reset-password")
-    Call<BaseResponse<Void>> resetPassword(@Body ResetPasswordRequest request);
+    Call<BaseResponse<String>> resetPassword(@Body ResetPasswordRequest request);
 
     @POST("auth/refresh-token")
     Call<BaseResponse<AuthResponse>> refreshToken(@Body java.util.Map<String, String> body);

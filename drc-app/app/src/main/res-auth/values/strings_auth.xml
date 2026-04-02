@@ -59,4 +59,5 @@
     <string name="hint_confirm_password">Nhập lại mật khẩu mới</string>
     <string name="forgot_btn_change_password">ĐỔI MẬT KHẨU</string>
     <string name="forgot_success_message">Đổi mật khẩu thành công. Vui lòng đăng nhập lại.</string>
+    <string name="forgot_invalid_context">Phiên đặt lại mật khẩu không hợp lệ. Vui lòng thử lại từ đầu.</string>
 </resources>
