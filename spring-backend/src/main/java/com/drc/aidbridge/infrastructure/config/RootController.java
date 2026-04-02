@@ -1,4 +1,4 @@
-package com.drc.aidbridge.config;
+package com.drc.aidbridge.infrastructure.config;
 
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import org.springframework.web.bind.annotation.GetMapping;
