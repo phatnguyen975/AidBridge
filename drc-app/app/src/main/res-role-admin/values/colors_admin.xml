@@ -62,4 +62,12 @@
     <color name="admin_ai_summary_warning_water">#FACC15</color>
     <color name="admin_ai_summary_warning_overload">#FB923C</color>
     <color name="admin_ai_summary_activity_dot_secondary">#64748B</color>
+
+    <color name="admin_chat_online_dot">#34D399</color>
+    <color name="admin_chat_ai_message_bg">#1B2C44</color>
+    <color name="admin_chat_input_bg">#15253A</color>
+    <color name="admin_chat_input_stroke">#2D4768</color>
+    <color name="admin_chat_input_field_bg">#1C2F48</color>
+    <color name="admin_chat_suggested_chip_bg">#1A2A40</color>
+    <color name="admin_chat_suggested_chip_stroke">#34506D</color>
 </resources>

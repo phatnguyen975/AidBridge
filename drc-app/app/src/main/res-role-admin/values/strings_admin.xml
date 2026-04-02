@@ -170,5 +170,27 @@
     <string name="admin_ai_summary_toast_open_all_activities">Mở danh sách toàn bộ hoạt động</string>
     <string name="admin_ai_summary_toast_open_chatbot_failed">Chưa thể mở AI Chatbot lúc này</string>
     <string name="admin_ai_chatbot_title">AI Chatbot</string>
+    <string name="admin_ai_chatbot_back">Quay lại Tóm tắt AI</string>
+    <string name="admin_ai_chatbot_header_title">DRC Admin AI</string>
+    <string name="admin_ai_chatbot_header_subtitle">Hệ thống trực tuyến</string>
+    <string name="admin_ai_chatbot_ai_avatar_desc">Biểu tượng trợ lý AI</string>
+    <string name="admin_ai_chatbot_chip_inventory">Báo cáo tồn kho tuần này</string>
+    <string name="admin_ai_chatbot_chip_maintenance">Danh sách trạm bảo trì</string>
+    <string name="admin_ai_chatbot_input_hint">Hỏi về hệ thống...</string>
+    <string name="admin_ai_chatbot_attach">Đính kèm tệp</string>
+    <string name="admin_ai_chatbot_voice">Ghi âm</string>
+    <string name="admin_ai_chatbot_send">Gửi tin nhắn</string>
+    <string name="admin_ai_chatbot_action_dispatch">Điều phối ngay</string>
+    <string name="admin_ai_chatbot_action_view_detail">Xem chi tiết</string>
+    <string name="admin_ai_chatbot_toast_attach_todo">Chức năng đính kèm tệp đang phát triển</string>
+    <string name="admin_ai_chatbot_toast_voice_todo">Chức năng ghi âm đang phát triển</string>
+    <string name="admin_ai_chatbot_toast_send">Gửi tin nhắn...</string>
+    <string name="admin_ai_chatbot_toast_empty_message">Vui lòng nhập nội dung câu hỏi</string>
+    <string name="admin_ai_chatbot_toast_dispatch_todo">Điều phối nhiệm vụ từ AI đang phát triển</string>
+    <string name="admin_ai_chatbot_toast_detail_todo">Mở chi tiết đề xuất AI đang phát triển</string>
+    <string name="admin_ai_chatbot_mock_ai_welcome">Chào Admin, hệ thống đã đồng bộ dữ liệu trạm mới nhất. Tôi có thể hỗ trợ điều phối ngay.</string>
+    <string name="admin_ai_chatbot_mock_admin_question">Kiểm tra giúp tôi khu vực đang thiếu nước và gợi ý điều phối.</string>
+    <string name="admin_ai_chatbot_mock_ai_suggestion">Hub Quận 7 đang thiếu 40 thùng nước. Đề xuất điều phối từ Hub Quận 1 trong 30 phút.</string>
+    <string name="admin_ai_chatbot_mock_ai_auto_reply">Tôi đã ghi nhận câu hỏi. Đang phân tích dữ liệu thời gian thực để phản hồi chi tiết cho Admin.</string>
     <string name="admin_profile_screen_title">ADMIN PROFILE SCREEN</string>
 </resources>
