@@ -4,9 +4,9 @@ import com.drc.aidbridge.infrastructure.security.JwtService;
 import com.drc.aidbridge.modules.shared.exception.AuthenticationException;
 import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.user.internal.entity.User;
+import com.drc.aidbridge.modules.user.internal.mapper.UserMapper;
 import com.drc.aidbridge.modules.user.internal.repository.UserJpaRepository;
 import com.drc.aidbridge.modules.user.internal.web.dto.RefreshTokenRequest;
-import com.drc.aidbridge.modules.user.internal.web.dto.TokenResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +22,9 @@ public class RefreshTokenUseCase {
 
     private final UserJpaRepository userRepository;
     private final JwtService jwtService;
+    private final UserMapper userMapper;
 
-    public TokenResponse execute(RefreshTokenRequest request) {
+    public AuthResponse execute(RefreshTokenRequest request) {
         Claims claims;
         try {
             claims = jwtService.validateRefreshToken(request.getRefreshToken());
@@ -46,9 +47,6 @@ public class RefreshTokenUseCase {
         String newRefreshToken = jwtService.generateRefreshToken(user.getId());
 
         log.debug("Token refreshed for user: {}", user.getEmail());
-        return TokenResponse.builder()
-                .accessToken(newAccessToken)
-                .refreshToken(newRefreshToken)
-                .build();
+        return userMapper.buildAuthResponse(user, newAccessToken, newRefreshToken);
     }
 }

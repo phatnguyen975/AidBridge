@@ -1,16 +1,28 @@
 package com.drc.aidbridge.ui.base;
 
+import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
@@ -18,8 +30,11 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.viewbinding.ViewBinding;
 
+import com.drc.aidbridge.R;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.utils.Constants;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 
 /**
  * BaseFragment — parent class for all Fragments.
@@ -63,27 +78,22 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
     protected abstract void observeViewModel();
 
     /**
-     * Optional progress view to toggle for loading states.
-     * Fragments can override and return a ProgressBar from the layout.
+     * Template hook for child fragments to control their loading UI.
      */
-    @Nullable
-    protected ProgressBar getLoadingView() {
-        return null;
+    protected void onLoadingStateChanged(boolean isLoading) {
     }
 
     /**
      * Shared observer for NetworkResultWrapper streams.
-     * - Loading: disable action view + show optional progress bar
-     * - Success: re-enable action view + invoke success callback
-     * - Error:   re-enable action view + invoke error callback (or toast fallback)
+     * - Loading: delegate state handling to child fragments
+     * - Success: invoke success callback
+     * - Error: invoke error callback (or toast fallback)
      */
-    protected <T> Observer<NetworkResultWrapper<T>> resultObserver(@Nullable View actionView,
-                                                                   @NonNull OnSuccess<T> onSuccess) {
-        return resultObserver(actionView, onSuccess, this::showToast);
+    protected <T> Observer<NetworkResultWrapper<T>> resultObserver(@NonNull OnSuccess<T> onSuccess) {
+        return resultObserver(onSuccess, this::showToast);
     }
 
-    protected <T> Observer<NetworkResultWrapper<T>> resultObserver(@Nullable View actionView,
-                                                                   @NonNull OnSuccess<T> onSuccess,
+    protected <T> Observer<NetworkResultWrapper<T>> resultObserver(@NonNull OnSuccess<T> onSuccess,
                                                                    @NonNull OnError onError) {
         return result -> {
             if (result == null) {
@@ -91,17 +101,10 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
             }
 
             boolean isLoading = result.isLoading();
-            ProgressBar loadingView = getLoadingView();
+            onLoadingStateChanged(isLoading);
 
             if (result.hasBeenHandled() && !isLoading) {
                 return;
-            }
-
-            if (actionView != null) {
-                actionView.setEnabled(!isLoading);
-            }
-            if (loadingView != null) {
-                loadingView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             }
 
             if (result.isSuccess()) {
@@ -111,7 +114,7 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
             } else if (result.isError()) {
                 result.markAsHandled();
                 String message = ((NetworkResultWrapper.Error<T>) result).message;
-                onError.handle(message != null ? message : "Có lỗi xảy ra");
+                onError.handle(message != null ? message : getString(R.string.error_generic));
             }
         };
     }
@@ -134,6 +137,109 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
     protected void showToast(String message) {
         if (getContext() != null) {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Shows a Snackbar at the top of the screen with custom styling.
+     *
+     * @param parentView The view to find a parent from for the Snackbar.
+     * @param message The text to display in the Snackbar.
+     * @param isError Whether the message represents an error (affects styling).
+     */
+    protected void showTopSnackbar(@NonNull View parentView,
+                                   @NonNull String message,
+                                   boolean isError) {
+        Snackbar snackbar = Snackbar.make(parentView, message, Snackbar.LENGTH_SHORT);
+        View snackbarView = snackbar.getView();
+
+        int bgColor = ContextCompat.getColor(requireContext(), isError ? R.color.sos_red : R.color.safe_green);
+
+        // Force-disable Material background tint so custom shape color is always visible.
+        snackbar.setBackgroundTint(Color.TRANSPARENT);
+        snackbarView.setBackgroundTintList(null);
+
+        GradientDrawable background = new GradientDrawable();
+        background.setColor(bgColor);
+        background.setCornerRadius(getResources().getDimension(R.dimen.radius_sm));
+        snackbarView.setBackground(background);
+
+        TextView textView = snackbarView.findViewById(com.google.android.material.R.id.snackbar_text);
+        if (textView != null) {
+            textView.setMaxLines(5);
+            textView.setEllipsize(TextUtils.TruncateAt.END);
+            textView.setTextColor(Color.WHITE);
+        }
+
+        int topMargin = getResources().getDimensionPixelSize(R.dimen.snackbar_top_margin);
+        ViewGroup.LayoutParams layoutParams = snackbarView.getLayoutParams();
+
+        if (layoutParams instanceof FrameLayout.LayoutParams) {
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) layoutParams;
+            params.gravity = Gravity.TOP;
+            params.topMargin = topMargin;
+            snackbarView.setLayoutParams(params);
+        } else if (layoutParams instanceof CoordinatorLayout.LayoutParams) {
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layoutParams;
+            params.gravity = Gravity.TOP;
+            params.topMargin = topMargin;
+            snackbarView.setLayoutParams(params);
+        }
+
+        snackbar.show();
+    }
+
+    protected void applyActionLoadingState(@NonNull MaterialButton button,
+                                           @Nullable View progressView,
+                                           @Nullable TextView labelView,
+                                           boolean isLoading,
+                                           @StringRes int normalTextResId) {
+        button.setEnabled(!isLoading);
+
+        int buttonColor = ContextCompat.getColor(
+            requireContext(),
+            isLoading ? R.color.color_primary_variant : R.color.color_primary
+        );
+        button.setBackgroundTintList(ColorStateList.valueOf(buttonColor));
+
+        int loadingTextColor = ContextCompat.getColor(requireContext(), R.color.text_secondary);
+        int normalTextColor = ContextCompat.getColor(requireContext(), R.color.white);
+        int effectiveTextColor = isLoading ? loadingTextColor : normalTextColor;
+
+        if (progressView != null) {
+            progressView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+
+            if (progressView instanceof ProgressBar) {
+                ((ProgressBar) progressView).setIndeterminateTintList(
+                    ColorStateList.valueOf(effectiveTextColor)
+                );
+            }
+        }
+
+        if (labelView != null) {
+            labelView.setText(isLoading ? R.string.btn_loading : normalTextResId);
+            labelView.setTextColor(effectiveTextColor);
+        }
+    }
+
+    protected void clearInputFocusAndHideKeyboard() {
+        if (!isAdded()) {
+            return;
+        }
+
+        View currentFocus = requireActivity().getCurrentFocus();
+        if (currentFocus != null) {
+            currentFocus.clearFocus();
+            InputMethodManager imm = (InputMethodManager) requireContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+            }
+        }
+
+        View rootView = getView();
+        if (rootView != null) {
+            rootView.clearFocus();
         }
     }
 

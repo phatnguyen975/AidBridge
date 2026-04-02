@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Component
@@ -32,20 +33,27 @@ public class RegisterUserUseCase {
 
     @Transactional
     public AuthResponse execute(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        // Validate email or phone required
+        if (!StringUtils.hasText(request.getEmail()) && !StringUtils.hasText(request.getPhoneNumber())) {
+            throw new IllegalArgumentException("Either email or phone_number is required");
+        }
+
+        // Check duplicates
+        if (StringUtils.hasText(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
             throw new DuplicateResourceException("Email already registered");
         }
-        if (request.getPhone() != null &&
-                userRepository.existsByPhoneNumber(request.getPhone())) {
+        if (StringUtils.hasText(request.getPhoneNumber()) &&
+                userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
             throw new DuplicateResourceException("Phone number already registered");
         }
 
         User user = User.builder()
-                .fullName(request.getName())
+                .fullName(request.getFullName())
                 .email(request.getEmail())
-                .phoneNumber(request.getPhone())
+                .phoneNumber(request.getPhoneNumber())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .role(UserRole.valueOf(request.getRole().toUpperCase()))
+                .avatarUrl(request.getAvatarUrl())
                 .isVerified(false)
                 .isActive(true)
                 .build();
@@ -53,9 +61,12 @@ public class RegisterUserUseCase {
         user = userRepository.save(user);
         log.info("User registered: {} with role {}", user.getEmail(), user.getRole());
 
-        String otp = otpRedisSchema.generateOtp(
-                OtpRedisSchema.OtpPurpose.REGISTRATION, request.getEmail());
-        notificationFacade.sendEmail(request.getEmail(), otp);
+        // Send verification OTP
+        if (StringUtils.hasText(request.getEmail())) {
+            String otp = otpRedisSchema.generateOtp(
+                    OtpRedisSchema.OtpPurpose.REGISTRATION, request.getEmail());
+            notificationFacade.sendEmail(request.getEmail(), otp);
+        }
 
         String accessToken = jwtService.generateAccessToken(user.getId(), user.getRole().name());
         String refreshToken = jwtService.generateRefreshToken(user.getId());
