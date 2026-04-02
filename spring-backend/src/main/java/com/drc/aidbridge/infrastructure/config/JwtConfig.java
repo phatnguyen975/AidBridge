@@ -1,4 +1,4 @@
-package com.drc.aidbridge.config;
+package com.drc.aidbridge.infrastructure.config;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

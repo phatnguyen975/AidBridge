@@ -1,13 +1,12 @@
 package com.drc.aidbridge.modules.user.internal.usecase;
 
-import com.drc.aidbridge.modules.shared.exception.BadRequestException;
+import com.drc.aidbridge.infrastructure.security.JwtService;
 import com.drc.aidbridge.modules.shared.exception.InvalidOtpException;
 import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.user.internal.cache.OtpRedisSchema;
 import com.drc.aidbridge.modules.user.internal.cache.SessionCacheRedisSchema;
 import com.drc.aidbridge.modules.user.internal.entity.User;
 import com.drc.aidbridge.modules.user.internal.repository.UserJpaRepository;
-import com.drc.aidbridge.modules.user.internal.security.JwtService;
 import com.drc.aidbridge.modules.user.internal.web.dto.ResetPasswordRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
