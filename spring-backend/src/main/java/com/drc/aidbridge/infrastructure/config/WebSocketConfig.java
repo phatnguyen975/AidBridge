@@ -1,4 +1,4 @@
-package com.drc.aidbridge.config;
+package com.drc.aidbridge.infrastructure.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

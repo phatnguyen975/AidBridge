@@ -1,6 +1,5 @@
-package com.drc.aidbridge.security;
+package com.drc.aidbridge.infrastructure.security;
 
-import com.drc.aidbridge.modules.user.internal.security.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;

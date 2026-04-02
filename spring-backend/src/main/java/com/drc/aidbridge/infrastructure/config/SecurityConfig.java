@@ -1,6 +1,5 @@
-package com.drc.aidbridge.config;
+package com.drc.aidbridge.infrastructure.config;
 
-import com.drc.aidbridge.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +11,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.drc.aidbridge.infrastructure.security.JwtAuthenticationFilter;
 
 /**
  * Security configuration for RSA-signed JWT authentication.

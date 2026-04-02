@@ -1,4 +1,4 @@
-package com.drc.aidbridge.config;
+package com.drc.aidbridge.infrastructure.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

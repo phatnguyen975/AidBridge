@@ -1,4 +1,4 @@
-package com.drc.aidbridge.modules.user.internal.security;
+package com.drc.aidbridge.infrastructure.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
