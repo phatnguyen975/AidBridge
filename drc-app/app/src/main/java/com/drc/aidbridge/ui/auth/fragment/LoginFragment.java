@@ -1,15 +1,17 @@
 package com.drc.aidbridge.ui.auth.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentLoginBinding;
+import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.auth.viewmodel.LoginViewModel;
 import com.drc.aidbridge.ui.base.BaseFragment;
@@ -52,19 +54,24 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
                 binding.tilPassword.setError(validation.getErrorMessage());
                 binding.tilPassword.requestFocus();
             } else {
-                showToast(validation.getErrorMessage());
+                showTopSnackbar(binding.getRoot(), validation.getErrorMessage(), true);
             }
         });
 
         viewModel.getLoginResult().observe(getViewLifecycleOwner(),
-                resultObserver(binding.btnLogin,
-                        ignored -> navigateToMain(),
+                resultObserver(this::handleLoginSuccess,
                         this::showNetworkError));
     }
 
     @Override
-    protected ProgressBar getLoadingView() {
-        return binding.progressBar;
+    protected void onLoadingStateChanged(boolean isLoading) {
+        applyActionLoadingState(
+            binding.btnLogin,
+            binding.progressLoginInline,
+            binding.tvLoginButtonText,
+            isLoading,
+            R.string.btn_login_action
+        );
     }
 
     private void setupClickListeners() {
@@ -78,6 +85,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
     }
 
     private void attemptLogin() {
+        clearInputFocusAndHideKeyboard();
         String email = getRawText(binding.etEmail);
         String password = getRawText(binding.etPassword);
         viewModel.login(email, password);
@@ -91,7 +99,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
     }
 
     private void showNetworkError(String message) {
-        showToast(message);
+        showTopSnackbar(binding.getRoot(), message, true);
     }
 
     private void clearErrors() {
@@ -104,5 +112,25 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         requireActivity().finish();
+    }
+
+    private void navigateToOtp(@Nullable String email) {
+        Bundle args = new Bundle();
+        args.putString("email", email != null ? email : "");
+        navigateSafely(R.id.action_loginFragment_to_otpFragment, args);
+    }
+
+    private void handleLoginSuccess(@Nullable User user) {
+        if (user == null) {
+            showTopSnackbar(binding.getRoot(), getString(R.string.error_generic), true);
+            return;
+        }
+
+        if (user.isVerified()) {
+            navigateToMain();
+            return;
+        }
+
+        navigateToOtp(user.getEmail());
     }
 }

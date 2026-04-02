@@ -24,16 +24,26 @@ public class UserDto {
     @SerializedName("avatarUrl")
     private String avatarUrl;
 
+    @SerializedName("verified")
+    private boolean verified;
+
     public UserDto() {
     }
 
-    public UserDto(String id, String name, String email, String phone, String role, @Nullable String avatarUrl) {
+    public UserDto(String id,
+                   String name,
+                   String email,
+                   String phone,
+                   String role,
+                   @Nullable String avatarUrl,
+                   boolean verified) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.role = role;
         this.avatarUrl = avatarUrl;
+        this.verified = verified;
     }
 
     public String getId() {
@@ -59,5 +69,9 @@ public class UserDto {
     @Nullable
     public String getAvatarUrl() {
         return avatarUrl;
+    }
+
+    public boolean isVerified() {
+        return verified;
     }
 }

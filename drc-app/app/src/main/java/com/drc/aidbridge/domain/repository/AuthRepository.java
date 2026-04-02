@@ -27,7 +27,7 @@ public interface AuthRepository {
      * Registers a new user account.
      * Returns a stream emitting Loading → Success/Error.
      */
-    LiveData<NetworkResultWrapper<String>> register(RegisterRequest request);
+    LiveData<NetworkResultWrapper<User>> register(RegisterRequest request);
 
     /**
      * Verifies a 6-digit OTP code for the given email.

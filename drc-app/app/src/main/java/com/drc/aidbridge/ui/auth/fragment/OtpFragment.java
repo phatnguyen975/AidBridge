@@ -4,12 +4,12 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
 
-import androidx.annotation.Nullable;
+import androidx.activity.OnBackPressedCallback;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
@@ -37,6 +37,23 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
     @Override
     protected FragmentOtpBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
         return FragmentOtpBinding.inflate(inflater, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@androidx.annotation.NonNull View view,
+                              @androidx.annotation.Nullable android.os.Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(
+            getViewLifecycleOwner(),
+            new OnBackPressedCallback(true) {
+                @Override
+                public void handleOnBackPressed() {
+                    showTopSnackbar(binding.getRoot(), getString(R.string.otp_back_locked_message), true);
+                    navigateSafely(R.id.action_otpFragment_to_loginFragment);
+                }
+            }
+        );
     }
 
     @Override
@@ -86,29 +103,33 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
             if (validation.getErrorField() == ValidationResult.Field.OTP) {
                 otpInputController.clear();
             } else {
-                showToast(validation.getErrorMessage());
+                showTopSnackbar(binding.getRoot(), validation.getErrorMessage(), true);
             }
         });
 
         viewModel.getVerifyResult().observe(getViewLifecycleOwner(),
-                resultObserver(binding.btnVerify,
+                resultObserver(
                         ignored -> showSuccessDialog(),
                         this::showNetworkError));
 
         viewModel.getResendResult().observe(getViewLifecycleOwner(),
-            resultObserver(binding.tvResend,
+            resultObserver(
                 ignored -> showResendSuccess(),
                 this::showNetworkError));
     }
 
     @Override
-    protected ProgressBar getLoadingView() {
-        return binding.progressBar;
+    protected void onLoadingStateChanged(boolean isLoading) {
+        applyActionLoadingState(
+            binding.btnVerify,
+            binding.progressVerifyInline,
+            binding.tvVerifyButtonText,
+            isLoading,
+            R.string.btn_confirm
+        );
     }
 
     private void setupClickListeners() {
-        binding.btnBack.setOnClickListener(v -> popBackStackSafely());
-
         binding.btnVerify.setOnClickListener(v -> attemptVerify());
 
         binding.tvResend.setOnClickListener(v -> {
@@ -119,9 +140,10 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
     }
 
     private void attemptVerify() {
+        clearInputFocusAndHideKeyboard();
         String otp = otpInputController.collectOtp();
         if (otp.length() < 6) {
-            showToast(getString(R.string.error_otp_length));
+            showTopSnackbar(binding.getRoot(), getString(R.string.error_otp_length), true);
             return;
         }
         viewModel.verify(otp);
@@ -170,14 +192,14 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
 
     private void showNetworkError(String message) {
         if (message != null && !message.trim().isEmpty()) {
-            showToast(message);
+            showTopSnackbar(binding.getRoot(), message, true);
         } else {
             showFailedDialog();
         }
     }
 
     private void showResendSuccess() {
-        showToast(getString(R.string.otp_resend_now));
+        showTopSnackbar(binding.getRoot(), getString(R.string.otp_resend_now), false);
     }
 
     private Dialog buildDialog() {

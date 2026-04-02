@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
@@ -46,19 +45,25 @@ public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding
                 binding.tilEmail.setError(validation.getErrorMessage());
                 binding.tilEmail.requestFocus();
             } else {
-                showToast(validation.getErrorMessage());
+                showTopSnackbar(binding.getRoot(), validation.getErrorMessage(), true);
             }
         });
 
         viewModel.getSendOtpResult().observe(getViewLifecycleOwner(),
-                resultObserver(binding.btnSendOtp,
+                resultObserver(
                         ignored -> navigateToOtp(getRawText(binding.tilEmail.getEditText())),
                         this::showNetworkError));
     }
 
     @Override
-    protected ProgressBar getLoadingView() {
-        return binding.progressBar;
+    protected void onLoadingStateChanged(boolean isLoading) {
+        applyActionLoadingState(
+            binding.btnSendOtp,
+            binding.progressSendOtpInline,
+            binding.tvSendOtpButtonText,
+            isLoading,
+            R.string.forgot_btn_send_otp
+        );
     }
 
     private void setupClickListeners() {
@@ -67,6 +72,7 @@ public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding
     }
 
     private void attemptSendOtp() {
+        clearInputFocusAndHideKeyboard();
         String email = getRawText(binding.tilEmail.getEditText());
         viewModel.sendOtp(email);
     }
@@ -79,7 +85,7 @@ public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding
     }
 
     private void showNetworkError(String message) {
-        showToast(message);
+        showTopSnackbar(binding.getRoot(), message, true);
     }
 
     private void clearErrors() {

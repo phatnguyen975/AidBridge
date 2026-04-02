@@ -7,7 +7,6 @@ import com.drc.aidbridge.data.remote.api.AuthApiService;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.dto.response.AuthResponse;
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
-import com.drc.aidbridge.data.remote.dto.response.UserDto;
 import com.drc.aidbridge.data.remote.dto.request.ForgotPasswordRequest;
 import com.drc.aidbridge.data.remote.dto.request.LoginRequest;
 import com.drc.aidbridge.data.remote.dto.request.OtpVerifyRequest;
@@ -18,8 +17,6 @@ import com.drc.aidbridge.domain.enums.UserRole;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.utils.TokenManager;
 import com.drc.aidbridge.data.mapper.UserMapper;
-
-import org.json.JSONObject;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -94,7 +91,13 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
 
                 persistAuthData(data);
                 User user = userMapper.mapToDomain(data.getUser());
-                tokenManager.saveUserInfo(user.getId(), user.getName(), user.getEmail(), user.getRole().name());
+                tokenManager.saveUserInfo(
+                    user.getId(),
+                    user.getName(),
+                    user.getEmail(),
+                    user.getRole().name(),
+                    user.isVerified()
+                );
                 result.postValue(NetworkResultWrapper.success(user));
             }
 
@@ -111,13 +114,15 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 request.getEmail(),
                 "0000000000",
                 UserRole.VICTIM,
-                null
+                null,
+                false
         );
         tokenManager.saveUserInfo(
                 mockUser.getId(),
                 mockUser.getName(),
                 mockUser.getEmail(),
-                mockUser.getRole().name()
+                mockUser.getRole().name(),
+                mockUser.isVerified()
         );
         result.postValue(NetworkResultWrapper.success(mockUser));
 
@@ -125,47 +130,67 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
     }
 
     @Override
-    public LiveData<NetworkResultWrapper<String>> register(RegisterRequest request) {
-        MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
+    public LiveData<NetworkResultWrapper<User>> register(RegisterRequest request) {
+        MutableLiveData<NetworkResultWrapper<User>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
-        // TODO: Re-enable actual API call once backend is ready.
-        /*
         authApiService.register(request).enqueue(new Callback<BaseResponse<AuthResponse>>() {
             @Override
             public void onResponse(Call<BaseResponse<AuthResponse>> call,
                                    Response<BaseResponse<AuthResponse>> response) {
+                // 1. HTTP-level success check
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
 
+                // 2. Body null-safety check
                 BaseResponse<AuthResponse> baseResponse = response.body();
                 if (baseResponse == null) {
                     result.postValue(NetworkResultWrapper.error("Phản hồi đăng ký không hợp lệ."));
                     return;
                 }
 
+                // 3. API-level business success check
                 if (!baseResponse.isSuccess()) {
                     String apiMessage = baseResponse.getMessage();
                     result.postValue(NetworkResultWrapper.error(
-                        apiMessage != null && !apiMessage.isEmpty()
+                        apiMessage != null && !apiMessage.trim().isEmpty()
                             ? apiMessage
                             : "Đăng ký thất bại."
                     ));
                     return;
                 }
 
+                // 4. Extract data payload and map user DTO to domain model
                 AuthResponse data = baseResponse.getData();
-                if (data != null) {
-                    persistAuthData(data);
-                    if (data.getUser() != null) {
-                        User user = userMapper.mapToDomain(data.getUser());
-                        tokenManager.saveUserInfo(user.getId(), user.getName(), user.getEmail(), user.getRole().name());
-                    }
+                if (data == null || data.getUser() == null) {
+                    String apiMessage = baseResponse.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                        apiMessage != null && !apiMessage.trim().isEmpty()
+                            ? apiMessage
+                            : "Phản hồi đăng ký không hợp lệ."
+                    ));
+                    return;
                 }
 
-                result.postValue(NetworkResultWrapper.success(request.getEmail()));
+                User user = userMapper.mapToDomain(data.getUser());
+                if (user == null) {
+                    result.postValue(NetworkResultWrapper.error("Không thể ánh xạ thông tin người dùng."));
+                    return;
+                }
+
+                // Persist access/refresh tokens and local user metadata for session bootstrap.
+                persistAuthData(data);
+                tokenManager.saveUserInfo(
+                    user.getId(),
+                    user.getName(),
+                    user.getEmail(),
+                    user.getRole().name(),
+                    user.isVerified()
+                );
+
+                result.postValue(NetworkResultWrapper.success(user));
             }
 
             @Override
@@ -173,9 +198,6 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 result.postValue(NetworkResultWrapper.error("Đăng ký thất bại: " + safeMessage(t)));
             }
         });
-        */
-
-        result.postValue(NetworkResultWrapper.success(request.getEmail()));
 
         return result;
     }
@@ -217,7 +239,13 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                     persistAuthData(data);
                     if (data.getUser() != null) {
                         User user = userMapper.mapToDomain(data.getUser());
-                        tokenManager.saveUserInfo(user.getId(), user.getName(), user.getEmail(), user.getRole().name());
+                        tokenManager.saveUserInfo(
+                                user.getId(),
+                                user.getName(),
+                                user.getEmail(),
+                                user.getRole().name(),
+                                user.isVerified()
+                        );
                     }
                 }
 

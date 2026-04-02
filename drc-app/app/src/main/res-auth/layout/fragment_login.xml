@@ -188,29 +188,52 @@
             app:layout_constraintTop_toBottomOf="@+id/til_password"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- "ĐĂNG NHẬP →" primary blue button -->
-        <Button
-            android:id="@+id/btn_login"
+        <FrameLayout
+            android:id="@+id/layout_login_action"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingVertical="@dimen/spacing_md"
-            android:text="@string/btn_login_action"
-            style="@style/Widget.AidBridge.Button.Primary"
             android:layout_marginTop="@dimen/spacing_xl"
             app:layout_constraintTop_toBottomOf="@+id/tv_forgot_password"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Loading indicator (ProgressBar) — hidden by default -->
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:indeterminateTint="@color/color_primary"
-            app:layout_constraintTop_toBottomOf="@+id/btn_login"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="@dimen/spacing_md"
+                android:text=""
+                style="@style/Widget.AidBridge.Button.Primary" />
+
+            <LinearLayout
+                android:id="@+id/layout_login_button_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:clickable="false"
+                android:focusable="false"
+                android:elevation="@dimen/auth_button_center_overlay_elevation"
+                android:orientation="horizontal">
+
+                <ProgressBar
+                    android:id="@+id/progress_login_inline"
+                    android:layout_width="@dimen/auth_button_center_progress_size"
+                    android:layout_height="@dimen/auth_button_center_progress_size"
+                    android:layout_marginEnd="@dimen/auth_button_center_progress_spacing"
+                    android:visibility="gone"
+                    android:indeterminateTint="@color/white" />
+
+                <TextView
+                    android:id="@+id/tv_login_button_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btn_login_action"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_md" />
+            </LinearLayout>
+        </FrameLayout>
 
         <!-- "Chưa có tài khoản? Đăng ký ngay" bottom text -->
         <LinearLayout
@@ -220,7 +243,7 @@
             android:orientation="horizontal"
             android:gravity="center"
             android:layout_marginTop="@dimen/spacing_xl"
-            app:layout_constraintTop_toBottomOf="@+id/progress_bar"
+            app:layout_constraintTop_toBottomOf="@+id/layout_login_action"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
