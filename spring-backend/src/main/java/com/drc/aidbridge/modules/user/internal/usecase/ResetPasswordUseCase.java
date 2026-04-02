@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Component
@@ -27,17 +28,25 @@ public class ResetPasswordUseCase {
 
     @Transactional
     public void execute(ResetPasswordRequest request) {
+        // Validate: email OR phone required
+        if (!StringUtils.hasText(request.getEmail()) && !StringUtils.hasText(request.getPhoneNumber())) {
+            throw new BadRequestException("Either email or phone_number is required");
+        }
+
+        String identifier = StringUtils.hasText(request.getEmail())
+                ? request.getEmail()
+                : request.getPhoneNumber();
+
         boolean valid = otpRedisSchema.verifyOtp(
                 OtpRedisSchema.OtpPurpose.PASSWORD_RESET,
-                request.getEmail(),
-                request.getOtp());
+                identifier,
+                request.getOtpCode());
 
         if (!valid) {
             throw new InvalidOtpException("Invalid or expired OTP");
         }
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = findUser(request);
 
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
@@ -46,6 +55,15 @@ public class ResetPasswordUseCase {
         jwtService.revokeAllUserTokens(user.getId());
         sessionCacheRedisSchema.deleteSession(user.getId().getLeastSignificantBits());
 
-        log.info("Password reset for: {}", request.getEmail());
+        log.info("Password reset for: {}", identifier);
+    }
+
+    private User findUser(ResetPasswordRequest request) {
+        if (StringUtils.hasText(request.getEmail())) {
+            return userRepository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        }
+        return userRepository.findByPhoneNumber(request.getPhoneNumber())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }

@@ -16,33 +16,46 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AttachmentResponse {
 
-    private UUID id;
-    private String url;
+    private boolean success;
 
-    @JsonProperty("file_name")
-    private String fileName;
+    private AttachmentData data;
 
-    @JsonProperty("file_size")
-    private long fileSize;
+    @lombok.Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AttachmentData {
+        private UUID id;
+        private String url;
 
-    @JsonProperty("mime_type")
-    private String mimeType;
+        @JsonProperty("file_name")
+        private String fileName;
 
-    @JsonProperty("uploaded_by")
-    private UUID uploadedBy;
+        @JsonProperty("file_size")
+        private long fileSize;
 
-    @JsonProperty("created_at")
-    private Instant createdAt;
+        @JsonProperty("mime_type")
+        private String mimeType;
+
+        @JsonProperty("uploaded_by")
+        private UUID uploadedBy;
+
+        @JsonProperty("created_at")
+        private Instant createdAt;
+    }
 
     public static AttachmentResponse from(AttachmentDTO attachmentDTO) {
         return AttachmentResponse.builder()
-                .id(attachmentDTO.getId())
-                .url(attachmentDTO.getUrl())
-                .fileName(attachmentDTO.getFileName())
-                .fileSize(attachmentDTO.getFileSize())
-                .mimeType(attachmentDTO.getMimeType())
-                .uploadedBy(attachmentDTO.getUploadedBy())
-                .createdAt(attachmentDTO.getCreatedAt())
+                .success(true)
+                .data(AttachmentData.builder()
+                        .id(attachmentDTO.getId())
+                        .url(attachmentDTO.getUrl())
+                        .fileName(attachmentDTO.getFileName())
+                        .fileSize(attachmentDTO.getFileSize())
+                        .mimeType(attachmentDTO.getMimeType())
+                        .uploadedBy(attachmentDTO.getUploadedBy())
+                        .createdAt(attachmentDTO.getCreatedAt())
+                        .build())
                 .build();
     }
 }

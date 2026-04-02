@@ -3,12 +3,13 @@ package com.drc.aidbridge.modules.user.internal.usecase;
 import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.user.internal.cache.OtpRedisSchema;
 import com.drc.aidbridge.modules.user.internal.repository.UserJpaRepository;
-import com.drc.aidbridge.modules.user.internal.web.dto.ResendOtpRequest;
+import com.drc.aidbridge.modules.user.internal.web.dto.RequestOtpRequest;
 import com.drc.aidbridge.modules.notification.NotificationFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Deprecated
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -18,7 +19,11 @@ public class ResendOtpUseCase {
     private final OtpRedisSchema otpRedisSchema;
     private final NotificationFacade notificationFacade;
 
-    public void execute(ResendOtpRequest request) {
+    /**
+     * @deprecated Use RequestOtpUseCase.execute(RequestOtpRequest) instead.
+     */
+    @Deprecated
+    public void execute(RequestOtpRequest request) {
         if (!userRepository.existsByEmail(request.getEmail())) {
             throw new ResourceNotFoundException("Email not registered");
         }

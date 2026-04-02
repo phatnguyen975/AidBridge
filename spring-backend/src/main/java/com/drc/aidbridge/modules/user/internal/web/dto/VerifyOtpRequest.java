@@ -3,22 +3,22 @@ package com.drc.aidbridge.modules.user.internal.web.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Request DTO cho reset password với OTP.
- * Khớp với ResetPasswordRequest schema trong api.yaml.
+ * Request DTO cho verify OTP.
+ * Khớp với VerifyOtpRequest schema trong api.yaml.
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResetPasswordRequest {
+public class VerifyOtpRequest {
 
     @Email(message = "Invalid email format")
     private String email;
@@ -31,8 +31,8 @@ public class ResetPasswordRequest {
     @JsonProperty("otp_code")
     private String otpCode;
 
-    @NotBlank(message = "New password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters")
-    @JsonProperty("new_password")
-    private String newPassword;
+    @NotNull(message = "OTP type is required")
+    @Pattern(regexp = "^(EMAIL_VERIFY|PHONE_VERIFY|PASSWORD_RESET)$", message = "OTP type must be EMAIL_VERIFY, PHONE_VERIFY, or PASSWORD_RESET")
+    @JsonProperty("otp_type")
+    private String otpType;
 }

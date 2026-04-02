@@ -25,4 +25,7 @@
     <!-- Logo sizes -->
     <dimen name="logo_size_splash">160dp</dimen>
     <dimen name="logo_size_header">72dp</dimen>
+
+    <!-- Snackbar -->
+    <dimen name="snackbar_top_margin">20dp</dimen>
 </resources>
