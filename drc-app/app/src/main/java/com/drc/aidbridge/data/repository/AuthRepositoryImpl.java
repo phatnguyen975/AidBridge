@@ -9,11 +9,12 @@ import com.drc.aidbridge.data.remote.dto.response.AuthResponse;
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 import com.drc.aidbridge.data.remote.dto.request.ForgotPasswordRequest;
 import com.drc.aidbridge.data.remote.dto.request.LoginRequest;
+import com.drc.aidbridge.data.remote.dto.request.LogoutRequest;
 import com.drc.aidbridge.data.remote.dto.request.OtpVerifyRequest;
 import com.drc.aidbridge.data.remote.dto.request.RegisterRequest;
 import com.drc.aidbridge.data.remote.dto.request.ResetPasswordRequest;
+import com.drc.aidbridge.data.remote.dto.request.UpdateFcmTokenRequest;
 import com.drc.aidbridge.domain.model.User;
-import com.drc.aidbridge.domain.enums.UserRole;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.utils.TokenManager;
 import com.drc.aidbridge.data.mapper.UserMapper;
@@ -51,8 +52,6 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
         MutableLiveData<NetworkResultWrapper<User>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
-        // TODO: Re-enable actual API call once backend is ready.
-        /*
         authApiService.login(request).enqueue(new Callback<BaseResponse<AuthResponse>>() {
             @Override
             public void onResponse(Call<BaseResponse<AuthResponse>> call,
@@ -71,7 +70,7 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 if (!baseResponse.isSuccess()) {
                     String apiMessage = baseResponse.getMessage();
                     result.postValue(NetworkResultWrapper.error(
-                        apiMessage != null && !apiMessage.isEmpty()
+                        apiMessage != null && !apiMessage.trim().isEmpty()
                             ? apiMessage
                             : "Đăng nhập thất bại."
                     ));
@@ -82,7 +81,7 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 if (data == null || data.getUser() == null) {
                     String apiMessage = baseResponse.getMessage();
                     result.postValue(NetworkResultWrapper.error(
-                        apiMessage != null && !apiMessage.isEmpty()
+                        apiMessage != null && !apiMessage.trim().isEmpty()
                             ? apiMessage
                             : "Phản hồi đăng nhập không hợp lệ."
                     ));
@@ -106,25 +105,6 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 result.postValue(NetworkResultWrapper.error("Không thể kết nối máy chủ: " + safeMessage(t)));
             }
         });
-        */
-
-        User mockUser = new User(
-                "mock-user-id",
-                "Mock Victim",
-                request.getEmail(),
-                "0000000000",
-                UserRole.VICTIM,
-                null,
-                false
-        );
-        tokenManager.saveUserInfo(
-                mockUser.getId(),
-                mockUser.getName(),
-                mockUser.getEmail(),
-                mockUser.getRole().name(),
-                mockUser.isVerified()
-        );
-        result.postValue(NetworkResultWrapper.success(mockUser));
 
         return result;
     }
@@ -442,6 +422,56 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
         });
 
         return result;
+    }
+
+    @Override
+    public LiveData<NetworkResultWrapper<Boolean>> logout(String refreshToken) {
+        MutableLiveData<NetworkResultWrapper<Boolean>> result = new MutableLiveData<>();
+        result.postValue(NetworkResultWrapper.loading());
+
+        // Always clear local session immediately so UI can return to auth shell deterministically.
+        tokenManager.clearAll();
+        result.postValue(NetworkResultWrapper.success(Boolean.TRUE));
+
+        if (refreshToken == null || refreshToken.trim().isEmpty()) {
+            return result;
+        }
+
+        authApiService.logout(new LogoutRequest(refreshToken.trim())).enqueue(new Callback<BaseResponse<Void>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
+            }
+        });
+
+        return result;
+    }
+
+    @Override
+    public void updateFcmToken(String deviceId, String fcmToken) {
+        if (deviceId == null || deviceId.trim().isEmpty() || fcmToken == null || fcmToken.trim().isEmpty()) {
+            return;
+        }
+
+        String accessToken = tokenManager.getAccessToken();
+        if (accessToken == null || accessToken.trim().isEmpty()) {
+            return;
+        }
+
+        String authorization = "Bearer " + accessToken.trim();
+        UpdateFcmTokenRequest request = new UpdateFcmTokenRequest(deviceId.trim(), fcmToken.trim());
+        authApiService.updateFcmToken(authorization, request).enqueue(new Callback<BaseResponse<Void>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
+            }
+        });
     }
 
     private void persistAuthData(AuthResponse body) {

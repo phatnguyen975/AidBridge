@@ -47,6 +47,14 @@ public class UserMapper {
 
     // Cache user session to Redis for fast lookups
     public void cacheUserSession(SessionCacheRedisSchema sessionCacheRedisSchema, User user) {
+        cacheUserSession(sessionCacheRedisSchema, user, null, user.getFcmToken());
+    }
+
+    // Cache user session with explicit device + FCM context from login payload.
+    public void cacheUserSession(SessionCacheRedisSchema sessionCacheRedisSchema,
+                                 User user,
+                                 String deviceId,
+                                 String fcmToken) {
         sessionCacheRedisSchema.saveSession(
                 SessionCacheRedisSchema.UserSession.builder()
                         .userId(user.getId().getLeastSignificantBits())
@@ -54,7 +62,8 @@ public class UserMapper {
                         .fullName(user.getFullName())
                         .role(user.getRole().name())
                         .avatarUrl(user.getAvatarUrl())
-                        .fcmToken(user.getFcmToken())
+                        .deviceId(deviceId)
+                        .fcmToken(fcmToken)
                         .build());
     }
 }

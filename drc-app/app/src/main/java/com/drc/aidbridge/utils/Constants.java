@@ -30,6 +30,7 @@ public final class Constants {
     public static final String KEY_USER_NAME = "user_name";
     public static final String KEY_USER_EMAIL = "user_email";
     public static final String KEY_USER_VERIFIED = "user_verified";
+    public static final String KEY_FCM_TOKEN = "fcm_token";
 
     // === Room Database ===
     public static final String DB_NAME = "aidbridge_db";

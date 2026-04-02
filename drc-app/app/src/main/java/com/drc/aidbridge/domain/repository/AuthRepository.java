@@ -56,4 +56,15 @@ public interface AuthRepository {
      * Resets password after successful OTP verification.
      */
     LiveData<NetworkResultWrapper<String>> resetPassword(ResetPasswordRequest request);
+
+    /**
+     * Logs out the current user session.
+     * Always clears local auth state regardless of API outcome.
+     */
+    LiveData<NetworkResultWrapper<Boolean>> logout(String refreshToken);
+
+    /**
+     * Updates the backend mapping for current device FCM token.
+     */
+    void updateFcmToken(String deviceId, String fcmToken);
 }

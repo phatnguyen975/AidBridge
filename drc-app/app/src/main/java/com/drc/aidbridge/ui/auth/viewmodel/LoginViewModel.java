@@ -29,7 +29,12 @@ public class LoginViewModel extends BaseViewModel {
         this.loginUseCase = loginUseCase;
         this.loginResult = Transformations.switchMap(
             loginTrigger,
-            params -> this.loginUseCase.execute(params.email, params.password)
+            params -> this.loginUseCase.execute(
+                params.email,
+                params.password,
+                params.deviceId,
+                params.fcmToken
+            )
         );
     }
 
@@ -41,7 +46,7 @@ public class LoginViewModel extends BaseViewModel {
         return loginResult;
     }
 
-    public void login(String email, String password) {
+    public void login(String email, String password, String deviceId, String fcmToken) {
         ValidationResult validation = loginUseCase.validate(email, password);
 
         if (!validation.isValid()) {
@@ -50,15 +55,20 @@ public class LoginViewModel extends BaseViewModel {
         }
 
         validationError.setValue(ValidationResult.valid());
-        loginTrigger.setValue(new LoginParams(email, password));
+        loginTrigger.setValue(new LoginParams(email, password, deviceId, fcmToken));
     }
 
     private static class LoginParams {
         String email;
         String password;
-        LoginParams(String email, String password) {
+        String deviceId;
+        String fcmToken;
+
+        LoginParams(String email, String password, String deviceId, String fcmToken) {
             this.email = email;
             this.password = password;
+            this.deviceId = deviceId;
+            this.fcmToken = fcmToken;
         }
     }
 }

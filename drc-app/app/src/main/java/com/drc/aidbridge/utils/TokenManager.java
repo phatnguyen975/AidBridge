@@ -64,6 +64,23 @@ public class TokenManager {
                 .apply();
     }
 
+    /** Stores the latest FCM token from Firebase. */
+    public void saveFcmToken(@Nullable String fcmToken) {
+        SharedPreferences.Editor editor = prefs.edit();
+        if (fcmToken == null || fcmToken.isBlank()) {
+            editor.remove(Constants.KEY_FCM_TOKEN);
+        } else {
+            editor.putString(Constants.KEY_FCM_TOKEN, fcmToken);
+        }
+        editor.apply();
+    }
+
+    /** Returns locally cached FCM token if available. */
+    @Nullable
+    public String getFcmToken() {
+        return prefs.getString(Constants.KEY_FCM_TOKEN, null);
+    }
+
     /** Returns the cached user role string (matches UserRole enum name). */
     public String getUserRole() {
         return prefs.getString(Constants.KEY_USER_ROLE, null);
