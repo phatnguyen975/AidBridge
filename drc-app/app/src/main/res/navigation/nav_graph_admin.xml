@@ -34,4 +34,9 @@
         android:id="@+id/adminAddSupplyTypeFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminAddSupplyTypeFragment"
         android:label="@string/admin_add_supply_type_title" />
+
+    <fragment
+        android:id="@+id/adminAiChatbotFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminAiChatbotFragment"
+        android:label="@string/admin_ai_chatbot_title" />
 </navigation>
