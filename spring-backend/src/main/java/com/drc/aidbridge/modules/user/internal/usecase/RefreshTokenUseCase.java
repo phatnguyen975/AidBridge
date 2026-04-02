@@ -6,6 +6,7 @@ import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.user.internal.entity.User;
 import com.drc.aidbridge.modules.user.internal.mapper.UserMapper;
 import com.drc.aidbridge.modules.user.internal.repository.UserJpaRepository;
+import com.drc.aidbridge.modules.user.internal.web.dto.AuthResponse;
 import com.drc.aidbridge.modules.user.internal.web.dto.RefreshTokenRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

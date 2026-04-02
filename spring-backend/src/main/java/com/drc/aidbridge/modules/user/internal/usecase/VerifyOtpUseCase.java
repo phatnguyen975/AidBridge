@@ -8,7 +8,7 @@ import com.drc.aidbridge.modules.user.internal.entity.User;
 import com.drc.aidbridge.modules.user.internal.mapper.UserMapper;
 import com.drc.aidbridge.modules.user.internal.repository.UserJpaRepository;
 import com.drc.aidbridge.modules.user.internal.web.dto.AuthResponse;
-import com.drc.aidbridge.modules.user.internal.web.dto.OtpVerifyRequest;
+import com.drc.aidbridge.modules.user.internal.web.dto.VerifyOtpRequest;
 import com.drc.aidbridge.infrastructure.security.JwtService;
 import com.drc.aidbridge.modules.notification.NotificationFacade;
 import lombok.RequiredArgsConstructor;
@@ -57,8 +57,6 @@ public class VerifyOtpUseCase {
                 log.info("User verified: {}", user.getEmail());
             }
             case "PASSWORD_RESET" -> {
-                // For password reset, just verify OTP is valid
-                // Actual password change happens in /password/reset endpoint
                 log.info("Password reset OTP verified for: {}", identifier);
             }
         }

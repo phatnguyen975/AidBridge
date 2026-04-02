@@ -1,6 +1,7 @@
 package com.drc.aidbridge.modules.user.internal.usecase;
 
 import com.drc.aidbridge.infrastructure.security.JwtService;
+import com.drc.aidbridge.modules.shared.exception.BadRequestException;
 import com.drc.aidbridge.modules.shared.exception.InvalidOtpException;
 import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.user.internal.cache.OtpRedisSchema;
