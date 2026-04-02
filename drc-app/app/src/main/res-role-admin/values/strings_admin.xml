@@ -193,4 +193,23 @@
     <string name="admin_ai_chatbot_mock_ai_suggestion">Hub Quận 7 đang thiếu 40 thùng nước. Đề xuất điều phối từ Hub Quận 1 trong 30 phút.</string>
     <string name="admin_ai_chatbot_mock_ai_auto_reply">Tôi đã ghi nhận câu hỏi. Đang phân tích dữ liệu thời gian thực để phản hồi chi tiết cho Admin.</string>
     <string name="admin_profile_screen_title">ADMIN PROFILE SCREEN</string>
+    <string name="admin_profile_title">Cá nhân</string>
+    <string name="admin_profile_personal_info_title">Thông tin cá nhân</string>
+    <string name="admin_profile_email_label">Email</string>
+    <string name="admin_profile_phone_label">Số điện thoại</string>
+    <string name="admin_profile_email_mock">admin@drc.gov.vn</string>
+    <string name="admin_profile_phone_mock">090xxxxxxx</string>
+    <string name="admin_profile_email_icon_desc">Biểu tượng email quản trị</string>
+    <string name="admin_profile_phone_icon_desc">Biểu tượng điện thoại quản trị</string>
+    <string name="admin_profile_management_info_title">Thông tin quản trị</string>
+    <string name="admin_profile_change_info">Thay đổi thông tin</string>
+    <string name="admin_profile_manage_roles">Quản lý &amp; Phân quyền</string>
+    <string name="admin_profile_system_settings">Cài đặt hệ thống</string>
+    <string name="admin_profile_navigate_detail">Mở chi tiết cấu hình</string>
+    <string name="admin_profile_logout">ĐĂNG XUẤT</string>
+    <string name="admin_profile_logout_icon_desc">Biểu tượng đăng xuất</string>
+    <string name="admin_profile_toast_change_info">Mở chức năng Thay đổi thông tin</string>
+    <string name="admin_profile_toast_manage_roles">Mở chức năng Quản lý &amp; Phân quyền</string>
+    <string name="admin_profile_toast_system_settings">Mở chức năng Cài đặt hệ thống</string>
+    <string name="admin_profile_toast_logout_progress">Đang thực hiện đăng xuất...</string>
 </resources>

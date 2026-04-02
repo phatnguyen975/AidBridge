@@ -119,4 +119,11 @@
     <dimen name="admin_chat_input_icon_size">28dp</dimen>
     <dimen name="admin_chat_send_button_size">34dp</dimen>
     <dimen name="admin_chat_input_field_height">38dp</dimen>
+
+    <dimen name="admin_profile_title_text_size">24sp</dimen>
+    <dimen name="admin_profile_section_title_text_size">19sp</dimen>
+    <dimen name="admin_profile_label_text_size">15sp</dimen>
+    <dimen name="admin_profile_value_text_size">16sp</dimen>
+    <dimen name="admin_profile_item_text_size">16sp</dimen>
+    <dimen name="admin_profile_logout_text_size">17sp</dimen>
 </resources>
