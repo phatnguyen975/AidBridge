@@ -81,7 +81,13 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
         Intent intent;
 
         if (tokenManager.hasActiveSession()) {
-            intent = new Intent(this, MainActivity.class);
+            if (tokenManager.isUserVerified()) {
+                intent = new Intent(this, MainActivity.class);
+            } else {
+                intent = new Intent(this, AuthActivity.class);
+                intent.putExtra(AuthActivity.EXTRA_DESTINATION, AuthActivity.DESTINATION_OTP_FRAGMENT);
+                intent.putExtra(AuthActivity.EXTRA_EMAIL, tokenManager.getUserEmail());
+            }
         } else {
             intent = new Intent(this, AuthActivity.class);
         }

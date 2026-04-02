@@ -20,5 +20,7 @@ public class AttachmentDTO {
     private long fileSize;
     private String mimeType;
     private UUID uploadedBy;
+    private String referenceType;
+    private UUID referenceId;
     private Instant createdAt;
 }

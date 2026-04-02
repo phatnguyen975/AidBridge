@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/admin_screen_background">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/admin_screen_padding"
+        android:paddingTop="@dimen/admin_screen_padding"
+        android:paddingEnd="@dimen/admin_screen_padding"
+        android:paddingBottom="@dimen/admin_screen_padding"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_admin_profile_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/admin_profile_title"
+                android:textColor="@color/admin_text_primary"
+                android:textSize="@dimen/admin_profile_title_text_size"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_admin_personal_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_section_spacing"
+                app:cardBackgroundColor="@color/admin_summary_card_bg"
+                app:cardCornerRadius="@dimen/admin_hub_detail_card_radius"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/admin_summary_card_stroke"
+                app:strokeWidth="@dimen/admin_hub_detail_card_stroke">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/admin_hub_detail_card_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/admin_profile_personal_info_title"
+                        android:textColor="@color/admin_text_primary"
+                        android:textSize="@dimen/admin_profile_section_title_text_size"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                        app:cardBackgroundColor="@color/admin_hub_icon_box_bg"
+                        app:cardCornerRadius="@dimen/admin_hub_item_icon_box_radius"
+                        app:cardElevation="0dp"
+                        app:strokeColor="@color/admin_hub_icon_box_stroke"
+                        app:strokeWidth="@dimen/admin_hub_detail_card_stroke">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="@dimen/admin_hub_item_spacing_medium">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/admin_hub_item_icon_size"
+                                    android:layout_height="@dimen/admin_hub_item_icon_size"
+                                    android:contentDescription="@string/admin_profile_email_icon_desc"
+                                    android:src="@drawable/ic_admin_mail"
+                                    app:tint="@color/admin_text_secondary" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                                    android:text="@string/admin_profile_email_label"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:textSize="@dimen/admin_profile_label_text_size" />
+
+                                <TextView
+                                    android:id="@+id/text_admin_profile_email"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                                    android:layout_weight="1"
+                                    android:gravity="end"
+                                    android:text="@string/admin_profile_email_mock"
+                                    android:textColor="@color/admin_text_primary"
+                                    android:textSize="@dimen/admin_profile_value_text_size"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/admin_hub_detail_card_stroke"
+                                android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                                android:layout_marginBottom="@dimen/admin_hub_item_spacing_small"
+                                android:background="@color/admin_summary_card_stroke" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/admin_hub_item_icon_size"
+                                    android:layout_height="@dimen/admin_hub_item_icon_size"
+                                    android:contentDescription="@string/admin_profile_phone_icon_desc"
+                                    android:src="@drawable/ic_admin_phone"
+                                    app:tint="@color/admin_text_secondary" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                                    android:text="@string/admin_profile_phone_label"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:textSize="@dimen/admin_profile_label_text_size" />
+
+                                <TextView
+                                    android:id="@+id/text_admin_profile_phone"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                                    android:layout_weight="1"
+                                    android:gravity="end"
+                                    android:text="@string/admin_profile_phone_mock"
+                                    android:textColor="@color/admin_text_primary"
+                                    android:textSize="@dimen/admin_profile_value_text_size"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_admin_management_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_section_spacing"
+                app:cardBackgroundColor="@color/admin_summary_card_bg"
+                app:cardCornerRadius="@dimen/admin_hub_detail_card_radius"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/admin_summary_card_stroke"
+                app:strokeWidth="@dimen/admin_hub_detail_card_stroke">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/admin_hub_detail_card_padding">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/admin_profile_management_info_title"
+                        android:textColor="@color/admin_text_primary"
+                        android:textSize="@dimen/admin_profile_section_title_text_size"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:id="@+id/layout_admin_change_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                        android:background="@drawable/bg_admin_inventory_row"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/admin_hub_item_spacing_medium">
+
+                        <ImageView
+                            android:layout_width="@dimen/admin_hub_item_icon_size"
+                            android:layout_height="@dimen/admin_hub_item_icon_size"
+                            android:contentDescription="@string/admin_profile_change_info"
+                            android:src="@drawable/ic_admin_user"
+                            app:tint="@color/admin_text_secondary" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                            android:layout_weight="1"
+                            android:text="@string/admin_profile_change_info"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_profile_item_text_size" />
+
+                        <ImageView
+                            android:layout_width="@dimen/admin_hub_item_icon_size"
+                            android:layout_height="@dimen/admin_hub_item_icon_size"
+                            android:contentDescription="@string/admin_profile_navigate_detail"
+                            android:src="@drawable/ic_admin_chevron_right"
+                            app:tint="@color/admin_text_secondary" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_admin_manage_roles"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                        android:background="@drawable/bg_admin_inventory_row"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/admin_hub_item_spacing_medium">
+
+                        <ImageView
+                            android:layout_width="@dimen/admin_hub_item_icon_size"
+                            android:layout_height="@dimen/admin_hub_item_icon_size"
+                            android:contentDescription="@string/admin_profile_manage_roles"
+                            android:src="@drawable/ic_admin_security"
+                            app:tint="@color/admin_text_secondary" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                            android:layout_weight="1"
+                            android:text="@string/admin_profile_manage_roles"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_profile_item_text_size" />
+
+                        <ImageView
+                            android:layout_width="@dimen/admin_hub_item_icon_size"
+                            android:layout_height="@dimen/admin_hub_item_icon_size"
+                            android:contentDescription="@string/admin_profile_navigate_detail"
+                            android:src="@drawable/ic_admin_chevron_right"
+                            app:tint="@color/admin_text_secondary" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_admin_system_settings"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                        android:background="@drawable/bg_admin_inventory_row"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/admin_hub_item_spacing_medium">
+
+                        <ImageView
+                            android:layout_width="@dimen/admin_hub_item_icon_size"
+                            android:layout_height="@dimen/admin_hub_item_icon_size"
+                            android:contentDescription="@string/admin_profile_system_settings"
+                            android:src="@drawable/ic_admin_settings"
+                            app:tint="@color/admin_text_secondary" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                            android:layout_weight="1"
+                            android:text="@string/admin_profile_system_settings"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="@dimen/admin_profile_item_text_size" />
+
+                        <ImageView
+                            android:layout_width="@dimen/admin_hub_item_icon_size"
+                            android:layout_height="@dimen/admin_hub_item_icon_size"
+                            android:contentDescription="@string/admin_profile_navigate_detail"
+                            android:src="@drawable/ic_admin_chevron_right"
+                            app:tint="@color/admin_text_secondary" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_admin_logout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/admin_hub_detail_button_height"
+                android:layout_marginTop="@dimen/admin_section_spacing"
+                android:text="@string/admin_profile_logout"
+                android:textAllCaps="true"
+                android:textColor="@color/admin_button_danger_bg"
+                android:textSize="@dimen/admin_profile_logout_text_size"
+                android:gravity="start|center_vertical"
+                android:paddingStart="@dimen/admin_hub_item_spacing_small"
+                app:backgroundTint="@android:color/transparent"
+                app:strokeColor="@color/admin_button_danger_bg"
+                app:strokeWidth="@dimen/admin_hub_detail_card_stroke"
+                app:icon="@drawable/ic_admin_logout"
+                app:iconTint="@color/admin_button_danger_bg"
+                app:iconGravity="textStart"
+                app:iconPadding="@dimen/admin_hub_item_spacing_small"
+                app:cornerRadius="@dimen/admin_action_button_radius" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

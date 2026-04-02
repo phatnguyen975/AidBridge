@@ -4,7 +4,6 @@
     <string name="app_logo">AidBridge Logo</string>
 
     <!-- Global -->
-    <string name="loading">Đang tải…</string>
     <string name="error_network">Không có kết nối mạng. Vui lòng thử lại.</string>
     <string name="error_generic">Đã xảy ra lỗi. Vui lòng thử lại.</string>
     <string name="btn_confirm">XÁC NHẬN</string>
@@ -12,6 +11,7 @@
     <string name="btn_continue">TIẾP TỤC</string>
     <string name="btn_retry">THỬ LẠI</string>
     <string name="btn_back">QUAY LẠI</string>
+    <string name="btn_loading">ĐANG XỬ LÝ...</string>
 
     <!-- Splash Screen -->
     <string name="tagline">Ứng dụng Điều phối Cứu trợ Thiên tai</string>

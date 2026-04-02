@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVolunteerDashboardBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
+import com.drc.aidbridge.ui.main.MainActivity;
 import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -109,10 +110,9 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
         });
 
         binding.layoutAccountSecurity.setOnClickListener(
-                v -> showToast(getString(R.string.volunteer_dashboard_toast_personal_info_todo)));
+            v -> navigateSafely(R.id.action_dashboard_to_personal_info));
 
-        binding.layoutLogout.setOnClickListener(
-                v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_logout)));
+        binding.layoutLogout.setOnClickListener(v -> requestLogout());
     }
 
     private void updateStatusUI(boolean isOnline) {
@@ -128,6 +128,12 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
             binding.viewStatusIndicator.setBackgroundResource(com.drc.aidbridge.R.drawable.bg_circle_status_offline);
             binding.btnReady.setAlpha(0.5f);
             binding.btnOffline.setAlpha(1.0f);
+        }
+    }
+
+    private void requestLogout() {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).requestLogout();
         }
     }
 }

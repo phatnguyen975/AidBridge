@@ -8,31 +8,6 @@
     android:background="@color/bg_primary"
     android:paddingHorizontal="@dimen/spacing_lg">
 
-    <!-- Back button -->
-    <ImageButton
-        android:id="@+id/btn_back"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:src="@drawable/ic_arrow_back"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/btn_back"
-        android:layout_marginTop="@dimen/spacing_xl"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:tint="@color/text_primary" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_back"
-        android:textSize="@dimen/text_md"
-        android:layout_marginStart="4dp"
-        android:textColor="@color/text_primary"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_back"
-        app:layout_constraintStart_toEndOf="@+id/btn_back"
-        app:layout_constraintTop_toTopOf="@+id/btn_back" />
-
     <!-- Title: "Xác thực OTP" -->
     <TextView
         android:id="@+id/tv_title"
@@ -44,7 +19,7 @@
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginTop="@dimen/spacing_xl"
-        app:layout_constraintTop_toBottomOf="@+id/btn_back"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -162,30 +137,52 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- "XÁC NHẬN →" button -->
-    <Button
-        android:id="@+id/btn_verify"
+    <FrameLayout
+        android:id="@+id/layout_verify_action"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/btn_confirm"
-        style="@style/Widget.AidBridge.Button.Primary"
-        android:paddingVertical="@dimen/spacing_md"
         android:layout_marginTop="@dimen/spacing_xl"
-        app:layout_constraintTop_toBottomOf="@+id/ll_otp_boxes"
+        app:layout_constraintTop_toBottomOf="@id/ll_otp_boxes"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Loading ProgressBar -->
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:indeterminateTint="@color/color_primary"
-        android:layout_marginTop="@dimen/spacing_sm"
-        app:layout_constraintTop_toBottomOf="@+id/btn_verify"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_verify"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            style="@style/Widget.AidBridge.Button.Primary"
+            android:paddingVertical="@dimen/spacing_md" />
+
+        <LinearLayout
+            android:id="@+id/layout_verify_button_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:clickable="false"
+            android:focusable="false"
+            android:elevation="@dimen/auth_button_center_overlay_elevation"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                android:id="@+id/progress_verify_inline"
+                android:layout_width="@dimen/auth_button_center_progress_size"
+                android:layout_height="@dimen/auth_button_center_progress_size"
+                android:layout_marginEnd="@dimen/auth_button_center_progress_spacing"
+                android:visibility="gone"
+                android:indeterminateTint="@color/white" />
+
+            <TextView
+                android:id="@+id/tv_verify_button_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_confirm"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_md" />
+        </LinearLayout>
+    </FrameLayout>
 
     <!-- Resend / countdown text -->
     <TextView
@@ -197,7 +194,7 @@
         android:textSize="@dimen/text_sm"
         android:gravity="center"
         android:layout_marginTop="@dimen/spacing_md"
-        app:layout_constraintTop_toBottomOf="@+id/progress_bar"
+        app:layout_constraintTop_toBottomOf="@id/layout_verify_action"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

@@ -153,6 +153,29 @@
     <string name="volunteer_supply_detail_other_item_type_1">Tã</string>
     <string name="volunteer_supply_detail_other_item_quantity_1">1 bịch</string>
 
+    <!-- Volunteer Personal Info -->
+    <string name="volunteer_personal_info_back_desc">Quay lại</string>
+    <string name="volunteer_personal_info_screen_title">Thông tin cá nhân</string>
+    <string name="volunteer_personal_info_card_title">Thông tin cá nhân</string>
+    <string name="volunteer_personal_info_avatar_desc">Ảnh đại diện tình nguyện viên</string>
+    <string name="volunteer_personal_info_edit_avatar_desc">Chỉnh sửa ảnh đại diện</string>
+    <string name="volunteer_personal_info_hint_full_name">Họ và tên</string>
+    <string name="volunteer_personal_info_default_full_name">Nguyễn Văn A</string>
+    <string name="volunteer_personal_info_hint_phone">Số điện thoại</string>
+    <string name="volunteer_personal_info_default_phone">090 123 4567</string>
+    <string name="volunteer_personal_info_hint_email">Email</string>
+    <string name="volunteer_personal_info_default_email">volunteer@aidbridge.vn</string>
+    <string name="volunteer_personal_info_btn_update">Cập nhật thông tin</string>
+    <string name="volunteer_personal_info_password_card_title">Đổi mật khẩu</string>
+    <string name="volunteer_personal_info_hint_current_password">Mật khẩu hiện tại</string>
+    <string name="volunteer_personal_info_hint_new_password">Mật khẩu mới</string>
+    <string name="volunteer_personal_info_hint_confirm_new_password">Xác nhận mật khẩu mới</string>
+    <string name="volunteer_personal_info_btn_change_password">Đổi mật khẩu</string>
+    <string name="volunteer_personal_info_toast_update_success">Cập nhật thông tin thành công</string>
+    <string name="volunteer_personal_info_toast_change_password_success">Đổi mật khẩu thành công</string>
+    <string name="volunteer_personal_info_toast_change_password_mismatch">Xác nhận mật khẩu không khớp</string>
+    <string name="volunteer_personal_info_toast_change_password_empty">Vui lòng nhập đầy đủ mật khẩu mới và xác nhận</string>
+
     <!-- Volunteer SOS Acceptance -->
     <string name="volunteer_sos_acceptance_title">Nhiệm vụ mới</string>
     <string name="volunteer_sos_acceptance_timer_minutes_value">00</string>

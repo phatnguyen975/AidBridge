@@ -3,10 +3,12 @@ package com.drc.aidbridge.ui.auth.viewmodel;
 import android.os.CountDownTimer;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.Transformations;
 
+import com.drc.aidbridge.R;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.usecase.auth.VerifyResetOtpUseCase;
 import com.drc.aidbridge.domain.usecase.auth.ResendOtpUseCase;
@@ -24,21 +26,30 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class ForgotOtpViewModel extends BaseViewModel {
 
+    public enum ResendUiState {
+        TIMER_RUNNING,
+        READY,
+        LOADING
+    }
+
     private final VerifyResetOtpUseCase verifyResetOtpUseCase;
     private final ResendOtpUseCase resendOtpUseCase;
     private final SavedStateHandle savedStateHandle;
 
-        private final MutableLiveData<Integer> countdown =
+    private final MutableLiveData<Integer> countdown =
             new MutableLiveData<>(Constants.OTP_COUNTDOWN_SEC);
-
-        private final MutableLiveData<Boolean> resendEnabled = new MutableLiveData<>(false);
+    private final MutableLiveData<ResendUiState> resendUiState =
+            new MutableLiveData<>(ResendUiState.TIMER_RUNNING);
 
     private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
+    private final MutableLiveData<Integer> otpInlineErrorResId = new MutableLiveData<>();
     private final MutableLiveData<VerifyParams> verifyTrigger = new MutableLiveData<>();
     private final MutableLiveData<ResendParams> resendTrigger = new MutableLiveData<>();
 
-    private final LiveData<NetworkResultWrapper<String>> verifyResult;
-    private final LiveData<NetworkResultWrapper<Boolean>> resendResult;
+    private final MediatorLiveData<NetworkResultWrapper<String>> verifyResult =
+            new MediatorLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<Boolean>> resendResult =
+            new MediatorLiveData<>();
 
     private CountDownTimer countDownTimer;
 
@@ -50,14 +61,21 @@ public class ForgotOtpViewModel extends BaseViewModel {
         this.resendOtpUseCase = resendOtpUseCase;
         this.savedStateHandle = savedStateHandle;
 
-        this.verifyResult = Transformations.switchMap(
+        LiveData<NetworkResultWrapper<String>> verifySource = Transformations.switchMap(
             verifyTrigger,
             params -> this.verifyResetOtpUseCase.execute(params.email, params.otp)
         );
-        this.resendResult = Transformations.switchMap(
+
+        LiveData<NetworkResultWrapper<Boolean>> resendSource = Transformations.switchMap(
             resendTrigger,
             params -> this.resendOtpUseCase.execute(params.email)
         );
+
+        verifyResult.addSource(verifySource, verifyResult::setValue);
+        resendResult.addSource(resendSource, result -> {
+            resendResult.setValue(result);
+            updateResendStateFromApi(result);
+        });
 
         startCountdown();
     }
@@ -66,12 +84,16 @@ public class ForgotOtpViewModel extends BaseViewModel {
         return countdown;
     }
 
-    public LiveData<Boolean> getResendEnabled() {
-        return resendEnabled;
+    public LiveData<ResendUiState> getResendUiState() {
+        return resendUiState;
     }
 
     public LiveData<ValidationResult> getValidationError() {
         return validationError;
+    }
+
+    public LiveData<Integer> getOtpInlineErrorResId() {
+        return otpInlineErrorResId;
     }
 
     public LiveData<NetworkResultWrapper<String>> getVerifyResult() {
@@ -88,20 +110,31 @@ public class ForgotOtpViewModel extends BaseViewModel {
     }
 
     public void verify(String otp) {
+        String normalizedOtp = otp != null ? otp.trim() : "";
+        if (normalizedOtp.length() < 6) {
+            otpInlineErrorResId.setValue(R.string.otp_error_required_6_digits);
+            return;
+        }
+
         String email = getEmail();
-        ValidationResult validation = verifyResetOtpUseCase.validate(email, otp);
+        ValidationResult validation = verifyResetOtpUseCase.validate(email, normalizedOtp);
 
         if (!validation.isValid()) {
-            validationError.setValue(validation);
+            if (validation.getErrorField() == ValidationResult.Field.OTP) {
+                otpInlineErrorResId.setValue(R.string.otp_error_required_6_digits);
+            } else {
+                validationError.setValue(validation);
+            }
             return;
         }
 
         validationError.setValue(ValidationResult.valid());
-        verifyTrigger.setValue(new VerifyParams(email, otp));
+        clearOtpInlineError();
+        verifyTrigger.setValue(new VerifyParams(email, normalizedOtp));
     }
 
     public void resendOtp() {
-        if (!Boolean.TRUE.equals(resendEnabled.getValue())) {
+        if (resendUiState.getValue() != ResendUiState.READY) {
             return;
         }
 
@@ -114,9 +147,12 @@ public class ForgotOtpViewModel extends BaseViewModel {
         }
 
         validationError.setValue(ValidationResult.valid());
-        resendEnabled.setValue(false);
-        startCountdown();
+        resendUiState.setValue(ResendUiState.LOADING);
         resendTrigger.setValue(new ResendParams(email));
+    }
+
+    public void clearOtpInlineError() {
+        otpInlineErrorResId.setValue(null);
     }
 
     private static class VerifyParams {
@@ -137,6 +173,9 @@ public class ForgotOtpViewModel extends BaseViewModel {
 
     private void startCountdown() {
         cancelCountdown();
+        countdown.setValue(Constants.OTP_COUNTDOWN_SEC);
+        resendUiState.setValue(ResendUiState.TIMER_RUNNING);
+
         countDownTimer = new CountDownTimer(
                 Constants.OTP_COUNTDOWN_SEC * 1000L,
                 1000L
@@ -149,10 +188,30 @@ public class ForgotOtpViewModel extends BaseViewModel {
             @Override
             public void onFinish() {
                 countdown.postValue(0);
-                resendEnabled.postValue(true);
+                resendUiState.postValue(ResendUiState.READY);
             }
         };
         countDownTimer.start();
+    }
+
+    private void updateResendStateFromApi(NetworkResultWrapper<Boolean> result) {
+        if (result == null) {
+            return;
+        }
+
+        if (result.isLoading()) {
+            resendUiState.postValue(ResendUiState.LOADING);
+            return;
+        }
+
+        if (result.isSuccess()) {
+            startCountdown();
+            return;
+        }
+
+        if (result.isError()) {
+            resendUiState.postValue(ResendUiState.READY);
+        }
     }
 
     private void cancelCountdown() {

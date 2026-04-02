@@ -2,6 +2,7 @@ package com.drc.aidbridge.domain.repository;
 
 import androidx.lifecycle.LiveData;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
+import com.drc.aidbridge.data.remote.dto.response.AuthResponse;
 import com.drc.aidbridge.data.remote.dto.request.LoginRequest;
 import com.drc.aidbridge.data.remote.dto.request.RegisterRequest;
 import com.drc.aidbridge.data.remote.dto.request.OtpVerifyRequest;
@@ -27,13 +28,13 @@ public interface AuthRepository {
      * Registers a new user account.
      * Returns a stream emitting Loading → Success/Error.
      */
-    LiveData<NetworkResultWrapper<String>> register(RegisterRequest request);
+    LiveData<NetworkResultWrapper<User>> register(RegisterRequest request);
 
     /**
      * Verifies a 6-digit OTP code for the given email.
-     * On success, returns the email string.
+      * On success, returns the auth payload including refreshed tokens and user info.
      */
-    LiveData<NetworkResultWrapper<String>> verifyOtp(OtpVerifyRequest request);
+     LiveData<NetworkResultWrapper<AuthResponse>> verifyOtp(OtpVerifyRequest request);
 
     /**
      * Requests a password-reset OTP for the given email.
@@ -55,4 +56,15 @@ public interface AuthRepository {
      * Resets password after successful OTP verification.
      */
     LiveData<NetworkResultWrapper<String>> resetPassword(ResetPasswordRequest request);
+
+    /**
+     * Logs out the current user session.
+     * Always clears local auth state regardless of API outcome.
+     */
+    LiveData<NetworkResultWrapper<Boolean>> logout(String refreshToken);
+
+    /**
+     * Updates the backend mapping for current device FCM token.
+     */
+    void updateFcmToken(String deviceId, String fcmToken);
 }

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
@@ -30,6 +29,7 @@ public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPas
     @Override
     protected void setupViews() {
         viewModel = new ViewModelProvider(this).get(ForgotNewPasswordViewModel.class);
+        validateRequiredArguments();
         setupClickListeners();
     }
 
@@ -49,21 +49,27 @@ public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPas
                 binding.tilConfirmPassword.setError(validation.getErrorMessage());
                 binding.tilConfirmPassword.requestFocus();
             } else if (validation.getErrorField() == ValidationResult.Field.EMAIL) {
-                showToast(validation.getErrorMessage());
+                showTopSnackbar(binding.getRoot(), validation.getErrorMessage(), true);
             } else {
-                showToast(validation.getErrorMessage());
+                showTopSnackbar(binding.getRoot(), validation.getErrorMessage(), true);
             }
         });
 
         viewModel.getChangePasswordResult().observe(getViewLifecycleOwner(),
-                resultObserver(binding.btnChangePassword,
+                resultObserver(
                         ignored -> showSuccessAndReturnToLogin(),
                         this::showNetworkError));
     }
 
     @Override
-    protected ProgressBar getLoadingView() {
-        return binding.progressBar;
+    protected void onLoadingStateChanged(boolean isLoading) {
+        applyActionLoadingState(
+            binding.btnChangePassword,
+            binding.progressChangePasswordInline,
+            binding.tvChangePasswordButtonText,
+            isLoading,
+            R.string.forgot_btn_change_password
+        );
     }
 
     private void setupClickListeners() {
@@ -71,6 +77,7 @@ public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPas
     }
 
     private void attemptChangePassword() {
+        clearInputFocusAndHideKeyboard();
         String newPwd = getRawText(binding.tilNewPassword.getEditText());
         String confirmPwd = getRawText(binding.tilConfirmPassword.getEditText());
         viewModel.changePassword(newPwd, confirmPwd);
@@ -84,7 +91,7 @@ public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPas
     }
 
     private void showNetworkError(String message) {
-        showToast(message);
+        showTopSnackbar(binding.getRoot(), message, true);
     }
 
     private void clearErrors() {
@@ -93,7 +100,16 @@ public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPas
     }
 
     private void showSuccessAndReturnToLogin() {
-        showToast(getString(R.string.forgot_success_message));
+        showTopSnackbar(binding.getRoot(), getString(R.string.forgot_success_message), false);
         navigateSafely(R.id.action_forgotNewPasswordFragment_to_loginFragment);
+    }
+
+    private void validateRequiredArguments() {
+        String email = viewModel.getEmail();
+        String otp = viewModel.getOtp();
+        if (email.trim().isEmpty() || otp.trim().isEmpty()) {
+            showTopSnackbar(binding.getRoot(), getString(R.string.forgot_invalid_context), true);
+            popBackStackSafely();
+        }
     }
 }

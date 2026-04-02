@@ -16,14 +16,16 @@ public class User {
     private final String phone;
     private final UserRole role;
     private final String avatarUrl;
+    private final boolean verified;
 
-    public User(String id, String name, String email, String phone, UserRole role, String avatarUrl) {
-        this.id    = id;
-        this.name  = name;
+    public User(String id, String name, String email, String phone, UserRole role, String avatarUrl, boolean verified) {
+        this.id = id;
+        this.name = name;
         this.email = email;
         this.phone = phone;
-        this.role  = role;
+        this.role = role;
         this.avatarUrl = avatarUrl;
+        this.verified = verified;
     }
 
     public String getId() {
@@ -48,5 +50,9 @@ public class User {
 
     public UserRole getRole() {
         return role;
+    }
+
+    public boolean isVerified() {
+        return verified;
     }
 }

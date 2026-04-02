@@ -22,6 +22,10 @@
             android:id="@+id/action_dashboard_to_current_sos_mission"
             app:destination="@id/volunteerCurrentSosMissionFragment" />
 
+        <action
+            android:id="@+id/action_dashboard_to_personal_info"
+            app:destination="@id/volunteerPersonalInfoFragment" />
+
     </fragment>
 
     <fragment
@@ -83,6 +87,11 @@
         android:id="@+id/volunteerSupplyDetailFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerSupplyDetailFragment"
         android:label="Volunteer Supply Detail" />
+
+    <fragment
+        android:id="@+id/volunteerPersonalInfoFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.volunteer.VolunteerPersonalInfoFragment"
+        android:label="Volunteer Personal Info" />
 
     <fragment
         android:id="@+id/volunteerCurrentSosMissionFragment"

@@ -1,22 +1,29 @@
 package com.drc.aidbridge.data.remote.interceptor;
 
 import com.drc.aidbridge.data.remote.api.AuthApiService;
+import com.drc.aidbridge.data.remote.dto.request.RefreshTokenRequest;
 import com.drc.aidbridge.data.remote.dto.response.AuthResponse;
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 import com.drc.aidbridge.utils.Constants;
 import com.drc.aidbridge.utils.TokenManager;
+import com.drc.aidbridge.ui.auth.AuthActivity;
+
+import android.content.Intent;
+import android.content.Context;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.Lazy;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 
 /**
@@ -42,16 +49,22 @@ import retrofit2.Call;
 @Singleton
 public class TokenRefreshInterceptor implements Interceptor {
 
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
+
     private final TokenManager tokenManager;
-    // Lazy<> breaks the circular dep: AuthApiService is only created on first .get() call,
-    // which is after OkHttpClient + Retrofit are fully initialised.
     private final Lazy<AuthApiService> lazyAuthApiService;
+    private final Context applicationContext;
+
+    private final Object refreshLock = new Object();
 
     @Inject
     public TokenRefreshInterceptor(TokenManager tokenManager,
-                                   Lazy<AuthApiService> lazyAuthApiService) {
+                                   Lazy<AuthApiService> lazyAuthApiService,
+                                   @ApplicationContext Context applicationContext) {
         this.tokenManager = tokenManager;
         this.lazyAuthApiService = lazyAuthApiService;
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -59,61 +72,113 @@ public class TokenRefreshInterceptor implements Interceptor {
         Request originalRequest = chain.request();
         Response response = chain.proceed(originalRequest);
 
-        // Only intercept 401 errors that are NOT from the refresh endpoint itself
-        if (response.code() == 401
-                && !originalRequest.url().encodedPath()
-                        .contains(Constants.REFRESH_TOKEN_ENDPOINT)) {
-            String refreshToken = tokenManager.getRefreshToken();
-            if (refreshToken == null) {
-                // No refresh token available — user must log in again
-                return response;
-            }
-
-            // TODO: Re-enable refresh-token API once backend is ready.
-            /*
-            // Build the refresh request body
-            Map<String, String> body = new HashMap<>();
-            body.put("refreshToken", refreshToken);
-
-            // Resolve AuthApiService now (safe — Retrofit is fully constructed by this point)
-            Call<BaseResponse<AuthResponse>> refreshCall = lazyAuthApiService.get().refreshToken(body);
-            retrofit2.Response<BaseResponse<AuthResponse>> refreshResponse = refreshCall.execute();
-
-            if (refreshResponse.isSuccessful()) {
-                BaseResponse<AuthResponse> baseResponse = refreshResponse.body();
-                if (baseResponse != null && baseResponse.isSuccess() && baseResponse.getData() != null) {
-                    response.close();
-
-                    AuthResponse authResponse = baseResponse.getData();
-
-                    // Save the newly obtained tokens to EncryptedSharedPreferences
-                    tokenManager.saveTokens(
-                            authResponse.getAccessToken(),
-                            authResponse.getRefreshToken()
-                    );
-
-                    // Retry the original failed request with the new access token
-                    Request retryRequest = originalRequest.newBuilder()
-                            .header("Authorization", "Bearer " + authResponse.getAccessToken())
-                            .build();
-                    return chain.proceed(retryRequest);
-                }
-
-                // API returns business-level failure or empty data
-                tokenManager.clearAll();
-                return response;
-            } else {
-                // Refresh token also rejected — clear session and force re-login
-                tokenManager.clearAll();
-                return response;
-            }
-            */
-
-            // Test mode: disable refresh-token API and force re-login on 401.
-            tokenManager.clearAll();
+        if (response.code() != 401 || isAuthRequest(originalRequest) || isRefreshRequest(originalRequest)) {
             return response;
         }
 
-        return response;
+        String requestAccessToken = extractTokenFromHeader(originalRequest.header(AUTHORIZATION_HEADER));
+
+        // Close immediately to prevent leaking sockets while we perform refresh/retry logic.
+        response.close();
+
+        synchronized (refreshLock) {
+            String latestAccessToken = tokenManager.getAccessToken();
+
+            // Another request may have already refreshed the token while this thread waited.
+            if (shouldRetryWithExistingToken(requestAccessToken, latestAccessToken)) {
+                return retryRequest(chain, originalRequest, latestAccessToken);
+            }
+
+            String refreshToken = tokenManager.getRefreshToken();
+            if (isBlank(refreshToken)) {
+                return forceLogout(originalRequest);
+            }
+
+            AuthResponse refreshedAuth = refreshTokenBlocking(refreshToken);
+            if (refreshedAuth == null || isBlank(refreshedAuth.getAccessToken())) {
+                return forceLogout(originalRequest);
+            }
+
+            String nextRefreshToken = isBlank(refreshedAuth.getRefreshToken())
+                ? refreshToken
+                : refreshedAuth.getRefreshToken();
+            tokenManager.saveTokens(refreshedAuth.getAccessToken(), nextRefreshToken);
+
+            return retryRequest(chain, originalRequest, refreshedAuth.getAccessToken());
+        }
+    }
+
+    private boolean isRefreshRequest(Request request) {
+        return request.url().encodedPath().contains(Constants.REFRESH_TOKEN_ENDPOINT);
+    }
+
+    private boolean isAuthRequest(Request request) {
+        return request.url().encodedPath().contains(Constants.AUTH_PATH_PREFIX);
+    }
+
+    private boolean shouldRetryWithExistingToken(String requestAccessToken, String latestAccessToken) {
+        if (isBlank(latestAccessToken)) {
+            return false;
+        }
+
+        return isBlank(requestAccessToken) || !latestAccessToken.equals(requestAccessToken);
+    }
+
+    private AuthResponse refreshTokenBlocking(String refreshToken) {
+        try {
+            Call<BaseResponse<AuthResponse>> refreshCall = lazyAuthApiService.get()
+                .refreshToken(new RefreshTokenRequest(refreshToken));
+            retrofit2.Response<BaseResponse<AuthResponse>> refreshResponse = refreshCall.execute();
+
+            if (!refreshResponse.isSuccessful()) {
+                return null;
+            }
+
+            BaseResponse<AuthResponse> baseResponse = refreshResponse.body();
+            if (baseResponse == null || !baseResponse.isSuccess()) {
+                return null;
+            }
+
+            return baseResponse.getData();
+        } catch (IOException refreshException) {
+            return null;
+        }
+    }
+
+    private Response retryRequest(Chain chain, Request originalRequest, String accessToken) throws IOException {
+        Request retryRequest = originalRequest.newBuilder()
+            .header(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken)
+            .build();
+        return chain.proceed(retryRequest);
+    }
+
+    private Response forceLogout(Request originalRequest) {
+        tokenManager.clearAll();
+        
+        Intent intent = new Intent(applicationContext, AuthActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        applicationContext.startActivity(intent);
+
+        MediaType jsonMediaType = MediaType.get("application/json; charset=utf-8");
+        return new Response.Builder()
+            .request(originalRequest)
+            .protocol(Protocol.HTTP_1_1)
+            .code(401)
+            .message("Unauthorized")
+            .body(ResponseBody.Companion.create("", jsonMediaType))
+            .build();
+    }
+
+    private String extractTokenFromHeader(String authorizationHeader) {
+        if (isBlank(authorizationHeader) || !authorizationHeader.startsWith(BEARER_PREFIX)) {
+            return null;
+        }
+
+        String token = authorizationHeader.substring(BEARER_PREFIX.length());
+        return isBlank(token) ? null : token;
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }

@@ -33,7 +33,25 @@ public class LoginUseCase {
         return inputValidator.requirePassword(password);
     }
 
-    public LiveData<NetworkResultWrapper<User>> execute(String email, String password) {
-        return authRepository.login(new LoginRequest(inputValidator.normalizeEmail(email), password));
+    public LiveData<NetworkResultWrapper<User>> execute(String email,
+                                                        String password,
+                                                        String deviceId,
+                                                        String fcmToken) {
+        return authRepository.login(
+            new LoginRequest(
+                inputValidator.normalizeEmail(email),
+                password,
+                normalizeOptional(deviceId),
+                normalizeOptional(fcmToken)
+            )
+        );
+    }
+
+    private String normalizeOptional(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

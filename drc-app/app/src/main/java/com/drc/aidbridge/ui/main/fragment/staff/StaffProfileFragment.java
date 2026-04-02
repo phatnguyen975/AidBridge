@@ -13,6 +13,7 @@ import androidx.core.graphics.ColorUtils;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentStaffProfileBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
+import com.drc.aidbridge.ui.main.MainActivity;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -33,8 +34,7 @@ public class StaffProfileFragment extends BaseFragment<FragmentStaffProfileBindi
         binding.switchHubStatus.setOnCheckedChangeListener((buttonView, isChecked) ->
             updateHubStatusUi(isChecked));
 
-        binding.btnLogout.setOnClickListener(v ->
-            showToast("Đã đăng xuất"));
+        binding.btnLogout.setOnClickListener(v -> requestLogout());
     }
 
     @Override
@@ -95,5 +95,11 @@ public class StaffProfileFragment extends BaseFragment<FragmentStaffProfileBindi
             strokeColor
         );
         return drawable;
+    }
+
+    private void requestLogout() {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).requestLogout();
+        }
     }
 }

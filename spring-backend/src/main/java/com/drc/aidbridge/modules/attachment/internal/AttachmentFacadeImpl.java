@@ -17,6 +17,11 @@ public class AttachmentFacadeImpl implements AttachmentFacade {
 
     @Override
     public AttachmentDTO upload(UUID uploadedBy, MultipartFile file) {
-        return uploadAttachmentUseCase.execute(uploadedBy, file);
+        return uploadAttachmentUseCase.execute(uploadedBy, file, null, null);
+    }
+
+    @Override
+    public AttachmentDTO upload(UUID uploadedBy, MultipartFile file, String referenceType, UUID referenceId) {
+        return uploadAttachmentUseCase.execute(uploadedBy, file, referenceType, referenceId);
     }
 }

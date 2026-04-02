@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="otp_box_size">48dp</dimen>
+    <dimen name="auth_button_center_progress_size">24dp</dimen>
+    <dimen name="auth_button_center_progress_spacing">8dp</dimen>
+    <dimen name="auth_button_center_overlay_elevation">8dp</dimen>
 </resources>

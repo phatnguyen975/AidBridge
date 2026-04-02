@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="@color/admin_chart_bar" />
+
+    <corners
+        android:topLeftRadius="@dimen/admin_chart_bar_radius"
+        android:topRightRadius="@dimen/admin_chart_bar_radius" />
+
+</shape>

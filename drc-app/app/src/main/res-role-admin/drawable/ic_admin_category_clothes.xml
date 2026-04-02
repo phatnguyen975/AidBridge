@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/admin_inventory_category_icon_size"
+    android:height="@dimen/admin_inventory_category_icon_size"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M8,5l4,2 4,-2 3,3 -2,3v8H7v-8L5,8z"
+        android:strokeColor="@color/admin_stat_icon_tint"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

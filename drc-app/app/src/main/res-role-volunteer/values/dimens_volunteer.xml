@@ -91,4 +91,16 @@
     <dimen name="volunteer_supply_detail_chevron_size">20dp</dimen>
     <dimen name="volunteer_supply_detail_group_title_size">18sp</dimen>
     <dimen name="volunteer_supply_detail_quantity_column_width">92dp</dimen>
+
+    <!-- Volunteer Personal Info Dimensions -->
+    <dimen name="volunteer_personal_info_toolbar_height">56dp</dimen>
+    <dimen name="volunteer_personal_info_toolbar_icon_size">24dp</dimen>
+    <dimen name="volunteer_personal_info_toolbar_spacer_width">40dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_frame_size">112dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_card_size">100dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_corner_radius">50dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_edit_button_size">30dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_edit_corner_radius">15dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_edit_icon_size">16dp</dimen>
+    <dimen name="volunteer_personal_info_avatar_edit_margin">10dp</dimen>
 </resources>

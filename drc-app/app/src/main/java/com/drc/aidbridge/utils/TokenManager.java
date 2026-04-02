@@ -54,13 +54,31 @@ public class TokenManager {
     }
 
     /** Caches user metadata locally after login for quick access throughout the app. */
-    public void saveUserInfo(String userId, String userName, String email, String role) {
+    public void saveUserInfo(String userId, String userName, String email, String role, boolean verified) {
         prefs.edit()
                 .putString(Constants.KEY_USER_ID, userId)
                 .putString(Constants.KEY_USER_NAME, userName)
                 .putString(Constants.KEY_USER_EMAIL, email)
                 .putString(Constants.KEY_USER_ROLE, role)
+                .putBoolean(Constants.KEY_USER_VERIFIED, verified)
                 .apply();
+    }
+
+    /** Stores the latest FCM token from Firebase. */
+    public void saveFcmToken(@Nullable String fcmToken) {
+        SharedPreferences.Editor editor = prefs.edit();
+        if (fcmToken == null || fcmToken.isBlank()) {
+            editor.remove(Constants.KEY_FCM_TOKEN);
+        } else {
+            editor.putString(Constants.KEY_FCM_TOKEN, fcmToken);
+        }
+        editor.apply();
+    }
+
+    /** Returns locally cached FCM token if available. */
+    @Nullable
+    public String getFcmToken() {
+        return prefs.getString(Constants.KEY_FCM_TOKEN, null);
     }
 
     /** Returns the cached user role string (matches UserRole enum name). */
@@ -76,6 +94,16 @@ public class TokenManager {
     /** Returns the cached user email. */
     public String getUserEmail() {
         return prefs.getString(Constants.KEY_USER_EMAIL, null);
+    }
+
+    /** Returns the cached verified state of the current user. */
+    public boolean isUserVerified() {
+        return prefs.getBoolean(Constants.KEY_USER_VERIFIED, false);
+    }
+
+    /** Updates verified state for current cached user. */
+    public void markUserAsVerified(boolean verified) {
+        prefs.edit().putBoolean(Constants.KEY_USER_VERIFIED, verified).apply();
     }
 
     /** Clears ALL stored tokens. */

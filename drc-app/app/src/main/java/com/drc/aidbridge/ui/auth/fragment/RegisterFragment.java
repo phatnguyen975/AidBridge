@@ -1,19 +1,20 @@
 package com.drc.aidbridge.ui.auth.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentRegisterBinding;
 import com.drc.aidbridge.domain.enums.UserRole;
+import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
+import com.drc.aidbridge.ui.main.MainActivity;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.auth.viewmodel.RegisterViewModel;
 
@@ -62,19 +63,24 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
                 binding.tilPassword.setError(validation.getErrorMessage());
                 binding.tilPassword.requestFocus();
             } else {
-                showToast(validation.getErrorMessage());
+                showTopSnackbar(binding.getRoot(), validation.getErrorMessage(), true);
             }
         });
 
         viewModel.getRegisterResult().observe(getViewLifecycleOwner(),
-                resultObserver(binding.btnRegister,
-                        ignored -> navigateToOtp(getRawText(binding.tilEmail.getEditText())),
+                resultObserver(this::handleRegisterSuccess,
                         this::showNetworkError));
     }
 
     @Override
-    protected ProgressBar getLoadingView() {
-        return binding.progressBar;
+    protected void onLoadingStateChanged(boolean isLoading) {
+        applyActionLoadingState(
+            binding.btnRegister,
+            binding.progressRegisterInline,
+            binding.tvRegisterButtonText,
+            isLoading,
+            R.string.btn_register
+        );
     }
 
     private void setupRoleCards() {
@@ -93,8 +99,10 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
     }
 
     private void attemptRegister() {
+        clearInputFocusAndHideKeyboard();
+
         if (!binding.cbTerms.isChecked()) {
-            showToast(getString(R.string.error_terms_not_agreed));
+            showTopSnackbar(binding.getRoot(), getString(R.string.error_terms_not_agreed), true);
             return;
         }
 
@@ -113,7 +121,7 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
     }
 
     private void showNetworkError(String message) {
-        showToast(message);
+        showTopSnackbar(binding.getRoot(), message, true);
     }
 
     private void clearErrors() {
@@ -127,6 +135,27 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
         Bundle args = new Bundle();
         args.putString("email", email);
         navigateSafely(R.id.action_registerFragment_to_otpFragment, args);
+    }
+
+    private void handleRegisterSuccess(@Nullable User user) {
+        if (user == null) {
+            showTopSnackbar(binding.getRoot(), getString(R.string.error_generic), true);
+            return;
+        }
+
+        if (user.isVerified()) {
+            Intent intent = new Intent(requireContext(), MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            requireActivity().finish();
+            return;
+        }
+
+        String email = user.getEmail();
+        if (email == null || email.trim().isEmpty()) {
+            email = getRawText(binding.tilEmail.getEditText());
+        }
+        navigateToOtp(email);
     }
 
     private void updateRoleCardSelection(@Nullable UserRole role) {

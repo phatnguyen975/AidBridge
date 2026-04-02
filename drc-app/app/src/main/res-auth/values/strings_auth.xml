@@ -27,30 +27,30 @@
     <string name="btn_register">ĐĂNG KÝ NGAY</string>
     <string name="link_have_account">Đã có tài khoản?</string>
     <string name="link_login_now">Đăng nhập</string>
-    <string name="error_terms_not_agreed">Bạn phải đồng ý với điều khoản để tiếp tục.</string>
+    <string name="error_terms_not_agreed">Bạn phải đồng ý với các điều khoản để tiếp tục.</string>
 
     <!-- OTP Screen -->
     <string name="screen_title_otp">Xác thực OTP</string>
     <string name="otp_title">Nhập mã OTP</string>
-    <string name="otp_description">Vui lòng nhập mã OTP 6 chữ số vừa được gửi đến</string>
-    <string name="otp_resend_countdown">Chưa nhận được mã? Gửi lại (59s)</string>
-    <string name="otp_resend_countdown_template">Chưa nhận được mã? Gửi lại (%ds)</string>
+    <string name="otp_resend_countdown">Chưa nhận được mã? Gửi lại sau 60s</string>
+    <string name="otp_resend_countdown_template">Chưa nhận được mã? Gửi lại sau %1$ds</string>
+    <string name="otp_resend_ready">Gửi lại mã</string>
+    <string name="otp_resend_loading">Đang gửi...</string>
+    <string name="otp_resend_success">Mã OTP mới đã được gửi tới email của bạn</string>
     <string name="otp_resend_now">Gửi lại ngay</string>
-
-    <!-- OTP Result Dialogs -->
-    <string name="otp_icon_failed">Thất bại</string>
-    <string name="otp_failed_title">Xác thực thất bại</string>
-    <string name="otp_failed_message">Mã OTP bạn nhập không chính xác. Vui lòng kiểm tra lại hoặc gửi mã mới.</string>
-    <string name="otp_icon_success">Thành công</string>
+    <string name="otp_success_icon_description">Biểu tượng thành công</string>
     <string name="otp_success_title">Xác thực thành công</string>
-    <string name="otp_success_message">Tài khoản của bạn đã được xác minh. Chào mừng bạn đến với AidBridge.</string>
-    <string name="error_otp_length">Vui lòng nhập đủ 6 chữ số.</string>
+    <string name="otp_success_message">Tài khoản của bạn đã được xác thực. Chào mừng bạn đến với AidBridge.</string>
+
+    <string name="error_otp_length">Vui lòng nhập đủ 6 số OTP</string>
+    <string name="otp_error_required_6_digits">Vui lòng nhập đủ 6 số OTP</string>
+    <string name="otp_back_locked_message">Bạn cần xác thực OTP. Vui lòng kiểm tra email để tiếp tục.</string>
 
     <!-- Forgot Password Flow -->
     <string name="forgot_title">Quên mật khẩu</string>
     <string name="forgot_subtitle">Nhập email đã đăng ký, chúng tôi sẽ gửi mã OTP để đặt lại mật khẩu.</string>
     <string name="forgot_btn_send_otp">GỬI MÃ OTP</string>
-    <string name="forgot_otp_description">Nhập mã OTP 6 chữ số đã được gửi đến email của bạn:</string>
+    <string name="otp_description">Nhập mã OTP 6 chữ số đã được gửi đến email của bạn:</string>
     <string name="forgot_new_password_title">Tạo mật khẩu mới</string>
     <string name="forgot_new_password_subtitle">Nhập mật khẩu mới cho tài khoản của bạn.</string>
     <string name="label_new_password">MẬT KHẨU MỚI</string>
@@ -59,4 +59,5 @@
     <string name="hint_confirm_password">Nhập lại mật khẩu mới</string>
     <string name="forgot_btn_change_password">ĐỔI MẬT KHẨU</string>
     <string name="forgot_success_message">Đổi mật khẩu thành công. Vui lòng đăng nhập lại.</string>
+    <string name="forgot_invalid_context">Phiên đặt lại mật khẩu không hợp lệ. Vui lòng thử lại từ đầu.</string>
 </resources>
