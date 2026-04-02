@@ -46,6 +46,12 @@ public class Attachment {
     @Column(name = "cloudinary_public_id", nullable = false, unique = true, length = 255)
     private String cloudinaryPublicId;
 
+    @Column(name = "reference_type", length = 50)
+    private String referenceType;
+
+    @Column(name = "reference_id")
+    private UUID referenceId;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

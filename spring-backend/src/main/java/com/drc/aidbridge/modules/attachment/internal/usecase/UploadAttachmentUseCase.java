@@ -20,7 +20,7 @@ public class UploadAttachmentUseCase {
     private final CloudinaryService cloudinaryService;
 
     @Transactional
-    public AttachmentDTO execute(UUID uploadedBy, MultipartFile file) {
+    public AttachmentDTO execute(UUID uploadedBy, MultipartFile file, String referenceType, UUID referenceId) {
         if (uploadedBy == null) {
             throw new IllegalArgumentException("uploadedBy must not be null");
         }
@@ -34,6 +34,8 @@ public class UploadAttachmentUseCase {
                 .mimeType(file.getContentType())
                 .uploadedBy(uploadedBy)
                 .cloudinaryPublicId(uploadedImage.publicId())
+                .referenceType(referenceType)
+                .referenceId(referenceId)
                 .build();
 
         Attachment savedAttachment = attachmentRepository.save(attachment);
@@ -57,6 +59,8 @@ public class UploadAttachmentUseCase {
                 .fileSize(attachment.getFileSize())
                 .mimeType(attachment.getMimeType())
                 .uploadedBy(attachment.getUploadedBy())
+                .referenceType(attachment.getReferenceType())
+                .referenceId(attachment.getReferenceId())
                 .createdAt(attachment.getCreatedAt())
                 .build();
     }
