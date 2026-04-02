@@ -203,12 +203,10 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
     }
 
     @Override
-    public LiveData<NetworkResultWrapper<String>> verifyOtp(OtpVerifyRequest request) {
-        MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
+    public LiveData<NetworkResultWrapper<AuthResponse>> verifyOtp(OtpVerifyRequest request) {
+        MutableLiveData<NetworkResultWrapper<AuthResponse>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
-        // TODO: Re-enable actual API call once backend is ready.
-        /*
         authApiService.verifyOtp(request).enqueue(new Callback<BaseResponse<AuthResponse>>() {
             @Override
             public void onResponse(Call<BaseResponse<AuthResponse>> call,
@@ -227,7 +225,7 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 if (!baseResponse.isSuccess()) {
                     String apiMessage = baseResponse.getMessage();
                     result.postValue(NetworkResultWrapper.error(
-                        apiMessage != null && !apiMessage.isEmpty()
+                        apiMessage != null && !apiMessage.trim().isEmpty()
                             ? apiMessage
                             : "Xác thực OTP thất bại."
                     ));
@@ -235,21 +233,17 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 }
 
                 AuthResponse data = baseResponse.getData();
-                if (data != null) {
-                    persistAuthData(data);
-                    if (data.getUser() != null) {
-                        User user = userMapper.mapToDomain(data.getUser());
-                        tokenManager.saveUserInfo(
-                                user.getId(),
-                                user.getName(),
-                                user.getEmail(),
-                                user.getRole().name(),
-                                user.isVerified()
-                        );
-                    }
+                if (data == null) {
+                    String apiMessage = baseResponse.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                        apiMessage != null && !apiMessage.trim().isEmpty()
+                            ? apiMessage
+                            : "Phản hồi xác thực OTP không hợp lệ."
+                    ));
+                    return;
                 }
 
-                result.postValue(NetworkResultWrapper.success(request.getEmail()));
+                result.postValue(NetworkResultWrapper.success(data));
             }
 
             @Override
@@ -257,9 +251,6 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 result.postValue(NetworkResultWrapper.error("Xác thực OTP thất bại: " + safeMessage(t)));
             }
         });
-        */
-
-        result.postValue(NetworkResultWrapper.success(request.getEmail()));
 
         return result;
     }
@@ -269,17 +260,15 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
         MutableLiveData<NetworkResultWrapper<Boolean>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
-        // TODO: Re-enable actual API call once backend is ready.
-        /*
-        authApiService.resendOtp(request).enqueue(new Callback<BaseResponse<Void>>() {
+        authApiService.resendOtp(request).enqueue(new Callback<BaseResponse<String>>() {
             @Override
-            public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
+            public void onResponse(Call<BaseResponse<String>> call, Response<BaseResponse<String>> response) {
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
 
-                BaseResponse<Void> baseResponse = response.body();
+                BaseResponse<String> baseResponse = response.body();
                 if (baseResponse == null) {
                     result.postValue(NetworkResultWrapper.error("Phản hồi gửi lại OTP không hợp lệ."));
                     return;
@@ -288,7 +277,7 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                 if (!baseResponse.isSuccess()) {
                     String apiMessage = baseResponse.getMessage();
                     result.postValue(NetworkResultWrapper.error(
-                        apiMessage != null && !apiMessage.isEmpty()
+                        apiMessage != null && !apiMessage.trim().isEmpty()
                             ? apiMessage
                             : "Gửi lại OTP thất bại."
                     ));
@@ -299,13 +288,10 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
             }
 
             @Override
-            public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error("Gửi lại OTP thất bại: " + safeMessage(t)));
             }
         });
-        */
-
-        result.postValue(NetworkResultWrapper.success(Boolean.TRUE));
 
         return result;
     }

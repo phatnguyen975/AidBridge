@@ -20,46 +20,27 @@ import retrofit2.http.POST;
  */
 public interface AuthApiService {
 
-    /**
-     * Authenticates the user with email + password.
-     * Returns access + refresh tokens and user profile on success.
-     */
     @POST("auth/login")
     Call<BaseResponse<AuthResponse>> login(@Body LoginRequest request);
 
-    /**
-     * Registers a new user account.
-     * On success, triggers OTP sending to the user's email/phone and returns initial tokens.
-     */
     @POST("auth/register")
     Call<BaseResponse<AuthResponse>> register(@Body RegisterRequest request);
 
-    /**
-     * Verifies the OTP submitted by the user after registration or sensitive operations.
-     * Returns updated tokens on success.
-     */
     @POST("auth/verify-otp")
     Call<BaseResponse<AuthResponse>> verifyOtp(@Body OtpVerifyRequest request);
 
-    /**
-     * Resends an OTP to the user's email/phone.
-     */
     @POST("auth/resend-otp")
-    Call<BaseResponse<Void>> resendOtp(@Body ForgotPasswordRequest request);
+    Call<BaseResponse<String>> resendOtp(@Body ForgotPasswordRequest request);
 
     @POST("auth/forgot-password")
     Call<BaseResponse<Void>> forgotPassword(@Body ForgotPasswordRequest request);
 
-    @POST("auth/verify-reset-otp")
+    @POST("auth/verify-otp")
     Call<BaseResponse<Void>> verifyResetOtp(@Body OtpVerifyRequest request);
 
     @POST("auth/reset-password")
     Call<BaseResponse<Void>> resetPassword(@Body ResetPasswordRequest request);
 
-    /**
-     * Refreshes the access token using the long-lived refresh token.
-     * Called automatically by TokenRefreshInterceptor when a 401 is received.
-     */
     @POST("auth/refresh-token")
     Call<BaseResponse<AuthResponse>> refreshToken(@Body java.util.Map<String, String> body);
 }

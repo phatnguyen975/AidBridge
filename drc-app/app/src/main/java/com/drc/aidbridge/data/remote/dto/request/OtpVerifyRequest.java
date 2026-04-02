@@ -7,7 +7,7 @@ public class OtpVerifyRequest {
     @SerializedName("email")
     private final String email;
 
-    @SerializedName("otpCode")
+    @SerializedName("otp")
     private final String otpCode;
 
     public OtpVerifyRequest(String email, String otpCode) {
