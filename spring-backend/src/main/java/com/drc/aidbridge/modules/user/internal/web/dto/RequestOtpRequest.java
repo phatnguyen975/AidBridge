@@ -9,11 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO cho yêu cầu gửi OTP.
- * Khớp với RequestOtpRequest schema trong api.yaml.
- * Thay thế ResendOtpRequest và ForgotPasswordRequest.
- */
 @Data
 @Builder
 @NoArgsConstructor

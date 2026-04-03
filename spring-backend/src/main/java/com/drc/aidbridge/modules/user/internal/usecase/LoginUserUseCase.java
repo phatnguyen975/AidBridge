@@ -1,6 +1,7 @@
 package com.drc.aidbridge.modules.user.internal.usecase;
 
 import com.drc.aidbridge.infrastructure.security.JwtService;
+import com.drc.aidbridge.modules.shared.enums.UserRole;
 import com.drc.aidbridge.modules.shared.exception.AuthenticationException;
 import com.drc.aidbridge.modules.shared.exception.BadRequestException;
 import com.drc.aidbridge.modules.user.internal.cache.SessionCacheRedisSchema;
@@ -43,6 +44,10 @@ public class LoginUserUseCase {
             throw new AuthenticationException("Account is deactivated");
         }
 
+        if (!user.isVerified() && requiresVerificationBeforeLogin(user)) {
+            throw new AuthenticationException("Account is not verified. Please verify OTP before login");
+        }
+
         // Update FCM token if provided
         if (StringUtils.hasText(request.getFcmToken())) {
             user.setFcmToken(request.getFcmToken());
@@ -65,5 +70,9 @@ public class LoginUserUseCase {
         }
         return userRepository.findByPhoneNumber(request.getPhoneNumber())
                 .orElseThrow(() -> new AuthenticationException("Invalid credentials"));
+    }
+
+    private boolean requiresVerificationBeforeLogin(User user) {
+        return user.getRole() != UserRole.ADMIN && user.getRole() != UserRole.STAFF;
     }
 }
