@@ -3,14 +3,13 @@ package com.drc.aidbridge.modules.user.internal.usecase;
 import com.drc.aidbridge.modules.shared.enums.UserRole;
 import com.drc.aidbridge.modules.shared.exception.DuplicateResourceException;
 import com.drc.aidbridge.modules.user.internal.cache.OtpRedisSchema;
-import com.drc.aidbridge.modules.user.internal.cache.SessionCacheRedisSchema;
 import com.drc.aidbridge.modules.user.internal.entity.User;
 import com.drc.aidbridge.modules.user.internal.mapper.UserMapper;
 import com.drc.aidbridge.modules.user.internal.repository.UserJpaRepository;
 import com.drc.aidbridge.modules.user.internal.web.dto.AuthResponse;
 import com.drc.aidbridge.modules.user.internal.web.dto.RegisterRequest;
-import com.drc.aidbridge.infrastructure.security.JwtService;
 import com.drc.aidbridge.modules.notification.NotificationFacade;
+import com.drc.aidbridge.modules.volunteer.VolunteerFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,11 +24,10 @@ public class RegisterUserUseCase {
 
     private final UserJpaRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
     private final OtpRedisSchema otpRedisSchema;
-    private final SessionCacheRedisSchema sessionCacheRedisSchema;
     private final NotificationFacade notificationFacade;
     private final UserMapper userMapper;
+    private final VolunteerFacade volunteerFacade;
 
     @Transactional
     public AuthResponse execute(RegisterRequest request) {
@@ -61,6 +59,11 @@ public class RegisterUserUseCase {
         user = userRepository.save(user);
         log.info("User registered: {} with role {}", user.getEmail(), user.getRole());
 
+        if (user.getRole() == UserRole.VOLUNTEER) {
+            volunteerFacade.createVolunteerProfile(user.getId());
+            log.info("Volunteer profile created for user: {}", user.getId());
+        }
+
         // Send verification OTP
         if (StringUtils.hasText(request.getEmail())) {
             String otp = otpRedisSchema.generateOtp(
@@ -68,12 +71,6 @@ public class RegisterUserUseCase {
             notificationFacade.sendEmail(request.getEmail(), otp);
         }
 
-        String accessToken = jwtService.generateAccessToken(user.getId(), user.getRole().name());
-        String refreshToken = jwtService.generateRefreshToken(user.getId());
-
-        // Cache session for fast lookups
-        userMapper.cacheUserSession(sessionCacheRedisSchema, user);
-
-        return userMapper.buildAuthResponse(user, accessToken, refreshToken);
+        return userMapper.buildAuthResponse(user, null, null);
     }
 }

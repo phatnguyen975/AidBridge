@@ -2994,6 +2994,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /auth/password/otp/resend:
+    post:
+      tags: [Auth]
+      summary: Resend OTP for password reset
+      operationId: resendPasswordOtp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOtpRequest'
+      responses:
+        '200':
+          description: Password reset OTP resent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          description: Email not registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many OTP requests (rate limited)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /auth/otp/verify:
     post:
       tags: [Auth]

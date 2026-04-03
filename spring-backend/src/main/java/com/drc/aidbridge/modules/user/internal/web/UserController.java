@@ -80,6 +80,22 @@ public class UserController {
     }
 
     /**
+     * POST /auth/password/otp/resend
+     */
+    @PostMapping("/password/otp/resend")
+    public ResponseEntity<ApiResponse<Void>> resendPasswordOtp(
+            @RequestBody RequestOtpRequest request) {
+        RequestOtpRequest otpRequest = RequestOtpRequest.builder()
+                .email(request.getEmail())
+                .phoneNumber(request.getPhoneNumber())
+                .otpType("PASSWORD_RESET")
+                .build();
+
+        requestOtpUseCase.execute(otpRequest);
+        return ResponseEntity.ok(ApiResponse.success("Password reset OTP resent successfully", null));
+    }
+
+    /**
      * POST /auth/otp/verify - Xác thực OTP
      */
     @PostMapping("/otp/verify")
