@@ -8,13 +8,14 @@ import com.drc.aidbridge.modules.aid.internal.repository.AidRequestItemJpaReposi
 import com.drc.aidbridge.modules.aid.internal.repository.AidRequestJpaRepository;
 import com.drc.aidbridge.modules.aid.internal.web.dto.AidRequestResponse;
 import com.drc.aidbridge.modules.aid.internal.web.dto.CreateAidRequest;
-import com.drc.aidbridge.modules.mission.MissionDTO;
-import com.drc.aidbridge.modules.mission.MissionFacade;
+import com.drc.aidbridge.modules.aid.AidRequestCreatedEvent;
 import com.drc.aidbridge.modules.user.UserFacade;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,9 +26,9 @@ public class CreateAidRequestUseCase {
 
     private final AidRequestJpaRepository aidRequestRepository;
     private final AidRequestItemJpaRepository aidRequestItemRepository;
-    private final MissionFacade missionFacade;
     private final UserFacade userFacade;
     private final AidMapper aidMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public AidRequestResponse execute(UUID requesterId, CreateAidRequest request) {
@@ -45,8 +46,7 @@ public class CreateAidRequestUseCase {
         AidRequest aidRequest = AidRequest.builder()
                 .requesterId(requesterId)
                 .status(AidStatus.PENDING)
-                .lat(request.getLat())
-                .lng(request.getLng())
+                .location(AidRequest.createPoint(request.getLat().doubleValue(), request.getLng().doubleValue()))
                 .address(request.getAddress())
                 .description(request.getNotes())
                 .numberAdult(adults)
@@ -64,8 +64,12 @@ public class CreateAidRequestUseCase {
         List<AidRequestItem> savedItems = aidRequestItemRepository.saveAll(items);
         saved.setItems(savedItems);
 
-        MissionDTO savedMission = missionFacade.createDeliveryMission(saved.getId(), saved.getLat(), saved.getLng());
+        // Publish event so mission module can create delivery mission in a transactional listener
+        BigDecimal lat = saved.getLocation() != null ? BigDecimal.valueOf(saved.getLocation().getY()) : null;
+        BigDecimal lng = saved.getLocation() != null ? BigDecimal.valueOf(saved.getLocation().getX()) : null;
 
-        return aidMapper.toResponse(saved, savedItems, savedMission);
+        eventPublisher.publishEvent(new AidRequestCreatedEvent(saved.getId(), lat, lng));
+
+        return aidMapper.toResponse(saved, savedItems, null);
     }
 }

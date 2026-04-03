@@ -9,6 +9,7 @@ import com.drc.aidbridge.modules.aid.internal.web.dto.AidItemResponse;
 import com.drc.aidbridge.modules.aid.internal.web.dto.AidRequestResponse;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,8 +22,8 @@ public class AidMapper {
                 .id(entity.getId())
                 .requesterId(entity.getRequesterId())
                 .status(entity.getStatus())
-                .lat(entity.getLat())
-                .lng(entity.getLng())
+                .lat(entity.getLocation() != null ? BigDecimal.valueOf(entity.getLocation().getY()) : null)
+                .lng(entity.getLocation() != null ? BigDecimal.valueOf(entity.getLocation().getX()) : null)
                 .address(entity.getAddress())
                 .description(entity.getDescription())
                 .numberAdult(entity.getNumberAdult())
@@ -40,8 +41,8 @@ public class AidMapper {
                 .requesterId(entity.getRequesterId())
                 .sosRequestId(null)
                 .status(entity.getStatus())
-                .lat(entity.getLat())
-                .lng(entity.getLng())
+                .lat(entity.getLocation() != null ? BigDecimal.valueOf(entity.getLocation().getY()) : null)
+                .lng(entity.getLocation() != null ? BigDecimal.valueOf(entity.getLocation().getX()) : null)
                 .address(entity.getAddress())
                 .description(entity.getDescription())
                 .numberAdult(entity.getNumberAdult())

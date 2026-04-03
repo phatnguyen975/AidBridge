@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/victim/aid-requests")
+@RequestMapping("/api/aid-requests")
 @RequiredArgsConstructor
 public class AidController {
 
