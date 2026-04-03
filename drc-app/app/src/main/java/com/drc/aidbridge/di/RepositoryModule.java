@@ -1,7 +1,9 @@
 package com.drc.aidbridge.di;
 
 import com.drc.aidbridge.data.repository.AuthRepositoryImpl;
+import com.drc.aidbridge.data.repository.UserRepositoryImpl;
 import com.drc.aidbridge.domain.repository.AuthRepository;
+import com.drc.aidbridge.domain.repository.UserRepository;
 
 import dagger.Binds;
 import dagger.Module;
@@ -27,4 +29,8 @@ public abstract class RepositoryModule {
     @Binds
     @Singleton
     public abstract AuthRepository bindAuthRepository(AuthRepositoryImpl impl);
+
+    @Binds
+    @Singleton
+    public abstract UserRepository bindUserRepository(UserRepositoryImpl impl);
 }
