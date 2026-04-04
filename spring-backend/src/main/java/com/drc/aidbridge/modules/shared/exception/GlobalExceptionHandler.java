@@ -55,6 +55,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(ApiResponse.error(ex.getMessage()));
     }
 
+    @ExceptionHandler(InvalidMissionStateException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidMissionStateException(InvalidMissionStateException ex) {
+        log.warn("Invalid mission state: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(ex.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
         String errors = ex.getBindingResult().getFieldErrors().stream()

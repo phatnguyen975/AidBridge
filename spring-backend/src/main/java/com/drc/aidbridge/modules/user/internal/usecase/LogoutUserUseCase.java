@@ -24,16 +24,13 @@ public class LogoutUserUseCase {
     private final SessionCacheRedisSchema sessionCacheRedisSchema;
 
     public void execute(String authHeader, LogoutRequest request) {
+        // Normalize and extract user information
         String refreshToken = request != null ? normalizeOptional(request.getRefreshToken()) : null;
         UUID userId = resolveUserId(authHeader, refreshToken);
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String accessToken = authHeader.substring(7);
-            jwtService.revokeToken(accessToken);
-        }
-
         if (refreshToken != null) {
             jwtService.revokeToken(refreshToken);
+            log.info("Refresh token revoked during logout");
         }
 
         if (userId != null) {
@@ -41,7 +38,8 @@ public class LogoutUserUseCase {
             clearUserSessionState(userId);
         }
 
-        log.info("User logged out");
+        // Access token không cần blacklist - sẽ tự expire sau 15 phút
+        log.info("User logged out (access token will expire naturally)");
     }
 
     private UUID resolveUserId(String authHeader, String refreshToken) {
