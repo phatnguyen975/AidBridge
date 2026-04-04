@@ -20,6 +20,7 @@ public class AidController {
     private final GetAidRequestUseCase getAidRequestUseCase;
     private final CancelAidRequestUseCase cancelAidRequestUseCase;
     private final ListAidRequestsUseCase listAidRequestsUseCase;
+    private final TranscribeAidRequestVoiceUseCase transcribeAidRequestVoiceUseCase;
 
     @PostMapping
     public ResponseEntity<ApiResponse<AidRequestResponse>> createAidRequest(
@@ -53,5 +54,15 @@ public class AidController {
             @RequestParam(name = "limit", defaultValue = "20") int limit) {
         PaginatedResponseDto<AidRequestResponse> response = listAidRequestsUseCase.execute(page, limit);
         return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PostMapping(value = "/voice", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<String>> transcribeVoice(
+            @RequestPart("file") org.springframework.web.multipart.MultipartFile audioFile,
+            @AuthenticationPrincipal java.util.UUID userId) {
+
+        // userId có thể dùng để xác thực quyền nếu cần (import sẵn ở trên)
+        String transcript = transcribeAidRequestVoiceUseCase.execute(audioFile);
+        return ResponseEntity.ok(ApiResponse.success("Voice transcription completed", transcript));
     }
 }
