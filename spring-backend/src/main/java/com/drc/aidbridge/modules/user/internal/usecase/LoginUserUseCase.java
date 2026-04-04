@@ -59,9 +59,7 @@ public class LoginUserUseCase {
 
         userMapper.cacheUserSession(
                 sessionCacheRedisSchema,
-                user,
-                normalizeOptional(request.getDeviceId()),
-                sanitizedFcmToken != null ? sanitizedFcmToken : user.getFcmToken());
+                user);
 
         log.info("User logged in: {}", user.getEmail() != null ? user.getEmail() : user.getPhoneNumber());
         return userMapper.buildAuthResponse(user, accessToken, refreshToken);
