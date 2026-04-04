@@ -29,7 +29,7 @@ public class JwtService {
     @Value("${app.jwt.secret:AidBridgeModularMonolithSecretKeyForJwtSigning1234567890}")
     private String jwtSecret;
 
-    @Value("${app.jwt.access-token-expiration-ms:900000}")
+    @Value("${app.jwt.access-token-expiration-ms:900000000}")
     private long accessTokenExpirationMs;
 
     @Value("${app.jwt.refresh-token-expiration-ms:604800000}")

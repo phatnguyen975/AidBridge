@@ -21,13 +21,14 @@ public class UserMapper implements BaseMapper<UserDto, User> {
         }
 
         return new User(
-                dto.getId(),
-                dto.getName(),
-                dto.getEmail(),
-                dto.getPhone(),
-                UserRole.fromStringSafe(dto.getRole()),
-                dto.getAvatarUrl(),
-                dto.isVerified()
+            dto.getId(),
+            dto.getName(),
+            dto.getEmail(),
+            dto.getPhone(),
+            dto.getAddress(),
+            UserRole.fromStringSafe(dto.getRole()),
+            dto.getAvatarUrl(),
+            dto.isVerified()
         );
     }
 
@@ -38,13 +39,14 @@ public class UserMapper implements BaseMapper<UserDto, User> {
         }
 
         return new UserDto(
-                domainModel.getId(),
-                domainModel.getName(),
-                domainModel.getEmail(),
-                domainModel.getPhone(),
-                domainModel.getRole().name(),
-                domainModel.getAvatarUrl(),
-                domainModel.isVerified()
+            domainModel.getId(),
+            domainModel.getName(),
+            domainModel.getEmail(),
+            domainModel.getPhone(),
+            domainModel.getAddress(),
+            domainModel.getRole().name(),
+            domainModel.getAvatarUrl(),
+            domainModel.isVerified()
         );
     }
 }

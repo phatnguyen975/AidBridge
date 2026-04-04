@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import java.math.BigDecimal;
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 public class SosDTO {
     private UUID id;
     private UUID requesterId;
-    private Double lat;
-    private Double lng;
+    private BigDecimal lat;
+    private BigDecimal lng;
     private String address;
     private String description;
     private Integer peopleCount;

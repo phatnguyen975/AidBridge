@@ -93,6 +93,7 @@
                     app:strokeWidth="1dp">
 
                     <ImageView
+                        android:id="@+id/ivEditAvatar"
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:layout_gravity="center"

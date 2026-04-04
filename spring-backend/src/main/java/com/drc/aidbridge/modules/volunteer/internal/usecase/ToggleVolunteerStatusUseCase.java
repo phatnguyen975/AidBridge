@@ -31,12 +31,13 @@ public class ToggleVolunteerStatusUseCase {
 
         volunteer.setOnline(request.isOnline());
 
-        if (request.getCurrentLat() != null) {
-            volunteer.setCurrentLat(request.getCurrentLat());
-        }
-        if (request.getCurrentLng() != null) {
-            volunteer.setCurrentLng(request.getCurrentLng());
-        }
+        // if (request.getCurrentLat() != null) {
+        //     volunteer.setCurrentLat(request.getCurrentLat());
+        // }
+        // if (request.getCurrentLng() != null) {
+        //     volunteer.setCurrentLng(request.getCurrentLng());
+        // }
+        
 
         volunteer = volunteerRepository.save(volunteer);
 

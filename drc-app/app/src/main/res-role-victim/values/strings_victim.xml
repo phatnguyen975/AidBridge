@@ -40,6 +40,11 @@
     <string name="victim_personal_info_btn_change_password">ĐỔI MẬT KHẨU</string>
     <string name="victim_personal_info_toast_update_success">Cập nhật thông tin thành công</string>
     <string name="victim_personal_info_toast_change_password_success">Đổi mật khẩu thành công</string>
+    <string name="victim_personal_info_message_update_success">Cập nhật thông tin thành công.</string>
+    <string name="victim_personal_info_message_change_password_success">Đổi mật khẩu thành công.</string>
+    <string name="victim_personal_info_message_avatar_updated">Cập nhật ảnh đại diện thành công.</string>
+    <string name="victim_personal_info_error_password_mismatch">Mật khẩu mới và xác nhận mật khẩu không khớp.</string>
+    <string name="victim_personal_info_error_avatar_processing">Không thể xử lý ảnh đã chọn. Vui lòng thử lại.</string>
 
     <!-- Victim History Screen -->
     <string name="victim_history_title">Lịch sử yêu cầu</string>

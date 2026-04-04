@@ -2,13 +2,17 @@ package com.drc.aidbridge.modules.aid.internal.entity;
 
 import com.drc.aidbridge.modules.shared.enums.AidStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +26,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AidRequest {
 
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -34,11 +40,8 @@ public class AidRequest {
     @Builder.Default
     private AidStatus status = AidStatus.PENDING;
 
-    @Column(name = "lat", nullable = false, precision = 9, scale = 6)
-    private BigDecimal lat;
-
-    @Column(name = "lng", nullable = false, precision = 9, scale = 6)
-    private BigDecimal lng;
+    @Column(name = "location", nullable = false, columnDefinition = "geography(POINT, 4326)")
+    private Point location;
 
     @Column(name = "address", length = 500)
     private String address;
@@ -48,14 +51,17 @@ public class AidRequest {
 
     @Column(name = "number_elderly", nullable = false)
     @Builder.Default
+    @Min(0)
     private Integer numberElderly = 0;
 
     @Column(name = "number_adult", nullable = false)
     @Builder.Default
+    @Min(0)
     private Integer numberAdult = 0;
 
     @Column(name = "number_children", nullable = false)
     @Builder.Default
+    @Min(0)
     private Integer numberChildren = 0;
 
     @OneToMany(mappedBy = "aidRequest", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -71,4 +77,19 @@ public class AidRequest {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    /**
+     * Creates a Point from latitude and longitude coordinates.
+     * Uses SRID 4326 (WGS84) for geographic coordinate system.
+     *
+     * @param lat latitude coordinate
+     * @param lng longitude coordinate
+     * @return Point representing the location
+     */
+    public static Point createPoint(Double lat, Double lng) {
+        if (lat == null || lng == null) {
+            return null;
+        }
+        return GEOMETRY_FACTORY.createPoint(new Coordinate(lng, lat));
+    }
 }

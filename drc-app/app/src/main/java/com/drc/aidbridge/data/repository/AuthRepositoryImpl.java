@@ -94,7 +94,9 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                     user.getId(),
                     user.getName(),
                     user.getEmail(),
+                    user.getPhone(),
                     user.getRole().name(),
+                    user.getAvatarUrl(),
                     user.isVerified()
                 );
                 result.postValue(NetworkResultWrapper.success(user));
@@ -166,7 +168,9 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
                     user.getId(),
                     user.getName(),
                     user.getEmail(),
+                    user.getPhone(),
                     user.getRole().name(),
+                    user.getAvatarUrl(),
                     user.isVerified()
                 );
 
