@@ -21,6 +21,7 @@ public class OtpRedisSchema {
     private static final int OTP_LENGTH = 6;
     private static final int MAX_ATTEMPTS = 5;
     private static final String ATTEMPT_SUFFIX = ":attempts";
+    private static final String VERIFIED_SUFFIX = ":verified";
 
     public enum OtpPurpose {
         REGISTRATION("registration"),
@@ -62,10 +63,26 @@ public class OtpRedisSchema {
         return verifyOtpInternal(purpose, identifier, otp, false);
     }
 
+    public void markOtpVerified(OtpPurpose purpose, String identifier) {
+        String verifiedKey = buildVerifiedKey(purpose, identifier);
+        redisTemplate.opsForValue().set(verifiedKey, "true", DEFAULT_TTL);
+    }
+
+    public boolean isOtpVerified(OtpPurpose purpose, String identifier) {
+        String verifiedKey = buildVerifiedKey(purpose, identifier);
+        String value = redisTemplate.opsForValue().get(verifiedKey);
+        return "true".equals(value);
+    }
+
+    public void clearOtpVerified(OtpPurpose purpose, String identifier) {
+        String verifiedKey = buildVerifiedKey(purpose, identifier);
+        redisTemplate.delete(verifiedKey);
+    }
+
     private boolean verifyOtpInternal(OtpPurpose purpose,
-                                      String identifier,
-                                      String otp,
-                                      boolean consumeOnSuccess) {
+            String identifier,
+            String otp,
+            boolean consumeOnSuccess) {
         if (isBlocked(purpose, identifier)) {
             log.warn("OTP verification blocked for {}:{} - too many attempts", purpose.getValue(), identifier);
             return false;
@@ -78,6 +95,7 @@ public class OtpRedisSchema {
             if (consumeOnSuccess) {
                 redisTemplate.delete(key);
                 deleteAttempts(purpose, identifier);
+                clearOtpVerified(purpose, identifier);
             }
             log.debug("OTP verified successfully for {}:{}", purpose.getValue(), identifier);
             return true;
@@ -118,6 +136,10 @@ public class OtpRedisSchema {
 
     private String buildAttemptKey(OtpPurpose purpose, String identifier) {
         return buildKey(purpose, identifier) + ATTEMPT_SUFFIX;
+    }
+
+    private String buildVerifiedKey(OtpPurpose purpose, String identifier) {
+        return buildKey(purpose, identifier) + VERIFIED_SUFFIX;
     }
 
     private String generateRandomOtp() {

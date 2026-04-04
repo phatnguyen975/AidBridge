@@ -376,16 +376,16 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
         MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
-        authApiService.resetPassword(request).enqueue(new Callback<BaseResponse<String>>() {
+        authApiService.resetPassword(request).enqueue(new Callback<BaseResponse<Void>>() {
             @Override
-            public void onResponse(Call<BaseResponse<String>> call,
-                    Response<BaseResponse<String>> response) {
+            public void onResponse(Call<BaseResponse<Void>> call,
+                    Response<BaseResponse<Void>> response) {
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
 
-                BaseResponse<String> baseResponse = response.body();
+                BaseResponse<Void> baseResponse = response.body();
                 if (baseResponse == null) {
                     result.postValue(NetworkResultWrapper.error("Phản hồi đổi mật khẩu không hợp lệ."));
                     return;
@@ -408,7 +408,7 @@ public class AuthRepositoryImpl extends BaseRepository implements AuthRepository
             }
 
             @Override
-            public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error("Đổi mật khẩu thất bại: " + safeMessage(t)));
             }
         });

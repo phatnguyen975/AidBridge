@@ -44,7 +44,7 @@ public interface AuthApiService {
     Call<BaseResponse<AuthResponse>> verifyResetOtp(@Body OtpVerifyRequest request);
 
     @POST("auth/password/reset")
-    Call<BaseResponse<String>> resetPassword(@Body ResetPasswordRequest request);
+    Call<BaseResponse<Void>> resetPassword(@Body ResetPasswordRequest request);
 
     @POST("auth/refresh")
     Call<BaseResponse<AuthResponse>> refreshToken(@Body RefreshTokenRequest request);
