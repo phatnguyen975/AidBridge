@@ -48,9 +48,9 @@ public class LoginUserUseCase {
             throw new AuthenticationException("Account is not verified. Please verify OTP before login");
         }
 
-        // Update FCM token if provided
-        if (StringUtils.hasText(request.getFcmToken())) {
-            user.setFcmToken(request.getFcmToken());
+        String sanitizedFcmToken = normalizeOptional(request.getFcmToken());
+        if (sanitizedFcmToken != null) {
+            user.setFcmToken(sanitizedFcmToken);
             userRepository.save(user);
         }
 
@@ -59,7 +59,9 @@ public class LoginUserUseCase {
 
         userMapper.cacheUserSession(
                 sessionCacheRedisSchema,
-                user);
+                user,
+                normalizeOptional(request.getDeviceId()),
+                sanitizedFcmToken != null ? sanitizedFcmToken : user.getFcmToken());
 
         log.info("User logged in: {}", user.getEmail() != null ? user.getEmail() : user.getPhoneNumber());
         return userMapper.buildAuthResponse(user, accessToken, refreshToken);
@@ -76,5 +78,13 @@ public class LoginUserUseCase {
 
     private boolean requiresVerificationBeforeLogin(User user) {
         return user.getRole() != UserRole.ADMIN && user.getRole() != UserRole.STAFF;
+    }
+
+    private String normalizeOptional(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }
