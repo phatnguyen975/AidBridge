@@ -3,7 +3,7 @@ package com.drc.aidbridge.domain.usecase.auth;
 import androidx.lifecycle.LiveData;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
-import com.drc.aidbridge.data.remote.dto.request.ForgotPasswordRequest;
+import com.drc.aidbridge.data.remote.dto.request.RequestOtpRequest;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.domain.usecase.validation.AuthInputValidator;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
@@ -20,7 +20,7 @@ public class ResendOtpUseCase {
 
     @Inject
     public ResendOtpUseCase(AuthRepository authRepository,
-                            AuthInputValidator inputValidator) {
+            AuthInputValidator inputValidator) {
         this.authRepository = authRepository;
         this.inputValidator = inputValidator;
     }
@@ -29,8 +29,8 @@ public class ResendOtpUseCase {
         return inputValidator.requireValidEmail(email);
     }
 
-    public LiveData<NetworkResultWrapper<Boolean>> execute(String email) {
+    public LiveData<NetworkResultWrapper<Boolean>> execute(String email, String otpType) {
         return authRepository.resendOtp(
-                new ForgotPasswordRequest(inputValidator.normalizeEmail(email)));
+                new RequestOtpRequest(inputValidator.normalizeEmail(email), null, otpType));
     }
 }

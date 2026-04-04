@@ -39,42 +39,36 @@ public class OtpViewModel extends BaseViewModel {
     private final TokenManager tokenManager;
     private final SavedStateHandle savedStateHandle;
 
-    private final MutableLiveData<Integer> countdown =
-            new MutableLiveData<>(Constants.OTP_COUNTDOWN_SEC);
-    private final MutableLiveData<ResendUiState> resendUiState =
-            new MutableLiveData<>(ResendUiState.TIMER_RUNNING);
+    private final MutableLiveData<Integer> countdown = new MutableLiveData<>(Constants.OTP_COUNTDOWN_SEC);
+    private final MutableLiveData<ResendUiState> resendUiState = new MutableLiveData<>(ResendUiState.TIMER_RUNNING);
 
     private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
     private final MutableLiveData<Integer> otpInlineErrorResId = new MutableLiveData<>();
     private final MutableLiveData<VerifyParams> verifyTrigger = new MutableLiveData<>();
     private final MutableLiveData<ResendParams> resendTrigger = new MutableLiveData<>();
 
-    private final MediatorLiveData<NetworkResultWrapper<AuthResponse>> verifyResult =
-            new MediatorLiveData<>();
-    private final MediatorLiveData<NetworkResultWrapper<Boolean>> resendResult =
-            new MediatorLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<AuthResponse>> verifyResult = new MediatorLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<Boolean>> resendResult = new MediatorLiveData<>();
 
     private CountDownTimer countDownTimer;
 
     @Inject
     public OtpViewModel(ResendOtpUseCase resendOtpUseCase,
-                        VerifyOtpUseCase verifyOtpUseCase,
-                        TokenManager tokenManager,
-                        SavedStateHandle savedStateHandle) {
+            VerifyOtpUseCase verifyOtpUseCase,
+            TokenManager tokenManager,
+            SavedStateHandle savedStateHandle) {
         this.resendOtpUseCase = resendOtpUseCase;
         this.verifyOtpUseCase = verifyOtpUseCase;
         this.tokenManager = tokenManager;
         this.savedStateHandle = savedStateHandle;
 
         LiveData<NetworkResultWrapper<AuthResponse>> verifySource = Transformations.switchMap(
-            verifyTrigger,
-            params -> this.verifyOtpUseCase.execute(params.email, params.otp)
-        );
+                verifyTrigger,
+                params -> this.verifyOtpUseCase.execute(params.email, params.otp));
 
         LiveData<NetworkResultWrapper<Boolean>> resendSource = Transformations.switchMap(
-            resendTrigger,
-            params -> this.resendOtpUseCase.execute(params.email)
-        );
+                resendTrigger,
+                params -> this.resendOtpUseCase.execute(params.email, "EMAIL_VERIFY"));
 
         verifyResult.addSource(verifySource, result -> {
             verifyResult.setValue(result);
@@ -162,6 +156,7 @@ public class OtpViewModel extends BaseViewModel {
     private static class VerifyParams {
         final String email;
         final String otp;
+
         VerifyParams(String email, String otp) {
             this.email = email;
             this.otp = otp;
@@ -170,6 +165,7 @@ public class OtpViewModel extends BaseViewModel {
 
     private static class ResendParams {
         final String email;
+
         ResendParams(String email) {
             this.email = email;
         }
@@ -182,8 +178,7 @@ public class OtpViewModel extends BaseViewModel {
 
         countDownTimer = new CountDownTimer(
                 Constants.OTP_COUNTDOWN_SEC * 1000L,
-                1000L
-        ) {
+                1000L) {
             @Override
             public void onTick(long millisUntilFinished) {
                 countdown.postValue((int) (millisUntilFinished / 1000));
