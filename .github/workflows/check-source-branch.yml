@@ -6,12 +6,25 @@ on:
       - main
 
 jobs:
-  enforce-dev-source:
+  enforce-rules:
     runs-on: ubuntu-latest
     steps:
-      - name: Check if PR is coming from dev
+      # Step 1: Verify the source branch is 'dev'
+      - name: Verify Source Branch
         if: github.head_ref != 'dev'
         run: |
-          echo "Failed: Only the 'dev' branch can be merged into 'main'."
-          echo "The branch you are using is: ${{ github.head_ref }}"
+          echo "Error: Only the 'dev' branch can be merged into 'main'."
+          echo "Source branch provided: ${{ github.head_ref }}"
           exit 1
+
+      # Step 2: Verify the PR creator is the Repository Owner
+      - name: Verify PR Creator is Owner
+        if: github.event.pull_request.user.login != github.repository_owner
+        run: |
+          echo "Error: Access Denied."
+          echo "Only the repository owner (${{ github.repository_owner }}) is authorized to create PRs to 'main'."
+          echo "Current user: ${{ github.event.pull_request.user.login }}"
+          exit 1
+
+      - name: Success Message
+        run: echo "Validation passed. Branch and Ownership verified."
