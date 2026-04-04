@@ -95,8 +95,6 @@ public class MissionController {
         return ResponseEntity.ok(ApiResponse.success("Tracking info retrieved", response));
     }
 
-    // ===================== NEW ENDPOINTS =====================
-
     /**
      * Tạo mission mới (Staff/Admin only)
      */

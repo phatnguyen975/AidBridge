@@ -1,6 +1,5 @@
 package com.drc.aidbridge.modules.sos.internal.entity;
 
-// ... existing code ...
 import com.drc.aidbridge.modules.shared.enums.SosStatus;
 import com.drc.aidbridge.modules.shared.enums.UrgencyLevel;
 import jakarta.persistence.*;

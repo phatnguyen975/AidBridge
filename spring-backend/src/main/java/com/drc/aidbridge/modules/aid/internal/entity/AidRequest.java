@@ -90,7 +90,9 @@ public class AidRequest {
         if (lat == null || lng == null) {
             return null;
         }
-        return GEOMETRY_FACTORY.createPoint(new Coordinate(lng, lat));
+        Point point = GEOMETRY_FACTORY.createPoint(new Coordinate(lng, lat));
+        point.setSRID(4326);
+        return point;
     }
 
     /**

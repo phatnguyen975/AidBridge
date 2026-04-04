@@ -42,14 +42,6 @@ public class RefreshTokenUseCase {
             throw new AuthenticationException("Account is deactivated");
         }
 
-        // OPTIMIZATION: Không blacklist refresh token cũ khi rotate.
-        // Lý do:
-        // 1. Token cũ sẽ tự expire sau 7 ngày
-        // 2. Security vẫn OK vì chỉ 1 token được dùng tại 1 thời điểm (client thay bằng
-        // token mới)
-        // 3. Giảm 50% Redis writes khi refresh token
-        // Nếu cần revoke tất cả tokens → dùng revokeAllUserTokens() trong emergency
-
         String newAccessToken = jwtService.generateAccessToken(user.getId(), user.getRole().name());
         String newRefreshToken = jwtService.generateRefreshToken(user.getId());
 

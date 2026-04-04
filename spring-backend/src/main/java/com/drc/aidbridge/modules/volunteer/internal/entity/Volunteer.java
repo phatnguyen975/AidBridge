@@ -63,6 +63,7 @@ public class Volunteer {
 
     /**
      * Creates a Point from latitude and longitude coordinates.
+     * 
      * @param lat latitude
      * @param lng longitude
      * @return Point with SRID 4326, or null if inputs are null
