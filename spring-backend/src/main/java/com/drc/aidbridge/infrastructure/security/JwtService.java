@@ -71,10 +71,13 @@ public class JwtService {
 
     public Claims validateAccessToken(String token) throws JwtException {
         Claims claims = parseToken(token);
-        String jti = claims.getId();
-        if (isBlacklisted(jti)) {
-            throw new JwtException("Token has been revoked");
-        }
+
+        // OPTIMIZATION: Access token không check blacklist.
+        // Lý do:
+        // 1. Access token có TTL rất ngắn (15 phút)
+        // 2. Không blacklist access token khi logout → không cần check
+        // 3. Giảm Redis reads đáng kể (mỗi API request)
+        // Trade-off: Token còn valid tối đa 15 phút sau logout (chấp nhận được)
 
         String type = claims.get("type", String.class);
         if (!"access".equals(type)) {
@@ -125,15 +128,15 @@ public class JwtService {
                 .claim("type", tokenType)
                 .id(jti)
                 .issuedAt(now)
-            .expiration(expiration);
+                .expiration(expiration);
 
         if (role != null) {
             builder.claim("role", role);
         }
 
         String token = builder
-            .signWith(secretKey, Jwts.SIG.HS256)
-            .compact();
+                .signWith(secretKey, Jwts.SIG.HS256)
+                .compact();
 
         trackUserToken(userId, jti, expiration);
         return token;
@@ -148,6 +151,9 @@ public class JwtService {
     }
 
     private void trackUserToken(UUID userId, String jti, Date expiration) {
+        // Tracking tokens để hỗ trợ emergency revoke all (khi user báo mất device, v.v.)
+        // Cost: 1 Redis write khi generate token
+        // Benefit: Có thể revoke tất cả sessions của user ngay lập tức
         String key = userTokensKey(userId);
         redisTemplate.opsForSet().add(key, jti);
 

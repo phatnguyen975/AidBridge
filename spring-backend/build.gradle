@@ -84,6 +84,8 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
     // JJWT Jackson - Jackson-based JSON serializer/deserializer for JWT claims
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+    // Spring Security OAuth2 Resource Server - provides JWT support for @AuthenticationPrincipal Jwt
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
     // ===========================
     // DTO Mapping

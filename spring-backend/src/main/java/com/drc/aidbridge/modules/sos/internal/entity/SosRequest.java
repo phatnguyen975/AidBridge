@@ -1,4 +1,5 @@
 package com.drc.aidbridge.modules.sos.internal.entity;
+
 // ... existing code ...
 import com.drc.aidbridge.modules.shared.enums.SosStatus;
 import com.drc.aidbridge.modules.shared.enums.UrgencyLevel;
@@ -23,9 +24,9 @@ public class SosRequest {
     private UUID id;
     @Column(name = "requester_id")
     private UUID requesterId;
-    @Column(name = "lat", nullable = false)
+    @Column(name = "lat")
     private Double lat;
-    @Column(name = "lng", nullable = false)
+    @Column(name = "lng")
     private Double lng;
     @Column(name = "address", length = 500)
     private String address;
