@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentSponsorProfileBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
+import com.drc.aidbridge.ui.main.MainActivity;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -34,11 +35,16 @@ public class SponsorProfileFragment extends BaseFragment<FragmentSponsorProfileB
         binding.rowDonationHistory.setOnClickListener(v ->
             navigateToDestinationSafely(R.id.sponsorHistoryFragment));
 
-        binding.btnLogout.setOnClickListener(v ->
-            showToast("Đã đăng xuất"));
+        binding.btnLogout.setOnClickListener(v -> requestLogout());
     }
 
     @Override
     protected void observeViewModel() {
+    }
+
+    private void requestLogout() {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).requestLogout();
+        }
     }
 }

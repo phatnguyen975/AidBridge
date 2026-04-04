@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/admin_hub_item_spacing_medium"
+    app:cardBackgroundColor="@color/admin_hub_card_bg"
+    app:cardCornerRadius="@dimen/admin_hub_item_card_radius"
+    app:strokeColor="@color/admin_hub_card_stroke"
+    app:strokeWidth="@dimen/admin_hub_item_card_stroke">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/admin_hub_item_padding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="@dimen/admin_hub_item_icon_box_size"
+                android:layout_height="@dimen/admin_hub_item_icon_box_size"
+                app:cardBackgroundColor="@color/admin_hub_icon_box_bg"
+                app:cardCornerRadius="@dimen/admin_hub_item_icon_box_radius"
+                app:strokeColor="@color/admin_hub_icon_box_stroke"
+                app:strokeWidth="@dimen/admin_hub_item_card_stroke">
+
+                <ImageView
+                    android:layout_width="@dimen/admin_hub_item_icon_size"
+                    android:layout_height="@dimen/admin_hub_item_icon_size"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/admin_hub_mgmt_hub_icon_desc"
+                    android:src="@drawable/ic_admin_hub"
+                    app:tint="@color/admin_stat_icon_tint" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/admin_hub_item_spacing_medium"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/text_hub_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/admin_text_primary"
+                        android:textSize="@dimen/admin_hub_item_title_text_size"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/text_hub_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_admin_badge_active"
+                        android:paddingStart="@dimen/admin_hub_item_badge_padding_horizontal"
+                        android:paddingTop="@dimen/admin_hub_item_badge_padding_vertical"
+                        android:paddingEnd="@dimen/admin_hub_item_badge_padding_horizontal"
+                        android:paddingBottom="@dimen/admin_hub_item_badge_padding_vertical"
+                        android:textColor="@color/admin_badge_active_text"
+                        android:textSize="@dimen/admin_hub_item_badge_text_size"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/text_hub_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                    android:textColor="@color/admin_text_secondary"
+                    android:textSize="@dimen/admin_hub_item_sub_text_size" />
+
+                <TextView
+                    android:id="@+id/text_hub_inventory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                    android:textColor="@color/admin_text_secondary"
+                    android:textSize="@dimen/admin_hub_item_sub_text_size" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_hub_details"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/admin_hub_item_button_height"
+                android:layout_weight="1"
+                android:text="@string/admin_hub_mgmt_btn_details"
+                android:textAllCaps="false"
+                android:textColor="@color/admin_button_edit_text"
+                android:textSize="@dimen/admin_hub_item_sub_text_size"
+                app:backgroundTint="@color/admin_button_edit_bg"
+                app:cornerRadius="@dimen/admin_hub_item_button_radius"
+                app:strokeColor="@color/admin_button_edit_stroke"
+                app:strokeWidth="@dimen/admin_hub_item_card_stroke" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_hub_toggle_status"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/admin_hub_item_button_height"
+                android:layout_marginStart="@dimen/admin_hub_item_spacing_medium"
+                android:layout_weight="1"
+                android:textAllCaps="false"
+                android:textColor="@color/admin_text_primary"
+                android:textSize="@dimen/admin_hub_item_sub_text_size"
+                app:backgroundTint="@color/admin_button_danger_bg"
+                app:cornerRadius="@dimen/admin_hub_item_button_radius" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

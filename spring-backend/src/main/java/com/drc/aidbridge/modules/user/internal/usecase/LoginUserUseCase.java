@@ -57,7 +57,11 @@ public class LoginUserUseCase {
         String accessToken = jwtService.generateAccessToken(user.getId(), user.getRole().name());
         String refreshToken = jwtService.generateRefreshToken(user.getId());
 
-        userMapper.cacheUserSession(sessionCacheRedisSchema, user);
+        userMapper.cacheUserSession(
+                sessionCacheRedisSchema,
+                user,
+                normalizeOptional(request.getDeviceId()),
+                sanitizedFcmToken != null ? sanitizedFcmToken : user.getFcmToken());
 
         log.info("User logged in: {}", user.getEmail() != null ? user.getEmail() : user.getPhoneNumber());
         return userMapper.buildAuthResponse(user, accessToken, refreshToken);

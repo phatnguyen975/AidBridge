@@ -14,15 +14,24 @@ public class User {
     private final String name;
     private final String email;
     private final String phone;
+    private final String address;
     private final UserRole role;
     private final String avatarUrl;
     private final boolean verified;
 
-    public User(String id, String name, String email, String phone, UserRole role, String avatarUrl, boolean verified) {
+    public User(String id,
+                String name,
+                String email,
+                String phone,
+                String address,
+                UserRole role,
+                String avatarUrl,
+                boolean verified) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.phone = phone;
+        this.address = address;
         this.role = role;
         this.avatarUrl = avatarUrl;
         this.verified = verified;
@@ -42,6 +51,10 @@ public class User {
 
     public String getPhone() {
         return phone;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     public String getAvatarUrl() {

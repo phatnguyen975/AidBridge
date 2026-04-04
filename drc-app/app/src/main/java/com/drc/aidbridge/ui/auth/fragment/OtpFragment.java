@@ -1,24 +1,21 @@
 package com.drc.aidbridge.ui.auth.fragment;
 
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.activity.OnBackPressedCallback;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
-import com.drc.aidbridge.databinding.DialogOtpFailedBinding;
+import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.DialogOtpSuccessBinding;
 import com.drc.aidbridge.databinding.FragmentOtpBinding;
-import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.common.OtpInputController;
+import com.drc.aidbridge.ui.main.MainActivity;
 import com.drc.aidbridge.ui.auth.viewmodel.OtpViewModel;
 
 import java.util.Arrays;
@@ -30,6 +27,8 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
+
+    private static final float SUCCESS_DIALOG_WIDTH_RATIO = 0.9f;
 
     private OtpViewModel viewModel;
     private OtpInputController otpInputController;
@@ -70,7 +69,7 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
                 binding.etOtp5,
                 binding.etOtp6
             ),
-            null,
+            (box, filled) -> viewModel.clearOtpInlineError(),
             otp -> attemptVerify()
         );
         otpInputController.bind();
@@ -80,42 +79,27 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
 
     @Override
     protected void observeViewModel() {
-        viewModel.getCountdown().observe(getViewLifecycleOwner(), seconds -> {
-            if (seconds != null && seconds > 0) {
-                String text = getString(R.string.otp_resend_countdown_template, seconds);
-                binding.tvResend.setText(text);
-                binding.tvResend.setTextColor(requireContext().getColor(R.color.text_secondary));
-            }
-        });
+        viewModel.getCountdown().observe(getViewLifecycleOwner(),
+            seconds -> renderResendState(viewModel.getResendUiState().getValue(), seconds));
 
-        viewModel.getResendEnabled().observe(getViewLifecycleOwner(), enabled -> {
-            if (Boolean.TRUE.equals(enabled)) {
-                binding.tvResend.setText(R.string.otp_resend_now);
-                binding.tvResend.setTextColor(requireContext().getColor(R.color.text_link));
-            }
-        });
+        viewModel.getResendUiState().observe(getViewLifecycleOwner(),
+            state -> renderResendState(state, viewModel.getCountdown().getValue()));
+
+        viewModel.getOtpInlineErrorResId().observe(getViewLifecycleOwner(), this::renderInlineValidationError);
 
         viewModel.getValidationError().observe(getViewLifecycleOwner(), validation -> {
             if (validation == null || validation.isValid()) {
                 return;
             }
-
-            if (validation.getErrorField() == ValidationResult.Field.OTP) {
-                otpInputController.clear();
-            } else {
-                showTopSnackbar(binding.getRoot(), validation.getErrorMessage(), true);
-            }
+            showTopSnackbar(binding.getRoot(), validation.getErrorMessage(), true);
         });
 
         viewModel.getVerifyResult().observe(getViewLifecycleOwner(),
                 resultObserver(
-                        ignored -> showSuccessDialog(),
+            ignored -> showSuccessDialog(),
                         this::showNetworkError));
 
-        viewModel.getResendResult().observe(getViewLifecycleOwner(),
-            resultObserver(
-                ignored -> showResendSuccess(),
-                this::showNetworkError));
+        viewModel.getResendResult().observe(getViewLifecycleOwner(), this::handleResendResult);
     }
 
     @Override
@@ -131,87 +115,107 @@ public class OtpFragment extends BaseFragment<FragmentOtpBinding> {
 
     private void setupClickListeners() {
         binding.btnVerify.setOnClickListener(v -> attemptVerify());
-
-        binding.tvResend.setOnClickListener(v -> {
-            if (Boolean.TRUE.equals(viewModel.getResendEnabled().getValue())) {
-                viewModel.resendOtp();
-            }
-        });
+        binding.tvResend.setOnClickListener(v -> viewModel.resendOtp());
     }
 
     private void attemptVerify() {
         clearInputFocusAndHideKeyboard();
         String otp = otpInputController.collectOtp();
-        if (otp.length() < 6) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.error_otp_length), true);
-            return;
-        }
         viewModel.verify(otp);
     }
 
+    private void showNetworkError(String message) {
+        showTopSnackbar(binding.getRoot(), message, true);
+    }
+
+    private void handleResendResult(NetworkResultWrapper<Boolean> result) {
+        if (result == null || result.isLoading() || result.hasBeenHandled()) {
+            return;
+        }
+
+        result.markAsHandled();
+
+        if (result.isSuccess()) {
+            showTopSnackbar(binding.getRoot(), getString(R.string.otp_resend_success), false);
+            otpInputController.clear();
+            viewModel.clearOtpInlineError();
+            return;
+        }
+
+        if (result.isError()) {
+            String message = result.getMessage() != null
+                ? result.getMessage()
+                : getString(R.string.error_generic);
+            showTopSnackbar(binding.getRoot(), message, true);
+        }
+    }
+
+    private void renderInlineValidationError(Integer messageResId) {
+        if (messageResId != null) {
+            showTopSnackbar(binding.getRoot(), getString(messageResId), true);
+        }
+    }
+
+    private void renderResendState(OtpViewModel.ResendUiState state, Integer seconds) {
+        OtpViewModel.ResendUiState safeState = state != null
+            ? state
+            : OtpViewModel.ResendUiState.TIMER_RUNNING;
+
+        if (safeState == OtpViewModel.ResendUiState.LOADING) {
+            binding.tvResend.setText(R.string.otp_resend_loading);
+            binding.tvResend.setEnabled(false);
+            binding.tvResend.setClickable(false);
+            binding.tvResend.setTextColor(requireContext().getColor(R.color.text_secondary));
+            return;
+        }
+
+        if (safeState == OtpViewModel.ResendUiState.READY) {
+            binding.tvResend.setText(R.string.otp_resend_ready);
+            binding.tvResend.setEnabled(true);
+            binding.tvResend.setClickable(true);
+            binding.tvResend.setTextColor(requireContext().getColor(R.color.text_link));
+            return;
+        }
+
+        int safeSeconds = (seconds != null && seconds > 0) ? seconds : 0;
+        binding.tvResend.setText(getString(R.string.otp_resend_countdown_template, safeSeconds));
+        binding.tvResend.setEnabled(false);
+        binding.tvResend.setClickable(false);
+        binding.tvResend.setTextColor(requireContext().getColor(R.color.text_secondary));
+    }
+
+    private void navigateToMain() {
+        if (!isAdded()) {
+            return;
+        }
+
+        Intent intent = new Intent(requireContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        requireActivity().finish();
+    }
+
     private void showSuccessDialog() {
-        Dialog dialog = buildDialog();
+        if (!isAdded()) {
+            return;
+        }
+
         DialogOtpSuccessBinding dialogBinding = DialogOtpSuccessBinding.inflate(getLayoutInflater());
-        dialog.setContentView(dialogBinding.getRoot());
+        AlertDialog successDialog = new AlertDialog.Builder(requireContext(), R.style.Theme_AidBridge_Dialog)
+            .setView(dialogBinding.getRoot())
+            .setCancelable(false)
+            .create();
 
         dialogBinding.btnContinue.setOnClickListener(v -> {
-            dialog.dismiss();
-            navigateToLogin();
+            successDialog.dismiss();
+            navigateToMain();
         });
 
-        dialog.setCancelable(false);
-        dialog.show();
-        setupDialogWindow(dialog);
-    }
+        successDialog.show();
 
-    private void showFailedDialog() {
-        Dialog dialog = buildDialog();
-        DialogOtpFailedBinding dialogBinding = DialogOtpFailedBinding.inflate(getLayoutInflater());
-        dialog.setContentView(dialogBinding.getRoot());
-
-        dialogBinding.btnRetry.setOnClickListener(v -> {
-            dialog.dismiss();
-            otpInputController.clear();
-        });
-
-        dialog.setCancelable(false);
-        dialog.show();
-        setupDialogWindow(dialog);
-    }
-
-    private void setupDialogWindow(Dialog dialog) {
-        Window window = dialog.getWindow();
-        if (window != null) {
-            WindowManager.LayoutParams params = window.getAttributes();
-            // Thiết lập chiều rộng bằng 90% màn hình
-            params.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.9);
-            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            window.setAttributes(params);
+        if (successDialog.getWindow() != null) {
+            int dialogWidth = (int) (getResources().getDisplayMetrics().widthPixels * SUCCESS_DIALOG_WIDTH_RATIO);
+            successDialog.getWindow().setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
-    }
-
-    private void showNetworkError(String message) {
-        if (message != null && !message.trim().isEmpty()) {
-            showTopSnackbar(binding.getRoot(), message, true);
-        } else {
-            showFailedDialog();
-        }
-    }
-
-    private void showResendSuccess() {
-        showTopSnackbar(binding.getRoot(), getString(R.string.otp_resend_now), false);
-    }
-
-    private Dialog buildDialog() {
-        Dialog dialog = new Dialog(requireContext(), R.style.Theme_AidBridge_Dialog);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        }
-        return dialog;
-    }
-
-    private void navigateToLogin() {
-        navigateSafely(R.id.action_otpFragment_to_loginFragment);
     }
 }

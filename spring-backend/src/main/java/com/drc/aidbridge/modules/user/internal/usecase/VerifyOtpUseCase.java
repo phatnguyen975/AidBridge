@@ -66,6 +66,8 @@ public class VerifyOtpUseCase {
             }
         }
 
+        // For password reset OTP verification we keep contract compatibility by returning
+        // AuthResponse payload, but caller may ignore these tokens.
         String accessToken = jwtService.generateAccessToken(user.getId(), user.getRole().name());
         String refreshToken = jwtService.generateRefreshToken(user.getId());
 

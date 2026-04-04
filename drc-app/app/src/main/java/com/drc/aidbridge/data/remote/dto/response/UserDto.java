@@ -17,6 +17,10 @@ public class UserDto {
     @SerializedName("phone")
     private String phone;
 
+    @Nullable
+    @SerializedName("address")
+    private String address;
+
     @SerializedName("role")
     private String role;
 
@@ -34,6 +38,7 @@ public class UserDto {
                    String name,
                    String email,
                    String phone,
+                   @Nullable String address,
                    String role,
                    @Nullable String avatarUrl,
                    boolean verified) {
@@ -41,6 +46,7 @@ public class UserDto {
         this.name = name;
         this.email = email;
         this.phone = phone;
+        this.address = address;
         this.role = role;
         this.avatarUrl = avatarUrl;
         this.verified = verified;
@@ -60,6 +66,11 @@ public class UserDto {
 
     public String getPhone() {
         return phone;
+    }
+
+    @Nullable
+    public String getAddress() {
+        return address;
     }
 
     public String getRole() {

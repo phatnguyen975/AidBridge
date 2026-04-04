@@ -32,18 +32,18 @@
     <!-- OTP Screen -->
     <string name="screen_title_otp">Xác thực OTP</string>
     <string name="otp_title">Nhập mã OTP</string>
-    <string name="otp_resend_countdown">Chưa nhận được mã? Gửi lại (59s)</string>
-    <string name="otp_resend_countdown_template">Chưa nhận được mã? Gửi lại (%ds)</string>
+    <string name="otp_resend_countdown">Chưa nhận được mã? Gửi lại sau 60s</string>
+    <string name="otp_resend_countdown_template">Chưa nhận được mã? Gửi lại sau %1$ds</string>
+    <string name="otp_resend_ready">Gửi lại mã</string>
+    <string name="otp_resend_loading">Đang gửi...</string>
+    <string name="otp_resend_success">Mã OTP mới đã được gửi tới email của bạn</string>
     <string name="otp_resend_now">Gửi lại ngay</string>
-
-    <!-- OTP Result Dialogs -->
-    <string name="otp_icon_failed">Thất bại</string>
-    <string name="otp_failed_title">Xác thực thất bại</string>
-    <string name="otp_failed_message">Mã OTP bạn nhập không chính xác. Vui lòng kiểm tra lại hoặc gửi mã mới.</string>
-    <string name="otp_icon_success">Thành công</string>
+    <string name="otp_success_icon_description">Biểu tượng thành công</string>
     <string name="otp_success_title">Xác thực thành công</string>
-    <string name="otp_success_message">Tài khoản của bạn đã được xác minh. Chào mừng bạn đến với AidBridge.</string>
-    <string name="error_otp_length">Vui lòng nhập đủ 6 chữ số.</string>
+    <string name="otp_success_message">Tài khoản của bạn đã được xác thực. Chào mừng bạn đến với AidBridge.</string>
+
+    <string name="error_otp_length">Vui lòng nhập đủ 6 số OTP</string>
+    <string name="otp_error_required_6_digits">Vui lòng nhập đủ 6 số OTP</string>
     <string name="otp_back_locked_message">Bạn cần xác thực OTP. Vui lòng kiểm tra email để tiếp tục.</string>
 
     <!-- Forgot Password Flow -->
@@ -59,4 +59,5 @@
     <string name="hint_confirm_password">Nhập lại mật khẩu mới</string>
     <string name="forgot_btn_change_password">ĐỔI MẬT KHẨU</string>
     <string name="forgot_success_message">Đổi mật khẩu thành công. Vui lòng đăng nhập lại.</string>
+    <string name="forgot_invalid_context">Phiên đặt lại mật khẩu không hợp lệ. Vui lòng thử lại từ đầu.</string>
 </resources>

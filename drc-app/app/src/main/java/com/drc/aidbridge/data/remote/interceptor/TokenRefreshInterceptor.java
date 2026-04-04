@@ -1,6 +1,7 @@
 package com.drc.aidbridge.data.remote.interceptor;
 
 import com.drc.aidbridge.data.remote.api.AuthApiService;
+import com.drc.aidbridge.data.remote.dto.request.RefreshTokenRequest;
 import com.drc.aidbridge.data.remote.dto.response.AuthResponse;
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 import com.drc.aidbridge.utils.Constants;
@@ -11,8 +12,6 @@ import android.content.Intent;
 import android.content.Context;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -73,7 +72,7 @@ public class TokenRefreshInterceptor implements Interceptor {
         Request originalRequest = chain.request();
         Response response = chain.proceed(originalRequest);
 
-        if (response.code() != 401 || isRefreshRequest(originalRequest)) {
+        if (response.code() != 401 || isAuthRequest(originalRequest) || isRefreshRequest(originalRequest)) {
             return response;
         }
 
@@ -113,6 +112,10 @@ public class TokenRefreshInterceptor implements Interceptor {
         return request.url().encodedPath().contains(Constants.REFRESH_TOKEN_ENDPOINT);
     }
 
+    private boolean isAuthRequest(Request request) {
+        return request.url().encodedPath().contains(Constants.AUTH_PATH_PREFIX);
+    }
+
     private boolean shouldRetryWithExistingToken(String requestAccessToken, String latestAccessToken) {
         if (isBlank(latestAccessToken)) {
             return false;
@@ -122,11 +125,9 @@ public class TokenRefreshInterceptor implements Interceptor {
     }
 
     private AuthResponse refreshTokenBlocking(String refreshToken) {
-        Map<String, String> body = new HashMap<>();
-        body.put("refreshToken", refreshToken);
-
         try {
-            Call<BaseResponse<AuthResponse>> refreshCall = lazyAuthApiService.get().refreshToken(body);
+            Call<BaseResponse<AuthResponse>> refreshCall = lazyAuthApiService.get()
+                .refreshToken(new RefreshTokenRequest(refreshToken));
             retrofit2.Response<BaseResponse<AuthResponse>> refreshResponse = refreshCall.execute();
 
             if (!refreshResponse.isSuccessful()) {

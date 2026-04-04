@@ -2,6 +2,7 @@ package com.drc.aidbridge.ui.auth.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -16,6 +17,7 @@ import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.auth.viewmodel.LoginViewModel;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.MainActivity;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -26,6 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
 
     private LoginViewModel viewModel;
+    private String pendingFcmToken;
 
     @Override
     protected FragmentLoginBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
@@ -35,6 +38,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
     @Override
     protected void setupViews() {
         viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+        requestFcmToken();
         setupClickListeners();
     }
 
@@ -88,7 +92,34 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
         clearInputFocusAndHideKeyboard();
         String email = getRawText(binding.etEmail);
         String password = getRawText(binding.etPassword);
-        viewModel.login(email, password);
+        viewModel.login(email, password, resolveDeviceId(), pendingFcmToken);
+    }
+
+    private void requestFcmToken() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (!isAdded()) {
+                return;
+            }
+
+            if (!task.isSuccessful()) {
+                pendingFcmToken = null;
+                return;
+            }
+
+            String token = task.getResult();
+            pendingFcmToken = token != null && !token.trim().isEmpty() ? token.trim() : null;
+        });
+    }
+
+    private String resolveDeviceId() {
+        String deviceId = Settings.Secure.getString(
+            requireContext().getContentResolver(),
+            Settings.Secure.ANDROID_ID
+        );
+        if (deviceId == null || deviceId.trim().isEmpty()) {
+            return getString(R.string.app_name);
+        }
+        return deviceId.trim();
     }
 
     private String getRawText(EditText et) {

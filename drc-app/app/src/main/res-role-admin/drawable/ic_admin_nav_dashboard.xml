@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/admin_nav_icon_size"
+    android:height="@dimen/admin_nav_icon_size"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <path
+        android:pathData="M4,3 h5 a1,1 0 0 1 1,1 v7 a1,1 0 0 1 -1,1 h-5 a1,1 0 0 1 -1,-1 v-7 a1,1 0 0 1 1,-1 z M15,3 h5 a1,1 0 0 1 1,1 v3 a1,1 0 0 1 -1,1 h-5 a1,1 0 0 1 -1,-1 v-3 a1,1 0 0 1 1,-1 z M15,12 h5 a1,1 0 0 1 1,1 v7 a1,1 0 0 1 -1,1 h-5 a1,1 0 0 1 -1,-1 v-7 a1,1 0 0 1 1,-1 z M4,16 h5 a1,1 0 0 1 1,1 v3 a1,1 0 0 1 -1,1 h-5 a1,1 0 0 1 -1,-1 v-3 a1,1 0 0 1 1,-1 z"
+        android:strokeWidth="1.5"
+        android:strokeColor="@color/admin_nav_icon_tint"
+        android:fillColor="@android:color/transparent"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

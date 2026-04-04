@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.dto.request.OtpVerifyRequest;
+import com.drc.aidbridge.data.remote.dto.response.AuthResponse;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.domain.usecase.validation.AuthInputValidator;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
@@ -28,7 +29,7 @@ public class VerifyOtpUseCase {
         return inputValidator.requireOtp(otp);
     }
 
-    public LiveData<NetworkResultWrapper<String>> execute(String email, String otpCode) {
+    public LiveData<NetworkResultWrapper<AuthResponse>> execute(String email, String otpCode) {
         return authRepository.verifyOtp(
                 new OtpVerifyRequest(inputValidator.normalizeEmail(email), otpCode));
     }

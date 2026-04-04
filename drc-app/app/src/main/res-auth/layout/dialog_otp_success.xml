@@ -23,7 +23,7 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_check"
-            android:contentDescription="@string/otp_icon_success" />
+            android:contentDescription="@string/otp_success_icon_description" />
     </FrameLayout>
 
     <TextView
