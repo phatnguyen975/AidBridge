@@ -59,7 +59,11 @@ public class VerifyOtpUseCase {
                 notificationFacade.sendWelcomeEmail(user.getEmail(), user.getFullName());
                 log.info("User verified: {}", user.getEmail());
                 // Publish event for role-based actions
-                publishUserRoleCreatedEvent(user);
+                try {
+                    publishUserRoleCreatedEvent(user);
+                } catch (Exception e) {
+                    log.error("Failed to publish UserRoleCreatedEvent for user: {}", user.getEmail(), e);
+                }
             }
             case "PASSWORD_RESET" -> {
                 log.info("Password reset OTP verified for: {}", identifier);
@@ -76,9 +80,13 @@ public class VerifyOtpUseCase {
     }
 
     private void publishUserRoleCreatedEvent(User user) {
-        UserRoleCreatedEvent event = new UserRoleCreatedEvent(user.getRole().name(), user.getId().toString());
+        UserRoleCreatedEvent event = UserRoleCreatedEvent.builder()
+                .role(user.getRole().name())
+                .userId(user.getId().toString())
+                .build();
+        log.info("Publishing UserRoleCreatedEvent with userId: {}, role: {}", user.getId(), user.getRole().name());
         publisher.publishEvent(event);
-        log.info("Published UserRoleCreatedEvent for user: {}", user.getEmail());
+        log.info("Successfully published UserRoleCreatedEvent for user: {}", user.getEmail());
     } 
 
     private void validateRequest(VerifyOtpRequest request) {

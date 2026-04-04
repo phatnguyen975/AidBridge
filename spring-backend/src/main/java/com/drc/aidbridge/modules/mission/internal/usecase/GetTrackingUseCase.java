@@ -1,6 +1,7 @@
 package com.drc.aidbridge.modules.mission.internal.usecase;
 
 import com.drc.aidbridge.modules.shared.enums.MissionStatus;
+import com.drc.aidbridge.modules.shared.exception.InvalidMissionStateException;
 import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.mission.internal.entity.Mission;
 import com.drc.aidbridge.modules.mission.internal.cache.MissionCacheRedisSchema;
@@ -37,12 +38,13 @@ public class GetTrackingUseCase {
                 .orElseThrow(() -> new ResourceNotFoundException("Mission not found: " + missionId));
 
         if (!isTrackableStatus(mission.getStatus())) {
-            throw new IllegalStateException("Mission is not in a trackable state. Current: " + mission.getStatus());
+            throw new InvalidMissionStateException(
+                    "Mission is not in a trackable state. Current: " + mission.getStatus());
         }
 
         UserDTO volunteer = resolveVolunteer(mission.getVolunteerId());
-    SosDTO sos = resolveSos(mission.getSosRequestId());
-    String destinationAddress = getDestinationAddress(sos);
+        SosDTO sos = resolveSos(mission.getSosRequestId());
+        String destinationAddress = getDestinationAddress(sos);
 
         // TODO: Implement real ETA and distance calculation
         MissionTrackingResponse tracking = missionMapper.toTrackingResponse(
