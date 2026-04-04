@@ -1,11 +1,8 @@
 package com.drc.aidbridge.modules.user;
 
-
-
-import lombok.Data;
 import lombok.AllArgsConstructor;
-@Data
-@AllArgsConstructor
+import lombok.Builder;
+import lombok.Getter;
 
 /*
     Flow:
@@ -13,6 +10,9 @@ import lombok.AllArgsConstructor;
                      -> sponsor listener
                      -> victim listener
 */
+@Getter
+@Builder
+@AllArgsConstructor
 public class UserRoleCreatedEvent {
     private final String role;
     private final String userId;
