@@ -1,17 +1,29 @@
 package com.drc.aidbridge.modules.user.internal.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Response DTO cho authentication (login, register, refresh).
+ * Khớp với AuthResponse schema trong api.yaml.
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthResponse {
 
+    @JsonProperty("access_token")
     private String accessToken;
+
+    @JsonProperty("refresh_token")
     private String refreshToken;
+
+    @JsonProperty("expires_in")
+    private Integer expiresIn;
+
     private UserResponse user;
 }

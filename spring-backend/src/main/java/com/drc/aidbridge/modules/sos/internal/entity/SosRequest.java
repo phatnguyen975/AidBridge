@@ -10,6 +10,11 @@ import java.time.Instant;
 import java.util.UUID;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "sos_requests")
@@ -18,15 +23,15 @@ import org.hibernate.type.SqlTypes;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SosRequest {
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Column(name = "requester_id")
     private UUID requesterId;
-    @Column(name = "lat", nullable = false)
-    private Double lat;
-    @Column(name = "lng", nullable = false)
-    private Double lng;
+    @Column(name = "location", columnDefinition = "geography(Point,4326)")
+    private Point location;
     @Column(name = "address", length = 500)
     private String address;
     @Column(columnDefinition = "text")
@@ -49,4 +54,23 @@ public class SosRequest {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    public static Point createPoint(Double lat, Double lng) {
+        if (lat == null || lng == null) {
+            throw new IllegalArgumentException("Lat/Lng must not be null");
+        }
+        Point point = GEOMETRY_FACTORY.createPoint(new Coordinate(lng, lat));
+        point.setSRID(4326);
+        return point;
+    }
+
+    @Transient
+    public BigDecimal getLat() {
+        return location != null ? BigDecimal.valueOf(location.getY()) : null;
+    }
+
+    @Transient
+    public BigDecimal getLng() {
+        return location != null ? BigDecimal.valueOf(location.getX()) : null;
+    }
 }

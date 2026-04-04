@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
+import org.locationtech.jts.geom.Point;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
@@ -29,11 +29,10 @@ public class Volunteer {
     @Builder.Default
     private boolean isOnline = false;
 
-    @Column(name = "current_lat", precision = 9, scale = 6)
-    private BigDecimal currentLat;
+    @Column(name = "current_location", columnDefinition = "GEOGRAPHY(POINT,4326)")
+    private Point currentLocation;
+    
 
-    @Column(name = "current_lng", precision = 9, scale = 6)
-    private BigDecimal currentLng;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type")

@@ -1,5 +1,6 @@
 package com.drc.aidbridge.modules.user.internal.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,27 +13,38 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RegisterRequest {
 
-    @NotBlank(message = "Name is required")
-    @Size(min = 2, max = 100, message = "Name must be 2-100 characters")
-    private String name;
+    @NotBlank(message = "Full name is required")
+    @Size(min = 2, max = 100, message = "Full name must be 2-100 characters")
+    @JsonProperty("full_name")
+    private String fullName;
 
-    @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
+    @Size(max = 255, message = "Email must not exceed 255 characters")
     private String email;
 
-    @Pattern(regexp = "^\\d{10,11}$", message = "Phone must be 10-11 digits")
-    private String phone;
+    @JsonProperty("phone_number")
+    @Size(max = 20, message = "Phone number must not exceed 20 characters")
+    private String phoneNumber;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
-    @NotBlank(message = "Role is required")
+    @NotNull(message = "Role is required")
     @Pattern(regexp = "^(VICTIM|VOLUNTEER|SPONSOR)$", message = "Role must be VICTIM, VOLUNTEER, or SPONSOR")
     private String role;
 
+    @JsonProperty("avatar_url")
+    @Size(max = 500, message = "Avatar URL must not exceed 500 characters")
+    private String avatarUrl;
+
+    @JsonProperty("victim_details")
     private VictimDetails victimDetails;
+
+    @JsonProperty("volunteer_details")
     private VolunteerDetails volunteerDetails;
+
+    @JsonProperty("sponsor_details")
     private SponsorDetails sponsorDetails;
 
     @Data
@@ -43,6 +55,7 @@ public class RegisterRequest {
         private Double latitude;
         private Double longitude;
         private String address;
+        @JsonProperty("household_size")
         private Integer householdSize;
     }
 
@@ -51,8 +64,11 @@ public class RegisterRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class VolunteerDetails {
+        @JsonProperty("vehicle_type")
         private String vehicleType;
+        @JsonProperty("id_card_number")
         private String idCardNumber;
+        @JsonProperty("emergency_contact")
         private String emergencyContact;
     }
 
@@ -61,8 +77,11 @@ public class RegisterRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SponsorDetails {
+        @JsonProperty("organization_name")
         private String organizationName;
+        @JsonProperty("tax_id")
         private String taxId;
+        @JsonProperty("contact_person")
         private String contactPerson;
     }
 }
