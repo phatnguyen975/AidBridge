@@ -105,6 +105,7 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("OTP verified successfully", response));
     }
 
+    
     /**
      * POST /auth/password/reset - Reset password với OTP
      */
