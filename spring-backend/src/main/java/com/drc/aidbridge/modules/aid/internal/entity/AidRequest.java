@@ -90,6 +90,28 @@ public class AidRequest {
         if (lat == null || lng == null) {
             return null;
         }
-        return GEOMETRY_FACTORY.createPoint(new Coordinate(lng, lat));
+        Point point = GEOMETRY_FACTORY.createPoint(new Coordinate(lng, lat));
+        point.setSRID(4326);
+        return point;
+    }
+
+    /**
+     * Gets the latitude from the location Point.
+     * 
+     * @return latitude as BigDecimal, or null if location is null
+     */
+    @Transient
+    public java.math.BigDecimal getLat() {
+        return location != null ? java.math.BigDecimal.valueOf(location.getY()) : null;
+    }
+
+    /**
+     * Gets the longitude from the location Point.
+     * 
+     * @return longitude as BigDecimal, or null if location is null
+     */
+    @Transient
+    public java.math.BigDecimal getLng() {
+        return location != null ? java.math.BigDecimal.valueOf(location.getX()) : null;
     }
 }

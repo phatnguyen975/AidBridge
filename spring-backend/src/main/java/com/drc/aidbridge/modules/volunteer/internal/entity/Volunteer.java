@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
@@ -17,6 +20,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Volunteer {
+
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -31,8 +36,6 @@ public class Volunteer {
 
     @Column(name = "current_location", columnDefinition = "GEOGRAPHY(POINT,4326)")
     private Point currentLocation;
-    
-
 
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type")
@@ -57,4 +60,40 @@ public class Volunteer {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    /**
+     * Creates a Point from latitude and longitude coordinates.
+     * 
+     * @param lat latitude
+     * @param lng longitude
+     * @return Point with SRID 4326, or null if inputs are null
+     */
+    public static Point createPoint(BigDecimal lat, BigDecimal lng) {
+        if (lat == null || lng == null) {
+            return null;
+        }
+        Point point = GEOMETRY_FACTORY.createPoint(new Coordinate(lng.doubleValue(), lat.doubleValue()));
+        point.setSRID(4326);
+        return point;
+    }
+
+    /**
+     * Gets the latitude from the currentLocation Point.
+     * 
+     * @return latitude as BigDecimal, or null if currentLocation is null
+     */
+    @Transient
+    public java.math.BigDecimal getLat() {
+        return currentLocation != null ? java.math.BigDecimal.valueOf(currentLocation.getY()) : null;
+    }
+
+    /**
+     * Gets the longitude from the currentLocation Point.
+     * 
+     * @return longitude as BigDecimal, or null if currentLocation is null
+     */
+    @Transient
+    public java.math.BigDecimal getLng() {
+        return currentLocation != null ? java.math.BigDecimal.valueOf(currentLocation.getX()) : null;
+    }
 }

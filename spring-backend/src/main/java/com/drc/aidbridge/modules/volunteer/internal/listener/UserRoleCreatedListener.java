@@ -4,7 +4,8 @@ import com.drc.aidbridge.modules.volunteer.VolunteerFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.UUID;
@@ -15,14 +16,23 @@ public class UserRoleCreatedListener {
     
     private final VolunteerFacade volunteerFacade;
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleUserRoleCreated(UserRoleCreatedEvent event) {
-        log.info("Received UserRoleCreatedEvent for userId: {}, role: {}", event.getUserId(), event.getRole());
+        log.info("[LISTENER] Received UserRoleCreatedEvent for userId: {}, role: {}", event.getUserId(), event.getRole());
         if ("VOLUNTEER".equalsIgnoreCase(event.getRole())) {
             // transform userId to UUID and create volunteer profile
-            UUID userId = UUID.fromString(event.getUserId());
-            volunteerFacade.createVolunteerProfile(userId);
-            log.info("Volunteer profile created for userId: {}", event.getUserId());
+            try {
+                UUID userId = UUID.fromString(event.getUserId());
+                log.info("[LISTENER] Creating volunteer profile for userId: {}", userId);
+                volunteerFacade.createVolunteerProfile(userId);
+                log.info("[LISTENER] ✅ Volunteer profile created for userId: {}", event.getUserId());
+            } catch (Exception e) {
+                log.error("[LISTENER] ❌ Failed to create volunteer profile", e);
+                throw e;
+            }
+        } else {
+            log.info("[LISTENER] Skipping - role is not VOLUNTEER: {}", event.getRole());
         }
     }
 }

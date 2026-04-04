@@ -42,8 +42,6 @@ public class RefreshTokenUseCase {
             throw new AuthenticationException("Account is deactivated");
         }
 
-        jwtService.revokeToken(request.getRefreshToken());
-
         String newAccessToken = jwtService.generateAccessToken(user.getId(), user.getRole().name());
         String newRefreshToken = jwtService.generateRefreshToken(user.getId());
 
