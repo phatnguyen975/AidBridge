@@ -92,4 +92,24 @@ public class AidRequest {
         }
         return GEOMETRY_FACTORY.createPoint(new Coordinate(lng, lat));
     }
+
+    /**
+     * Gets the latitude from the location Point.
+     * 
+     * @return latitude as BigDecimal, or null if location is null
+     */
+    @Transient
+    public java.math.BigDecimal getLat() {
+        return location != null ? java.math.BigDecimal.valueOf(location.getY()) : null;
+    }
+
+    /**
+     * Gets the longitude from the location Point.
+     * 
+     * @return longitude as BigDecimal, or null if location is null
+     */
+    @Transient
+    public java.math.BigDecimal getLng() {
+        return location != null ? java.math.BigDecimal.valueOf(location.getX()) : null;
+    }
 }

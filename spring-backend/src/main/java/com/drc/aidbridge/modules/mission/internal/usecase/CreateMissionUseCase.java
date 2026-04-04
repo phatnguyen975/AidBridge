@@ -46,8 +46,7 @@ public class CreateMissionUseCase {
                 .hubId(request.getHubId())
                 .status(MissionStatus.PENDING)
                 .priorityScore(request.getPriorityScore() != null ? request.getPriorityScore() : BigDecimal.ZERO)
-                .victimLat(request.getVictimLat())
-                .victimLng(request.getVictimLng())
+                .victimLocation(Mission.createPoint(request.getVictimLat(), request.getVictimLng()))
                 .comment(request.getComment())
                 .build();
 
