@@ -28,10 +28,6 @@ public class LogoutUserUseCase {
         String refreshToken = request != null ? normalizeOptional(request.getRefreshToken()) : null;
         UUID userId = resolveUserId(authHeader, refreshToken);
 
-        // OPTIMIZATION: Chỉ blacklist refresh token (TTL dài).
-        // Access token có TTL ngắn (15 phút) nên để tự hết hạn, tránh ghi Redis không
-        // cần thiết.
-
         if (refreshToken != null) {
             jwtService.revokeToken(refreshToken);
             log.info("Refresh token revoked during logout");
