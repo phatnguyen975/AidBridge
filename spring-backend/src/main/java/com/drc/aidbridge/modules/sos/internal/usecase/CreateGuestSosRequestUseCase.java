@@ -26,8 +26,7 @@ public class CreateGuestSosRequestUseCase {
         // Create guest SOS request
         SosRequest sosRequest = SosRequest.builder()
                 .requesterId(null)
-                .lat(createDto.getLat())
-                .lng(createDto.getLng())
+                .location(SosRequest.createPoint(createDto.getLat(), createDto.getLng()))
                 .address(createDto.getAddress())
                 .description(createDto.getDescription())
                 .peopleCount(createDto.getPeopleCount() != null ? createDto.getPeopleCount() : 1)
@@ -44,6 +43,8 @@ public class CreateGuestSosRequestUseCase {
                 savedSos.getLat(),
                 savedSos.getLng()
         ));
+
+        System.out.println("✅ END execute()");
 
         return sosMapper.toResponse(savedSos, null);
     }

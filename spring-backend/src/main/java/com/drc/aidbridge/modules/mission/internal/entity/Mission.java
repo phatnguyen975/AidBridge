@@ -8,6 +8,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -20,6 +24,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Mission {
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -55,11 +60,8 @@ public class Mission {
     @Column(name = "priority_score", precision = 5, scale = 2)
     private BigDecimal priorityScore;
 
-    @Column(name = "victim_lat", precision = 9, scale = 6)
-    private BigDecimal victimLat;
-
-    @Column(name = "victim_lng", precision = 9, scale = 6)
-    private BigDecimal victimLng;
+    @Column(name = "victim_location", columnDefinition = "geography(Point,4326)")
+    private Point victimLocation;
 
     @Column(name = "accepted_at")
     private Instant acceptedAt;
@@ -95,4 +97,25 @@ public class Mission {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    public static Point createPoint(BigDecimal lat, BigDecimal lng) {
+        if (lat == null || lng == null) {
+            return null;
+        }
+        Point point = GEOMETRY_FACTORY.createPoint(new Coordinate(lng.doubleValue(), lat.doubleValue()));
+        point.setSRID(4326);
+        return point;
+    }
+
+    @Transient
+    public BigDecimal getVictimLat() {
+        if (victimLocation == null) return null;
+        return BigDecimal.valueOf(victimLocation.getY());
+    }
+
+    @Transient
+    public BigDecimal getVictimLng() {
+        if (victimLocation == null) return null;
+        return BigDecimal.valueOf(victimLocation.getX());
+    }
 }
