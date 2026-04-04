@@ -83,8 +83,8 @@ public class MissionResponse {
     public static class SosRequestBrief {
         private UUID id;
         private UUID requesterId;
-        private Double lat;
-        private Double lng;
+        private BigDecimal lat;
+        private BigDecimal lng;
         private String address;
         private String description;
         private Integer peopleCount;

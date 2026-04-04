@@ -1,5 +1,4 @@
 package com.drc.aidbridge.modules.volunteer.internal.usecase;
-
 import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.user.UserDTO;
 import com.drc.aidbridge.modules.user.UserFacade;

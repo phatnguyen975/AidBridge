@@ -35,12 +35,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String jwt = extractJwtFromRequest(request);
-
+            log.info("Extracted JWT: {}", jwt); // Debug log
+            // Print stringUtils and securityContext for debugging
+            log.info("StringUtils.hasText(jwt): {}", StringUtils.hasText(jwt));
+            log.info("Current Authentication: {}", SecurityContextHolder.getContext().getAuthentication());
             if (StringUtils.hasText(jwt) && SecurityContextHolder.getContext().getAuthentication() == null) {
                 Claims claims = jwtService.validateAccessToken(jwt);
                 UUID userId = jwtService.extractUserId(claims);
                 String role = jwtService.extractRole(claims);
 
+                log.info("Authenticated user ID: {}, role: {}", userId, role); // Debug log
                 List<SimpleGrantedAuthority> authorities = role == null || role.isBlank()
                         ? List.of()
                         : List.of(new SimpleGrantedAuthority("ROLE_" + role));

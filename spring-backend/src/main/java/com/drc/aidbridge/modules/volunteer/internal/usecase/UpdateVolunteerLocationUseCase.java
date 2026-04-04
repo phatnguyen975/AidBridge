@@ -21,8 +21,8 @@ public class UpdateVolunteerLocationUseCase {
         Volunteer volunteer = volunteerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Volunteer profile not found"));
 
-        volunteer.setCurrentLat(request.getCurrentLat());
-        volunteer.setCurrentLng(request.getCurrentLng());
+        // volunteer.setCurrentLat(request.getCurrentLat());
+        // volunteer.setCurrentLng(request.getCurrentLng());
 
         volunteerRepository.save(volunteer);
     }

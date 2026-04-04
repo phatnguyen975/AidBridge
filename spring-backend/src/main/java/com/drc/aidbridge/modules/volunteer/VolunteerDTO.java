@@ -15,10 +15,18 @@ public class VolunteerDTO {
     private UUID id;
     private UUID userId;
     private boolean isOnline;
-    private BigDecimal currentLat;
-    private BigDecimal currentLng;
+    private LocationDTO currentLocation;
     private String vehicleType;
     private Integer totalTasksCompleted;
     private BigDecimal avgRating;
     private Integer avgResponseSeconds;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LocationDTO {
+        private BigDecimal lat;
+        private BigDecimal lng;
+    }
 }

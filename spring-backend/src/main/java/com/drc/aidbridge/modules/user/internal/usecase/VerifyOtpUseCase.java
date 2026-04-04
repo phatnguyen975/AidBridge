@@ -16,7 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
+import org.springframework.context.ApplicationEventPublisher;
+import com.drc.aidbridge.modules.user.UserRoleCreatedEvent;
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -27,6 +28,8 @@ public class VerifyOtpUseCase {
     private final JwtService jwtService;
     private final NotificationFacade notificationFacade;
     private final UserMapper userMapper;
+    // event publisher 
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public AuthResponse execute(VerifyOtpRequest request) {
@@ -55,6 +58,8 @@ public class VerifyOtpUseCase {
                 userRepository.save(user);
                 notificationFacade.sendWelcomeEmail(user.getEmail(), user.getFullName());
                 log.info("User verified: {}", user.getEmail());
+                // Publish event for role-based actions
+                publishUserRoleCreatedEvent(user);
             }
             case "PASSWORD_RESET" -> {
                 log.info("Password reset OTP verified for: {}", identifier);
@@ -64,8 +69,15 @@ public class VerifyOtpUseCase {
         String accessToken = jwtService.generateAccessToken(user.getId(), user.getRole().name());
         String refreshToken = jwtService.generateRefreshToken(user.getId());
 
+
         return userMapper.buildAuthResponse(user, accessToken, refreshToken);
     }
+
+    private void publishUserRoleCreatedEvent(User user) {
+        UserRoleCreatedEvent event = new UserRoleCreatedEvent(user.getRole().name(), user.getId().toString());
+        publisher.publishEvent(event);
+        log.info("Published UserRoleCreatedEvent for user: {}", user.getEmail());
+    } 
 
     private void validateRequest(VerifyOtpRequest request) {
         if (!StringUtils.hasText(request.getEmail()) && !StringUtils.hasText(request.getPhoneNumber())) {
