@@ -10,10 +10,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO cho verify OTP.
- * Khớp với VerifyOtpRequest schema trong api.yaml.
- */
 @Data
 @Builder
 @NoArgsConstructor

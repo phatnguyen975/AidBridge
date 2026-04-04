@@ -8,10 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
-/**
- * Response DTO cho user profile.
- * Khớp với UserProfile schema trong api.yaml.
- */
 @Data
 @Builder
 @NoArgsConstructor

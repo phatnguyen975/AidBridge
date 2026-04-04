@@ -7,10 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO cho refresh token.
- * Khớp với RefreshTokenRequest schema trong api.yaml.
- */
 @Data
 @Builder
 @NoArgsConstructor

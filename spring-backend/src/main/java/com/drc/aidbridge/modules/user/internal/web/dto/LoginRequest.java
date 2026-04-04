@@ -8,11 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO cho login.
- * Khớp với LoginRequest schema trong api.yaml.
- * Có thể login bằng email HOẶC phone_number.
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -28,7 +23,7 @@ public class LoginRequest {
     @NotBlank(message = "Password is required")
     private String password;
 
-    // Extended fields (không có trong api.yaml nhưng hữu ích cho mobile app)
+    // Extended fields
     @JsonProperty("device_id")
     private String deviceId;
 
