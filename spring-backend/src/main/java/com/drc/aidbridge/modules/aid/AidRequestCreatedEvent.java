@@ -1,16 +1,17 @@
-package com.drc.aidbridge.modules.sos;
+package com.drc.aidbridge.modules.aid;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.UUID;
 import java.math.BigDecimal;
+import java.util.UUID;
+
 @Getter
 @Builder
 @AllArgsConstructor
-public class SosRequestCreatedEvent {
-    private final UUID sosRequestId;
+public class AidRequestCreatedEvent {
+    private final UUID aidRequestId;
     private final BigDecimal lat;
     private final BigDecimal lng;
 }

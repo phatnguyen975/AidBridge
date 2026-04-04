@@ -5,7 +5,7 @@ import com.drc.aidbridge.modules.shared.enums.MissionType;
 import com.drc.aidbridge.modules.shared.enums.SosStatus;
 import com.drc.aidbridge.modules.shared.enums.UrgencyLevel;
 import lombok.*;
-
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -16,8 +16,8 @@ import java.util.UUID;
 public class SosRequestResponse {
     private UUID id;
     private UUID requesterId;
-    private Double lat;
-    private Double lng;
+    private BigDecimal lat;
+    private BigDecimal lng;
     private String address;
     private String description;
     private Integer peopleCount;

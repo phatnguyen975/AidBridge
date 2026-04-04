@@ -10,7 +10,7 @@ import com.drc.aidbridge.modules.mission.internal.mapper.MissionMapper;
 import com.drc.aidbridge.modules.mission.internal.repository.MissionJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import org.locationtech.jts.geom.Point;
 import java.time.Instant;
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -48,8 +48,7 @@ public class MissionFacadeImpl implements MissionFacade {
                 .missionType(MissionType.DELIVERY)
                 .aidRequestId(aidRequestId)
                 .status(MissionStatus.PENDING)
-                .victimLat(lat)
-                .victimLng(lng)
+                .victimLocation(Mission.createPoint(lat, lng))
                 .build();
         return missionMapper.toDTO(missionRepository.save(mission));
     }
@@ -72,13 +71,22 @@ public class MissionFacadeImpl implements MissionFacade {
 
     @Override
     public MissionDTO createRescueMission(UUID sosRequestId, BigDecimal lat, BigDecimal lng) {
+
+        if (lat == null || lng == null) {
+            throw new IllegalArgumentException("Mission location must not be null");
+        }
+
+        Point location = Mission.createPoint(lat, lng);
+
         Mission mission = Mission.builder()
                 .missionType(MissionType.RESCUE)
                 .status(MissionStatus.PENDING)
                 .sosRequestId(sosRequestId)
-                .victimLat(lat)
-                .victimLng(lng)
+                .victimLocation(location)
                 .build();
-        return missionMapper.toDTO(missionRepository.save(mission));
+
+        Mission saved = missionRepository.save(mission);
+
+        return missionMapper.toDTO(saved);
     }
 }
