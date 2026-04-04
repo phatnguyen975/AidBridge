@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
+import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.FragmentForgotOtpBinding;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
@@ -46,7 +47,7 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
                 binding.etOtp5,
                 binding.etOtp6
             ),
-            null,
+            (box, filled) -> viewModel.clearOtpInlineError(),
             otp -> attemptVerifyOtp()
         );
         otpInputController.bind();
@@ -56,42 +57,28 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
 
     @Override
     protected void observeViewModel() {
-        viewModel.getCountdown().observe(getViewLifecycleOwner(), seconds -> {
-            if (seconds != null && seconds > 0) {
-                String text = getString(R.string.otp_resend_countdown_template, seconds);
-                binding.tvResend.setText(text);
-                binding.tvResend.setTextColor(requireContext().getColor(R.color.text_secondary));
-            }
-        });
+        viewModel.getCountdown().observe(getViewLifecycleOwner(),
+            seconds -> renderResendState(viewModel.getResendUiState().getValue(), seconds));
 
-        viewModel.getResendEnabled().observe(getViewLifecycleOwner(), enabled -> {
-            if (Boolean.TRUE.equals(enabled)) {
-                binding.tvResend.setText(R.string.otp_resend_now);
-                binding.tvResend.setTextColor(requireContext().getColor(R.color.text_link));
-            }
-        });
+        viewModel.getResendUiState().observe(getViewLifecycleOwner(),
+            state -> renderResendState(state, viewModel.getCountdown().getValue()));
+
+        viewModel.getOtpInlineErrorResId().observe(getViewLifecycleOwner(), this::renderInlineValidationError);
 
         viewModel.getValidationError().observe(getViewLifecycleOwner(), validation -> {
             if (validation == null || validation.isValid()) {
                 return;
             }
 
-            if (validation.getErrorField() == ValidationResult.Field.OTP) {
-                clearOtpBoxes();
-            } else {
-                showTopSnackbar(binding.getRoot(), validation.getErrorMessage(), true);
-            }
+            showTopSnackbar(binding.getRoot(), validation.getErrorMessage(), true);
         });
 
         viewModel.getVerifyResult().observe(getViewLifecycleOwner(),
                 resultObserver(
-                        ignored -> navigateToNewPassword(),
+                        this::handleVerifySuccess,
                         this::showNetworkError));
 
-        viewModel.getResendResult().observe(getViewLifecycleOwner(),
-            resultObserver(
-                ignored -> showResendSuccess(),
-                this::showNetworkError));
+        viewModel.getResendResult().observe(getViewLifecycleOwner(), this::handleResendResult);
     }
 
     @Override
@@ -108,20 +95,12 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
     private void setupClickListeners() {
         binding.btnBack.setOnClickListener(v -> popBackStackSafely());
         binding.btnVerify.setOnClickListener(v -> attemptVerifyOtp());
-        binding.tvResend.setOnClickListener(v -> {
-            if (Boolean.TRUE.equals(viewModel.getResendEnabled().getValue())) {
-                viewModel.resendOtp();
-            }
-        });
+        binding.tvResend.setOnClickListener(v -> viewModel.resendOtp());
     }
 
     private void attemptVerifyOtp() {
         clearInputFocusAndHideKeyboard();
         String otp = otpInputController.collectOtp();
-        if (otp.length() < 6) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.error_otp_length), true);
-            return;
-        }
         viewModel.verify(otp);
     }
 
@@ -129,17 +108,70 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
         showTopSnackbar(binding.getRoot(), message, true);
     }
 
-    private void showResendSuccess() {
-        showTopSnackbar(binding.getRoot(), getString(R.string.otp_resend_now), false);
+    private void handleVerifySuccess(String verifiedOtp) {
+        navigateToNewPassword(verifiedOtp != null ? verifiedOtp : otpInputController.collectOtp());
     }
 
-    private void clearOtpBoxes() {
-        otpInputController.clear();
+    private void handleResendResult(NetworkResultWrapper<Boolean> result) {
+        if (result == null || result.isLoading() || result.hasBeenHandled()) {
+            return;
+        }
+
+        result.markAsHandled();
+
+        if (result.isSuccess()) {
+            showTopSnackbar(binding.getRoot(), getString(R.string.otp_resend_success), false);
+            otpInputController.clear();
+            viewModel.clearOtpInlineError();
+            return;
+        }
+
+        if (result.isError()) {
+            String message = result.getMessage() != null
+                ? result.getMessage()
+                : getString(R.string.error_generic);
+            showTopSnackbar(binding.getRoot(), message, true);
+        }
     }
 
-    private void navigateToNewPassword() {
+    private void renderInlineValidationError(Integer messageResId) {
+        if (messageResId != null) {
+            showTopSnackbar(binding.getRoot(), getString(messageResId), true);
+        }
+    }
+
+    private void renderResendState(ForgotOtpViewModel.ResendUiState state, Integer seconds) {
+        ForgotOtpViewModel.ResendUiState safeState = state != null
+            ? state
+            : ForgotOtpViewModel.ResendUiState.TIMER_RUNNING;
+
+        if (safeState == ForgotOtpViewModel.ResendUiState.LOADING) {
+            binding.tvResend.setText(R.string.otp_resend_loading);
+            binding.tvResend.setEnabled(false);
+            binding.tvResend.setClickable(false);
+            binding.tvResend.setTextColor(requireContext().getColor(R.color.text_secondary));
+            return;
+        }
+
+        if (safeState == ForgotOtpViewModel.ResendUiState.READY) {
+            binding.tvResend.setText(R.string.otp_resend_ready);
+            binding.tvResend.setEnabled(true);
+            binding.tvResend.setClickable(true);
+            binding.tvResend.setTextColor(requireContext().getColor(R.color.text_link));
+            return;
+        }
+
+        int safeSeconds = (seconds != null && seconds > 0) ? seconds : 0;
+        binding.tvResend.setText(getString(R.string.otp_resend_countdown_template, safeSeconds));
+        binding.tvResend.setEnabled(false);
+        binding.tvResend.setClickable(false);
+        binding.tvResend.setTextColor(requireContext().getColor(R.color.text_secondary));
+    }
+
+    private void navigateToNewPassword(String verifiedOtp) {
         Bundle args = new Bundle();
         args.putString("email", viewModel.getEmail());
+        args.putString("otp", verifiedOtp != null ? verifiedOtp : "");
         navigateSafely(R.id.action_forgotOtpFragment_to_forgotNewPasswordFragment, args);
     }
 }

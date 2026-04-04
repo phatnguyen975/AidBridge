@@ -10,9 +10,17 @@ public class LoginRequest {
     @SerializedName("password")
     private final String password;
 
-    public LoginRequest(String email, String password) {
+    @SerializedName("deviceId")
+    private final String deviceId;
+
+    @SerializedName("fcmToken")
+    private final String fcmToken;
+
+    public LoginRequest(String email, String password, String deviceId, String fcmToken) {
         this.email = email;
         this.password = password;
+        this.deviceId = deviceId;
+        this.fcmToken = fcmToken;
     }
 
     public String getEmail() {
@@ -21,5 +29,13 @@ public class LoginRequest {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
     }
 }

@@ -100,6 +100,35 @@ public class SessionCacheRedisSchema {
         });
     }
 
+    public void updateFcmTokenByDeviceId(String deviceId, String fcmToken) {
+        if (deviceId == null || deviceId.isBlank()) {
+            return;
+        }
+
+        Set<String> keys = redisTemplate.keys(KEY_PREFIX + ":*");
+        if (keys == null || keys.isEmpty()) {
+            return;
+        }
+
+        for (String key : keys) {
+            String json = redisTemplate.opsForValue().get(key);
+            if (json == null || json.isBlank()) {
+                continue;
+            }
+
+            try {
+                UserSession session = objectMapper.readValue(json, UserSession.class);
+                if (deviceId.equals(session.getDeviceId())) {
+                    session.setFcmToken(fcmToken);
+                    saveSession(session);
+                    return;
+                }
+            } catch (JsonProcessingException e) {
+                log.warn("Failed to parse session key {} while updating FCM token", key, e);
+            }
+        }
+    }
+
     public void setUserOnline(Long userId) {
         redisTemplate.opsForZSet().add(
                 ONLINE_KEY,

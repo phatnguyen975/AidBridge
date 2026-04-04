@@ -61,3 +61,8 @@ swagger-ui:
   path: /swagger-ui.html
   operationsSorter: method
   tagsSorter: alpha
+
+logging:
+  level:
+    root: WARN
+    com.drc.aidbridge: INFO

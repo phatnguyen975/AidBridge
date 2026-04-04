@@ -54,19 +54,49 @@ public class TokenManager {
     }
 
     /** Caches user metadata locally after login for quick access throughout the app. */
-    public void saveUserInfo(String userId, String userName, String email, String role, boolean verified) {
+    public void saveUserInfo(String userId,
+                             String userName,
+                             String email,
+                             String phone,
+                             String role,
+                             String avatarUrl,
+                             boolean verified) {
         prefs.edit()
                 .putString(Constants.KEY_USER_ID, userId)
                 .putString(Constants.KEY_USER_NAME, userName)
                 .putString(Constants.KEY_USER_EMAIL, email)
+                .putString(Constants.KEY_USER_PHONE, phone)
                 .putString(Constants.KEY_USER_ROLE, role)
+                .putString(Constants.KEY_USER_AVATAR, avatarUrl)
                 .putBoolean(Constants.KEY_USER_VERIFIED, verified)
                 .apply();
+    }
+
+    /** Stores the latest FCM token from Firebase. */
+    public void saveFcmToken(@Nullable String fcmToken) {
+        SharedPreferences.Editor editor = prefs.edit();
+        if (fcmToken == null || fcmToken.isBlank()) {
+            editor.remove(Constants.KEY_FCM_TOKEN);
+        } else {
+            editor.putString(Constants.KEY_FCM_TOKEN, fcmToken);
+        }
+        editor.apply();
+    }
+
+    /** Returns locally cached FCM token if available. */
+    @Nullable
+    public String getFcmToken() {
+        return prefs.getString(Constants.KEY_FCM_TOKEN, null);
     }
 
     /** Returns the cached user role string (matches UserRole enum name). */
     public String getUserRole() {
         return prefs.getString(Constants.KEY_USER_ROLE, null);
+    }
+
+    /** Returns the cached user id. */
+    public String getUserId() {
+        return prefs.getString(Constants.KEY_USER_ID, null);
     }
 
     /** Returns the cached user name. */
@@ -79,14 +109,64 @@ public class TokenManager {
         return prefs.getString(Constants.KEY_USER_EMAIL, null);
     }
 
+    /** Returns the cached user phone number. */
+    public String getUserPhone() {
+        return prefs.getString(Constants.KEY_USER_PHONE, null);
+    }
+
+    /** Returns the cached avatar URL. */
+    public String getUserAvatar() {
+        return prefs.getString(Constants.KEY_USER_AVATAR, null);
+    }
+
+    /** Returns the cached address. */
+    public String getUserAddress() {
+        return prefs.getString(Constants.KEY_USER_ADDRESS, null);
+    }
+
+    /** Updates editable user fields after successful profile API calls. */
+    public void updateUserInfo(String userName,
+                               String phone,
+                               String email,
+                               String avatarUrl,
+                               String address) {
+        SharedPreferences.Editor editor = prefs.edit();
+
+        if (userName != null) {
+            editor.putString(Constants.KEY_USER_NAME, userName);
+        }
+
+        if (phone != null) {
+            editor.putString(Constants.KEY_USER_PHONE, phone);
+        }
+
+        if (email != null) {
+            editor.putString(Constants.KEY_USER_EMAIL, email);
+        }
+
+        if (avatarUrl != null) {
+            if (avatarUrl.isBlank()) {
+                editor.remove(Constants.KEY_USER_AVATAR);
+            } else {
+                editor.putString(Constants.KEY_USER_AVATAR, avatarUrl);
+            }
+        }
+
+        if (address != null) {
+            editor.putString(Constants.KEY_USER_ADDRESS, address);
+        }
+
+        editor.apply();
+    }
+
     /** Returns the cached verified state of the current user. */
     public boolean isUserVerified() {
         return prefs.getBoolean(Constants.KEY_USER_VERIFIED, false);
     }
 
-    /** Marks the current user as verified */
-    public void markUserAsVerified() {
-        prefs.edit().putBoolean(Constants.KEY_USER_VERIFIED, true).apply();
+    /** Updates verified state for current cached user. */
+    public void markUserAsVerified(boolean verified) {
+        prefs.edit().putBoolean(Constants.KEY_USER_VERIFIED, verified).apply();
     }
 
     /** Clears ALL stored tokens. */

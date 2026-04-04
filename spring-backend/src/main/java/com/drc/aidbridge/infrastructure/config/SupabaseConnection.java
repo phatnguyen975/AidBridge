@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 @Slf4j
@@ -36,7 +35,6 @@ public class SupabaseConnection {
     public void testConnection() {
         try (Connection connection = dataSource.getConnection()) {
             if (connection.isValid(5)) {
-                DatabaseMetaData metaData = connection.getMetaData();
                 connected = true;
                 log.info("  SUPABASE CONNECTION SUCCESSFUL!");
             }

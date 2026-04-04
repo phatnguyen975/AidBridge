@@ -25,10 +25,14 @@ public class ResetPasswordUseCase {
         this.inputValidator = inputValidator;
     }
 
-    public ValidationResult validate(String email, String newPassword, String confirmPassword) {
+    public ValidationResult validate(String email, String otp, String newPassword, String confirmPassword) {
         ValidationResult emailValidation = inputValidator.requireValidEmail(email);
         if (!emailValidation.isValid()) {
             return emailValidation;
+        }
+        ValidationResult otpValidation = inputValidator.requireOtp(otp);
+        if (!otpValidation.isValid()) {
+            return otpValidation;
         }
         ValidationResult passwordValidation = inputValidator.requirePassword(newPassword);
         if (!passwordValidation.isValid()) {
@@ -37,8 +41,12 @@ public class ResetPasswordUseCase {
         return inputValidator.requirePasswordMatch(newPassword, confirmPassword);
     }
 
-    public LiveData<NetworkResultWrapper<String>> execute(String email, String newPassword) {
+    public LiveData<NetworkResultWrapper<String>> execute(String email, String otp, String newPassword) {
         return authRepository.resetPassword(
-                new ResetPasswordRequest(inputValidator.normalizeEmail(email), newPassword));
+                new ResetPasswordRequest(
+                    inputValidator.normalizeEmail(email),
+                    inputValidator.normalizeText(otp),
+                    newPassword
+                ));
     }
 }

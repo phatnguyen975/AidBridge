@@ -3,15 +3,40 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_admin"
-    app:startDestination="@id/adminDashboardFragment">
+    app:startDestination="@id/nav_admin_dashboard">
 
     <fragment
-        android:id="@+id/adminDashboardFragment"
+        android:id="@+id/nav_admin_dashboard"
         android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminDashboardFragment"
-        android:label="AdminDashboardFragment" />
+        android:label="@string/admin_nav_dashboard" />
 
     <fragment
-        android:id="@+id/mapFragment"
-        android:name="com.drc.aidbridge.ui.map.fragment.AdminMapFragment"
-        android:label="MapFragment" />
+        android:id="@+id/nav_admin_ai"
+        android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminAiSummaryFragment"
+        android:label="@string/admin_nav_ai" />
+
+    <fragment
+        android:id="@+id/nav_admin_profile"
+        android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminProfileFragment"
+        android:label="@string/admin_nav_profile" />
+
+    <fragment
+        android:id="@+id/adminHubManagementFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminHubManagementFragment"
+        android:label="@string/admin_hub_mgmt_title" />
+
+    <fragment
+        android:id="@+id/adminHubDetailFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminHubDetailFragment"
+        android:label="@string/admin_hub_detail_hub_name" />
+
+    <fragment
+        android:id="@+id/adminAddSupplyTypeFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminAddSupplyTypeFragment"
+        android:label="@string/admin_add_supply_type_title" />
+
+    <fragment
+        android:id="@+id/adminAiChatbotFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminAiChatbotFragment"
+        android:label="@string/admin_ai_chatbot_title" />
 </navigation>

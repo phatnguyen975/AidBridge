@@ -29,6 +29,7 @@ public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPas
     @Override
     protected void setupViews() {
         viewModel = new ViewModelProvider(this).get(ForgotNewPasswordViewModel.class);
+        validateRequiredArguments();
         setupClickListeners();
     }
 
@@ -101,5 +102,14 @@ public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPas
     private void showSuccessAndReturnToLogin() {
         showTopSnackbar(binding.getRoot(), getString(R.string.forgot_success_message), false);
         navigateSafely(R.id.action_forgotNewPasswordFragment_to_loginFragment);
+    }
+
+    private void validateRequiredArguments() {
+        String email = viewModel.getEmail();
+        String otp = viewModel.getOtp();
+        if (email.trim().isEmpty() || otp.trim().isEmpty()) {
+            showTopSnackbar(binding.getRoot(), getString(R.string.forgot_invalid_context), true);
+            popBackStackSafely();
+        }
     }
 }

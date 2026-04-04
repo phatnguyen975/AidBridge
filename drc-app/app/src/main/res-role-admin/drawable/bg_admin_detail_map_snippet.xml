@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/admin_detail_map_bg" />
+    <corners android:radius="@dimen/admin_hub_detail_card_radius" />
+    <stroke
+        android:width="@dimen/admin_hub_detail_card_stroke"
+        android:color="@color/admin_detail_card_stroke" />
+</shape>

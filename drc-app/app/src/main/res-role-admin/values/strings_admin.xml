@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="admin_nav_dashboard">Dashboard</string>
+    <string name="admin_nav_ai">AI</string>
+    <string name="admin_nav_profile">Cá nhân</string>
+
+    <string name="admin_dashboard_screen_title">ADMIN DASHBOARD SCREEN</string>
+    <string name="admin_dashboard_title">Bảng quản trị</string>
+    <string name="admin_logo_content_description">Logo ứng dụng AidBridge</string>
+
+    <string name="admin_action_open_relief_map">Xem bản đồ cứu trợ</string>
+    <string name="admin_action_manage_hubs">Quản lý trạm</string>
+
+    <string name="admin_stat_total_hubs">TỔNG SỐ TRẠM</string>
+    <string name="admin_stat_total_hubs_value">12</string>
+    <string name="admin_stat_volunteers">TÌNH NGUYỆN VIÊN</string>
+    <string name="admin_stat_volunteers_value">1.2K</string>
+    <string name="admin_stat_today_missions">NHIỆM VỤ HÔM NAY</string>
+    <string name="admin_stat_today_missions_value">156</string>
+    <string name="admin_stat_distributed_items">VẬT PHẨM PHÂN PHỐI</string>
+    <string name="admin_stat_distributed_items_value">45K unit</string>
+
+    <string name="admin_chart_title">Số lượng hàng theo loại</string>
+    <string name="admin_chart_label_medical">Y TẾ</string>
+    <string name="admin_chart_label_food">THỰC PHẨM</string>
+    <string name="admin_chart_label_water">NƯỚC</string>
+    <string name="admin_chart_label_clothes">QUẦN ÁO</string>
+
+    <string name="admin_dashboard_open_map_todo">Màn hình bản đồ cứu trợ đang được hoàn thiện</string>
+    <string name="admin_dashboard_manage_hubs_todo">Màn hình quản lý trạm đang được hoàn thiện</string>
+
+    <string name="admin_hub_mgmt_title">Quản lý trạm trung chuyển</string>
+    <string name="admin_hub_mgmt_back">Quay lại Dashboard</string>
+    <string name="admin_hub_mgmt_search_hint">Tìm kiếm theo tên trạm hoặc địa điểm...</string>
+    <string name="admin_hub_mgmt_summary_total_hubs">TỔNG SỐ TRẠM</string>
+    <string name="admin_hub_mgmt_summary_total_hubs_value">12</string>
+    <string name="admin_hub_mgmt_summary_active_hubs">ĐANG HOẠT ĐỘNG</string>
+    <string name="admin_hub_mgmt_summary_active_hubs_value">9</string>
+    <string name="admin_hub_mgmt_hub_icon_desc">Biểu tượng trạm trung chuyển</string>
+    <string name="admin_hub_mgmt_status_active">ACTIVE</string>
+    <string name="admin_hub_mgmt_status_suspended">SUSPENDED</string>
+    <string name="admin_hub_mgmt_inventory_format">Tồn kho: %1$s</string>
+    <string name="admin_hub_mgmt_btn_edit">Chỉnh sửa</string>
+    <string name="admin_hub_mgmt_btn_details">Xem chi tiết</string>
+    <string name="admin_hub_mgmt_btn_deactivate">Vô hiệu hóa</string>
+    <string name="admin_hub_mgmt_btn_activate">Kích hoạt lại</string>
+    <string name="admin_hub_mgmt_fab_desc">Thêm trạm mới</string>
+
+    <string name="admin_hub_mgmt_toast_open_edit">Mở chỉnh sửa cho %1$s</string>
+    <string name="admin_hub_mgmt_toast_open_details">Chuyển sang màn hình chi tiết trạm: %1$s</string>
+    <string name="admin_hub_mgmt_toast_add_new">Mở form thêm mới trạm trung chuyển</string>
+    <string name="admin_hub_mgmt_toast_status_changed">Đã cập nhật trạng thái %1$s: %2$s</string>
+
+    <string name="admin_hub_mock_name_q1">Hub Q1</string>
+    <string name="admin_hub_mock_name_q7">Hub Q7</string>
+    <string name="admin_hub_mock_name_thu_duc">Hub Thủ Đức</string>
+    <string name="admin_hub_mock_name_binh_thanh">Hub Bình Thạnh</string>
+
+    <string name="admin_hub_mock_address_q1">12 Nguyễn Huệ, Quận 1</string>
+    <string name="admin_hub_mock_address_q7">220 Nguyễn Thị Thập, Quận 7</string>
+    <string name="admin_hub_mock_address_thu_duc">09 Võ Văn Ngân, TP Thủ Đức</string>
+    <string name="admin_hub_mock_address_binh_thanh">88 Điện Biên Phủ, Bình Thạnh</string>
+
+    <string name="admin_hub_mock_inventory_q1">18.200 đơn vị</string>
+    <string name="admin_hub_mock_inventory_q7">9.700 đơn vị</string>
+    <string name="admin_hub_mock_inventory_thu_duc">6.150 đơn vị</string>
+    <string name="admin_hub_mock_inventory_binh_thanh">12.600 đơn vị</string>
+
+    <string name="admin_hub_detail_back">Quay lại Quản lý trạm</string>
+    <string name="admin_hub_detail_hub_name">Hub Quận 1</string>
+    <string name="admin_hub_detail_status_active">HOẠT ĐỘNG</string>
+    <string name="admin_hub_detail_address">Địa chỉ: 12 Nguyễn Huệ, Quận 1, TP.HCM</string>
+    <string name="admin_hub_detail_manager">Quản lý: Nguyễn Văn Điều phối</string>
+    <string name="admin_hub_detail_map_desc">Bản đồ vị trí trạm trung chuyển</string>
+    <string name="admin_hub_detail_button_add_inventory">Thêm / Cập nhật loại vật tư</string>
+    <string name="admin_hub_detail_inventory_toast">Mở chức năng thêm vật tư cho trạm</string>
+    <string name="admin_hub_detail_section_reserve">Mức dự trữ</string>
+    <string name="admin_hub_detail_threshold_format">Tối thiểu: %1$s units</string>
+    <string name="admin_hub_detail_badge_ok">ĐỦ</string>
+    <string name="admin_hub_detail_badge_low">CẦN BỔ SUNG</string>
+    <string name="admin_hub_detail_stat_total_import">TỔNG NHẬP KHO</string>
+    <string name="admin_hub_detail_stat_total_import_value">1.240 đơn vị</string>
+    <string name="admin_hub_detail_stat_relief_runs">LƯỢT CỨU TRỢ</string>
+    <string name="admin_hub_detail_stat_relief_runs_value">386 lượt</string>
+
+    <string name="admin_hub_category_medicine">Thuốc</string>
+    <string name="admin_hub_category_clothes">Quần áo</string>
+    <string name="admin_hub_category_food">Thức ăn</string>
+    <string name="admin_hub_category_water">Nước uống</string>
+    <string name="admin_hub_category_other">Khác</string>
+
+    <string name="admin_hub_item_medicine_fever">Cảm/sốt</string>
+    <string name="admin_hub_item_medicine_digestive">Tiêu hóa</string>
+    <string name="admin_hub_item_medicine_bandage">Băng gạc</string>
+    <string name="admin_hub_item_clothes_set">Bộ</string>
+    <string name="admin_hub_item_clothes_blanket">Chăn màn</string>
+    <string name="admin_hub_item_clothes_raincoat">Áo mưa</string>
+    <string name="admin_hub_item_food_rice">Gạo</string>
+    <string name="admin_hub_item_food_noodle">Mì tôm</string>
+    <string name="admin_hub_item_food_canned">Đồ hộp</string>
+    <string name="admin_hub_item_water_bottle">Nước đóng chai</string>
+    <string name="admin_hub_item_water_milk">Sữa</string>
+    <string name="admin_hub_item_water_electrolyte">Nước điện giải</string>
+    <string name="admin_hub_item_other_diaper">Tã</string>
+
+    <string name="admin_hub_unit_strip">vỉ</string>
+    <string name="admin_hub_unit_piece">cái</string>
+    <string name="admin_hub_unit_set">bộ</string>
+    <string name="admin_hub_unit_kg">kg</string>
+    <string name="admin_hub_unit_box">hộp</string>
+    <string name="admin_hub_unit_carton">thùng</string>
+    <string name="admin_hub_item_quantity_format">%1$d %2$s</string>
+
+    <string name="admin_add_supply_type_title">Thêm vật tư</string>
+    <string name="admin_add_supply_type_back">Quay lại Chi tiết trạm</string>
+    <string name="admin_add_supply_type_category_label">Chọn loại vật tư</string>
+    <string name="admin_add_supply_type_unit_label">Đơn vị</string>
+    <string name="admin_add_supply_type_min_level_label">Mức tối thiểu</string>
+    <string name="admin_add_supply_type_note_label">Ghi chú</string>
+    <string name="admin_add_supply_type_min_level_hint">Nhập số lượng định mức</string>
+    <string name="admin_add_supply_type_note_hint">Mô tả định mức cho loại vật tư này</string>
+    <string name="admin_add_supply_type_save_button">Lưu vật tư</string>
+    <string name="admin_add_supply_type_toast_updated">Cập nhật thành công Mức tối thiểu và Ghi chú cho loại %1$s</string>
+    <string name="admin_add_supply_type_toast_added">Đã thêm loại vật tư %1$s vào kho của trạm</string>
+    <string name="admin_add_supply_type_toast_invalid_min">Vui lòng nhập Mức tối thiểu hợp lệ</string>
+
+    <string-array name="admin_add_supply_type_categories">
+        <item>@string/admin_hub_category_medicine</item>
+        <item>@string/admin_hub_category_clothes</item>
+        <item>@string/admin_hub_category_food</item>
+        <item>@string/admin_hub_category_water</item>
+        <item>@string/admin_hub_category_other</item>
+    </string-array>
+
+    <string-array name="admin_add_supply_type_units">
+        <item>@string/admin_hub_unit_strip</item>
+        <item>@string/admin_hub_unit_set</item>
+        <item>@string/admin_hub_unit_carton</item>
+        <item>@string/admin_hub_unit_carton</item>
+        <item>@string/admin_hub_unit_piece</item>
+    </string-array>
+
+    <string-array name="admin_add_supply_type_existing_mock">
+        <item>@string/admin_hub_category_medicine</item>
+        <item>@string/admin_hub_category_water</item>
+    </string-array>
+
+    <string name="admin_ai_screen_title">ADMIN AI SUMMARY SCREEN</string>
+    <string name="admin_ai_summary_title">Tóm tắt AI</string>
+    <string name="admin_ai_summary_updated_at">Cập nhật lúc 08:30, Hôm nay</string>
+    <string name="admin_ai_summary_report_icon_desc">Biểu tượng báo cáo AI</string>
+    <string name="admin_ai_summary_report_title">Báo cáo cứu trợ hôm nay</string>
+    <string name="admin_ai_summary_goods_value">1.240 kiện hàng</string>
+    <string name="admin_ai_summary_goods_growth">+12%%</string>
+    <string name="admin_ai_summary_people_value">320 người được hỗ trợ</string>
+    <string name="admin_ai_summary_warning_icon_desc">Cảnh báo kho vật tư</string>
+    <string name="admin_ai_summary_alert_water">Hub Quận 7 thiếu nước uống</string>
+    <string name="admin_ai_summary_alert_overload">Hub Thủ Đức đang quá tải tiếp nhận</string>
+    <string name="admin_ai_summary_create_report">Tạo báo cáo</string>
+    <string name="admin_ai_summary_recent_title">HOẠT ĐỘNG GẦN ĐÂY</string>
+    <string name="admin_ai_summary_view_all">Xem tất cả</string>
+    <string name="admin_ai_summary_activity_one_content">Đã điều phối 40 thùng nước về Hub Quận 7</string>
+    <string name="admin_ai_summary_activity_one_time">10p trước</string>
+    <string name="admin_ai_summary_activity_two_content">Đã tạo cảnh báo ưu tiên cho Hub Thủ Đức</string>
+    <string name="admin_ai_summary_activity_two_time">23p trước</string>
+    <string name="admin_ai_summary_activity_three_content">Đã cập nhật mức dự trữ thuốc tại Hub Quận 1</string>
+    <string name="admin_ai_summary_activity_three_time">45p trước</string>
+    <string name="admin_ai_summary_fab_robot_desc">Mở AI Chatbot</string>
+    <string name="admin_ai_summary_toast_generate_report">Đang tạo báo cáo cứu trợ...</string>
+    <string name="admin_ai_summary_toast_open_all_activities">Mở danh sách toàn bộ hoạt động</string>
+    <string name="admin_ai_summary_toast_open_chatbot_failed">Chưa thể mở AI Chatbot lúc này</string>
+    <string name="admin_ai_chatbot_title">AI Chatbot</string>
+    <string name="admin_ai_chatbot_back">Quay lại Tóm tắt AI</string>
+    <string name="admin_ai_chatbot_header_title">DRC Admin AI</string>
+    <string name="admin_ai_chatbot_header_subtitle">Hệ thống trực tuyến</string>
+    <string name="admin_ai_chatbot_ai_avatar_desc">Biểu tượng trợ lý AI</string>
+    <string name="admin_ai_chatbot_chip_inventory">Báo cáo tồn kho tuần này</string>
+    <string name="admin_ai_chatbot_chip_maintenance">Danh sách trạm bảo trì</string>
+    <string name="admin_ai_chatbot_input_hint">Hỏi về hệ thống...</string>
+    <string name="admin_ai_chatbot_attach">Đính kèm tệp</string>
+    <string name="admin_ai_chatbot_voice">Ghi âm</string>
+    <string name="admin_ai_chatbot_send">Gửi tin nhắn</string>
+    <string name="admin_ai_chatbot_action_dispatch">Điều phối ngay</string>
+    <string name="admin_ai_chatbot_action_view_detail">Xem chi tiết</string>
+    <string name="admin_ai_chatbot_toast_attach_todo">Chức năng đính kèm tệp đang phát triển</string>
+    <string name="admin_ai_chatbot_toast_voice_todo">Chức năng ghi âm đang phát triển</string>
+    <string name="admin_ai_chatbot_toast_send">Gửi tin nhắn...</string>
+    <string name="admin_ai_chatbot_toast_empty_message">Vui lòng nhập nội dung câu hỏi</string>
+    <string name="admin_ai_chatbot_toast_dispatch_todo">Điều phối nhiệm vụ từ AI đang phát triển</string>
+    <string name="admin_ai_chatbot_toast_detail_todo">Mở chi tiết đề xuất AI đang phát triển</string>
+    <string name="admin_ai_chatbot_mock_ai_welcome">Chào Admin, hệ thống đã đồng bộ dữ liệu trạm mới nhất. Tôi có thể hỗ trợ điều phối ngay.</string>
+    <string name="admin_ai_chatbot_mock_admin_question">Kiểm tra giúp tôi khu vực đang thiếu nước và gợi ý điều phối.</string>
+    <string name="admin_ai_chatbot_mock_ai_suggestion">Hub Quận 7 đang thiếu 40 thùng nước. Đề xuất điều phối từ Hub Quận 1 trong 30 phút.</string>
+    <string name="admin_ai_chatbot_mock_ai_auto_reply">Tôi đã ghi nhận câu hỏi. Đang phân tích dữ liệu thời gian thực để phản hồi chi tiết cho Admin.</string>
+    <string name="admin_profile_screen_title">ADMIN PROFILE SCREEN</string>
+    <string name="admin_profile_title">Cá nhân</string>
+    <string name="admin_profile_personal_info_title">Thông tin cá nhân</string>
+    <string name="admin_profile_email_label">Email</string>
+    <string name="admin_profile_phone_label">Số điện thoại</string>
+    <string name="admin_profile_email_mock">admin@drc.gov.vn</string>
+    <string name="admin_profile_phone_mock">090xxxxxxx</string>
+    <string name="admin_profile_email_icon_desc">Biểu tượng email quản trị</string>
+    <string name="admin_profile_phone_icon_desc">Biểu tượng điện thoại quản trị</string>
+    <string name="admin_profile_management_info_title">Thông tin quản trị</string>
+    <string name="admin_profile_change_info">Thay đổi thông tin</string>
+    <string name="admin_profile_manage_roles">Quản lý &amp; Phân quyền</string>
+    <string name="admin_profile_system_settings">Cài đặt hệ thống</string>
+    <string name="admin_profile_navigate_detail">Mở chi tiết cấu hình</string>
+    <string name="admin_profile_logout">ĐĂNG XUẤT</string>
+    <string name="admin_profile_logout_icon_desc">Biểu tượng đăng xuất</string>
+    <string name="admin_profile_toast_change_info">Mở chức năng Thay đổi thông tin</string>
+    <string name="admin_profile_toast_manage_roles">Mở chức năng Quản lý &amp; Phân quyền</string>
+    <string name="admin_profile_toast_system_settings">Mở chức năng Cài đặt hệ thống</string>
+    <string name="admin_profile_toast_logout_progress">Đang thực hiện đăng xuất...</string>
+</resources>
