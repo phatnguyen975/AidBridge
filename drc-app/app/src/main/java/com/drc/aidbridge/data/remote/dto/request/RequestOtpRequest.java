@@ -2,20 +2,20 @@ package com.drc.aidbridge.data.remote.dto.request;
 
 import com.google.gson.annotations.SerializedName;
 
-public class OtpVerifyRequest {
+public class RequestOtpRequest {
 
     @SerializedName("email")
     private final String email;
 
-    @SerializedName("otp_code")
-    private final String otpCode;
+    @SerializedName("phone_number")
+    private final String phoneNumber;
 
     @SerializedName("otp_type")
     private final String otpType;
 
-    public OtpVerifyRequest(String email, String otpCode, String otpType) {
+    public RequestOtpRequest(String email, String phoneNumber, String otpType) {
         this.email = email;
-        this.otpCode = otpCode;
+        this.phoneNumber = phoneNumber;
         this.otpType = otpType;
     }
 
@@ -23,8 +23,8 @@ public class OtpVerifyRequest {
         return email;
     }
 
-    public String getOtpCode() {
-        return otpCode;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
     public String getOtpType() {

@@ -8,13 +8,13 @@ public class UserDto {
     @SerializedName("id")
     private String id;
 
-    @SerializedName("name")
+    @SerializedName("full_name")
     private String name;
 
     @SerializedName("email")
     private String email;
 
-    @SerializedName("phone")
+    @SerializedName("phone_number")
     private String phone;
 
     @Nullable
@@ -25,23 +25,23 @@ public class UserDto {
     private String role;
 
     @Nullable
-    @SerializedName("avatarUrl")
+    @SerializedName("avatar_url")
     private String avatarUrl;
 
-    @SerializedName("verified")
+    @SerializedName("is_verified")
     private boolean verified;
 
     public UserDto() {
     }
 
     public UserDto(String id,
-                   String name,
-                   String email,
-                   String phone,
-                   @Nullable String address,
-                   String role,
-                   @Nullable String avatarUrl,
-                   boolean verified) {
+            String name,
+            String email,
+            String phone,
+            @Nullable String address,
+            String role,
+            @Nullable String avatarUrl,
+            boolean verified) {
         this.id = id;
         this.name = name;
         this.email = email;

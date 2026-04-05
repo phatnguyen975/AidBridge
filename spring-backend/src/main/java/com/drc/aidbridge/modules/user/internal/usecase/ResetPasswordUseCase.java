@@ -38,6 +38,10 @@ public class ResetPasswordUseCase {
                 ? request.getEmail()
                 : request.getPhoneNumber();
 
+        if (!otpRedisSchema.isOtpVerified(OtpRedisSchema.OtpPurpose.PASSWORD_RESET, identifier)) {
+            throw new BadRequestException("Please verify OTP before resetting password");
+        }
+
         boolean valid = otpRedisSchema.verifyOtp(
                 OtpRedisSchema.OtpPurpose.PASSWORD_RESET,
                 identifier,
@@ -55,6 +59,7 @@ public class ResetPasswordUseCase {
         // Revoke all tokens as security measure
         jwtService.revokeAllUserTokens(user.getId());
         sessionCacheRedisSchema.deleteSession(user.getId().getLeastSignificantBits());
+        otpRedisSchema.clearOtpVerified(OtpRedisSchema.OtpPurpose.PASSWORD_RESET, identifier);
 
         log.info("Password reset for: {}", identifier);
     }

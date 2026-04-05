@@ -4,11 +4,14 @@ import com.google.gson.annotations.SerializedName;
 
 public class AuthResponse {
 
-    @SerializedName("accessToken")
+    @SerializedName("access_token")
     private String accessToken;
 
-    @SerializedName("refreshToken")
+    @SerializedName("refresh_token")
     private String refreshToken;
+
+    @SerializedName("expires_in")
+    private Integer expiresIn;
 
     @SerializedName("user")
     private UserDto user;
@@ -22,6 +25,10 @@ public class AuthResponse {
 
     public String getRefreshToken() {
         return refreshToken;
+    }
+
+    public Integer getExpiresIn() {
+        return expiresIn;
     }
 
     public UserDto getUser() {
