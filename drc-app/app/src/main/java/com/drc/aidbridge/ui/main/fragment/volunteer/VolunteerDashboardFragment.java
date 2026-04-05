@@ -10,9 +10,12 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
+import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.FragmentVolunteerDashboardBinding;
+import com.drc.aidbridge.domain.model.volunteer.VolunteerDashboardInfo;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.MainActivity;
+import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerDashboardViewModel;
 import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -22,8 +25,10 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDashboardBinding> {
 
     private VolunteerTaskViewModel volunteerTaskViewModel;
+    private VolunteerDashboardViewModel volunteerDashboardViewModel;
     private boolean isMissionAccepted;
     private boolean isMissionIgnored;
+    private boolean isApplyingProfileState;
 
     @Override
     protected FragmentVolunteerDashboardBinding inflateBinding(LayoutInflater inflater, @Nullable ViewGroup container) {
@@ -33,12 +38,14 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
     @Override
     protected void setupViews() {
         volunteerTaskViewModel = new ViewModelProvider(requireActivity()).get(VolunteerTaskViewModel.class);
+        volunteerDashboardViewModel = new ViewModelProvider(this).get(VolunteerDashboardViewModel.class);
 
         // Online Status (Online by default - Test UI)
         updateStatusUI(true);
         binding.switchOnlineStatus.setChecked(true);
 
         setupClickListeners();
+        volunteerDashboardViewModel.loadProfileDashboard();
     }
 
     @Override
@@ -63,6 +70,12 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
             return;
         }
 
+        if (volunteerDashboardViewModel != null) {
+            volunteerDashboardViewModel.getVolunteerDashboardInfoResult().observe(
+                    getViewLifecycleOwner(),
+                    resultObserver(this::renderDashboardProfile, this::showNetworkError));
+        }
+
         volunteerTaskViewModel.getIsMissionAccepted().observe(getViewLifecycleOwner(), isAccepted -> {
             isMissionAccepted = Boolean.TRUE.equals(isAccepted);
             renderMissionCardsState();
@@ -72,6 +85,35 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
             isMissionIgnored = Boolean.TRUE.equals(isIgnored);
             renderMissionCardsState();
         });
+    }
+
+    private void renderDashboardProfile(@Nullable VolunteerDashboardInfo profileInfo) {
+        if (profileInfo == null) {
+            return;
+        }
+
+        // ---------- Debug ----------
+        System.out.println("profileInfo: " + profileInfo.getFullName() + " - " + profileInfo.isOnline() + " - "
+                + profileInfo.getTotalCompletedTasks());
+        // ---------------------------
+
+        String fullName = profileInfo.getFullName();
+        if (fullName == null || fullName.trim().isEmpty()) {
+            binding.tvUserName.setText(getString(R.string.volunteer_dashboard_user_name_placeholder));
+        } else {
+            binding.tvUserName.setText(fullName.trim());
+        }
+
+        binding.tvCompletedCount.setText(String.valueOf(profileInfo.getTotalCompletedTasks()));
+
+        isApplyingProfileState = true;
+        binding.switchOnlineStatus.setChecked(profileInfo.isOnline());
+        updateStatusUI(profileInfo.isOnline());
+        isApplyingProfileState = false;
+    }
+
+    private void showNetworkError(String message) {
+        showTopSnackbar(binding.getRoot(), message, true);
     }
 
     private void renderMissionCardsState() {
@@ -84,6 +126,10 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
         String mockNotiType = "SUPPLY";
 
         binding.switchOnlineStatus.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isApplyingProfileState) {
+                return;
+            }
+
             updateStatusUI(isChecked);
             showToast(getString(isChecked
                     ? com.drc.aidbridge.R.string.volunteer_dashboard_toast_mode_ready
@@ -110,7 +156,7 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
         });
 
         binding.layoutAccountSecurity.setOnClickListener(
-            v -> navigateSafely(R.id.action_dashboard_to_personal_info));
+                v -> navigateSafely(R.id.action_dashboard_to_personal_info));
 
         binding.layoutLogout.setOnClickListener(v -> requestLogout());
     }
