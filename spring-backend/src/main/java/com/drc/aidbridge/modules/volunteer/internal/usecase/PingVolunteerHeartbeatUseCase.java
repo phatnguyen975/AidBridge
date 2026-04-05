@@ -6,37 +6,45 @@ import com.drc.aidbridge.modules.user.UserFacade;
 import com.drc.aidbridge.modules.volunteer.internal.entity.Volunteer;
 import com.drc.aidbridge.modules.volunteer.internal.mapper.VolunteerMapper;
 import com.drc.aidbridge.modules.volunteer.internal.repository.VolunteerJpaRepository;
-import com.drc.aidbridge.modules.volunteer.internal.web.dto.ToggleVolunteerStatusRequest;
+import com.drc.aidbridge.modules.volunteer.internal.web.dto.PingVolunteerHeartbeatRequest;
 import com.drc.aidbridge.modules.volunteer.internal.web.dto.VolunteerProfileResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-// Handle explicit online/offline toggle from user
+// Handle heartbeat ping: Update status, location, and last active timestamp
 @Component
 @RequiredArgsConstructor
-public class ToggleVolunteerStatusUseCase {
+public class PingVolunteerHeartbeatUseCase {
 
     private final VolunteerJpaRepository volunteerRepository;
     private final UserFacade userFacade;
     private final VolunteerMapper volunteerMapper;
 
+    // Update volunteer as online with current location and timestamp
     @Transactional
-    public VolunteerProfileResponse execute(UUID userId, ToggleVolunteerStatusRequest request) {
+    public VolunteerProfileResponse execute(UUID userId, PingVolunteerHeartbeatRequest request) {
         UserDTO user = userFacade.getUserById(userId);
 
         Volunteer volunteer = volunteerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Volunteer profile not found"));
 
-        // Cập nhật trạng thái online
-        volunteer.setOnline(request.isOnline());
+        // Set online status and update last active timestamp
+        volunteer.setOnline(true);
+        volunteer.setLastActiveAt(Instant.now());
 
-        // Update last active time if turning online to start heartbeat counter
-        if (request.isOnline()) {
-            volunteer.setLastActiveAt(Instant.now());
+        // Update current location (note: JTS Coordinate requires (lng, lat) order with SRID 4326)
+        if (request.getLat() != null && request.getLng() != null) {
+            volunteer.setCurrentLocation(
+                    Volunteer.createPoint(
+                            BigDecimal.valueOf(request.getLat()),
+                            BigDecimal.valueOf(request.getLng())
+                    )
+            );
         }
 
         volunteer = volunteerRepository.save(volunteer);
