@@ -143,4 +143,9 @@ tasks.named('test') {
 
 bootRun {
     jvmArgs = ['-Djava.net.preferIPv4Stack=true']
+    sourceResources sourceSets.main
+    classpath = sourceSets.main.runtimeClasspath
+}
+bootRun {
+    jvmArgs = ['-Djava.net.preferIPv4Stack=true']
 }
