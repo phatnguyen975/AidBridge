@@ -19,7 +19,6 @@ public class VolunteerController {
     private final GetVolunteerProfileUseCase getVolunteerProfileUseCase;
     private final UpdateVolunteerProfileUseCase updateVolunteerProfileUseCase;
     private final ToggleVolunteerStatusUseCase toggleVolunteerStatusUseCase;
-    private final UpdateVolunteerLocationUseCase updateVolunteerLocationUseCase;
     private final PingVolunteerHeartbeatUseCase pingVolunteerHeartbeatUseCase;
 
     @GetMapping("/profile")
@@ -48,14 +47,6 @@ public class VolunteerController {
         return ResponseEntity.ok(ApiResponse.success("Volunteer status toggled successfully", response));
     }
 
-    @PostMapping("/location")
-    public ResponseEntity<ApiResponse<Void>> updateVolunteerLocation(
-            Authentication authentication,
-            @Valid @RequestBody UpdateVolunteerLocationRequest request) {
-        UUID userId = UUID.fromString(authentication.getName());
-        updateVolunteerLocationUseCase.execute(userId, request);
-        return ResponseEntity.ok(ApiResponse.success("Location updated successfully", null));
-    }
 
     // Heartbeat endpoint: Update location & last active time (called every 30-60s)
     @PostMapping("/ping")
