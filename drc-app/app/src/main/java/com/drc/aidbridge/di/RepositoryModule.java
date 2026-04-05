@@ -2,8 +2,10 @@ package com.drc.aidbridge.di;
 
 import com.drc.aidbridge.data.repository.AuthRepositoryImpl;
 import com.drc.aidbridge.data.repository.UserRepositoryImpl;
+import com.drc.aidbridge.data.repository.volunteer.VolunteerRepositoryImpl;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.domain.repository.UserRepository;
+import com.drc.aidbridge.domain.repository.volunteer.VolunteerRepository;
 
 import dagger.Binds;
 import dagger.Module;
@@ -12,9 +14,11 @@ import dagger.hilt.components.SingletonComponent;
 import javax.inject.Singleton;
 
 /**
- * RepositoryModule — binds Repository interfaces to their concrete implementations.
+ * RepositoryModule — binds Repository interfaces to their concrete
+ * implementations.
  *
- * Uses @Binds (more efficient than @Provides) since we're just mapping an interface
+ * Uses @Binds (more efficient than @Provides) since we're just mapping an
+ * interface
  * to an already @Inject-annotated implementation class.
  */
 @Module
@@ -33,4 +37,8 @@ public abstract class RepositoryModule {
     @Binds
     @Singleton
     public abstract UserRepository bindUserRepository(UserRepositoryImpl impl);
+
+    @Binds
+    @Singleton
+    public abstract VolunteerRepository bindVolunteerRepository(VolunteerRepositoryImpl impl);
 }
