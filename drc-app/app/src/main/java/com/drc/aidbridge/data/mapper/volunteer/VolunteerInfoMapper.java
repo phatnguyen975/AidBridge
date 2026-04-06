@@ -6,19 +6,29 @@ import com.drc.aidbridge.data.mapper.BaseMapper;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerProfileDataDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerUserDto;
 import com.drc.aidbridge.domain.model.volunteer.VolunteerDashboardInfo;
+import com.drc.aidbridge.domain.model.volunteer.VolunteerPersonalInfo;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class VolunteerDashboardInfoMapper implements BaseMapper<VolunteerProfileDataDto, VolunteerDashboardInfo> {
+public class VolunteerInfoMapper implements BaseMapper<VolunteerProfileDataDto, VolunteerDashboardInfo> {
 
     @Inject
-    public VolunteerDashboardInfoMapper() {
+    public VolunteerInfoMapper() {
     }
 
     @Override
     public VolunteerDashboardInfo mapToDomain(@Nullable VolunteerProfileDataDto dto) {
+        return mapToDashboardInfoDomain(dto);
+    }
+
+    @Override
+    public VolunteerProfileDataDto mapToDto(VolunteerDashboardInfo domainModel) {
+        return null;
+    }
+
+    public VolunteerDashboardInfo mapToDashboardInfoDomain(@Nullable VolunteerProfileDataDto dto) {
         if (dto == null) {
             return new VolunteerDashboardInfo("", false, 0);
         }
@@ -38,8 +48,22 @@ public class VolunteerDashboardInfoMapper implements BaseMapper<VolunteerProfile
                 Math.max(totalCompletedTasks, 0));
     }
 
-    @Override
-    public VolunteerProfileDataDto mapToDto(VolunteerDashboardInfo domainModel) {
-        return null;
+    public VolunteerPersonalInfo mapToPersonalInfoDomain(@Nullable VolunteerProfileDataDto dto) {
+        if (dto == null) {
+            return new VolunteerPersonalInfo("", "", "");
+        }
+
+        VolunteerUserDto user = dto.getUser();
+        String fullName = user != null && user.getName() != null
+                ? user.getName().trim()
+                : "";
+        String phoneNumber = user != null && user.getPhoneNumber() != null
+                ? user.getPhoneNumber().trim()
+                : "";
+        String email = user != null && user.getEmail() != null
+                ? user.getEmail().trim()
+                : "";
+
+        return new VolunteerPersonalInfo(fullName, phoneNumber, email);
     }
 }

@@ -11,7 +11,25 @@ public class VolunteerUserDto {
     private String name;
 
     @Nullable
+    @SerializedName(value = "phone")
+    private String phoneNumber;
+
+    @Nullable
+    @SerializedName("email")
+    private String email;
+
+    @Nullable
     public String getName() {
         return name;
+    }
+
+    @Nullable
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    @Nullable
+    public String getEmail() {
+        return email;
     }
 }

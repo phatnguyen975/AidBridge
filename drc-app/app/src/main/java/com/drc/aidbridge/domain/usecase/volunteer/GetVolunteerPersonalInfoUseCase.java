@@ -5,29 +5,29 @@ import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.mapper.volunteer.VolunteerInfoMapper;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
-import com.drc.aidbridge.domain.model.volunteer.VolunteerDashboardInfo;
+import com.drc.aidbridge.domain.model.volunteer.VolunteerPersonalInfo;
 import com.drc.aidbridge.domain.repository.volunteer.VolunteerRepository;
 
 import javax.inject.Inject;
 
-public class GetVolunteerDashboardInfoUseCase {
+public class GetVolunteerPersonalInfoUseCase {
 
     private final VolunteerRepository volunteerRepository;
     private final VolunteerInfoMapper volunteerInfoMapper;
 
     @Inject
-    public GetVolunteerDashboardInfoUseCase(VolunteerRepository volunteerRepository,
+    public GetVolunteerPersonalInfoUseCase(VolunteerRepository volunteerRepository,
             VolunteerInfoMapper volunteerInfoMapper) {
         this.volunteerRepository = volunteerRepository;
         this.volunteerInfoMapper = volunteerInfoMapper;
     }
 
-    public LiveData<NetworkResultWrapper<VolunteerDashboardInfo>> execute() {
+    public LiveData<NetworkResultWrapper<VolunteerPersonalInfo>> execute() {
         return Transformations.map(
                 volunteerRepository.getVolunteerDashboardInfo(),
                 result -> {
                     if (result == null) {
-                        return NetworkResultWrapper.error("Dữ liệu hồ sơ tình nguyện viên không hợp lệ.");
+                        return NetworkResultWrapper.error("Dữ liệu hồ sơ cá nhân không hợp lệ.");
                     }
 
                     if (result.isLoading()) {
@@ -39,7 +39,7 @@ public class GetVolunteerDashboardInfoUseCase {
                     }
 
                     return NetworkResultWrapper.success(
-                            volunteerInfoMapper.mapToDashboardInfoDomain(result.getData()));
+                            volunteerInfoMapper.mapToPersonalInfoDomain(result.getData()));
                 });
     }
 }
