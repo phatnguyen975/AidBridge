@@ -6,6 +6,7 @@ import com.drc.aidbridge.data.mapper.BaseMapper;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerProfileDataDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerUserDto;
 import com.drc.aidbridge.domain.model.volunteer.VolunteerDashboardInfo;
+import com.drc.aidbridge.domain.model.volunteer.VolunteerPersonalInfo;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -41,5 +42,24 @@ public class VolunteerDashboardInfoMapper implements BaseMapper<VolunteerProfile
     @Override
     public VolunteerProfileDataDto mapToDto(VolunteerDashboardInfo domainModel) {
         return null;
+    }
+
+    public VolunteerPersonalInfo mapToPersonalInfo(@Nullable VolunteerProfileDataDto dto) {
+        if (dto == null) {
+            return new VolunteerPersonalInfo("", "", "");
+        }
+
+        VolunteerUserDto user = dto.getUser();
+        String fullName = user != null && user.getName() != null
+                ? user.getName().trim()
+                : "";
+        String phoneNumber = user != null && user.getPhoneNumber() != null
+                ? user.getPhoneNumber().trim()
+                : "";
+        String email = user != null && user.getEmail() != null
+                ? user.getEmail().trim()
+                : "";
+
+        return new VolunteerPersonalInfo(fullName, phoneNumber, email);
     }
 }

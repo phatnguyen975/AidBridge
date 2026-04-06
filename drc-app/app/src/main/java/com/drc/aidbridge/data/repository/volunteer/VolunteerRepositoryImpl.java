@@ -3,7 +3,6 @@ package com.drc.aidbridge.data.repository.volunteer;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.drc.aidbridge.data.mapper.volunteer.VolunteerDashboardInfoMapper;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.api.volunteer.VolunteerApiService;
 import com.drc.aidbridge.data.remote.dto.request.volunteer.ToggleStatusRequest;
@@ -12,7 +11,6 @@ import com.drc.aidbridge.data.remote.dto.response.volunteer.ToggleStatusResponse
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerProfileDataDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerProfileResponse;
 import com.drc.aidbridge.data.repository.BaseRepository;
-import com.drc.aidbridge.domain.model.volunteer.VolunteerDashboardInfo;
 import com.drc.aidbridge.domain.repository.volunteer.VolunteerRepository;
 
 import javax.inject.Inject;
@@ -26,18 +24,15 @@ import retrofit2.Response;
 public class VolunteerRepositoryImpl extends BaseRepository implements VolunteerRepository {
 
     private final VolunteerApiService volunteerApiService;
-    private final VolunteerDashboardInfoMapper volunteerDashboardInfoMapper;
 
     @Inject
-    public VolunteerRepositoryImpl(VolunteerApiService volunteerApiService,
-            VolunteerDashboardInfoMapper volunteerDashboardInfoMapper) {
+    public VolunteerRepositoryImpl(VolunteerApiService volunteerApiService) {
         this.volunteerApiService = volunteerApiService;
-        this.volunteerDashboardInfoMapper = volunteerDashboardInfoMapper;
     }
 
     @Override
-    public LiveData<NetworkResultWrapper<VolunteerDashboardInfo>> getVolunteerDashboardInfo() {
-        MutableLiveData<NetworkResultWrapper<VolunteerDashboardInfo>> result = new MutableLiveData<>();
+    public LiveData<NetworkResultWrapper<VolunteerProfileDataDto>> getVolunteerDashboardInfo() {
+        MutableLiveData<NetworkResultWrapper<VolunteerProfileDataDto>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
         volunteerApiService.getVolunteerProfile().enqueue(new Callback<VolunteerProfileResponse>() {
@@ -74,8 +69,7 @@ public class VolunteerRepositoryImpl extends BaseRepository implements Volunteer
                     return;
                 }
 
-                VolunteerDashboardInfo dashboardInfo = volunteerDashboardInfoMapper.mapToDomain(data);
-                result.postValue(NetworkResultWrapper.success(dashboardInfo));
+                result.postValue(NetworkResultWrapper.success(data));
             }
 
             @Override

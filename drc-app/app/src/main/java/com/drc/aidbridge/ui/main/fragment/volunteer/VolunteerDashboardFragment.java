@@ -38,7 +38,7 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
     @Override
     protected void setupViews() {
         volunteerTaskViewModel = new ViewModelProvider(requireActivity()).get(VolunteerTaskViewModel.class);
-        volunteerDashboardViewModel = new ViewModelProvider(this).get(VolunteerDashboardViewModel.class);
+        volunteerDashboardViewModel = new ViewModelProvider(requireActivity()).get(VolunteerDashboardViewModel.class);
 
         // Online Status (Online by default - Test UI)
         updateStatusUI(true);
