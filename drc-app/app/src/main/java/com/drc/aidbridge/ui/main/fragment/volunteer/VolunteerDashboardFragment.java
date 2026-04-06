@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
-import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.FragmentVolunteerDashboardBinding;
 import com.drc.aidbridge.domain.model.volunteer.VolunteerDashboardInfo;
 import com.drc.aidbridge.ui.base.BaseFragment;
@@ -29,6 +28,7 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
     private boolean isMissionAccepted;
     private boolean isMissionIgnored;
     private boolean isApplyingProfileState;
+    private boolean currentOnlineStatus = true;
 
     @Override
     protected FragmentVolunteerDashboardBinding inflateBinding(LayoutInflater inflater, @Nullable ViewGroup container) {
@@ -74,6 +74,10 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
             volunteerDashboardViewModel.getVolunteerDashboardInfoResult().observe(
                     getViewLifecycleOwner(),
                     resultObserver(this::renderDashboardProfile, this::showNetworkError));
+
+            volunteerDashboardViewModel.getToggleStatusResult().observe(
+                    getViewLifecycleOwner(),
+                    resultObserver(this::handleToggleStatusSuccess, this::showNetworkError));
         }
 
         volunteerTaskViewModel.getIsMissionAccepted().observe(getViewLifecycleOwner(), isAccepted -> {
@@ -92,11 +96,6 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
             return;
         }
 
-        // ---------- Debug ----------
-        System.out.println("profileInfo: " + profileInfo.getFullName() + " - " + profileInfo.isOnline() + " - "
-                + profileInfo.getTotalCompletedTasks());
-        // ---------------------------
-
         String fullName = profileInfo.getFullName();
         if (fullName == null || fullName.trim().isEmpty()) {
             binding.tvUserName.setText(getString(R.string.volunteer_dashboard_user_name_placeholder));
@@ -105,10 +104,23 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
         }
 
         binding.tvCompletedCount.setText(String.valueOf(profileInfo.getTotalCompletedTasks()));
+        currentOnlineStatus = profileInfo.isOnline();
 
         isApplyingProfileState = true;
-        binding.switchOnlineStatus.setChecked(profileInfo.isOnline());
-        updateStatusUI(profileInfo.isOnline());
+        binding.switchOnlineStatus.setChecked(currentOnlineStatus);
+        updateStatusUI(currentOnlineStatus);
+        isApplyingProfileState = false;
+    }
+
+    private void handleToggleStatusSuccess(@Nullable Boolean isOnline) {
+        if (isOnline == null) {
+            return;
+        }
+
+        currentOnlineStatus = isOnline;
+        isApplyingProfileState = true;
+        binding.switchOnlineStatus.setChecked(currentOnlineStatus);
+        // updateStatusUI(currentOnlineStatus);
         isApplyingProfileState = false;
     }
 
@@ -131,6 +143,7 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
             }
 
             updateStatusUI(isChecked);
+            volunteerDashboardViewModel.toggleStatus(isChecked);
             showToast(getString(isChecked
                     ? com.drc.aidbridge.R.string.volunteer_dashboard_toast_mode_ready
                     : com.drc.aidbridge.R.string.volunteer_dashboard_toast_mode_offline));
