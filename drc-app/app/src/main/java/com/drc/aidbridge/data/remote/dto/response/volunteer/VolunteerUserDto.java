@@ -11,7 +11,7 @@ public class VolunteerUserDto {
     private String name;
 
     @Nullable
-    @SerializedName(value = "phoneNumber", alternate = { "phone_number" })
+    @SerializedName(value = "phone")
     private String phoneNumber;
 
     @Nullable

@@ -12,14 +12,23 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class VolunteerDashboardInfoMapper implements BaseMapper<VolunteerProfileDataDto, VolunteerDashboardInfo> {
+public class VolunteerInfoMapper implements BaseMapper<VolunteerProfileDataDto, VolunteerDashboardInfo> {
 
     @Inject
-    public VolunteerDashboardInfoMapper() {
+    public VolunteerInfoMapper() {
     }
 
     @Override
     public VolunteerDashboardInfo mapToDomain(@Nullable VolunteerProfileDataDto dto) {
+        return mapToDashboardInfoDomain(dto);
+    }
+
+    @Override
+    public VolunteerProfileDataDto mapToDto(VolunteerDashboardInfo domainModel) {
+        return null;
+    }
+
+    public VolunteerDashboardInfo mapToDashboardInfoDomain(@Nullable VolunteerProfileDataDto dto) {
         if (dto == null) {
             return new VolunteerDashboardInfo("", false, 0);
         }
@@ -39,12 +48,7 @@ public class VolunteerDashboardInfoMapper implements BaseMapper<VolunteerProfile
                 Math.max(totalCompletedTasks, 0));
     }
 
-    @Override
-    public VolunteerProfileDataDto mapToDto(VolunteerDashboardInfo domainModel) {
-        return null;
-    }
-
-    public VolunteerPersonalInfo mapToPersonalInfo(@Nullable VolunteerProfileDataDto dto) {
+    public VolunteerPersonalInfo mapToPersonalInfoDomain(@Nullable VolunteerProfileDataDto dto) {
         if (dto == null) {
             return new VolunteerPersonalInfo("", "", "");
         }
