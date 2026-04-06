@@ -57,4 +57,12 @@ public class VolunteerController {
         VolunteerProfileResponse response = pingVolunteerHeartbeatUseCase.execute(userId, request);
         return ResponseEntity.ok(ApiResponse.success("Heartbeat ping received", response));
     }
+
+    // Current misssion of current volunteer 
+    // @GetMapping("/me/current-mission")
+    // public ResponseEntity<ApiResponse<VolunteerMissionResponse>> getCurrentMission(Authentication authentication) {
+    //     UUID userId = UUID.fromString(authentication.getName());
+    //     VolunteerMissionResponse response = getVolunteerProfileUseCase.getCurrentMission(userId);
+    //     return ResponseEntity.ok(ApiResponse.success("Current mission retrieved successfully", response));
+    // }
 }
