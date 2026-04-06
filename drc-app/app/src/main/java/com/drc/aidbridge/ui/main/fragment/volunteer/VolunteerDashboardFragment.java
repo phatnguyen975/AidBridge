@@ -120,7 +120,7 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
         currentOnlineStatus = isOnline;
         isApplyingProfileState = true;
         binding.switchOnlineStatus.setChecked(currentOnlineStatus);
-        // updateStatusUI(currentOnlineStatus);
+        updateStatusUI(currentOnlineStatus);
         isApplyingProfileState = false;
     }
 
@@ -142,7 +142,6 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
                 return;
             }
 
-            updateStatusUI(isChecked);
             volunteerDashboardViewModel.toggleStatus(isChecked);
             showToast(getString(isChecked
                     ? com.drc.aidbridge.R.string.volunteer_dashboard_toast_mode_ready
