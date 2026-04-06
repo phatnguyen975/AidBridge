@@ -19,7 +19,7 @@ public interface VolunteerJpaRepository extends JpaRepository<Volunteer, UUID> {
     Optional<Volunteer> findByUserId(UUID userId);
     boolean existsByUserId(UUID userId);
 
-<<<<<<< HEAD
+
     /**
      * Tìm các volunteers đang online trong bán kính (meters) từ một vị trí cho trước.
      * Sử dụng PostGIS ST_DWithin để tìm kiếm hiệu quả với geography type.
