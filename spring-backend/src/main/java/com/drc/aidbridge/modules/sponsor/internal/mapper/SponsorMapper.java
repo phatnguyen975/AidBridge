@@ -3,7 +3,7 @@ import org.springframework.stereotype.Component;
 import com.drc.aidbridge.modules.sponsor.internal.entity.Sponsor;
 import com.drc.aidbridge.modules.user.UserDTO;
 import com.drc.aidbridge.modules.sponsor.SponsorDTO;
-import com.drc.aidbridge.modules.sponsor.internal.web.dto.SponsorResponse;
+import com.drc.aidbridge.modules.sponsor.internal.web.dto.SponsorProfileResponse;
 
 
 @Component
@@ -21,8 +21,8 @@ public class SponsorMapper {
                 .build();
     }    
 
-    public SponsorResponse toResponse (Sponsor entity, UserDTO user){
-        return SponsorResponse.builder()
+    public SponsorProfileResponse toResponse (Sponsor entity, UserDTO user){
+        return SponsorProfileResponse.builder()
                 .user(user)
                 .sponsor(toDTO(entity))
                 .build();

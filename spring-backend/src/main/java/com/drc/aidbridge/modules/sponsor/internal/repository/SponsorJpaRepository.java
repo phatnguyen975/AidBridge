@@ -8,6 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface SponsorRepository extends JpaRepository<Sponsor, UUID> {
+public interface SponsorJpaRepository extends JpaRepository<Sponsor, UUID> {
     Optional<Sponsor> findByUserId(UUID userId);
 }

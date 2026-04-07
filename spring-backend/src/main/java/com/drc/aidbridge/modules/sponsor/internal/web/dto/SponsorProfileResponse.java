@@ -13,7 +13,7 @@ import com.drc.aidbridge.modules.sponsor.SponsorDTO;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SponsorResponse {
+public class SponsorProfileResponse {
     UserDTO user;
     SponsorDTO sponsor;
 }
