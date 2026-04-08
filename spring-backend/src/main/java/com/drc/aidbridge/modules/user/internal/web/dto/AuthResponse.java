@@ -6,10 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Response DTO cho authentication (login, register, refresh).
- * Khớp với AuthResponse schema trong api.yaml.
- */
 @Data
 @Builder
 @NoArgsConstructor

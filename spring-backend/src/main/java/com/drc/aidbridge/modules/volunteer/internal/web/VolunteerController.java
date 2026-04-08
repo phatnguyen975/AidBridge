@@ -19,7 +19,7 @@ public class VolunteerController {
     private final GetVolunteerProfileUseCase getVolunteerProfileUseCase;
     private final UpdateVolunteerProfileUseCase updateVolunteerProfileUseCase;
     private final ToggleVolunteerStatusUseCase toggleVolunteerStatusUseCase;
-    private final UpdateVolunteerLocationUseCase updateVolunteerLocationUseCase;
+    private final PingVolunteerHeartbeatUseCase pingVolunteerHeartbeatUseCase;
 
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<VolunteerProfileResponse>> getVolunteerProfile(
@@ -47,12 +47,22 @@ public class VolunteerController {
         return ResponseEntity.ok(ApiResponse.success("Volunteer status toggled successfully", response));
     }
 
-    @PostMapping("/location")
-    public ResponseEntity<ApiResponse<Void>> updateVolunteerLocation(
+
+    // Heartbeat endpoint: Update location & last active time (called every 30-60s)
+    @PostMapping("/ping")
+    public ResponseEntity<ApiResponse<VolunteerProfileResponse>> pingVolunteerHeartbeat(
             Authentication authentication,
-            @Valid @RequestBody UpdateVolunteerLocationRequest request) {
+            @Valid @RequestBody PingVolunteerHeartbeatRequest request) {
         UUID userId = UUID.fromString(authentication.getName());
-        updateVolunteerLocationUseCase.execute(userId, request);
-        return ResponseEntity.ok(ApiResponse.success("Location updated successfully", null));
+        VolunteerProfileResponse response = pingVolunteerHeartbeatUseCase.execute(userId, request);
+        return ResponseEntity.ok(ApiResponse.success("Heartbeat ping received", response));
     }
+
+    // Current misssion of current volunteer 
+    // @GetMapping("/me/current-mission")
+    // public ResponseEntity<ApiResponse<VolunteerMissionResponse>> getCurrentMission(Authentication authentication) {
+    //     UUID userId = UUID.fromString(authentication.getName());
+    //     VolunteerMissionResponse response = getVolunteerProfileUseCase.getCurrentMission(userId);
+    //     return ResponseEntity.ok(ApiResponse.success("Current mission retrieved successfully", response));
+    // }
 }

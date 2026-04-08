@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -25,7 +26,8 @@ public class AidController {
     @PostMapping
     public ResponseEntity<ApiResponse<AidRequestResponse>> createAidRequest(
             @Valid @RequestBody CreateAidRequest request,
-            @AuthenticationPrincipal UUID userId) {
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = resolveUserId(jwt);
         AidRequestResponse response = createAidRequestUseCase.execute(userId, request);
         return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
     }
@@ -39,8 +41,9 @@ public class AidController {
     @PostMapping("/{id}/cancel")
     public ResponseEntity<ApiResponse<AidRequestResponse>> cancelAidRequest(
             @PathVariable UUID id,
-            @AuthenticationPrincipal UUID userId,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody(required = false) CancelAidRequest request) {
+        UUID userId = resolveUserId(jwt);
         if (request == null) {
             request = new CancelAidRequest();
         }
@@ -57,12 +60,21 @@ public class AidController {
     }
 
     @PostMapping(value = "/voice", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<String>> transcribeVoice(
+    public ResponseEntity<ApiResponse<VoiceAidRequestResponse>> transcribeVoice(
             @RequestPart("file") org.springframework.web.multipart.MultipartFile audioFile,
-            @AuthenticationPrincipal java.util.UUID userId) {
+            @Valid @ModelAttribute CreateAidRequestVoiceInput request,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = resolveUserId(jwt);
 
-        // userId có thể dùng để xác thực quyền nếu cần (import sẵn ở trên)
-        String transcript = transcribeAidRequestVoiceUseCase.execute(audioFile);
-        return ResponseEntity.ok(ApiResponse.success("Voice transcription completed", transcript));
+        System.out.println("Received voice aid request from user " + userId + " with file: " + audioFile.getOriginalFilename());
+        VoiceAidRequestResponse response = transcribeAidRequestVoiceUseCase.execute(userId, audioFile, request);
+        return ResponseEntity.ok(ApiResponse.success("Voice transcription completed and aid request created", response));
+    }
+
+    private UUID resolveUserId(Jwt jwt) {
+        if (jwt == null || jwt.getSubject() == null || jwt.getSubject().isBlank()) {
+            throw new IllegalArgumentException("Authenticated user is required");
+        }
+        return UUID.fromString(jwt.getSubject());
     }
 }

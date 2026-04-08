@@ -55,6 +55,7 @@ public class SecurityConfig {
                         // ADMIN - full system access
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
+
                         // STAFF - hub management, can do most admin tasks
                         .requestMatchers("/api/staff/**").hasAnyRole("STAFF", "ADMIN")
 
@@ -65,6 +66,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/sponsor/**").hasAnyRole("SPONSOR", "STAFF", "ADMIN")
 
                         // VICTIM - aid requests, accessible by all authenticated users
+                        .requestMatchers("/api/aid-requests/**")
+                        .hasAnyRole("VICTIM", "VOLUNTEER", "SPONSOR", "STAFF", "ADMIN")
                         .requestMatchers("/api/victim/**")
                         .hasAnyRole("VICTIM", "VOLUNTEER", "SPONSOR", "STAFF", "ADMIN")
 

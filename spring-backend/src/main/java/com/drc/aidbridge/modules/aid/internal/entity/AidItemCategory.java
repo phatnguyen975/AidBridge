@@ -1,0 +1,29 @@
+package com.drc.aidbridge.modules.aid.internal.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
+
+@Entity
+@Table(name = "item_categories")
+@Getter
+@NoArgsConstructor
+public class AidItemCategory {
+
+    @Id
+    private UUID id;
+
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
+
+    @Column(name = "unit", nullable = false, length = 50)
+    private String unit;
+
+    @Column(name = "is_leaf", nullable = false)
+    private boolean isLeaf;
+}

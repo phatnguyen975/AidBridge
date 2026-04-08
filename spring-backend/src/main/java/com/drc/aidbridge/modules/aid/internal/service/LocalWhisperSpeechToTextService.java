@@ -5,10 +5,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,6 +21,7 @@ public class LocalWhisperSpeechToTextService implements SpeechToTextService {
     private final String command;
     private final String model;
     private final String language;
+    private final long timeoutSeconds = 300;
 
     public LocalWhisperSpeechToTextService(
             @Value("${openai.local-whisper.command:whisper}") String command,
@@ -37,7 +41,9 @@ public class LocalWhisperSpeechToTextService implements SpeechToTextService {
 
         Path tempFile = null;
         Path outputDir = null;
+
         try {
+            // Save temp audio
             tempFile = Files.createTempFile("aidbridge-whisper-", "-" + audioFile.getOriginalFilename());
             Files.write(tempFile, audioFile.getBytes());
 
@@ -52,35 +58,60 @@ public class LocalWhisperSpeechToTextService implements SpeechToTextService {
                     "--output_dir", outputDir.toAbsolutePath().toString(),
                     "--output_format", "txt"
             );
+
+            pb.environment().put("PYTHONIOENCODING", "UTF-8");
             pb.redirectErrorStream(true);
+
             Process process = pb.start();
 
-            String output = new String(process.getInputStream().readAllBytes());
-            int code = process.waitFor();
-            if (code != 0) {
-                throw new IllegalStateException("Local Whisper command failed (code=" + code + "): " + output);
+            // Read output stream (optional debug)
+            StringBuilder outputBuilder = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    outputBuilder.append(line).append("\n");
+                }
             }
 
-            List<Path> transcripts = Files.list(outputDir).filter(p -> p.toString().endsWith(".txt")).collect(Collectors.toList());
+            // Wait with timeout
+            boolean finished = process.waitFor(timeoutSeconds, TimeUnit.SECONDS);
+            if (!finished) {
+                process.destroyForcibly();
+                throw new IllegalStateException("Whisper timed out after " + timeoutSeconds + " seconds");
+            }
+
+            int code = process.exitValue();
+            String output = outputBuilder.toString();
+
+            if (code != 0) {
+                throw new IllegalStateException("Whisper failed (code=" + code + "): " + output);
+            }
+
+            // Find transcript file
+            List<Path> transcripts = Files.list(outputDir)
+                    .filter(p -> p.toString().endsWith(".txt"))
+                    .collect(Collectors.toList());
+
             if (transcripts.isEmpty()) {
                 throw new IllegalStateException("No transcription output found in " + outputDir);
             }
 
-            return Files.readString(transcripts.get(0)).trim();
-        } catch (IOException | InterruptedException ex) {
+            return Files.readString(transcripts.get(0), StandardCharsets.UTF_8).trim();
+
+        } catch (Exception ex) {
             throw new RuntimeException("Failed to transcribe audio using local Whisper", ex);
         } finally {
-            if (tempFile != null) {
-                try { Files.deleteIfExists(tempFile); } catch (Exception ignored) {}
-            }
-            if (outputDir != null) {
-                try {
+            try {
+                if (tempFile != null) Files.deleteIfExists(tempFile);
+                if (outputDir != null) {
                     Files.walk(outputDir)
-                            .sorted((a,b) -> b.compareTo(a))
-                            .forEach(p -> { try { Files.deleteIfExists(p); } catch (Exception ignored) {}; });
-                } catch (IOException ignored) {
+                            .sorted((a, b) -> b.compareTo(a))
+                            .forEach(p -> {
+                                try { Files.deleteIfExists(p); } catch (Exception ignored) {}
+                            });
                 }
-            }
+            } catch (Exception ignored) {}
         }
     }
 }
