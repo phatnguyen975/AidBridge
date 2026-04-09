@@ -2,9 +2,7 @@ package com.drc.aidbridge.modules.aid.internal.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -27,14 +25,4 @@ public class AidRequestItem {
 
     @Column(name = "item_category_id", nullable = false)
     private UUID itemCategoryId;
-
-    @Column(nullable = false)
-    private Integer quantity;
-
-    @Column(columnDefinition = "text")
-    private String description;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
 }

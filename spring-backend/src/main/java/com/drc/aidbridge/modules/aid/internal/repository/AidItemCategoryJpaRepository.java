@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface AidItemCategoryJpaRepository extends JpaRepository<AidItemCategory, UUID> {
     List<AidItemCategory> findByIsLeafTrue();
+    List<AidItemCategory> findByIsLeafFalse();
 }

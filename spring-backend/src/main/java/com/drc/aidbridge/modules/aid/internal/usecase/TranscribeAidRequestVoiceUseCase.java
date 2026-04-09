@@ -8,19 +8,16 @@ import com.drc.aidbridge.modules.aid.internal.web.dto.AidItemInput;
 import com.drc.aidbridge.modules.aid.internal.web.dto.AidRequestResponse;
 import com.drc.aidbridge.modules.aid.internal.web.dto.CreateAidRequest;
 import com.drc.aidbridge.modules.aid.internal.web.dto.CreateAidRequestVoiceInput;
-import com.drc.aidbridge.modules.aid.internal.web.dto.VoiceAidRequestResponse;
-import com.drc.aidbridge.modules.aid.internal.web.dto.VoiceExtractedItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.Normalizer;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Component
@@ -32,50 +29,37 @@ public class TranscribeAidRequestVoiceUseCase {
     private final AidItemCategoryJpaRepository aidItemCategoryJpaRepository;
     private final CreateAidRequestUseCase createAidRequestUseCase;
 
-    public VoiceAidRequestResponse execute(UUID requesterId, MultipartFile audioFile, CreateAidRequestVoiceInput input) {
+    public AidRequestResponse execute(UUID requesterId, MultipartFile audioFile, CreateAidRequestVoiceInput input) {
         if (audioFile == null || audioFile.isEmpty()) {
             throw new IllegalArgumentException("Audio file must not be empty");
         }
 
         String rawTranscript = speechToTextService.transcribe(audioFile);
-        System.out.println("=== RAW TRANSCRIPT ===");
-        System.out.println(rawTranscript);
         AidRequestVoiceLlmService.ExtractionResult extractionResult = aidRequestVoiceLlmService.extractItems(rawTranscript);
 
-        List<AidItemCategory> categories = aidItemCategoryJpaRepository.findByIsLeafTrue();
+        List<AidItemCategory> categories = aidItemCategoryJpaRepository.findByIsLeafFalse();
         if (categories.isEmpty()) {
-            throw new IllegalStateException("Inventory categories are empty");
+            throw new IllegalStateException("Root item categories are empty");
         }
 
-        List<VoiceExtractedItem> extractedItems = new ArrayList<>();
-        Map<UUID, Integer> matchedQuantities = new HashMap<>();
+        Set<UUID> matchedCategoryIds = new LinkedHashSet<>();
 
         for (AidRequestVoiceLlmService.ExtractedItem extracted : extractionResult.items()) {
             AidItemCategory bestMatch = findBestCategory(extracted.name(), categories);
-            int quantity = extracted.quantity() == null ? 1 : Math.max(1, extracted.quantity());
 
             if (bestMatch != null) {
-                matchedQuantities.merge(bestMatch.getId(), quantity, Integer::sum);
+                matchedCategoryIds.add(bestMatch.getId());
             }
-
-            extractedItems.add(VoiceExtractedItem.builder()
-                    .name(extracted.name())
-                    .quantity(quantity)
-                    .matched(bestMatch != null)
-                    .matchedCategoryId(bestMatch != null ? bestMatch.getId() : null)
-                    .matchedCategoryName(bestMatch != null ? bestMatch.getName() : null)
-                    .build());
         }
 
-        if (matchedQuantities.isEmpty()) {
+        if (matchedCategoryIds.isEmpty()) {
             throw new IllegalArgumentException("No extracted items matched inventory categories");
         }
 
-        List<AidItemInput> itemInputs = matchedQuantities.entrySet().stream()
-                .map(entry -> AidItemInput.builder()
-                        .itemCategoryId(entry.getKey())
-                        .quantity(entry.getValue())
-                        .description("Generated from voice transcript")
+        List<AidItemInput> itemInputs = matchedCategoryIds.stream()
+                .map(categoryId -> AidItemInput.builder()
+                        .itemCategoryId(categoryId)
+
                         .build())
                 .toList();
 
@@ -84,27 +68,20 @@ public class TranscribeAidRequestVoiceUseCase {
             combinedNotes = combinedNotes + "\n";
         }
         combinedNotes = combinedNotes + extractionResult.normalizedTranscript();
-
+        System.out.println("Combined notes: " + combinedNotes);
         CreateAidRequest createAidRequest = CreateAidRequest.builder()
                 .lat(input.getLat())
                 .lng(input.getLng())
                 .address(input.getAddress())
-                .adultsCount(1)
-                .elderlyCount(1)
-                .childrenCount(1)
+                .adultsCount(input.getAdultsCount() != 0 ? input.getAdultsCount() : 1)
+                .elderlyCount(input.getElderlyCount() != 0 ? input.getElderlyCount() : 0)
+                .childrenCount(input.getChildrenCount() != 0 ? input.getChildrenCount() : 0)
                 .notes(combinedNotes)
                 .urgencyLevel(input.getUrgencyLevel())
                 .items(itemInputs)
                 .build();
 
-        AidRequestResponse aidRequestResponse = createAidRequestUseCase.execute(requesterId, createAidRequest);
-
-        return VoiceAidRequestResponse.builder()
-                .rawTranscript(rawTranscript)
-                .normalizedTranscript(extractionResult.normalizedTranscript())
-                .extractedItems(extractedItems)
-                .aidRequest(aidRequestResponse)
-                .build();
+        return createAidRequestUseCase.execute(requesterId, createAidRequest);
     }
 
     private AidItemCategory findBestCategory(String itemName, List<AidItemCategory> categories) {

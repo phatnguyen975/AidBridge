@@ -50,7 +50,9 @@ public class LocalWhisperSpeechToTextService implements SpeechToTextService {
             outputDir = Files.createTempDirectory("aidbridge-whisper-output");
 
             ProcessBuilder pb = new ProcessBuilder(
-                    command,
+                    "python",
+                    "-X", "utf8", // force UTF-8 mode
+                    "-m", "whisper",
                     tempFile.toAbsolutePath().toString(),
                     "--model", model,
                     "--language", language,
@@ -59,15 +61,22 @@ public class LocalWhisperSpeechToTextService implements SpeechToTextService {
                     "--output_format", "txt"
             );
 
+            // ✅ Fix encoding environment
             pb.environment().put("PYTHONIOENCODING", "UTF-8");
+            pb.environment().put("PYTHONUTF8", "1");
+            pb.environment().put("LANG", "en_US.UTF-8");
+            pb.environment().put("LC_ALL", "en_US.UTF-8");
+            pb.environment().put("LC_CTYPE", "en_US.UTF-8");
+
             pb.redirectErrorStream(true);
 
             Process process = pb.start();
 
-            // Read output stream (optional debug)
+            // Read output safely as UTF-8
             StringBuilder outputBuilder = new StringBuilder();
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+
                 String line;
                 while ((line = reader.readLine()) != null) {
                     outputBuilder.append(line).append("\n");

@@ -51,12 +51,10 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwNDcyNDFmO
   "urgencyLevel": "HIGH",
   "items": [
     {
-      "itemCategoryId": "19ba8ca0-e43a-4aca-92aa-0183e2f32311",
-      "quantity": 10
+      "itemCategoryId": "19ba8ca0-e43a-4aca-92aa-0183e2f32311"
     },
     {
-      "itemCategoryId": "44d487ba-8c24-4863-96f6-bc54a322a286",
-      "quantity": 5
+      "itemCategoryId": "44d487ba-8c24-4863-96f6-bc54a322a286"
     }
   ]
 }

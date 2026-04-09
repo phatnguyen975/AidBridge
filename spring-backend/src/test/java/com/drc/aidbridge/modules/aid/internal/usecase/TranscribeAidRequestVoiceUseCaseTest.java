@@ -7,7 +7,6 @@ import com.drc.aidbridge.modules.aid.internal.service.SpeechToTextService;
 import com.drc.aidbridge.modules.aid.internal.web.dto.AidRequestResponse;
 import com.drc.aidbridge.modules.aid.internal.web.dto.CreateAidRequest;
 import com.drc.aidbridge.modules.aid.internal.web.dto.CreateAidRequestVoiceInput;
-import com.drc.aidbridge.modules.aid.internal.web.dto.VoiceAidRequestResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -48,22 +47,23 @@ class TranscribeAidRequestVoiceUseCaseTest {
     void execute_ShouldCreateAidRequest_WhenItemsMatched() {
         MultipartFile file = mock(MultipartFile.class);
         UUID requesterId = UUID.randomUUID();
-        UUID matchedCategoryId = UUID.randomUUID();
+        UUID matchedCategoryId = UUID.fromString("9a1ae288-fa90-439c-ba37-30f61527da9c");
 
         when(file.isEmpty()).thenReturn(false);
         when(speechToTextService.transcribe(file)).thenReturn("toi can 2 thung nuoc sach");
         when(llmService.extractItems("toi can 2 thung nuoc sach"))
                 .thenReturn(new AidRequestVoiceLlmService.ExtractionResult(
                         "Tôi cần 2 thùng nước sạch",
-                        List.of(new AidRequestVoiceLlmService.ExtractedItem("nuoc", 2, ""))
+                List.of(new AidRequestVoiceLlmService.ExtractedItem("Nước uống", 1, "classified_category"))
                 ));
 
-        AidItemCategory category = new AidItemCategory();
-        ReflectionTestUtils.setField(category, "id", matchedCategoryId);
-        ReflectionTestUtils.setField(category, "name", "Nước sạch");
-        ReflectionTestUtils.setField(category, "unit", "thung");
-        ReflectionTestUtils.setField(category, "isLeaf", true);
-        when(categoryRepository.findByIsLeafTrue()).thenReturn(List.of(category));
+        when(categoryRepository.findByIsLeafFalse()).thenReturn(List.of(
+            rootCategory("9a1ae288-fa90-439c-ba37-30f61527da9c", "Nước uống"),
+            rootCategory("b72f09ae-ba51-4d45-9834-daa6b6c11381", "Nhu yếu phẩm khác"),
+            rootCategory("ba53bc22-68c7-435b-8c45-34f158462f10", "Quần áo"),
+            rootCategory("e0127e1d-7b3e-4018-bd4b-b5f6df1bae9d", "Thuốc"),
+            rootCategory("f708a3fc-53f9-429b-b9dc-a17223905a63", "Thực phẩm")
+        ));
 
         AidRequestResponse aidRequestResponse = AidRequestResponse.builder().id(UUID.randomUUID()).build();
         when(createAidRequestUseCase.execute(any(), any(CreateAidRequest.class))).thenReturn(aidRequestResponse);
@@ -73,19 +73,18 @@ class TranscribeAidRequestVoiceUseCaseTest {
         input.setLng(BigDecimal.valueOf(106.69));
         input.setAdultsCount(1);
 
-        VoiceAidRequestResponse result = useCase.execute(requesterId, file, input);
+        AidRequestResponse result = useCase.execute(requesterId, file, input);
 
         assertNotNull(result);
-        assertEquals("toi can 2 thung nuoc sach", result.getRawTranscript());
-        assertEquals("Tôi cần 2 thùng nước sạch", result.getNormalizedTranscript());
-        assertEquals(1, result.getExtractedItems().size());
-        assertEquals(true, result.getExtractedItems().get(0).isMatched());
+        assertEquals(aidRequestResponse.getId(), result.getId());
 
         ArgumentCaptor<CreateAidRequest> requestCaptor = ArgumentCaptor.forClass(CreateAidRequest.class);
         verify(createAidRequestUseCase, times(1)).execute(any(), requestCaptor.capture());
         assertEquals(1, requestCaptor.getValue().getItems().size());
         assertEquals(matchedCategoryId, requestCaptor.getValue().getItems().get(0).getItemCategoryId());
-        assertEquals(2, requestCaptor.getValue().getItems().get(0).getQuantity());
+        assertEquals(1, requestCaptor.getValue().getAdultsCount());
+        assertEquals(0, requestCaptor.getValue().getElderlyCount());
+        assertEquals(0, requestCaptor.getValue().getChildrenCount());
     }
 
     @Test
@@ -97,5 +96,13 @@ class TranscribeAidRequestVoiceUseCaseTest {
                 () -> useCase.execute(UUID.randomUUID(), file, new CreateAidRequestVoiceInput()));
 
         assertEquals("Audio file must not be empty", ex.getMessage());
+    }
+
+    private AidItemCategory rootCategory(String id, String name) {
+        AidItemCategory category = new AidItemCategory();
+        ReflectionTestUtils.setField(category, "id", UUID.fromString(id));
+        ReflectionTestUtils.setField(category, "name", name);
+        ReflectionTestUtils.setField(category, "isLeaf", false);
+        return category;
     }
 }

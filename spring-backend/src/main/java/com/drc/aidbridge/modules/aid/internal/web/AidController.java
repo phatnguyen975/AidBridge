@@ -60,15 +60,14 @@ public class AidController {
     }
 
     @PostMapping(value = "/voice", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<VoiceAidRequestResponse>> transcribeVoice(
+    public ResponseEntity<ApiResponse<AidRequestResponse>> transcribeVoice(
             @RequestPart("file") org.springframework.web.multipart.MultipartFile audioFile,
             @Valid @ModelAttribute CreateAidRequestVoiceInput request,
             @AuthenticationPrincipal Jwt jwt) {
         UUID userId = resolveUserId(jwt);
-
-        System.out.println("Received voice aid request from user " + userId + " with file: " + audioFile.getOriginalFilename());
-        VoiceAidRequestResponse response = transcribeAidRequestVoiceUseCase.execute(userId, audioFile, request);
-        return ResponseEntity.ok(ApiResponse.success("Voice transcription completed and aid request created", response));
+        System.out.println(System.getProperty("file.encoding"));
+        AidRequestResponse response = transcribeAidRequestVoiceUseCase.execute(userId, audioFile, request);
+        return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
     }
 
     private UUID resolveUserId(Jwt jwt) {
