@@ -20,6 +20,10 @@ public class VolunteerController {
     private final UpdateVolunteerProfileUseCase updateVolunteerProfileUseCase;
     private final ToggleVolunteerStatusUseCase toggleVolunteerStatusUseCase;
     private final PingVolunteerHeartbeatUseCase pingVolunteerHeartbeatUseCase;
+<<<<<<< HEAD
+=======
+    private final GetVolunteerStatisticsUseCase getVolunteerStatisticsUseCase;
+>>>>>>> 40cdc4277bb1259bef98edf06f33a4b7c6d9f044
 
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<VolunteerProfileResponse>> getVolunteerProfile(
@@ -58,6 +62,16 @@ public class VolunteerController {
         return ResponseEntity.ok(ApiResponse.success("Heartbeat ping received", response));
     }
 
+<<<<<<< HEAD
+=======
+    @GetMapping("/{volunteerId}/statistics")
+    public ResponseEntity<ApiResponse<VolunteerStatisticsResponse>> getVolunteerStatistics(
+            @PathVariable UUID volunteerId) {
+        VolunteerStatisticsResponse response = getVolunteerStatisticsUseCase.execute(volunteerId);
+        return ResponseEntity.ok(ApiResponse.success("Volunteer statistics retrieved successfully", response));
+    }
+
+>>>>>>> 40cdc4277bb1259bef98edf06f33a4b7c6d9f044
     // Current misssion of current volunteer 
     // @GetMapping("/me/current-mission")
     // public ResponseEntity<ApiResponse<VolunteerMissionResponse>> getCurrentMission(Authentication authentication) {
