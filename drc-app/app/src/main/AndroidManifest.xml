@@ -22,6 +22,10 @@
         android:theme="@style/Theme.AidBridge"
         android:usesCleartextTraffic="true">
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${mapsApiKey}" />
+
         <activity
             android:name=".ui.splash.SplashActivity"
             android:exported="true"
