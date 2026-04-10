@@ -1,9 +1,11 @@
 package com.drc.aidbridge.di;
 
 import com.drc.aidbridge.data.repository.AuthRepositoryImpl;
+import com.drc.aidbridge.data.repository.SosRepositoryImpl;
 import com.drc.aidbridge.data.repository.UserRepositoryImpl;
 import com.drc.aidbridge.data.repository.volunteer.VolunteerRepositoryImpl;
 import com.drc.aidbridge.domain.repository.AuthRepository;
+import com.drc.aidbridge.domain.repository.SosRepository;
 import com.drc.aidbridge.domain.repository.UserRepository;
 import com.drc.aidbridge.domain.repository.volunteer.VolunteerRepository;
 
@@ -41,4 +43,8 @@ public abstract class RepositoryModule {
     @Binds
     @Singleton
     public abstract VolunteerRepository bindVolunteerRepository(VolunteerRepositoryImpl impl);
+
+    @Binds
+    @Singleton
+    public abstract SosRepository bindSosRepository(SosRepositoryImpl impl);
 }

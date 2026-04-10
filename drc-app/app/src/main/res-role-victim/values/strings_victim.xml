@@ -100,6 +100,7 @@
     <string name="victim_rescue_full_name_hint">Họ và tên</string>
     <string name="victim_rescue_default_name">Nguyễn Văn A</string>
     <string name="victim_rescue_people_count_hint">Số người</string>
+    <string name="victim_rescue_default_people_count">1</string>
     <string name="victim_rescue_severity_hint">Tình trạng</string>
     <string name="victim_rescue_health_detail_hint">Chi tiết sức khỏe</string>
     <string name="victim_rescue_images_title">Hình ảnh hiện trường</string>
@@ -107,6 +108,23 @@
     <string name="victim_rescue_upload_icon_desc">Biểu tượng tải ảnh hiện trường</string>
     <string name="victim_rescue_image_desc">Ảnh hiện trường</string>
     <string name="victim_rescue_remove_image_desc">Xóa ảnh khỏi danh sách</string>
+    <string name="victim_rescue_loading_hint">Đang gửi yêu cầu...</string>
+    <string name="victim_rescue_upload_dialog_title">Chọn nguồn ảnh</string>
+    <string name="victim_rescue_upload_option_camera">Chụp ảnh</string>
+    <string name="victim_rescue_upload_option_gallery">Chọn từ thư viện</string>
+    <string-array name="victim_rescue_image_source_options">
+        <item>@string/victim_rescue_upload_option_camera</item>
+        <item>@string/victim_rescue_upload_option_gallery</item>
+    </string-array>
+    <string name="victim_rescue_permission_camera_denied">Bạn cần cấp quyền camera để chụp ảnh hiện trường.</string>
+    <string name="victim_rescue_permission_gallery_denied">Bạn cần cấp quyền thư viện để chọn ảnh hiện trường.</string>
+    <string name="victim_rescue_permission_location_denied">Bạn cần cấp quyền vị trí để gửi SOS chính xác.</string>
+    <string name="victim_rescue_location_disabled">Vui lòng bật GPS để hệ thống lấy vị trí hiện tại.</string>
+    <string name="victim_rescue_location_unavailable">Không thể lấy vị trí hiện tại. Vui lòng thử lại.</string>
+    <string name="victim_rescue_image_limit_error">Bạn chỉ có thể tải tối đa 5 ảnh hiện trường.</string>
+    <string name="victim_rescue_camera_open_error">Không thể mở camera. Vui lòng thử lại.</string>
+    <string name="victim_rescue_submit_success">Yêu cầu SOS đã được gửi thành công.</string>
+    <string name="victim_rescue_submit_error">Không thể gửi yêu cầu SOS. Vui lòng thử lại.</string>
 
     <!-- Victim Supply Tab -->
     <string name="victim_supply_section_request">Yêu cầu tiếp tế</string>
@@ -152,4 +170,10 @@
     <string name="victim_relative_sos_severity_hint">Chọn tình trạng khẩn cấp</string>
     <string name="victim_relative_sos_submit">GỬI YÊU CẦU</string>
     <string name="victim_relative_sos_disclaimer">Bằng việc gửi yêu cầu, bạn cam kết các thông tin trên là chính xác để lực lượng cứu hộ có thể tiếp cận nhanh nhất</string>
+    <string name="victim_relative_sos_permission_location_denied">Bạn cần cấp quyền vị trí để gửi SOS cho người thân.</string>
+    <string name="victim_relative_sos_location_unavailable">Không thể lấy vị trí hiện tại để gửi SOS cho người thân.</string>
+    <string name="victim_relative_sos_error_name_required">Vui lòng nhập họ tên người thân cần hỗ trợ.</string>
+    <string name="victim_relative_sos_error_address_required">Vui lòng nhập địa chỉ hoặc mô tả vị trí người thân.</string>
+    <string name="victim_relative_sos_submit_success">Yêu cầu SOS cho người thân đã được gửi thành công.</string>
+    <string name="victim_relative_sos_submit_error">Không thể gửi SOS cho người thân. Vui lòng thử lại.</string>
 </resources>
