@@ -1,12 +1,14 @@
 package com.drc.aidbridge.ui.main.adapter.victim;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.ItemVictimImageBinding;
 
 import java.util.ArrayList;
@@ -17,8 +19,12 @@ import java.util.List;
  */
 public class VictimImageAdapter extends RecyclerView.Adapter<VictimImageAdapter.ImageViewHolder> {
 
-    // TODO: Replace Integer with a proper data class if images are loaded from URIs or network
-    private final List<Integer> images = new ArrayList<>();
+    private final List<Uri> images = new ArrayList<>();
+    private final OnImageRemovedListener onImageRemovedListener;
+
+    public VictimImageAdapter(@NonNull OnImageRemovedListener onImageRemovedListener) {
+        this.onImageRemovedListener = onImageRemovedListener;
+    }
 
     @NonNull
     @Override
@@ -30,9 +36,27 @@ public class VictimImageAdapter extends RecyclerView.Adapter<VictimImageAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
-        int imageRes = images.get(position);
-        holder.binding.ivImage.setImageResource(imageRes);
-        holder.binding.btnRemove.setOnClickListener(v -> removeAt(holder.getBindingAdapterPosition()));
+        Uri imageUri = images.get(position);
+        Glide.with(holder.binding.ivImage)
+            .load(imageUri)
+            .placeholder(R.drawable.ic_rescue)
+            .error(R.drawable.ic_rescue)
+            .centerCrop()
+            .into(holder.binding.ivImage);
+
+        holder.binding.btnRemove.setOnClickListener(v -> {
+            int adapterPosition = holder.getBindingAdapterPosition();
+            if (adapterPosition == RecyclerView.NO_POSITION
+                || adapterPosition < 0
+                || adapterPosition >= images.size()) {
+                return;
+            }
+
+            Uri removedImage = images.get(adapterPosition);
+            images.remove(adapterPosition);
+            notifyItemRemoved(adapterPosition);
+            onImageRemovedListener.onImageRemoved(removedImage);
+        });
     }
 
     @Override
@@ -40,17 +64,16 @@ public class VictimImageAdapter extends RecyclerView.Adapter<VictimImageAdapter.
         return images.size();
     }
 
-    public void addImage(@DrawableRes int drawableRes) {
-        images.add(drawableRes);
-        notifyItemInserted(images.size() - 1);
+    public void submitImages(List<Uri> newImages) {
+        images.clear();
+        if (newImages != null) {
+            images.addAll(newImages);
+        }
+        notifyDataSetChanged();
     }
 
-    private void removeAt(int position) {
-        if (position == RecyclerView.NO_POSITION || position < 0 || position >= images.size()) {
-            return;
-        }
-        images.remove(position);
-        notifyItemRemoved(position);
+    public interface OnImageRemovedListener {
+        void onImageRemoved(@NonNull Uri imageUri);
     }
 
     static class ImageViewHolder extends RecyclerView.ViewHolder {
