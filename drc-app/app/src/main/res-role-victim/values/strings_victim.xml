@@ -66,8 +66,24 @@
     <string name="victim_history_title_sos_self">Yêu cầu SOS cho bản thân</string>
     <string name="victim_history_title_supply">Yêu cầu hỗ trợ lương thực</string>
     <string name="victim_history_title_sos_relative">Yêu cầu SOS cho người thân</string>
+    <string name="victim_history_offline_indicator">Đang hiển thị dữ liệu ngoại tuyến</string>
+    <string name="victim_history_empty">Không có yêu cầu nào trong khoảng thời gian đã chọn.</string>
+    <string name="victim_history_empty_offline">Bạn đang offline và chưa có dữ liệu lịch sử đã lưu.</string>
+    <string name="victim_history_load_error">Không thể tải lịch sử yêu cầu. Vui lòng thử lại.</string>
+    <string name="victim_history_refresh_success">Đã cập nhật lịch sử yêu cầu.</string>
     <string name="victim_history_detail_title">Chi tiết yêu cầu</string>
     <string name="victim_history_detail_section_request">Thông tin yêu cầu</string>
+    <string name="victim_history_detail_unknown">Không xác định</string>
+    <string name="victim_history_placeholder_value">-</string>
+    <string name="victim_history_detail_note_empty">Không có ghi chú bổ sung.</string>
+    <string name="victim_history_detail_content_template">
+        Mã yêu cầu: %1$s
+        Loại yêu cầu: %2$s
+        Trạng thái: %3$s
+        Thời gian: %4$s
+        Địa điểm: %5$s
+        Ghi chú: %6$s
+    </string>
     <string name="victim_history_detail_dummy_content">Mã yêu cầu: REQ-001\nTrạng thái: Đang xử lý\nĐịa chỉ: Khu vực hỗ trợ gần nhất\nGhi chú: Đội cứu trợ đang điều phối xe tiếp cận vị trí của bạn.</string>
     <string name="victim_history_dummy_date_1">21/05/2025 - 11:02</string>
     <string name="victim_history_dummy_date_2">21/05/2025 - 10:20</string>

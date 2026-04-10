@@ -4,11 +4,13 @@ import com.drc.aidbridge.data.repository.AuthRepositoryImpl;
 import com.drc.aidbridge.data.repository.SosRepositoryImpl;
 import com.drc.aidbridge.data.repository.SupplyRepositoryImpl;
 import com.drc.aidbridge.data.repository.UserRepositoryImpl;
+import com.drc.aidbridge.data.repository.VictimHistoryRepositoryImpl;
 import com.drc.aidbridge.data.repository.volunteer.VolunteerRepositoryImpl;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.domain.repository.SosRepository;
 import com.drc.aidbridge.domain.repository.SupplyRepository;
 import com.drc.aidbridge.domain.repository.UserRepository;
+import com.drc.aidbridge.domain.repository.VictimHistoryRepository;
 import com.drc.aidbridge.domain.repository.volunteer.VolunteerRepository;
 
 import dagger.Binds;
@@ -53,4 +55,8 @@ public abstract class RepositoryModule {
     @Binds
     @Singleton
     public abstract SupplyRepository bindSupplyRepository(SupplyRepositoryImpl impl);
+
+    @Binds
+    @Singleton
+    public abstract VictimHistoryRepository bindVictimHistoryRepository(VictimHistoryRepositoryImpl impl);
 }

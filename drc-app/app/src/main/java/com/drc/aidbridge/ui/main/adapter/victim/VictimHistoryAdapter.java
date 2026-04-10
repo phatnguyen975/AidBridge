@@ -47,10 +47,10 @@ public class VictimHistoryAdapter extends RecyclerView.Adapter<VictimHistoryAdap
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
         HistoryModel model = items.get(position);
 
-        holder.binding.tvTitle.setText(model.title);
-        holder.binding.tvDate.setText(model.date);
-        holder.binding.tvLocation.setText(model.location);
-        holder.binding.tvStatus.setText(model.status);
+        holder.binding.tvTitle.setText(resolveTitle(holder, model));
+        holder.binding.tvDate.setText(resolveDate(holder, model));
+        holder.binding.tvLocation.setText(resolveLocation(holder, model));
+        holder.binding.tvStatus.setText(resolveStatus(holder, model));
 
         int iconRes;
         int typeColorRes;
@@ -136,6 +136,7 @@ public class VictimHistoryAdapter extends RecyclerView.Adapter<VictimHistoryAdap
         public final String date;
         public final String location;
         public final String type;
+        public final String detail;
 
         public static final String STATUS_PENDING = "STATUS_PENDING";
         public static final String STATUS_PROCESSING = "STATUS_PROCESSING";
@@ -147,7 +148,8 @@ public class VictimHistoryAdapter extends RecyclerView.Adapter<VictimHistoryAdap
                             String statusType,
                             String date,
                             String location,
-                            String type) {
+                            String type,
+                            String detail) {
             this.id = id;
             this.title = title;
             this.status = status;
@@ -155,7 +157,52 @@ public class VictimHistoryAdapter extends RecyclerView.Adapter<VictimHistoryAdap
             this.date = date;
             this.location = location;
             this.type = type;
+            this.detail = detail;
         }
+    }
+
+    private String resolveTitle(@NonNull HistoryViewHolder holder, @NonNull HistoryModel model) {
+        if (model.title != null && !model.title.trim().isEmpty()) {
+            return model.title.trim();
+        }
+
+        switch (model.type) {
+            case TYPE_SUPPLY:
+                return holder.binding.getRoot().getContext().getString(R.string.victim_history_title_supply);
+            case TYPE_SOS_RELATIVE:
+                return holder.binding.getRoot().getContext().getString(R.string.victim_history_title_sos_relative);
+            case TYPE_SOS_SELF:
+            default:
+                return holder.binding.getRoot().getContext().getString(R.string.victim_history_title_sos_self);
+        }
+    }
+
+    private String resolveStatus(@NonNull HistoryViewHolder holder, @NonNull HistoryModel model) {
+        if (model.status != null && !model.status.trim().isEmpty()) {
+            return model.status.trim();
+        }
+
+        switch (model.statusType) {
+            case HistoryModel.STATUS_PENDING:
+                return holder.binding.getRoot().getContext().getString(R.string.victim_history_status_pending);
+            case HistoryModel.STATUS_COMPLETED:
+                return holder.binding.getRoot().getContext().getString(R.string.victim_history_status_completed);
+            case HistoryModel.STATUS_PROCESSING:
+            default:
+                return holder.binding.getRoot().getContext().getString(R.string.victim_history_status_processing);
+        }
+    }
+
+    private String resolveDate(@NonNull HistoryViewHolder holder, @NonNull HistoryModel model) {
+        return model.date != null && !model.date.trim().isEmpty()
+            ? model.date.trim()
+            : holder.binding.getRoot().getContext().getString(R.string.victim_history_placeholder_value);
+    }
+
+    private String resolveLocation(@NonNull HistoryViewHolder holder, @NonNull HistoryModel model) {
+        return model.location != null && !model.location.trim().isEmpty()
+            ? model.location.trim()
+            : holder.binding.getRoot().getContext().getString(R.string.victim_history_placeholder_value);
     }
 
     static class HistoryViewHolder extends RecyclerView.ViewHolder {
