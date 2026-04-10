@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.api.volunteer.VolunteerApiService;
 import com.drc.aidbridge.data.remote.dto.request.volunteer.ToggleStatusRequest;
+import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerHistoryItemDto;
+import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerHistoryResponseDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.ToggleStatusDataDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.ToggleStatusResponse;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerProfileDataDto;
@@ -19,6 +21,9 @@ import javax.inject.Singleton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Singleton
 public class VolunteerRepositoryImpl extends BaseRepository implements VolunteerRepository {
@@ -74,6 +79,48 @@ public class VolunteerRepositoryImpl extends BaseRepository implements Volunteer
 
             @Override
             public void onFailure(Call<VolunteerProfileResponse> call, Throwable t) {
+                result.postValue(NetworkResultWrapper.error("Không thể kết nối máy chủ: " + safeMessage(t)));
+            }
+        });
+
+        return result;
+    }
+
+    @Override
+    public LiveData<NetworkResultWrapper<List<VolunteerHistoryItemDto>>> getMissionHistory() {
+        MutableLiveData<NetworkResultWrapper<List<VolunteerHistoryItemDto>>> result = new MutableLiveData<>();
+        result.postValue(NetworkResultWrapper.loading());
+
+        volunteerApiService.getMissionHistory().enqueue(new Callback<VolunteerHistoryResponseDto>() {
+            @Override
+            public void onResponse(Call<VolunteerHistoryResponseDto> call,
+                    Response<VolunteerHistoryResponseDto> response) {
+                if (!response.isSuccessful()) {
+                    result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
+                    return;
+                }
+
+                VolunteerHistoryResponseDto body = response.body();
+                if (body == null) {
+                    result.postValue(NetworkResultWrapper.error("Phản hồi lịch sử nhiệm vụ không hợp lệ."));
+                    return;
+                }
+
+                if (!body.isSuccess()) {
+                    String message = body.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                            message != null && !message.trim().isEmpty()
+                                    ? message
+                                    : "Không thể tải lịch sử nhiệm vụ."));
+                    return;
+                }
+
+                List<VolunteerHistoryItemDto> data = body.getData();
+                result.postValue(NetworkResultWrapper.success(data != null ? data : new ArrayList<>()));
+            }
+
+            @Override
+            public void onFailure(Call<VolunteerHistoryResponseDto> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error("Không thể kết nối máy chủ: " + safeMessage(t)));
             }
         });
