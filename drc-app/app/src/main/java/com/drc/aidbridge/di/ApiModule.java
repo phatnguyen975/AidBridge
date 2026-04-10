@@ -2,7 +2,9 @@ package com.drc.aidbridge.di;
 
 import com.drc.aidbridge.data.remote.api.AuthApiService;
 import com.drc.aidbridge.data.remote.api.SosApiService;
+import com.drc.aidbridge.data.remote.api.SupplyApiService;
 import com.drc.aidbridge.data.remote.api.UserApiService;
+import com.drc.aidbridge.data.remote.api.VictimHistoryApiService;
 import com.drc.aidbridge.data.remote.api.volunteer.VolunteerApiService;
 
 import javax.inject.Singleton;
@@ -46,5 +48,17 @@ public class ApiModule {
     @Singleton
     public SosApiService provideSosApiService(Retrofit retrofit) {
         return retrofit.create(SosApiService.class);
+    }
+
+    @Provides
+    @Singleton
+    public SupplyApiService provideSupplyApiService(Retrofit retrofit) {
+        return retrofit.create(SupplyApiService.class);
+    }
+
+    @Provides
+    @Singleton
+    public VictimHistoryApiService provideVictimHistoryApiService(Retrofit retrofit) {
+        return retrofit.create(VictimHistoryApiService.class);
     }
 }
