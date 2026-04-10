@@ -6,12 +6,13 @@ import com.drc.aidbridge.data.remote.dto.response.AuthResponse;
 import com.drc.aidbridge.data.remote.dto.request.LoginRequest;
 import com.drc.aidbridge.data.remote.dto.request.RegisterRequest;
 import com.drc.aidbridge.data.remote.dto.request.OtpVerifyRequest;
-import com.drc.aidbridge.data.remote.dto.request.ForgotPasswordRequest;
+import com.drc.aidbridge.data.remote.dto.request.RequestOtpRequest;
 import com.drc.aidbridge.data.remote.dto.request.ResetPasswordRequest;
 import com.drc.aidbridge.domain.model.User;
 
 /**
- * AuthRepository — interface defining the contract for all authentication operations.
+ * AuthRepository — interface defining the contract for all authentication
+ * operations.
  */
 public interface AuthRepository {
 
@@ -20,7 +21,7 @@ public interface AuthRepository {
      * Returns a LiveData stream of NetworkResultWrapper<User> that emits:
      * - Loading: while the API call is in flight
      * - Success: on successful login, with the authenticated User domain model
-     * - Error:   on failure (wrong credentials, network error, etc.)
+     * - Error: on failure (wrong credentials, network error, etc.)
      */
     LiveData<NetworkResultWrapper<User>> login(LoginRequest request);
 
@@ -32,20 +33,21 @@ public interface AuthRepository {
 
     /**
      * Verifies a 6-digit OTP code for the given email.
-      * On success, returns the auth payload including refreshed tokens and user info.
+     * On success, returns the auth payload including refreshed tokens and user
+     * info.
      */
-     LiveData<NetworkResultWrapper<AuthResponse>> verifyOtp(OtpVerifyRequest request);
+    LiveData<NetworkResultWrapper<AuthResponse>> verifyOtp(OtpVerifyRequest request);
 
     /**
      * Requests a password-reset OTP for the given email.
      */
-    LiveData<NetworkResultWrapper<String>> forgotPassword(ForgotPasswordRequest request);
+    LiveData<NetworkResultWrapper<String>> forgotPassword(RequestOtpRequest request);
 
     /**
      * Resends the OTP to the user's email/phone.
      * Success emits Boolean.TRUE; Error contains the failure message.
      */
-    LiveData<NetworkResultWrapper<Boolean>> resendOtp(ForgotPasswordRequest request);
+    LiveData<NetworkResultWrapper<Boolean>> resendOtp(RequestOtpRequest request);
 
     /**
      * Verifies reset-password OTP code.

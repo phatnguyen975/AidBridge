@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class RefreshTokenRequest {
 
-    @SerializedName("refreshToken")
+    @SerializedName("refresh_token")
     private final String refreshToken;
 
     public RefreshTokenRequest(String refreshToken) {

@@ -1,17 +1,29 @@
 package com.drc.aidbridge.ui.map.fragment;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 
+import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentMapVolunteerBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBinding> {
+public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBinding> implements OnMapReadyCallback {
+
+	private GoogleMap mMap;
+	private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
 
 	@Nullable
 	@Override
@@ -21,9 +33,61 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
 
 	@Override
 	protected void setupViews() {
+		// 1. Find & initialize SupportMapFragment from layout
+		SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+				.findFragmentById(R.id.map);
+
+		/*
+		 * // Uncomment the following lines to set up the map asynchronously
+		 * 
+		 * if (mapFragment != null) {
+		 * mapFragment.getMapAsync(this);
+		 * }
+		 */
+	}
+
+	@Override
+	public void onMapReady(@NonNull GoogleMap googleMap) {
+		mMap = googleMap;
+
+		// 2. Check permissions and enable location features
+		// Note: The following line is commented out to prevent automatic permission
+		// requests during development.
+		// enableMyLocation();
+	}
+
+	private void enableMyLocation() {
+		// Check for ACCESS_FINE_LOCATION permission
+		if (ActivityCompat.checkSelfPermission(requireContext(),
+				Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+			// If permission is not granted, request it from the user
+			requestPermissions(new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
+					LOCATION_PERMISSION_REQUEST_CODE);
+			return;
+		}
+
+		if (mMap != null) {
+			// 3. Display the blue dot for the current location and the "My Location" button
+			mMap.setMyLocationEnabled(true);
+			mMap.getUiSettings().setMyLocationButtonEnabled(true);
+		}
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+			@NonNull int[] grantResults) {
+		if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				enableMyLocation();
+			} else {
+				Toast.makeText(requireContext(), "Bạn cần cấp quyền vị trí để xem bản đồ", Toast.LENGTH_SHORT).show();
+			}
+		}
 	}
 
 	@Override
 	protected void observeViewModel() {
+		// Check if ViewModel observation is needed for this fragment
 	}
 }

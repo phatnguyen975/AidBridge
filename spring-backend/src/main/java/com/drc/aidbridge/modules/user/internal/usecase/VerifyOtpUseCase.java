@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import com.drc.aidbridge.modules.user.UserRoleCreatedEvent;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class VerifyOtpUseCase {
     private final JwtService jwtService;
     private final NotificationFacade notificationFacade;
     private final UserMapper userMapper;
-    // event publisher 
+    // event publisher
     private final ApplicationEventPublisher publisher;
 
     @Transactional
@@ -38,7 +39,9 @@ public class VerifyOtpUseCase {
         String identifier = getIdentifier(request);
         OtpRedisSchema.OtpPurpose purpose = mapOtpType(request.getOtpType());
 
-        boolean valid = otpRedisSchema.verifyOtp(purpose, identifier, request.getOtpCode());
+        boolean valid = purpose == OtpRedisSchema.OtpPurpose.PASSWORD_RESET
+                ? otpRedisSchema.verifyOtpWithoutConsuming(purpose, identifier, request.getOtpCode())
+                : otpRedisSchema.verifyOtp(purpose, identifier, request.getOtpCode());
 
         if (!valid) {
             int remaining = otpRedisSchema.getRemainingAttempts(purpose, identifier);
@@ -66,15 +69,16 @@ public class VerifyOtpUseCase {
                 }
             }
             case "PASSWORD_RESET" -> {
+                otpRedisSchema.markOtpVerified(OtpRedisSchema.OtpPurpose.PASSWORD_RESET, identifier);
                 log.info("Password reset OTP verified for: {}", identifier);
             }
         }
 
-        // For password reset OTP verification we keep contract compatibility by returning
+        // For password reset OTP verification we keep contract compatibility by
+        // returning
         // AuthResponse payload, but caller may ignore these tokens.
         String accessToken = jwtService.generateAccessToken(user.getId(), user.getRole().name());
         String refreshToken = jwtService.generateRefreshToken(user.getId());
-
 
         return userMapper.buildAuthResponse(user, accessToken, refreshToken);
     }
@@ -87,7 +91,7 @@ public class VerifyOtpUseCase {
         log.info("Publishing UserRoleCreatedEvent with userId: {}, role: {}", user.getId(), user.getRole().name());
         publisher.publishEvent(event);
         log.info("Successfully published UserRoleCreatedEvent for user: {}", user.getEmail());
-    } 
+    }
 
     private void validateRequest(VerifyOtpRequest request) {
         if (!StringUtils.hasText(request.getEmail()) && !StringUtils.hasText(request.getPhoneNumber())) {

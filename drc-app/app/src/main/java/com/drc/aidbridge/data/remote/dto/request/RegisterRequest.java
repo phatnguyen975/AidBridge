@@ -4,13 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 public class RegisterRequest {
 
-    @SerializedName("name")
+    @SerializedName("full_name")
     private final String name;
 
     @SerializedName("email")
     private final String email;
 
-    @SerializedName("phone")
+    @SerializedName("phone_number")
     private final String phone;
 
     @SerializedName("password")
