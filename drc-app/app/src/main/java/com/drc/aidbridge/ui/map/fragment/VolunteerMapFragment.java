@@ -33,38 +33,42 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
 
 	@Override
 	protected void setupViews() {
-		// 1. Tìm và khởi tạo SupportMapFragment từ layout
-		// Lưu ý: Đảm bảo trong fragment_map_volunteer.xml bạn đã có một <fragment> hoặc
-		// <FragmentContainerView> với ID là R.id.map
+		// 1. Find & initialize SupportMapFragment from layout
 		SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
 				.findFragmentById(R.id.map);
 
-		if (mapFragment != null) {
-			mapFragment.getMapAsync(this);
-		}
+		/*
+		 * // Uncomment the following lines to set up the map asynchronously
+		 * 
+		 * if (mapFragment != null) {
+		 * mapFragment.getMapAsync(this);
+		 * }
+		 */
 	}
 
 	@Override
 	public void onMapReady(@NonNull GoogleMap googleMap) {
 		mMap = googleMap;
 
-		// 2. Kích hoạt tính năng vị trí hiện tại
-		enableMyLocation();
+		// 2. Check permissions and enable location features
+		// Note: The following line is commented out to prevent automatic permission
+		// requests during development.
+		// enableMyLocation();
 	}
 
 	private void enableMyLocation() {
-		// Kiểm tra quyền ACCESS_FINE_LOCATION
+		// Check for ACCESS_FINE_LOCATION permission
 		if (ActivityCompat.checkSelfPermission(requireContext(),
 				Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-			// Nếu chưa có quyền, yêu cầu người dùng cấp quyền
+			// If permission is not granted, request it from the user
 			requestPermissions(new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
 					LOCATION_PERMISSION_REQUEST_CODE);
 			return;
 		}
 
 		if (mMap != null) {
-			// 3. Hiển thị dấu chấm xanh vị trí hiện tại và nút "My Location"
+			// 3. Display the blue dot for the current location and the "My Location" button
 			mMap.setMyLocationEnabled(true);
 			mMap.getUiSettings().setMyLocationButtonEnabled(true);
 		}
@@ -84,6 +88,6 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
 
 	@Override
 	protected void observeViewModel() {
-		// Xử lý dữ liệu từ ViewModel sau này (ví dụ: danh sách các ca cứu trợ)
+		// Check if ViewModel observation is needed for this fragment
 	}
 }
