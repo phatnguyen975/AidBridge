@@ -187,15 +187,48 @@
                             android:textColorHint="@color/text_hint" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnUpdateInfo"
-                        style="@style/Widget.AidBridge.Button.Primary"
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="@dimen/spacing_md"
-                        android:text="@string/volunteer_personal_info_btn_update"
-                        android:textAllCaps="true"
-                        app:backgroundTint="@color/color_primary" />
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnUpdateInfo"
+                            style="@style/Widget.AidBridge.Button.Primary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="@dimen/spacing_md"
+                            android:text=""
+                            android:textAllCaps="true"
+                            app:backgroundTint="@color/color_primary" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:clickable="false"
+                            android:elevation="@dimen/auth_button_center_overlay_elevation"
+                            android:focusable="false"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <ProgressBar
+                                android:id="@+id/progressUpdateInfoInline"
+                                android:layout_width="@dimen/auth_button_center_progress_size"
+                                android:layout_height="@dimen/auth_button_center_progress_size"
+                                android:layout_marginEnd="@dimen/auth_button_center_progress_spacing"
+                                android:indeterminateTint="@color/white"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/tvUpdateInfoButtonText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/volunteer_personal_info_btn_update"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/text_md"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </FrameLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -273,15 +306,48 @@
                             android:textColorHint="@color/text_hint" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnChangePassword"
-                        style="@style/Widget.AidBridge.Button.Primary"
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="@dimen/spacing_md"
-                        android:text="@string/volunteer_personal_info_btn_change_password"
-                        android:textAllCaps="true"
-                        app:backgroundTint="@color/color_primary" />
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnChangePassword"
+                            style="@style/Widget.AidBridge.Button.Primary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingVertical="@dimen/spacing_md"
+                            android:text=""
+                            android:textAllCaps="true"
+                            app:backgroundTint="@color/color_primary" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:clickable="false"
+                            android:elevation="@dimen/auth_button_center_overlay_elevation"
+                            android:focusable="false"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <ProgressBar
+                                android:id="@+id/progressChangePasswordInline"
+                                android:layout_width="@dimen/auth_button_center_progress_size"
+                                android:layout_height="@dimen/auth_button_center_progress_size"
+                                android:layout_marginEnd="@dimen/auth_button_center_progress_spacing"
+                                android:indeterminateTint="@color/white"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/tvChangePasswordButtonText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/volunteer_personal_info_btn_change_password"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/text_md"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </FrameLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
