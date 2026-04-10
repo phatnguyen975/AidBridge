@@ -3,6 +3,7 @@ package com.drc.aidbridge.data.mapper.volunteer;
 import androidx.annotation.Nullable;
 
 import com.drc.aidbridge.data.mapper.BaseMapper;
+import com.drc.aidbridge.data.remote.dto.response.UserDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerHistoryItemDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerProfileDataDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerUserDto;
@@ -65,6 +66,18 @@ public class VolunteerInfoMapper implements BaseMapper<VolunteerProfileDataDto, 
         String email = user != null && user.getEmail() != null
                 ? user.getEmail().trim()
                 : "";
+
+        return new VolunteerPersonalInfo(fullName, phoneNumber, email);
+    }
+
+    public VolunteerPersonalInfo mapToPersonalInfoDomain(@Nullable UserDto dto) {
+        if (dto == null) {
+            return new VolunteerPersonalInfo("", "", "");
+        }
+
+        String fullName = dto.getName() != null ? dto.getName().trim() : "";
+        String phoneNumber = dto.getPhone() != null ? dto.getPhone().trim() : "";
+        String email = dto.getEmail() != null ? dto.getEmail().trim() : "";
 
         return new VolunteerPersonalInfo(fullName, phoneNumber, email);
     }
