@@ -1,19 +1,21 @@
 package com.drc.aidbridge.ui.main.fragment.volunteer;
 
 import android.view.View;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVolunteerHistoryBinding;
+import com.drc.aidbridge.domain.model.volunteer.VolunteerHistoryItem;
 import com.drc.aidbridge.ui.main.adapter.volunteer.VolunteerMissionHistoryAdapter;
 import com.drc.aidbridge.ui.base.BaseFragment;
+import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerHistoryViewModel;
 import com.google.android.material.chip.Chip;
 
 import java.util.ArrayList;
@@ -25,12 +27,16 @@ import javax.inject.Inject;
 @AndroidEntryPoint
 public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHistoryBinding> {
 
-    private static final String TAG = "VolunteerHistory";
-
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private String currentFilter = "";
+
+    private static final String FILTER_ALL = "all";
+    private static final String FILTER_RESCUE = "RESCUE";
+    private static final String FILTER_DELIVERY = "DELIVERY";
+
+    private VolunteerHistoryViewModel volunteerHistoryViewModel;
 
     @Inject
     VolunteerMissionHistoryAdapter volunteerMissionHistoryAdapter;
@@ -42,20 +48,55 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
 
     @Override
     protected void setupViews() {
+        volunteerHistoryViewModel = new ViewModelProvider(this).get(VolunteerHistoryViewModel.class);
         onInitUI();
         setupToolbar();
-        setupFilterLogging();
+        setupFilterActions();
+
+        // === API LOGIC (Uncomment when Backend is ready) ===
+        // volunteerHistoryViewModel.loadHistory();
+        // ===================================================
     }
 
     @Override
     protected void observeViewModel() {
-        // TODO: Inject ViewModel và observe LiveData cho danh sách lịch sử từ UseCase
+        if (volunteerHistoryViewModel == null) {
+            return;
+        }
+
+        volunteerHistoryViewModel.getHistoryResult().observe(getViewLifecycleOwner(), result -> {
+            if (result == null) {
+                return;
+            }
+
+            binding.paginationProgress.setVisibility(result.isLoading() ? View.VISIBLE : View.GONE);
+
+            if (result.hasBeenHandled() && !result.isLoading()) {
+                return;
+            }
+
+            if (result.isError()) {
+                result.markAsHandled();
+                String message = result.getMessage() != null
+                        ? result.getMessage()
+                        : getString(R.string.error_generic);
+                showTopSnackbar(binding.getRoot(), message, true);
+            }
+        });
+
+        volunteerHistoryViewModel.getFilteredHistoryList().observe(getViewLifecycleOwner(), historyItems -> {
+            // Mock mode: keep adapter data from loadData()/generateDummyData().
+            // List<VolunteerMissionHistoryAdapter.MissionHistoryModel> uiModels =
+            // mapToUiModels(historyItems);
+            // volunteerMissionHistoryAdapter.setMissionList(uiModels);
+        });
     }
 
     private void onInitUI() {
-        resetScreenState();
         binding.rvHistory.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvHistory.setAdapter(volunteerMissionHistoryAdapter);
+
+        resetScreenState();
         setupRecyclerViewScrollListener();
         currentFilter = getString(R.string.volunteer_history_filter_all);
         loadData();
@@ -98,17 +139,17 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
         binding.btnBack.setOnClickListener(v -> popBackStackSafely());
     }
 
-    private void setupFilterLogging() {
+    private void setupFilterActions() {
         binding.chipGroupMissionFilters.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds == null || checkedIds.isEmpty()) {
-                Log.d(TAG, "Filter selected: none");
                 return;
             }
 
             int selectedId = checkedIds.get(0);
             Chip selectedChip = group.findViewById(selectedId);
-            String selectedText = selectedChip != null ? selectedChip.getText().toString() : "unknown";
-            Log.d(TAG, "Filter selected: " + selectedText + " (id=" + selectedId + ")");
+            String selectedText = selectedChip != null
+                    ? selectedChip.getText().toString()
+                    : getString(R.string.volunteer_history_filter_all);
 
             volunteerMissionHistoryAdapter.clear();
             currentPage = 1;
@@ -116,8 +157,15 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
             currentFilter = selectedText;
             loadData();
 
-            // TODO: Gọi viewModel.fetchHistory(type) và observe dữ liệu để cập nhật vào
-            // volunteerMissionHistoryAdapter.setMissionList()
+            // === API LOGIC (Uncomment when Backend is ready) ===
+            // if (selectedId == R.id.chipFilterRescue) {
+            // volunteerHistoryViewModel.filterHistory(FILTER_RESCUE);
+            // } else if (selectedId == R.id.chipFilterDelivery) {
+            // volunteerHistoryViewModel.filterHistory(FILTER_DELIVERY);
+            // } else {
+            // volunteerHistoryViewModel.filterHistory(FILTER_ALL);
+            // }
+            // ===================================================
         });
     }
 
@@ -203,5 +251,28 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
         }
 
         return filteredItems;
+    }
+
+    private List<VolunteerMissionHistoryAdapter.MissionHistoryModel> mapToUiModels(
+            @Nullable List<VolunteerHistoryItem> historyItems) {
+        List<VolunteerMissionHistoryAdapter.MissionHistoryModel> allItems = new ArrayList<>();
+
+        if (historyItems == null) {
+            return allItems;
+        }
+
+        for (VolunteerHistoryItem item : historyItems) {
+            String type = item.getType() != null ? item.getType() : "";
+            String location = item.getLocation() != null ? item.getLocation() : "";
+            String completedAt = item.getCompletedAt() != null ? item.getCompletedAt() : "";
+
+            allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
+                    type,
+                    location,
+                    completedAt,
+                    "https://images.unsplash.com/photo-1469474968028-56623f02e42e"));
+        }
+
+        return allItems;
     }
 }
