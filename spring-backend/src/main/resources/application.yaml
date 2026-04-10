@@ -25,8 +25,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 40
-      minimum-idle: 5
+      maximum-pool-size: 48
+      minimum-idle: 10
       leak-detection-threshold: 20000
       connection-timeout: 30000
       idle-timeout: 600000
