@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.FragmentForgotOtpBinding;
-import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.common.OtpInputController;
 import com.drc.aidbridge.ui.auth.viewmodel.ForgotOtpViewModel;
@@ -20,7 +20,7 @@ import java.util.Arrays;
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * ForgotOtpFragment — Forgot Password: Step 2 — Enter OTP.
+ * ForgotOtpFragment â€” Forgot Password: Step 2 â€” Enter OTP.
  */
 @AndroidEntryPoint
 public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
@@ -175,3 +175,4 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
         navigateSafely(R.id.action_forgotOtpFragment_to_forgotNewPasswordFragment, args);
     }
 }
+

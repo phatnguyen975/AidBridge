@@ -29,22 +29,15 @@
     <string name="victim_personal_info_hint_phone">Số điện thoại</string>
     <string name="victim_personal_info_hint_email">Email</string>
     <string name="victim_personal_info_hint_address">Địa chỉ thường trú</string>
-    <string name="victim_personal_info_default_full_name">Nguyễn Văn A</string>
-    <string name="victim_personal_info_default_phone">0901234567</string>
-    <string name="victim_personal_info_default_email">nguyenvana@gmail.com</string>
     <string name="victim_personal_info_btn_update">CẬP NHẬT THÔNG TIN</string>
     <string name="victim_personal_info_password_card_title">Đổi mật khẩu</string>
     <string name="victim_personal_info_hint_current_password">Mật khẩu hiện tại</string>
     <string name="victim_personal_info_hint_new_password">Mật khẩu mới</string>
     <string name="victim_personal_info_hint_confirm_new_password">Nhập lại mật khẩu mới</string>
     <string name="victim_personal_info_btn_change_password">ĐỔI MẬT KHẨU</string>
-    <string name="victim_personal_info_toast_update_success">Cập nhật thông tin thành công</string>
-    <string name="victim_personal_info_toast_change_password_success">Đổi mật khẩu thành công</string>
     <string name="victim_personal_info_message_update_success">Cập nhật thông tin thành công.</string>
     <string name="victim_personal_info_message_change_password_success">Đổi mật khẩu thành công.</string>
     <string name="victim_personal_info_message_avatar_updated">Cập nhật ảnh đại diện thành công.</string>
-    <string name="victim_personal_info_error_password_mismatch">Mật khẩu mới và xác nhận mật khẩu không khớp.</string>
-    <string name="victim_personal_info_error_avatar_processing">Không thể xử lý ảnh đã chọn. Vui lòng thử lại.</string>
 
     <!-- Victim History Screen -->
     <string name="victim_history_title">Lịch sử yêu cầu</string>
@@ -84,17 +77,6 @@
         Địa điểm: %5$s
         Ghi chú: %6$s
     </string>
-    <string name="victim_history_detail_dummy_content">Mã yêu cầu: REQ-001\nTrạng thái: Đang xử lý\nĐịa chỉ: Khu vực hỗ trợ gần nhất\nGhi chú: Đội cứu trợ đang điều phối xe tiếp cận vị trí của bạn.</string>
-    <string name="victim_history_dummy_date_1">21/05/2025 - 11:02</string>
-    <string name="victim_history_dummy_date_2">21/05/2025 - 10:20</string>
-    <string name="victim_history_dummy_date_3">20/05/2025 - 19:35</string>
-    <string name="victim_history_dummy_date_4">20/05/2025 - 14:10</string>
-    <string name="victim_history_dummy_date_5">19/05/2025 - 22:47</string>
-    <string name="victim_history_dummy_location_1">Khu vực A, bộ lọc %1$s</string>
-    <string name="victim_history_dummy_location_2">Khu vực B, bộ lọc %1$s</string>
-    <string name="victim_history_dummy_location_3">Khu vực C, bộ lọc %1$s</string>
-    <string name="victim_history_dummy_location_4">Khu vực D, bộ lọc %1$s</string>
-    <string name="victim_history_dummy_location_5">Khu vực E, bộ lọc %1$s</string>
 
     <!-- Victim SOS Selection -->
     <string name="victim_sos_title">YÊU CẦU HỖ TRỢ</string>
@@ -144,14 +126,6 @@
 
     <!-- Victim Supply Tab -->
     <string name="victim_supply_section_request">Yêu cầu tiếp tế</string>
-    <string name="victim_supply_category_food">Thức ăn</string>
-    <string name="victim_supply_category_water">Nước uống</string>
-    <string name="victim_supply_item_rice">Gạo</string>
-    <string name="victim_supply_item_noodles">Mì tôm</string>
-    <string name="victim_supply_item_canned">Đồ hộp</string>
-    <string name="victim_supply_item_water">Nước lọc</string>
-    <string name="victim_supply_item_milk">Sữa</string>
-    <string name="victim_supply_item_electrolyte">Nước điện giải</string>
     <string name="victim_supply_section_notes">Ghi chú &amp; Mô tả chi tiết</string>
     <string name="victim_supply_notes_hint">Nhập mô tả chi tiết...</string>
     <string name="victim_supply_voice_idle">Nhấn để nói...</string>
@@ -174,7 +148,6 @@
     <string name="victim_supply_load_categories_error">Không thể tải danh mục tiếp tế. Vui lòng thử lại.</string>
     <string name="victim_supply_submit_success">Yêu cầu tiếp tế đã được gửi thành công.</string>
     <string name="victim_supply_submit_error">Không thể gửi yêu cầu tiếp tế. Vui lòng thử lại.</string>
-    <string name="victim_supply_validation_item_required">Vui lòng chọn ít nhất một vật phẩm tiếp tế.</string>
     <string name="victim_supply_voice_prompt">Hãy nói nội dung ghi chú tiếp tế</string>
     <string name="victim_supply_voice_permission_denied">Bạn cần cấp quyền micro để sử dụng nhập liệu giọng nói.</string>
     <string name="victim_supply_voice_result_error">Không nhận diện được giọng nói. Vui lòng thử lại.</string>
@@ -198,8 +171,6 @@
     <string name="victim_relative_sos_disclaimer">Bằng việc gửi yêu cầu, bạn cam kết các thông tin trên là chính xác để lực lượng cứu hộ có thể tiếp cận nhanh nhất</string>
     <string name="victim_relative_sos_permission_location_denied">Bạn cần cấp quyền vị trí để gửi SOS cho người thân.</string>
     <string name="victim_relative_sos_location_unavailable">Không thể lấy vị trí hiện tại để gửi SOS cho người thân.</string>
-    <string name="victim_relative_sos_error_name_required">Vui lòng nhập họ tên người thân cần hỗ trợ.</string>
-    <string name="victim_relative_sos_error_address_required">Vui lòng nhập địa chỉ hoặc mô tả vị trí người thân.</string>
     <string name="victim_relative_sos_submit_success">Yêu cầu SOS cho người thân đã được gửi thành công.</string>
     <string name="victim_relative_sos_submit_error">Không thể gửi SOS cho người thân. Vui lòng thử lại.</string>
 </resources>

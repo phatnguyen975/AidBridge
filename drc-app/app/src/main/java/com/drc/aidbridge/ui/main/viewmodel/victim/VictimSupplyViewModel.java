@@ -9,8 +9,9 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.dto.supply.ReliefRequestDto;
 import com.drc.aidbridge.data.remote.dto.supply.RequestedItemDto;
 import com.drc.aidbridge.data.remote.dto.supply.SupplyCategoryDto;
-import com.drc.aidbridge.domain.usecase.supply.GetSupplyCategoriesUseCase;
-import com.drc.aidbridge.domain.usecase.supply.SubmitReliefRequestUseCase;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.victim.GetSupplyCategoriesUseCase;
+import com.drc.aidbridge.domain.usecase.victim.SubmitReliefRequestUseCase;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class VictimSupplyViewModel extends BaseViewModel {
     private final LiveData<NetworkResultWrapper<List<SupplyCategoryDto>>> categoriesSource;
     private final LiveData<NetworkResultWrapper<String>> submitSource;
 
+    private final MutableLiveData<AuthValidationResult> validationError = new MutableLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<List<SupplyCategoryDto>>> categoriesResult = new MediatorLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<String>> submitResult = new MediatorLiveData<>();
 
@@ -65,6 +67,10 @@ public class VictimSupplyViewModel extends BaseViewModel {
         return submitResult;
     }
 
+    public LiveData<AuthValidationResult> getValidationError() {
+        return validationError;
+    }
+
     public void loadCategories() {
         workerExecutor.execute(() -> loadCategoriesTrigger.postValue(System.currentTimeMillis()));
     }
@@ -83,6 +89,14 @@ public class VictimSupplyViewModel extends BaseViewModel {
                 note != null ? note.trim() : "",
                 requestedItems
             );
+
+            AuthValidationResult validation = submitReliefRequestUseCase.validate(requestDto);
+            if (!validation.isValid()) {
+                validationError.postValue(validation);
+                return;
+            }
+
+            validationError.postValue(AuthValidationResult.valid());
             submitRequestTrigger.postValue(requestDto);
         });
     }

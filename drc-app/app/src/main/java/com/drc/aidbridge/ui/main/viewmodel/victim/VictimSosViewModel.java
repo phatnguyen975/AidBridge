@@ -9,7 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
-import com.drc.aidbridge.domain.usecase.sos.UploadSosUseCase;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.victim.UploadSosUseCase;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 import com.drc.aidbridge.utils.ImageUtils;
 
@@ -44,6 +45,7 @@ public class VictimSosViewModel extends BaseViewModel {
     private final LiveData<NetworkResultWrapper<String>> selfSosSource;
     private final LiveData<NetworkResultWrapper<String>> relativeSosSource;
 
+    private final MutableLiveData<AuthValidationResult> validationError = new MutableLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<String>> submitSelfSosResult = new MediatorLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<String>> submitRelativeSosResult = new MediatorLiveData<>();
 
@@ -95,6 +97,10 @@ public class VictimSosViewModel extends BaseViewModel {
         return submitRelativeSosResult;
     }
 
+    public LiveData<AuthValidationResult> getValidationError() {
+        return validationError;
+    }
+
     public void submitSelfSos(Context context,
                               String fullName,
                               int peopleCount,
@@ -103,6 +109,13 @@ public class VictimSosViewModel extends BaseViewModel {
                               double latitude,
                               double longitude,
                               List<Uri> imageUris) {
+        AuthValidationResult validation = uploadSosUseCase.validateSelfSos(fullName, peopleCount, severity, note);
+        if (!validation.isValid()) {
+            validationError.postValue(validation);
+            return;
+        }
+
+        validationError.postValue(AuthValidationResult.valid());
         submitSelfSosResult.postValue(NetworkResultWrapper.loading());
 
         uploadExecutor.execute(() -> {
@@ -152,6 +165,17 @@ public class VictimSosViewModel extends BaseViewModel {
                                   String severity,
                                   double latitude,
                                   double longitude) {
+        AuthValidationResult validation = uploadSosUseCase.validateRelativeSos(
+            relativeName,
+            relativeAddress,
+            severity
+        );
+        if (!validation.isValid()) {
+            validationError.setValue(validation);
+            return;
+        }
+
+        validationError.setValue(AuthValidationResult.valid());
         submitRelativeSosResult.setValue(NetworkResultWrapper.loading());
 
         RelativeSosPayload payload = new RelativeSosPayload(

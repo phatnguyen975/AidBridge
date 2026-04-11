@@ -30,6 +30,7 @@ import com.drc.aidbridge.data.remote.dto.supply.SupplyCategoryDto;
 import com.drc.aidbridge.data.remote.dto.supply.SupplyItemDto;
 import com.drc.aidbridge.databinding.FragmentVictimSupplyTabBinding;
 import com.drc.aidbridge.databinding.ItemSupplyCategoryBinding;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.victim.VictimSupplyViewModel;
 import com.google.android.material.button.MaterialButton;
@@ -77,11 +78,28 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
 
     @Override
     protected void observeViewModel() {
+        viewModel.getValidationError().observe(getViewLifecycleOwner(), this::renderValidationError);
+
         viewModel.getCategoriesResult().observe(getViewLifecycleOwner(), this::handleCategoryState);
 
         viewModel.getSubmitResult().observe(
             getViewLifecycleOwner(),
             resultObserver(this::handleSubmitSuccess, this::handleSubmitError)
+        );
+    }
+
+    private void renderValidationError(@Nullable AuthValidationResult validation) {
+        if (validation == null || validation.isValid()) {
+            return;
+        }
+
+        String message = validation.getErrorMessage();
+        showTopSnackbar(
+            binding.getRoot(),
+            message != null && !message.trim().isEmpty()
+                ? message
+                : getString(R.string.victim_supply_submit_error),
+            true
         );
     }
 
@@ -507,11 +525,6 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
 
     private void extractDataAndSubmit() {
         List<VictimSupplyViewModel.RequestedItem> requestedItems = collectRequestedItems();
-        if (requestedItems.isEmpty()) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_validation_item_required), true);
-            return;
-        }
-
         int adultCount = parseInt(String.valueOf(binding.tvCountAdult.getText()).trim());
         int elderlyCount = parseInt(String.valueOf(binding.tvCountElderly.getText()).trim());
         int childCount = parseInt(String.valueOf(binding.tvCountChild.getText()).trim());

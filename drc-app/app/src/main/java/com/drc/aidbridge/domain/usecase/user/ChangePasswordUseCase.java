@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.repository.UserRepository;
 import com.drc.aidbridge.domain.usecase.validation.AuthInputValidator;
-import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
 
 import javax.inject.Inject;
 
@@ -21,15 +21,15 @@ public class ChangePasswordUseCase {
         this.inputValidator = inputValidator;
     }
 
-    public ValidationResult validate(String currentPassword,
+    public AuthValidationResult validate(String currentPassword,
                                      String newPassword,
                                      String confirmNewPassword) {
-        ValidationResult currentPasswordValidation = inputValidator.requirePassword(currentPassword);
+        AuthValidationResult currentPasswordValidation = inputValidator.requirePassword(currentPassword);
         if (!currentPasswordValidation.isValid()) {
-            return ValidationResult.invalid(ValidationResult.Field.PASSWORD, "Mật khẩu hiện tại không hợp lệ.");
+            return AuthValidationResult.invalid(AuthValidationResult.Field.PASSWORD, "Mat khau hien tai khong hop le.");
         }
 
-        ValidationResult newPasswordValidation = inputValidator.requirePassword(newPassword);
+        AuthValidationResult newPasswordValidation = inputValidator.requirePassword(newPassword);
         if (!newPasswordValidation.isValid()) {
             return newPasswordValidation;
         }
@@ -41,3 +41,4 @@ public class ChangePasswordUseCase {
         return userRepository.changePassword(currentPassword, newPassword);
     }
 }
+

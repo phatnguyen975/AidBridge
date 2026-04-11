@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVictimSosRelativeBinding;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.victim.VictimSosViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -59,9 +60,26 @@ public class VictimSosRelativeFragment extends BaseFragment<FragmentVictimSosRel
 
     @Override
     protected void observeViewModel() {
+        viewModel.getValidationError().observe(getViewLifecycleOwner(), this::renderValidationError);
+
         viewModel.getSubmitRelativeSosResult().observe(
             getViewLifecycleOwner(),
             resultObserver(this::handleSubmitSuccess, this::handleSubmitError)
+        );
+    }
+
+    private void renderValidationError(@Nullable AuthValidationResult validation) {
+        if (validation == null || validation.isValid()) {
+            return;
+        }
+
+        String message = validation.getErrorMessage();
+        showTopSnackbar(
+            binding.getRoot(),
+            message != null && !message.trim().isEmpty()
+                ? message
+                : getString(R.string.victim_relative_sos_submit_error),
+            true
         );
     }
 
@@ -75,16 +93,6 @@ public class VictimSosRelativeFragment extends BaseFragment<FragmentVictimSosRel
         clearInputFocusAndHideKeyboard();
         RelativeSosFormInput rawInput = collectRawInput();
         if (rawInput == null) {
-            return;
-        }
-
-        if (rawInput.name.isEmpty()) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_relative_sos_error_name_required), true);
-            return;
-        }
-
-        if (rawInput.address.isEmpty()) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_relative_sos_error_address_required), true);
             return;
         }
 

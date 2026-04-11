@@ -1,9 +1,11 @@
-package com.drc.aidbridge.domain.usecase.sos;
+package com.drc.aidbridge.domain.usecase.victim;
 
 import androidx.lifecycle.LiveData;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.repository.SosRepository;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.VictimSosInputValidator;
 
 import java.util.List;
 
@@ -17,10 +19,26 @@ import okhttp3.MultipartBody;
 public class UploadSosUseCase {
 
     private final SosRepository sosRepository;
+    private final VictimSosInputValidator victimSosInputValidator;
 
     @Inject
-    public UploadSosUseCase(SosRepository sosRepository) {
+    public UploadSosUseCase(SosRepository sosRepository,
+                            VictimSosInputValidator victimSosInputValidator) {
         this.sosRepository = sosRepository;
+        this.victimSosInputValidator = victimSosInputValidator;
+    }
+
+    public AuthValidationResult validateSelfSos(String fullName,
+                                                int peopleCount,
+                                                String severity,
+                                                String note) {
+        return victimSosInputValidator.validateSelfSos(fullName, peopleCount, severity, note);
+    }
+
+    public AuthValidationResult validateRelativeSos(String relativeName,
+                                                    String relativeAddress,
+                                                    String severity) {
+        return victimSosInputValidator.validateRelativeSos(relativeName, relativeAddress, severity);
     }
 
     public LiveData<NetworkResultWrapper<String>> uploadSelfSos(String fullName,

@@ -8,14 +8,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentForgotNewPasswordBinding;
-import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.auth.viewmodel.ForgotNewPasswordViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * ForgotNewPasswordFragment — Forgot Password: Step 3 — Set New Password.
+ * ForgotNewPasswordFragment â€” Forgot Password: Step 3 â€” Set New Password.
  */
 @AndroidEntryPoint
 public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPasswordBinding> {
@@ -42,13 +42,13 @@ public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPas
                 return;
             }
 
-            if (validation.getErrorField() == ValidationResult.Field.PASSWORD) {
+            if (validation.getErrorField() == AuthValidationResult.Field.PASSWORD) {
                 binding.tilNewPassword.setError(validation.getErrorMessage());
                 binding.tilNewPassword.requestFocus();
-            } else if (validation.getErrorField() == ValidationResult.Field.CONFIRM_PASSWORD) {
+            } else if (validation.getErrorField() == AuthValidationResult.Field.CONFIRM_PASSWORD) {
                 binding.tilConfirmPassword.setError(validation.getErrorMessage());
                 binding.tilConfirmPassword.requestFocus();
-            } else if (validation.getErrorField() == ValidationResult.Field.EMAIL) {
+            } else if (validation.getErrorField() == AuthValidationResult.Field.EMAIL) {
                 showTopSnackbar(binding.getRoot(), validation.getErrorMessage(), true);
             } else {
                 showTopSnackbar(binding.getRoot(), validation.getErrorMessage(), true);
@@ -113,3 +113,4 @@ public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPas
         }
     }
 }
+
