@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="sos_button_size">180dp</dimen>
+    <dimen name="guest_sos_sheet_padding_horizontal">20dp</dimen>
+    <dimen name="guest_sos_sheet_padding_top">12dp</dimen>
+    <dimen name="guest_sos_sheet_padding_bottom">20dp</dimen>
 </resources>
