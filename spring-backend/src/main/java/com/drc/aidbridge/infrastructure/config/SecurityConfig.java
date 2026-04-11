@@ -49,8 +49,11 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll() // WebSocket handshake
                         // Permit for springdoc OpenAPI
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-.requestMatchers(HttpMethod.POST, "/api/sos-requests").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/sos-requests").permitAll()
                         .requestMatchers("/api/sos-requests/**").permitAll() // Allow public access to SOS request endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/hubs", "/api/hubs/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/hubs").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/hubs/**").hasRole("ADMIN")
                         // Role-based endpoint authorization
                         // ADMIN - full system access
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

@@ -1,7 +1,5 @@
 package com.drc.aidbridge.modules.aid.internal.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,23 +13,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
-@ConditionalOnProperty(name = "openai.method", havingValue = "local")
 public class LocalWhisperSpeechToTextService implements SpeechToTextService {
 
-    private final String command;
-    private final String model;
-    private final String language;
-    private final long timeoutSeconds = 300;
-
-    public LocalWhisperSpeechToTextService(
-            @Value("${openai.local-whisper.command:whisper}") String command,
-            @Value("${openai.local-whisper.model:small}") String model,
-            @Value("${openai.local-whisper.language:en}") String language
-    ) {
-        this.command = command;
-        this.model = model;
-        this.language = language;
-    }
+    private static final String MODEL = "small";
+    private static final String LANGUAGE = "en";
+    private static final long TIMEOUT_SECONDS = 300;
 
     @Override
     public String transcribe(MultipartFile audioFile) {
@@ -54,8 +40,8 @@ public class LocalWhisperSpeechToTextService implements SpeechToTextService {
                     "-X", "utf8", // force UTF-8 mode
                     "-m", "whisper",
                     tempFile.toAbsolutePath().toString(),
-                    "--model", model,
-                    "--language", language,
+                    "--model", MODEL,
+                    "--language", LANGUAGE,
                     "--task", "transcribe",
                     "--output_dir", outputDir.toAbsolutePath().toString(),
                     "--output_format", "txt"
@@ -84,10 +70,10 @@ public class LocalWhisperSpeechToTextService implements SpeechToTextService {
             }
 
             // Wait with timeout
-            boolean finished = process.waitFor(timeoutSeconds, TimeUnit.SECONDS);
+            boolean finished = process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS);
             if (!finished) {
                 process.destroyForcibly();
-                throw new IllegalStateException("Whisper timed out after " + timeoutSeconds + " seconds");
+                throw new IllegalStateException("Whisper timed out after " + TIMEOUT_SECONDS + " seconds");
             }
 
             int code = process.exitValue();

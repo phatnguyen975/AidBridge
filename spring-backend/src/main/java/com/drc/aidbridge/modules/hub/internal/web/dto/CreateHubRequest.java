@@ -1,0 +1,49 @@
+package com.drc.aidbridge.modules.hub.internal.web.dto;
+
+import com.drc.aidbridge.modules.shared.enums.HubStatus;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateHubRequest {
+
+    @NotBlank(message = "name is required")
+    @Size(max = 255, message = "name must be at most 255 characters")
+    private String name;
+
+    @Size(max = 500, message = "address must be at most 500 characters")
+    private String address;
+
+    @Size(max = 50, message = "phoneNumber must be at most 50 characters")
+    private String phoneNumber;
+
+    @Size(max = 500, message = "imageUrl must be at most 500 characters")
+    private String imageUrl;
+
+    private HubStatus status;
+
+    @Size(max = 255, message = "operatingHours must be at most 255 characters")
+    private String operatingHours;
+
+    @NotNull(message = "lat is required")
+    @DecimalMin(value = "-90.0", message = "lat must be >= -90")
+    @DecimalMax(value = "90.0", message = "lat must be <= 90")
+    private BigDecimal lat;
+
+    @NotNull(message = "lng is required")
+    @DecimalMin(value = "-180.0", message = "lng must be >= -180")
+    @DecimalMax(value = "180.0", message = "lng must be <= 180")
+    private BigDecimal lng;
+}

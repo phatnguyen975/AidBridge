@@ -2,8 +2,6 @@ package com.drc.aidbridge.modules.aid.internal.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -13,10 +11,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@ConditionalOnProperty(name = "openai.llm.mode", havingValue = "local")
 public class LocalCliAidRequestVoiceLlmService implements AidRequestVoiceLlmService {
 
-        private static final String ROOT_CATEGORIES_JSON = """
+    private static final String COMMAND = "ollama";
+    private static final String MODEL = "llama3";
+    private static final long TIMEOUT_SECONDS = 300;
+
+    private static final String ROOT_CATEGORIES_JSON = """
                         [
                             {"name":"Nước uống"},
                             {"name":"Nhu yếu phẩm khác"},
@@ -28,15 +29,6 @@ public class LocalCliAidRequestVoiceLlmService implements AidRequestVoiceLlmServ
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Value("${openai.llm.local-cli.command:ollama}")
-    private String command;
-
-    @Value("${openai.llm.local-cli.model:llama3}")
-    private String model;
-
-    @Value("${openai.llm.local-cli.timeout-seconds:300}")
-    private long timeoutSeconds;
-
     @Override
     public ExtractionResult extractItems(String rawTranscript) {
         if (rawTranscript == null || rawTranscript.isBlank()) {
@@ -46,7 +38,7 @@ public class LocalCliAidRequestVoiceLlmService implements AidRequestVoiceLlmServ
         String prompt = buildPrompt(rawTranscript);
 
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder(command, "run", model);
+            ProcessBuilder processBuilder = new ProcessBuilder(COMMAND, "run", MODEL);
             processBuilder.redirectErrorStream(true);
 
             Process process = processBuilder.start();
@@ -60,10 +52,10 @@ public class LocalCliAidRequestVoiceLlmService implements AidRequestVoiceLlmServ
             } // auto close stdin
 
             // ✅ Wait for process to complete FIRST
-            boolean finished = process.waitFor(timeoutSeconds, TimeUnit.SECONDS);
+            boolean finished = process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS);
             if (!finished) {
                 process.destroyForcibly();
-                throw new IllegalStateException("Local LLM CLI timed out after " + timeoutSeconds + " seconds");
+                throw new IllegalStateException("Local LLM CLI timed out after " + TIMEOUT_SECONDS + " seconds");
             }
 
             int code = process.exitValue();

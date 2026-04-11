@@ -7,7 +7,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -20,6 +23,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Hub {
+
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -55,6 +60,15 @@ public class Hub {
 
     @Column(name = "location", columnDefinition = "geography(Point,4326)")
     private Point location;
+
+    public static Point createPoint(Double lat, Double lng) {
+        if (lat == null || lng == null) {
+            return null;
+        }
+        Point point = GEOMETRY_FACTORY.createPoint(new Coordinate(lng, lat));
+        point.setSRID(4326);
+        return point;
+    }
 
     @Transient
     public BigDecimal getLat() {

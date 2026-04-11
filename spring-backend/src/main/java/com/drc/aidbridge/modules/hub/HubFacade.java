@@ -1,7 +1,15 @@
 package com.drc.aidbridge.modules.hub;
 
+import com.drc.aidbridge.modules.hub.internal.web.dto.CreateHubRequest;
+import com.drc.aidbridge.modules.hub.internal.web.dto.UpdateHubRequest;
+import com.drc.aidbridge.modules.shared.enums.HubStatus;
+
+import java.util.List;
 import java.util.UUID;
 
 public interface HubFacade {
     HubDTO getById(UUID id);
+    List<HubDTO> list(HubStatus status);
+    HubDTO create(CreateHubRequest request);
+    HubDTO update(UUID id, UpdateHubRequest request);
 }
