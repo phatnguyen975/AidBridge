@@ -9,6 +9,24 @@
     <string name="gps_badge">GPS</string>
     <string name="gps_active">GPS ĐANG HOẠT ĐỘNG</string>
     <string name="gps_inactive">GPS KHÔNG HOẠT ĐỘNG</string>
+    <string name="guest_sos_sheet_title">Gửi SOS khẩn cấp</string>
+    <string name="guest_sos_sheet_subtitle">Điền nhanh thông tin để hệ thống điều phối cứu hộ gần nhất.</string>
+    <string name="guest_sos_full_name_hint">Họ và tên người cần hỗ trợ</string>
+    <string name="guest_sos_people_count_hint">Số người</string>
+    <string name="guest_sos_people_count_default">1</string>
+    <string name="guest_sos_severity_hint">Mức độ khẩn cấp</string>
+    <string name="guest_sos_health_note_hint">Mô tả tình trạng sức khỏe hoặc vị trí</string>
+    <string name="guest_sos_location_title">Vị trí hiện tại</string>
+    <string name="guest_sos_location_missing">Chưa có vị trí. Vui lòng cấp quyền để gửi SOS chính xác.</string>
+    <string name="guest_sos_location_ready">Đã xác định vị trí. Bạn có thể gửi SOS.</string>
+    <string name="guest_sos_location_grant_button">Cấp quyền vị trí</string>
+    <string name="guest_sos_location_permission_denied">Bạn cần cấp quyền vị trí để gửi SOS.</string>
+    <string name="guest_sos_location_disabled">GPS đang tắt. Vui lòng bật vị trí để tiếp tục.</string>
+    <string name="guest_sos_location_unavailable">Không thể lấy vị trí hiện tại. Vui lòng thử lại.</string>
+    <string name="guest_sos_submit">Gửi yêu cầu SOS</string>
+    <string name="guest_sos_submitting">Đang gửi yêu cầu...</string>
+    <string name="guest_sos_submit_success">Yêu cầu SOS đã được gửi thành công.</string>
+    <string name="guest_sos_submit_error">Không thể gửi yêu cầu SOS. Vui lòng thử lại.</string>
 
     <!-- User Guide Screen -->
     <string name="guide_title">HƯỚNG DẪN SỬ DỤNG</string>

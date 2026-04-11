@@ -14,10 +14,7 @@ import com.drc.aidbridge.domain.usecase.victim.UploadSosUseCase;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 import com.drc.aidbridge.utils.ImageUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,19 +22,16 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 @HiltViewModel
 public class VictimSosViewModel extends BaseViewModel {
 
     private static final int DEFAULT_PEOPLE_COUNT = 1;
     private static final String DEFAULT_FULL_NAME = "Nạn nhân chưa xác định";
-    private static final String DEFAULT_SEVERITY = "Trung bình";
+    private static final String DEFAULT_SEVERITY = "Nguy kịch";
 
     private final UploadSosUseCase uploadSosUseCase;
-    private final ExecutorService uploadExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService imageProcessingExecutor = Executors.newSingleThreadExecutor();
 
     private final MutableLiveData<SelfSosPayload> selfSosTrigger = new MutableLiveData<>();
     private final MutableLiveData<RelativeSosPayload> relativeSosTrigger = new MutableLiveData<>();
@@ -48,9 +42,6 @@ public class VictimSosViewModel extends BaseViewModel {
     private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<String>> submitSelfSosResult = new MediatorLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<String>> submitRelativeSosResult = new MediatorLiveData<>();
-
-    private final Object tempFilesLock = new Object();
-    private List<File> pendingSelfTempFiles = new ArrayList<>();
 
     @Inject
     public VictimSosViewModel(UploadSosUseCase uploadSosUseCase) {
@@ -64,7 +55,7 @@ public class VictimSosViewModel extends BaseViewModel {
                 payload.note,
                 payload.latitude,
                 payload.longitude,
-                payload.imageParts
+                payload.firstImageUrl
             )
         );
 
@@ -79,12 +70,7 @@ public class VictimSosViewModel extends BaseViewModel {
             )
         );
 
-        submitSelfSosResult.addSource(selfSosSource, result -> {
-            submitSelfSosResult.postValue(result);
-            if (result != null && !result.isLoading()) {
-                cleanupPendingSelfTempFiles();
-            }
-        });
+        submitSelfSosResult.addSource(selfSosSource, submitSelfSosResult::postValue);
 
         submitRelativeSosResult.addSource(relativeSosSource, submitRelativeSosResult::postValue);
     }
@@ -118,22 +104,9 @@ public class VictimSosViewModel extends BaseViewModel {
         validationError.postValue(ValidationResult.valid());
         submitSelfSosResult.postValue(NetworkResultWrapper.loading());
 
-        uploadExecutor.execute(() -> {
-            List<File> compressedFiles = new ArrayList<>();
+        Context appContext = context.getApplicationContext();
+        imageProcessingExecutor.execute(() -> {
             try {
-                Context appContext = context.getApplicationContext();
-                if (imageUris != null) {
-                    for (Uri imageUri : imageUris) {
-                        if (imageUri == null) {
-                            continue;
-                        }
-                        compressedFiles.add(ImageUtils.compressScenePhoto(appContext, imageUri));
-                    }
-                }
-
-                List<MultipartBody.Part> imageParts = createImageParts(compressedFiles);
-                setPendingSelfTempFiles(compressedFiles);
-
                 SelfSosPayload payload = new SelfSosPayload(
                     normalizeFullName(fullName),
                     peopleCount > 0 ? peopleCount : DEFAULT_PEOPLE_COUNT,
@@ -141,17 +114,15 @@ public class VictimSosViewModel extends BaseViewModel {
                     note != null ? note.trim() : "",
                     latitude,
                     longitude,
-                    imageParts
+                    extractFirstImageDataUrl(appContext, imageUris)
                 );
 
                 selfSosTrigger.postValue(payload);
             } catch (IOException exception) {
-                cleanupFiles(compressedFiles);
                 submitSelfSosResult.postValue(NetworkResultWrapper.error(
-                    "Không thể nén ảnh hiện trường: " + safeMessage(exception)
+                    "Không thể xử lý ảnh hiện trường: " + safeMessage(exception)
                 ));
             } catch (Exception exception) {
-                cleanupFiles(compressedFiles);
                 submitSelfSosResult.postValue(NetworkResultWrapper.error(
                     "Gửi SOS thất bại: " + safeMessage(exception)
                 ));
@@ -190,36 +161,6 @@ public class VictimSosViewModel extends BaseViewModel {
         relativeSosTrigger.setValue(payload);
     }
 
-    @Override
-    protected void onCleared() {
-        cleanupPendingSelfTempFiles();
-        uploadExecutor.shutdownNow();
-        super.onCleared();
-    }
-
-    private List<MultipartBody.Part> createImageParts(List<File> compressedFiles) {
-        if (compressedFiles == null || compressedFiles.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<MultipartBody.Part> parts = new ArrayList<>();
-        for (File compressedFile : compressedFiles) {
-            if (compressedFile == null || !compressedFile.exists()) {
-                continue;
-            }
-
-            String mimeType = resolveMimeType(compressedFile.getName());
-            RequestBody requestBody = RequestBody.create(compressedFile, MediaType.get(mimeType));
-            parts.add(MultipartBody.Part.createFormData(
-                "images",
-                compressedFile.getName(),
-                requestBody
-            ));
-        }
-
-        return parts;
-    }
-
     private String normalizeFullName(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) {
             return DEFAULT_FULL_NAME;
@@ -234,42 +175,21 @@ public class VictimSosViewModel extends BaseViewModel {
         return severity.trim();
     }
 
-    private String resolveMimeType(String fileName) {
-        String lowerName = fileName != null ? fileName.toLowerCase() : "";
-        if (lowerName.endsWith(".png")) {
-            return "image/png";
-        }
-        if (lowerName.endsWith(".webp")) {
-            return "image/webp";
-        }
-        return "image/jpeg";
-    }
-
-    private void setPendingSelfTempFiles(List<File> files) {
-        synchronized (tempFilesLock) {
-            pendingSelfTempFiles = new ArrayList<>(files);
-        }
-    }
-
-    private void cleanupPendingSelfTempFiles() {
-        List<File> filesToDelete;
-        synchronized (tempFilesLock) {
-            filesToDelete = pendingSelfTempFiles;
-            pendingSelfTempFiles = new ArrayList<>();
-        }
-        cleanupFiles(filesToDelete);
-    }
-
-    private void cleanupFiles(List<File> files) {
-        if (files == null || files.isEmpty()) {
-            return;
+    private String extractFirstImageDataUrl(Context context, List<Uri> imageUris) throws IOException {
+        if (imageUris == null || imageUris.isEmpty()) {
+            return "";
         }
 
-        for (File file : files) {
-            if (file != null && file.exists()) {
-                file.delete();
+        for (Uri uri : imageUris) {
+            if (uri != null) {
+                String dataUrl = ImageUtils.createScenePhotoDataUrl(context, uri);
+                if (dataUrl != null && !dataUrl.trim().isEmpty()) {
+                    return dataUrl.trim();
+                }
             }
         }
+
+        return "";
     }
 
     private String safeMessage(Throwable throwable) {
@@ -280,6 +200,12 @@ public class VictimSosViewModel extends BaseViewModel {
         return message.trim();
     }
 
+    @Override
+    protected void onCleared() {
+        imageProcessingExecutor.shutdownNow();
+        super.onCleared();
+    }
+
     private static final class SelfSosPayload {
         final String fullName;
         final int peopleCount;
@@ -287,7 +213,7 @@ public class VictimSosViewModel extends BaseViewModel {
         final String note;
         final double latitude;
         final double longitude;
-        final List<MultipartBody.Part> imageParts;
+        final String firstImageUrl;
 
         SelfSosPayload(String fullName,
                        int peopleCount,
@@ -295,14 +221,14 @@ public class VictimSosViewModel extends BaseViewModel {
                        String note,
                        double latitude,
                        double longitude,
-                       List<MultipartBody.Part> imageParts) {
+                       String firstImageUrl) {
             this.fullName = fullName;
             this.peopleCount = peopleCount;
             this.severity = severity;
             this.note = note;
             this.latitude = latitude;
             this.longitude = longitude;
-            this.imageParts = imageParts;
+            this.firstImageUrl = firstImageUrl;
         }
     }
 

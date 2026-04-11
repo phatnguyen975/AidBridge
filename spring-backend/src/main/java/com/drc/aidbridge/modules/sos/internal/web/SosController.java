@@ -36,15 +36,7 @@ public class SosController {
         if (userId != null) {
             response = createSosRequestUseCase.execute(userId, request);
         } else {
-            CreateGuestSosRequest guestRequest = CreateGuestSosRequest.builder()
-                    .lat(request.getLat())
-                    .lng(request.getLng())
-                    .address(request.getAddress())
-                    .description(request.getDescription())
-                    .peopleCount(request.getPeopleCount())
-                    .urgencyLevel(request.getUrgencyLevel())
-                    .imageUrl(request.getImageUrl())
-                    .build();
+            CreateGuestSosRequest guestRequest = CreateGuestSosRequest.from(request);
             response = createGuestSosRequestUseCase.execute(guestRequest);
         }
 

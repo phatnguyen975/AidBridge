@@ -5,26 +5,24 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.api.victim.SosApiService;
+import com.drc.aidbridge.data.remote.dto.request.victim.CreateSosRequest;
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
+import com.drc.aidbridge.data.remote.dto.response.victim.SosRequestResponse;
 import com.drc.aidbridge.data.repository.BaseRepository;
 import com.drc.aidbridge.domain.repository.victim.VictimSosRepository;
 
-import java.util.List;
+import java.text.Normalizer;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 @Singleton
 public class VictimSosRepositoryImpl extends BaseRepository implements VictimSosRepository {
-
-    private static final MediaType TEXT_PLAIN = MediaType.get("text/plain");
 
     private final SosApiService sosApiService;
 
@@ -40,28 +38,30 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
                                                                  String note,
                                                                  double latitude,
                                                                  double longitude,
-                                                                 List<MultipartBody.Part> imageParts) {
+                                                                 String firstImageUrl) {
         MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
-        sosApiService.uploadSelfSos(
-            toPart(fullName),
-            toPart(String.valueOf(peopleCount)),
-            toPart(severity),
-            toPart(note),
-            toPart(String.valueOf(latitude)),
-            toPart(String.valueOf(longitude)),
-            imageParts
-        ).enqueue(new Callback<BaseResponse<String>>() {
+        CreateSosRequest request = new CreateSosRequest(
+            latitude,
+            longitude,
+            null,
+            safeTrim(note),
+            peopleCount,
+            mapSeverityToUrgencyLevel(severity),
+            safeTrim(firstImageUrl)
+        );
+
+        sosApiService.createSosRequest(request).enqueue(new Callback<BaseResponse<SosRequestResponse>>() {
             @Override
-            public void onResponse(Call<BaseResponse<String>> call,
-                                   Response<BaseResponse<String>> response) {
+            public void onResponse(Call<BaseResponse<SosRequestResponse>> call,
+                                   Response<BaseResponse<SosRequestResponse>> response) {
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
 
-                BaseResponse<String> baseResponse = response.body();
+                BaseResponse<SosRequestResponse> baseResponse = response.body();
                 if (baseResponse == null) {
                     result.postValue(NetworkResultWrapper.error("Phản hồi gửi SOS không hợp lệ."));
                     return;
@@ -75,7 +75,6 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
                 }
 
                 String successMessage = firstNonBlank(
-                    baseResponse.getData(),
                     baseResponse.getMessage(),
                     "Gửi SOS thành công."
                 );
@@ -83,7 +82,7 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
             }
 
             @Override
-            public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<SosRequestResponse>> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error("Gửi SOS thất bại: " + safeMessage(t)));
             }
         });
@@ -101,23 +100,27 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
         MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
-        sosApiService.uploadRelativeSos(
-            toPart(relativeName),
-            toPart(relativePhone),
-            toPart(relativeAddress),
-            toPart(severity),
-            toPart(String.valueOf(latitude)),
-            toPart(String.valueOf(longitude))
-        ).enqueue(new Callback<BaseResponse<String>>() {
+        String description = buildRelativeDescription(relativeName, relativePhone);
+        CreateSosRequest request = new CreateSosRequest(
+            latitude,
+            longitude,
+            safeTrim(relativeAddress),
+            description,
+            1,
+            mapSeverityToUrgencyLevel(severity),
+            null
+        );
+
+        sosApiService.createSosRequest(request).enqueue(new Callback<BaseResponse<SosRequestResponse>>() {
             @Override
-            public void onResponse(Call<BaseResponse<String>> call,
-                                   Response<BaseResponse<String>> response) {
+            public void onResponse(Call<BaseResponse<SosRequestResponse>> call,
+                                   Response<BaseResponse<SosRequestResponse>> response) {
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
 
-                BaseResponse<String> baseResponse = response.body();
+                BaseResponse<SosRequestResponse> baseResponse = response.body();
                 if (baseResponse == null) {
                     result.postValue(NetworkResultWrapper.error("Phản hồi gửi SOS cho người thân không hợp lệ."));
                     return;
@@ -131,7 +134,6 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
                 }
 
                 String successMessage = firstNonBlank(
-                    baseResponse.getData(),
                     baseResponse.getMessage(),
                     "Gửi SOS cho người thân thành công."
                 );
@@ -139,7 +141,7 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
             }
 
             @Override
-            public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<SosRequestResponse>> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error(
                     "Gửi SOS cho người thân thất bại: " + safeMessage(t)
                 ));
@@ -149,8 +151,55 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
         return result;
     }
 
-    private RequestBody toPart(String value) {
-        return RequestBody.create(value != null ? value.trim() : "", TEXT_PLAIN);
+    private String buildRelativeDescription(String relativeName, String relativePhone) {
+        String name = safeTrim(relativeName);
+        String phone = safeTrim(relativePhone);
+        return firstNonBlank(
+            (name.isEmpty() && phone.isEmpty())
+                ? "Yeu cau SOS cho nguoi than"
+                : ("Ho ten: " + name + ". So dien thoai lien he: " + phone),
+            "Yeu cau SOS cho nguoi than"
+        );
+    }
+
+    private String mapSeverityToUrgencyLevel(String severity) {
+        String value = normalizeSeverityText(severity);
+        if (value.isEmpty()) {
+            return "CRITICAL";
+        }
+
+        if ("CRITICAL".equals(value) || value.contains("NGUY") || value.contains("KICH")) {
+            return "CRITICAL";
+        }
+        if ("HIGH".equals(value) || value.contains("NGHIEM") || value.contains("TRONG")) {
+            return "HIGH";
+        }
+        if ("LOW".equals(value) || value.contains("NHE")) {
+            return "LOW";
+        }
+        if ("MEDIUM".equals(value) || value.contains("TRUNG") || value.contains("BINH")) {
+            return "MEDIUM";
+        }
+
+        return "CRITICAL";
+    }
+
+    private String normalizeSeverityText(String value) {
+        String trimmed = safeTrim(value);
+        if (trimmed.isEmpty()) {
+            return "";
+        }
+
+        String normalized = Normalizer.normalize(trimmed, Normalizer.Form.NFD)
+            .replaceAll("\\p{M}", "")
+            .toUpperCase(Locale.US)
+            .trim();
+
+        return normalized;
+    }
+
+    private String safeTrim(String value) {
+        return value != null ? value.trim() : "";
     }
 
     private String firstNonBlank(String... values) {
