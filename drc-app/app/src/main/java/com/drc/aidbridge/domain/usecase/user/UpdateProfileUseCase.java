@@ -6,7 +6,7 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.domain.repository.UserRepository;
 import com.drc.aidbridge.domain.usecase.validation.AuthInputValidator;
-import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
 
 import javax.inject.Inject;
 
@@ -22,8 +22,8 @@ public class UpdateProfileUseCase {
         this.inputValidator = inputValidator;
     }
 
-    public ValidationResult validate(String name, String phone) {
-        ValidationResult nameValidation = inputValidator.requireName(name);
+    public AuthValidationResult validate(String name, String phone) {
+        AuthValidationResult nameValidation = inputValidator.requireName(name);
         if (!nameValidation.isValid()) {
             return nameValidation;
         }
@@ -39,3 +39,4 @@ public class UpdateProfileUseCase {
         );
     }
 }
+

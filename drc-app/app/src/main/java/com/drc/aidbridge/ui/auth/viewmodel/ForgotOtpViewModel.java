@@ -12,7 +12,7 @@ import com.drc.aidbridge.R;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.usecase.auth.VerifyResetOtpUseCase;
 import com.drc.aidbridge.domain.usecase.auth.ResendOtpUseCase;
-import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 import com.drc.aidbridge.utils.Constants;
 
@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
 /**
- * ForgotOtpViewModel — Step 2 of the forgot-password flow.
+ * ForgotOtpViewModel â€” Step 2 of the forgot-password flow.
  */
 @HiltViewModel
 public class ForgotOtpViewModel extends BaseViewModel {
@@ -39,7 +39,7 @@ public class ForgotOtpViewModel extends BaseViewModel {
     private final MutableLiveData<Integer> countdown = new MutableLiveData<>(Constants.OTP_COUNTDOWN_SEC);
     private final MutableLiveData<ResendUiState> resendUiState = new MutableLiveData<>(ResendUiState.TIMER_RUNNING);
 
-    private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
+    private final MutableLiveData<AuthValidationResult> validationError = new MutableLiveData<>();
     private final MutableLiveData<Integer> otpInlineErrorResId = new MutableLiveData<>();
     private final MutableLiveData<VerifyParams> verifyTrigger = new MutableLiveData<>();
     private final MutableLiveData<ResendParams> resendTrigger = new MutableLiveData<>();
@@ -82,7 +82,7 @@ public class ForgotOtpViewModel extends BaseViewModel {
         return resendUiState;
     }
 
-    public LiveData<ValidationResult> getValidationError() {
+    public LiveData<AuthValidationResult> getValidationError() {
         return validationError;
     }
 
@@ -111,10 +111,10 @@ public class ForgotOtpViewModel extends BaseViewModel {
         }
 
         String email = getEmail();
-        ValidationResult validation = verifyResetOtpUseCase.validate(email, normalizedOtp);
+        AuthValidationResult validation = verifyResetOtpUseCase.validate(email, normalizedOtp);
 
         if (!validation.isValid()) {
-            if (validation.getErrorField() == ValidationResult.Field.OTP) {
+            if (validation.getErrorField() == AuthValidationResult.Field.OTP) {
                 otpInlineErrorResId.setValue(R.string.otp_error_required_6_digits);
             } else {
                 validationError.setValue(validation);
@@ -122,7 +122,7 @@ public class ForgotOtpViewModel extends BaseViewModel {
             return;
         }
 
-        validationError.setValue(ValidationResult.valid());
+        validationError.setValue(AuthValidationResult.valid());
         clearOtpInlineError();
         verifyTrigger.setValue(new VerifyParams(email, normalizedOtp));
     }
@@ -133,14 +133,14 @@ public class ForgotOtpViewModel extends BaseViewModel {
         }
 
         String email = getEmail();
-        ValidationResult validation = resendOtpUseCase.validate(email);
+        AuthValidationResult validation = resendOtpUseCase.validate(email);
 
         if (!validation.isValid()) {
             validationError.setValue(validation);
             return;
         }
 
-        validationError.setValue(ValidationResult.valid());
+        validationError.setValue(AuthValidationResult.valid());
         resendUiState.setValue(ResendUiState.LOADING);
         resendTrigger.setValue(new ResendParams(email));
     }
@@ -222,3 +222,4 @@ public class ForgotOtpViewModel extends BaseViewModel {
         cancelCountdown();
     }
 }
+

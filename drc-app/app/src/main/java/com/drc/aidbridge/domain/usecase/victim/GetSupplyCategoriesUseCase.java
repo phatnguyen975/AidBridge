@@ -1,4 +1,4 @@
-package com.drc.aidbridge.domain.usecase.supply;
+package com.drc.aidbridge.domain.usecase.victim;
 
 import androidx.lifecycle.LiveData;
 

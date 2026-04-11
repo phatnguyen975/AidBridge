@@ -7,12 +7,12 @@ import com.drc.aidbridge.data.remote.dto.request.LoginRequest;
 import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.domain.usecase.validation.AuthInputValidator;
-import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
 
 import javax.inject.Inject;
 
 /**
- * LoginUseCase — validates and executes user login.
+ * LoginUseCase â€” validates and executes user login.
  */
 public class LoginUseCase {
 
@@ -25,8 +25,8 @@ public class LoginUseCase {
         this.inputValidator = inputValidator;
     }
 
-    public ValidationResult validate(String email, String password) {
-        ValidationResult emailValidation = inputValidator.requireValidEmail(email);
+    public AuthValidationResult validate(String email, String password) {
+        AuthValidationResult emailValidation = inputValidator.requireValidEmail(email);
         if (!emailValidation.isValid()) {
             return emailValidation;
         }
@@ -55,3 +55,4 @@ public class LoginUseCase {
         return trimmed.isEmpty() ? null : trimmed;
     }
 }
+

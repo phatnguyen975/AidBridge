@@ -13,7 +13,7 @@ import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentRegisterBinding;
 import com.drc.aidbridge.domain.enums.UserRole;
 import com.drc.aidbridge.domain.model.User;
-import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
 import com.drc.aidbridge.ui.main.MainActivity;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.auth.viewmodel.RegisterViewModel;
@@ -50,16 +50,16 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
                 return;
             }
 
-            if (validation.getErrorField() == ValidationResult.Field.NAME) {
+            if (validation.getErrorField() == AuthValidationResult.Field.NAME) {
                 binding.tilName.setError(validation.getErrorMessage());
                 binding.tilName.requestFocus();
-            } else if (validation.getErrorField() == ValidationResult.Field.EMAIL) {
+            } else if (validation.getErrorField() == AuthValidationResult.Field.EMAIL) {
                 binding.tilEmail.setError(validation.getErrorMessage());
                 binding.tilEmail.requestFocus();
-            } else if (validation.getErrorField() == ValidationResult.Field.PHONE) {
+            } else if (validation.getErrorField() == AuthValidationResult.Field.PHONE) {
                 binding.tilPhone.setError(validation.getErrorMessage());
                 binding.tilPhone.requestFocus();
-            } else if (validation.getErrorField() == ValidationResult.Field.PASSWORD) {
+            } else if (validation.getErrorField() == AuthValidationResult.Field.PASSWORD) {
                 binding.tilPassword.setError(validation.getErrorMessage());
                 binding.tilPassword.requestFocus();
             } else {
@@ -204,3 +204,4 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
         return Math.round(dp * density);
     }
 }
+

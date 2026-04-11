@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.databinding.FragmentVolunteerPersonalInfoBinding;
-import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerPersonalInfoViewModel;
 
@@ -84,7 +84,7 @@ public class VolunteerPersonalInfoFragment extends BaseFragment<FragmentVoluntee
 		binding.etEmail.setText(email);
 	}
 
-	private void renderValidationError(@Nullable ValidationResult validationResult) {
+	private void renderValidationError(@Nullable AuthValidationResult validationResult) {
 		if (validationResult == null || validationResult.isValid()) {
 			return;
 		}
@@ -170,3 +170,4 @@ public class VolunteerPersonalInfoFragment extends BaseFragment<FragmentVoluntee
 				R.string.volunteer_personal_info_btn_change_password);
 	}
 }
+

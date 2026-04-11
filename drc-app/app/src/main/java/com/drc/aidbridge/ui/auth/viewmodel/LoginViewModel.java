@@ -7,7 +7,7 @@ import androidx.lifecycle.Transformations;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.domain.usecase.auth.LoginUseCase;
-import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
 import javax.inject.Inject;
@@ -19,7 +19,7 @@ public class LoginViewModel extends BaseViewModel {
 
     private final LoginUseCase loginUseCase;
 
-    private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
+    private final MutableLiveData<AuthValidationResult> validationError = new MutableLiveData<>();
     private final MutableLiveData<LoginParams> loginTrigger = new MutableLiveData<>();
 
     private final LiveData<NetworkResultWrapper<User>> loginResult;
@@ -38,7 +38,7 @@ public class LoginViewModel extends BaseViewModel {
         );
     }
 
-    public LiveData<ValidationResult> getValidationError() {
+    public LiveData<AuthValidationResult> getValidationError() {
         return validationError;
     }
 
@@ -47,14 +47,14 @@ public class LoginViewModel extends BaseViewModel {
     }
 
     public void login(String email, String password, String deviceId, String fcmToken) {
-        ValidationResult validation = loginUseCase.validate(email, password);
+        AuthValidationResult validation = loginUseCase.validate(email, password);
 
         if (!validation.isValid()) {
             validationError.setValue(validation);
             return;
         }
 
-        validationError.setValue(ValidationResult.valid());
+        validationError.setValue(AuthValidationResult.valid());
         loginTrigger.setValue(new LoginParams(email, password, deviceId, fcmToken));
     }
 
@@ -72,3 +72,4 @@ public class LoginViewModel extends BaseViewModel {
         }
     }
 }
+

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.drc.aidbridge.BuildConfig;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVictimRescueTabBinding;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.adapter.victim.VictimImageAdapter;
 import com.drc.aidbridge.ui.main.viewmodel.victim.VictimSosViewModel;
@@ -79,9 +80,26 @@ public class VictimRescueTabFragment extends BaseFragment<FragmentVictimRescueTa
 
     @Override
     protected void observeViewModel() {
+        viewModel.getValidationError().observe(getViewLifecycleOwner(), this::renderValidationError);
+
         viewModel.getSubmitSelfSosResult().observe(
             getViewLifecycleOwner(),
             resultObserver(this::handleSubmitSuccess, this::handleSubmitError)
+        );
+    }
+
+    private void renderValidationError(@Nullable AuthValidationResult validation) {
+        if (validation == null || validation.isValid()) {
+            return;
+        }
+
+        String message = validation.getErrorMessage();
+        showTopSnackbar(
+            binding.getRoot(),
+            message != null && !message.trim().isEmpty()
+                ? message
+                : getString(R.string.victim_rescue_submit_error),
+            true
         );
     }
 

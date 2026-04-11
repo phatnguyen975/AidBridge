@@ -8,14 +8,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentForgotEmailBinding;
-import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.auth.viewmodel.ForgotEmailViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * ForgotEmailFragment — Forgot Password: Step 1 — Enter Email.
+ * ForgotEmailFragment â€” Forgot Password: Step 1 â€” Enter Email.
  */
 @AndroidEntryPoint
 public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding> {
@@ -42,7 +42,7 @@ public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding
                 return;
             }
 
-            if (validation.getErrorField() == ValidationResult.Field.EMAIL) {
+            if (validation.getErrorField() == AuthValidationResult.Field.EMAIL) {
                 binding.tilEmail.setError(validation.getErrorMessage());
                 binding.tilEmail.requestFocus();
             } else {
@@ -105,3 +105,4 @@ public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding
         navigateToOtp(submittedEmail);
     }
 }
+
