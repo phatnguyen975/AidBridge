@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentLoginBinding;
 import com.drc.aidbridge.domain.model.User;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.auth.viewmodel.LoginViewModel;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.MainActivity;
@@ -51,10 +51,10 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
                 return;
             }
 
-            if (validation.getErrorField() == AuthValidationResult.Field.EMAIL) {
+            if (validation.getErrorField() == ValidationResult.Field.EMAIL) {
                 binding.tilEmail.setError(validation.getErrorMessage());
                 binding.tilEmail.requestFocus();
-            } else if (validation.getErrorField() == AuthValidationResult.Field.PASSWORD) {
+            } else if (validation.getErrorField() == ValidationResult.Field.PASSWORD) {
                 binding.tilPassword.setError(validation.getErrorMessage());
                 binding.tilPassword.requestFocus();
             } else {

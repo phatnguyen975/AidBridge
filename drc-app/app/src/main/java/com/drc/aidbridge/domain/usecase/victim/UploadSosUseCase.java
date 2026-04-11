@@ -3,8 +3,8 @@ package com.drc.aidbridge.domain.usecase.victim;
 import androidx.lifecycle.LiveData;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
-import com.drc.aidbridge.domain.repository.SosRepository;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.repository.victim.VictimSosRepository;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.domain.usecase.validation.VictimSosInputValidator;
 
 import java.util.List;
@@ -18,24 +18,24 @@ import okhttp3.MultipartBody;
  */
 public class UploadSosUseCase {
 
-    private final SosRepository sosRepository;
+    private final VictimSosRepository victimSosRepository;
     private final VictimSosInputValidator victimSosInputValidator;
 
     @Inject
-    public UploadSosUseCase(SosRepository sosRepository,
+    public UploadSosUseCase(VictimSosRepository victimSosRepository,
                             VictimSosInputValidator victimSosInputValidator) {
-        this.sosRepository = sosRepository;
+        this.victimSosRepository = victimSosRepository;
         this.victimSosInputValidator = victimSosInputValidator;
     }
 
-    public AuthValidationResult validateSelfSos(String fullName,
+    public ValidationResult validateSelfSos(String fullName,
                                                 int peopleCount,
                                                 String severity,
                                                 String note) {
         return victimSosInputValidator.validateSelfSos(fullName, peopleCount, severity, note);
     }
 
-    public AuthValidationResult validateRelativeSos(String relativeName,
+    public ValidationResult validateRelativeSos(String relativeName,
                                                     String relativeAddress,
                                                     String severity) {
         return victimSosInputValidator.validateRelativeSos(relativeName, relativeAddress, severity);
@@ -48,7 +48,7 @@ public class UploadSosUseCase {
                                                                  double latitude,
                                                                  double longitude,
                                                                  List<MultipartBody.Part> imageParts) {
-        return sosRepository.uploadSelfSos(
+        return victimSosRepository.uploadSelfSos(
             fullName,
             peopleCount,
             severity,
@@ -65,7 +65,7 @@ public class UploadSosUseCase {
                                                                      String severity,
                                                                      double latitude,
                                                                      double longitude) {
-        return sosRepository.uploadRelativeSos(
+        return victimSosRepository.uploadRelativeSos(
             relativeName,
             relativePhone,
             relativeAddress,

@@ -1,17 +1,17 @@
 package com.drc.aidbridge.di;
 
 import com.drc.aidbridge.data.repository.AuthRepositoryImpl;
-import com.drc.aidbridge.data.repository.SosRepositoryImpl;
-import com.drc.aidbridge.data.repository.SupplyRepositoryImpl;
 import com.drc.aidbridge.data.repository.UserRepositoryImpl;
-import com.drc.aidbridge.data.repository.VictimHistoryRepositoryImpl;
+import com.drc.aidbridge.data.repository.victim.VictimHistoryRepositoryImpl;
+import com.drc.aidbridge.data.repository.victim.VictimSosRepositoryImpl;
+import com.drc.aidbridge.data.repository.victim.VictimSupplyRepositoryImpl;
 import com.drc.aidbridge.data.repository.volunteer.VolunteerRepositoryImpl;
 import com.drc.aidbridge.domain.repository.AuthRepository;
-import com.drc.aidbridge.domain.repository.SosRepository;
-import com.drc.aidbridge.domain.repository.SupplyRepository;
 import com.drc.aidbridge.domain.repository.UserRepository;
-import com.drc.aidbridge.domain.repository.VictimHistoryRepository;
 import com.drc.aidbridge.domain.repository.volunteer.VolunteerRepository;
+import com.drc.aidbridge.domain.repository.victim.VictimHistoryRepository;
+import com.drc.aidbridge.domain.repository.victim.VictimSosRepository;
+import com.drc.aidbridge.domain.repository.victim.VictimSupplyRepository;
 
 import dagger.Binds;
 import dagger.Module;
@@ -50,11 +50,11 @@ public abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    public abstract SosRepository bindSosRepository(SosRepositoryImpl impl);
+    public abstract VictimSosRepository bindVictimSosRepository(VictimSosRepositoryImpl impl);
 
     @Binds
     @Singleton
-    public abstract SupplyRepository bindSupplyRepository(SupplyRepositoryImpl impl);
+    public abstract VictimSupplyRepository bindVictimSupplyRepository(VictimSupplyRepositoryImpl impl);
 
     @Binds
     @Singleton

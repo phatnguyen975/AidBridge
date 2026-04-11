@@ -6,12 +6,12 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.dto.request.OtpVerifyRequest;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.domain.usecase.validation.AuthInputValidator;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 
 import javax.inject.Inject;
 
 /**
- * VerifyResetOtpUseCase â€” verifies reset-password OTP with strict OTP format
+ * VerifyResetOtpUseCase - verifies reset-password OTP with strict OTP format
  * checks.
  */
 public class VerifyResetOtpUseCase {
@@ -26,8 +26,8 @@ public class VerifyResetOtpUseCase {
         this.inputValidator = inputValidator;
     }
 
-    public AuthValidationResult validate(String email, String otpCode) {
-        AuthValidationResult emailValidation = inputValidator.requireValidEmail(email);
+    public ValidationResult validate(String email, String otpCode) {
+        ValidationResult emailValidation = inputValidator.requireValidEmail(email);
         if (!emailValidation.isValid()) {
             return emailValidation;
         }

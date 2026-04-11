@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.FragmentForgotOtpBinding;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.common.OtpInputController;
 import com.drc.aidbridge.ui.auth.viewmodel.ForgotOtpViewModel;

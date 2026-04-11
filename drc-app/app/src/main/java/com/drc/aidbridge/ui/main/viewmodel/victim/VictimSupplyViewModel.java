@@ -6,10 +6,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
-import com.drc.aidbridge.data.remote.dto.supply.ReliefRequestDto;
-import com.drc.aidbridge.data.remote.dto.supply.RequestedItemDto;
-import com.drc.aidbridge.data.remote.dto.supply.SupplyCategoryDto;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.model.victim.VictimReliefRequest;
+import com.drc.aidbridge.domain.model.victim.VictimRequestedItem;
+import com.drc.aidbridge.domain.model.victim.VictimSupplyCategory;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.domain.usecase.victim.GetSupplyCategoriesUseCase;
 import com.drc.aidbridge.domain.usecase.victim.SubmitReliefRequestUseCase;
 import com.drc.aidbridge.ui.base.BaseViewModel;
@@ -32,13 +32,13 @@ public class VictimSupplyViewModel extends BaseViewModel {
     private final SubmitReliefRequestUseCase submitReliefRequestUseCase;
 
     private final MutableLiveData<Long> loadCategoriesTrigger = new MutableLiveData<>();
-    private final MutableLiveData<ReliefRequestDto> submitRequestTrigger = new MutableLiveData<>();
+    private final MutableLiveData<VictimReliefRequest> submitRequestTrigger = new MutableLiveData<>();
 
-    private final LiveData<NetworkResultWrapper<List<SupplyCategoryDto>>> categoriesSource;
+    private final LiveData<NetworkResultWrapper<List<VictimSupplyCategory>>> categoriesSource;
     private final LiveData<NetworkResultWrapper<String>> submitSource;
 
-    private final MutableLiveData<AuthValidationResult> validationError = new MutableLiveData<>();
-    private final MediatorLiveData<NetworkResultWrapper<List<SupplyCategoryDto>>> categoriesResult = new MediatorLiveData<>();
+    private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<List<VictimSupplyCategory>>> categoriesResult = new MediatorLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<String>> submitResult = new MediatorLiveData<>();
 
     @Inject
@@ -59,7 +59,7 @@ public class VictimSupplyViewModel extends BaseViewModel {
         loadCategories();
     }
 
-    public LiveData<NetworkResultWrapper<List<SupplyCategoryDto>>> getCategoriesResult() {
+    public LiveData<NetworkResultWrapper<List<VictimSupplyCategory>>> getCategoriesResult() {
         return categoriesResult;
     }
 
@@ -67,7 +67,7 @@ public class VictimSupplyViewModel extends BaseViewModel {
         return submitResult;
     }
 
-    public LiveData<AuthValidationResult> getValidationError() {
+    public LiveData<ValidationResult> getValidationError() {
         return validationError;
     }
 
@@ -81,8 +81,8 @@ public class VictimSupplyViewModel extends BaseViewModel {
                               String note,
                               List<RequestedItem> items) {
         workerExecutor.execute(() -> {
-            List<RequestedItemDto> requestedItems = mapRequestedItems(items);
-            ReliefRequestDto requestDto = new ReliefRequestDto(
+            List<VictimRequestedItem> requestedItems = mapRequestedItems(items);
+            VictimReliefRequest request = new VictimReliefRequest(
                 Math.max(0, adults),
                 Math.max(0, elders),
                 Math.max(0, children),
@@ -90,14 +90,14 @@ public class VictimSupplyViewModel extends BaseViewModel {
                 requestedItems
             );
 
-            AuthValidationResult validation = submitReliefRequestUseCase.validate(requestDto);
+            ValidationResult validation = submitReliefRequestUseCase.validate(request);
             if (!validation.isValid()) {
                 validationError.postValue(validation);
                 return;
             }
 
-            validationError.postValue(AuthValidationResult.valid());
-            submitRequestTrigger.postValue(requestDto);
+            validationError.postValue(ValidationResult.valid());
+            submitRequestTrigger.postValue(request);
         });
     }
 
@@ -107,12 +107,12 @@ public class VictimSupplyViewModel extends BaseViewModel {
         super.onCleared();
     }
 
-    private List<RequestedItemDto> mapRequestedItems(List<RequestedItem> items) {
+    private List<VictimRequestedItem> mapRequestedItems(List<RequestedItem> items) {
         if (items == null || items.isEmpty()) {
             return Collections.emptyList();
         }
 
-        List<RequestedItemDto> result = new ArrayList<>();
+        List<VictimRequestedItem> result = new ArrayList<>();
         for (RequestedItem item : items) {
             if (item == null) {
                 continue;
@@ -124,7 +124,7 @@ public class VictimSupplyViewModel extends BaseViewModel {
                 continue;
             }
 
-            result.add(new RequestedItemDto(itemId.trim(), quantity));
+            result.add(new VictimRequestedItem(itemId.trim(), quantity));
         }
         return result;
     }

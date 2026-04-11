@@ -7,7 +7,7 @@ import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.usecase.auth.ResetPasswordUseCase;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
 import javax.inject.Inject;
@@ -23,7 +23,7 @@ public class ForgotNewPasswordViewModel extends BaseViewModel {
     private final ResetPasswordUseCase resetPasswordUseCase;
     private final SavedStateHandle savedStateHandle;
 
-    private final MutableLiveData<AuthValidationResult> validationError = new MutableLiveData<>();
+    private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
     private final MutableLiveData<ChangePasswordParams> changePasswordTrigger = new MutableLiveData<>();
     private final LiveData<NetworkResultWrapper<String>> changePasswordResult;
 
@@ -39,7 +39,7 @@ public class ForgotNewPasswordViewModel extends BaseViewModel {
         );
     }
 
-    public LiveData<AuthValidationResult> getValidationError() {
+    public LiveData<ValidationResult> getValidationError() {
         return validationError;
     }
 
@@ -61,14 +61,14 @@ public class ForgotNewPasswordViewModel extends BaseViewModel {
     public void changePassword(String newPassword, String confirmPassword) {
         String email = getEmail();
         String otp = getOtp();
-        AuthValidationResult validation = resetPasswordUseCase.validate(email, otp, newPassword, confirmPassword);
+        ValidationResult validation = resetPasswordUseCase.validate(email, otp, newPassword, confirmPassword);
 
         if (!validation.isValid()) {
             validationError.setValue(validation);
             return;
         }
 
-        validationError.setValue(AuthValidationResult.valid());
+        validationError.setValue(ValidationResult.valid());
         changePasswordTrigger.setValue(new ChangePasswordParams(email, otp, newPassword));
     }
 

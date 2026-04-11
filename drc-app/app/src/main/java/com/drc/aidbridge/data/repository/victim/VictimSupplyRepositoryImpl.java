@@ -1,16 +1,20 @@
-package com.drc.aidbridge.data.repository;
+package com.drc.aidbridge.data.repository.victim;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.drc.aidbridge.data.mapper.victim.VictimSupplyMapper;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
-import com.drc.aidbridge.data.remote.api.SupplyApiService;
+import com.drc.aidbridge.data.remote.api.victim.SupplyApiService;
+import com.drc.aidbridge.data.remote.dto.request.victim.ReliefRequest;
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
-import com.drc.aidbridge.data.remote.dto.supply.ReliefRequestDto;
-import com.drc.aidbridge.data.remote.dto.supply.SupplyCategoryDto;
-import com.drc.aidbridge.domain.repository.SupplyRepository;
+import com.drc.aidbridge.data.remote.dto.response.victim.SupplyCategoryResponse;
+import com.drc.aidbridge.data.repository.BaseRepository;
+import com.drc.aidbridge.domain.model.victim.VictimReliefRequest;
+import com.drc.aidbridge.domain.model.victim.VictimSupplyCategory;
+import com.drc.aidbridge.domain.repository.victim.VictimSupplyRepository;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -21,30 +25,33 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 @Singleton
-public class SupplyRepositoryImpl extends BaseRepository implements SupplyRepository {
+public class VictimSupplyRepositoryImpl extends BaseRepository implements VictimSupplyRepository {
 
     private final SupplyApiService supplyApiService;
+    private final VictimSupplyMapper victimSupplyMapper;
 
     @Inject
-    public SupplyRepositoryImpl(SupplyApiService supplyApiService) {
+    public VictimSupplyRepositoryImpl(SupplyApiService supplyApiService,
+                                      VictimSupplyMapper victimSupplyMapper) {
         this.supplyApiService = supplyApiService;
+        this.victimSupplyMapper = victimSupplyMapper;
     }
 
     @Override
-    public LiveData<NetworkResultWrapper<List<SupplyCategoryDto>>> getSupplyCategories() {
-        MutableLiveData<NetworkResultWrapper<List<SupplyCategoryDto>>> result = new MutableLiveData<>();
+    public LiveData<NetworkResultWrapper<List<VictimSupplyCategory>>> getSupplyCategories() {
+        MutableLiveData<NetworkResultWrapper<List<VictimSupplyCategory>>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
-        supplyApiService.getSupplyCategories().enqueue(new Callback<BaseResponse<List<SupplyCategoryDto>>>() {
+        supplyApiService.getSupplyCategories().enqueue(new Callback<BaseResponse<List<SupplyCategoryResponse>>>() {
             @Override
-            public void onResponse(Call<BaseResponse<List<SupplyCategoryDto>>> call,
-                                   Response<BaseResponse<List<SupplyCategoryDto>>> response) {
+            public void onResponse(Call<BaseResponse<List<SupplyCategoryResponse>>> call,
+                                   Response<BaseResponse<List<SupplyCategoryResponse>>> response) {
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
 
-                BaseResponse<List<SupplyCategoryDto>> body = response.body();
+                BaseResponse<List<SupplyCategoryResponse>> body = response.body();
                 if (body == null) {
                     result.postValue(NetworkResultWrapper.error("Phản hồi danh mục tiếp tế không hợp lệ."));
                     return;
@@ -60,15 +67,15 @@ public class SupplyRepositoryImpl extends BaseRepository implements SupplyReposi
                     return;
                 }
 
-                List<SupplyCategoryDto> categories = body.getData();
-                if (categories == null) {
-                    categories = new ArrayList<>();
-                }
-                result.postValue(NetworkResultWrapper.success(categories));
+                List<SupplyCategoryResponse> categories = body.getData();
+                List<VictimSupplyCategory> domainCategories = victimSupplyMapper.mapCategoriesToDomain(
+                    categories != null ? categories : Collections.emptyList()
+                );
+                result.postValue(NetworkResultWrapper.success(domainCategories));
             }
 
             @Override
-            public void onFailure(Call<BaseResponse<List<SupplyCategoryDto>>> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<List<SupplyCategoryResponse>>> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error("Tải danh mục tiếp tế thất bại: " + safeMessage(t)));
             }
         });
@@ -77,11 +84,13 @@ public class SupplyRepositoryImpl extends BaseRepository implements SupplyReposi
     }
 
     @Override
-    public LiveData<NetworkResultWrapper<String>> submitReliefRequest(ReliefRequestDto requestDto) {
+    public LiveData<NetworkResultWrapper<String>> submitReliefRequest(VictimReliefRequest request) {
         MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
-        supplyApiService.submitReliefRequest(requestDto).enqueue(new Callback<BaseResponse<String>>() {
+        ReliefRequest apiRequest = victimSupplyMapper.mapReliefRequestToRequest(request);
+
+        supplyApiService.submitReliefRequest(apiRequest).enqueue(new Callback<BaseResponse<String>>() {
             @Override
             public void onResponse(Call<BaseResponse<String>> call,
                                    Response<BaseResponse<String>> response) {

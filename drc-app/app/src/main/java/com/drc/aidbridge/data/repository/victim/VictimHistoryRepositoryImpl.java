@@ -1,17 +1,19 @@
-package com.drc.aidbridge.data.repository;
+package com.drc.aidbridge.data.repository.victim;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.drc.aidbridge.data.mapper.victim.VictimHistoryMapper;
 import com.drc.aidbridge.data.local.dao.VictimHistoryDao;
 import com.drc.aidbridge.data.local.entity.VictimHistoryEntity;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
-import com.drc.aidbridge.data.remote.api.VictimHistoryApiService;
+import com.drc.aidbridge.data.remote.api.victim.HistoryApiService;
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 import com.drc.aidbridge.data.remote.dto.response.PaginatedData;
-import com.drc.aidbridge.data.remote.dto.response.victim.VictimHistoryDto;
+import com.drc.aidbridge.data.remote.dto.response.victim.HistoryResponse;
+import com.drc.aidbridge.data.repository.BaseRepository;
 import com.drc.aidbridge.domain.model.victim.VictimHistoryPage;
-import com.drc.aidbridge.domain.repository.VictimHistoryRepository;
+import com.drc.aidbridge.domain.repository.victim.VictimHistoryRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,15 +32,18 @@ import retrofit2.Response;
 @Singleton
 public class VictimHistoryRepositoryImpl extends BaseRepository implements VictimHistoryRepository {
 
-    private final VictimHistoryApiService victimHistoryApiService;
+    private final HistoryApiService historyApiService;
     private final VictimHistoryDao victimHistoryDao;
+    private final VictimHistoryMapper victimHistoryMapper;
     private final ExecutorService ioExecutor = Executors.newSingleThreadExecutor();
 
     @Inject
-    public VictimHistoryRepositoryImpl(VictimHistoryApiService victimHistoryApiService,
-                                       VictimHistoryDao victimHistoryDao) {
-        this.victimHistoryApiService = victimHistoryApiService;
+    public VictimHistoryRepositoryImpl(HistoryApiService historyApiService,
+                                       VictimHistoryDao victimHistoryDao,
+                                       VictimHistoryMapper victimHistoryMapper) {
+        this.historyApiService = historyApiService;
         this.victimHistoryDao = victimHistoryDao;
+        this.victimHistoryMapper = victimHistoryMapper;
     }
 
     /**
@@ -62,18 +67,18 @@ public class VictimHistoryRepositoryImpl extends BaseRepository implements Victi
             return result;
         }
 
-        victimHistoryApiService.getVictimHistory(page, size, normalizedTimeRange)
-            .enqueue(new Callback<BaseResponse<PaginatedData<VictimHistoryDto>>>() {
+        historyApiService.getVictimHistory(page, size, normalizedTimeRange)
+            .enqueue(new Callback<BaseResponse<PaginatedData<HistoryResponse>>>() {
                 @Override
-                public void onResponse(Call<BaseResponse<PaginatedData<VictimHistoryDto>>> call,
-                                       Response<BaseResponse<PaginatedData<VictimHistoryDto>>> response) {
+                public void onResponse(Call<BaseResponse<PaginatedData<HistoryResponse>>> call,
+                                       Response<BaseResponse<PaginatedData<HistoryResponse>>> response) {
                     if (!response.isSuccessful()) {
                         fallbackToCache(result, normalizedTimeRange, page,
                             extractHttpError(response), response.code());
                         return;
                     }
 
-                    BaseResponse<PaginatedData<VictimHistoryDto>> body = response.body();
+                    BaseResponse<PaginatedData<HistoryResponse>> body = response.body();
                     if (body == null) {
                         fallbackToCache(result, normalizedTimeRange, page,
                             "Phản hồi lịch sử yêu cầu không hợp lệ.", 0);
@@ -90,12 +95,12 @@ public class VictimHistoryRepositoryImpl extends BaseRepository implements Victi
                         return;
                     }
 
-                    PaginatedData<VictimHistoryDto> pageData = body.getData();
-                    List<VictimHistoryDto> items = pageData != null ? pageData.getItems() : Collections.emptyList();
+                    PaginatedData<HistoryResponse> pageData = body.getData();
+                    List<HistoryResponse> items = pageData != null ? pageData.getItems() : Collections.emptyList();
                     boolean hasNextPage = pageData != null && pageData.hasNext();
 
                     ioExecutor.execute(() -> {
-                        List<VictimHistoryDto> safeItems = sanitizeItems(items);
+                        List<HistoryResponse> safeItems = sanitizeItems(items);
 
                         if (page == 1) {
                             victimHistoryDao.clearByTimeRange(normalizedTimeRange);
@@ -103,18 +108,28 @@ public class VictimHistoryRepositoryImpl extends BaseRepository implements Victi
 
                         if (!safeItems.isEmpty()) {
                             victimHistoryDao.insertAll(
-                                toEntities(safeItems, normalizedTimeRange, page, hasNextPage)
+                                victimHistoryMapper.mapResponsesToEntities(
+                                    safeItems,
+                                    normalizedTimeRange,
+                                    page,
+                                    hasNextPage,
+                                    System.currentTimeMillis()
+                                )
                             );
                         }
 
                         result.postValue(NetworkResultWrapper.success(
-                            new VictimHistoryPage(safeItems, hasNextPage, false)
+                            new VictimHistoryPage(
+                                victimHistoryMapper.mapResponsesToDomain(safeItems),
+                                hasNextPage,
+                                false
+                            )
                         ));
                     });
                 }
 
                 @Override
-                public void onFailure(Call<BaseResponse<PaginatedData<VictimHistoryDto>>> call,
+                public void onFailure(Call<BaseResponse<PaginatedData<HistoryResponse>>> call,
                                       Throwable t) {
                     fallbackToCache(result, normalizedTimeRange, page,
                         "Tải lịch sử yêu cầu thất bại: " + safeMessage(t), 0);
@@ -135,7 +150,7 @@ public class VictimHistoryRepositoryImpl extends BaseRepository implements Victi
     }
 
     /**
-     * Reads a cached page and maps entities back to DTO models for presentation.
+     * Reads a cached page and maps entities to domain models.
      */
     private NetworkResultWrapper<VictimHistoryPage> loadCachedPage(String timeRange,
                                                                     int page,
@@ -160,74 +175,20 @@ public class VictimHistoryRepositoryImpl extends BaseRepository implements Victi
         Integer hasNextRaw = victimHistoryDao.getHasNextPage(timeRange, page);
         boolean hasNextPage = hasNextRaw != null && hasNextRaw == 1;
 
-        List<VictimHistoryDto> mappedItems = new ArrayList<>();
-        for (VictimHistoryEntity entity : cachedItems) {
-            if (entity == null) {
-                continue;
-            }
-            mappedItems.add(new VictimHistoryDto(
-                entity.requestId,
-                entity.title,
-                entity.status,
-                entity.statusType,
-                entity.dateTime,
-                entity.location,
-                entity.type,
-                entity.detail
-            ));
-        }
-
-        return NetworkResultWrapper.success(new VictimHistoryPage(mappedItems, hasNextPage, true));
+        return NetworkResultWrapper.success(new VictimHistoryPage(
+            victimHistoryMapper.mapEntitiesToDomain(cachedItems),
+            hasNextPage,
+            true
+        ));
     }
 
-    private List<VictimHistoryEntity> toEntities(List<VictimHistoryDto> items,
-                                                 String timeRange,
-                                                 int page,
-                                                 boolean hasNextPage) {
-        List<VictimHistoryEntity> entities = new ArrayList<>();
-        long now = System.currentTimeMillis();
-
-        for (int index = 0; index < items.size(); index++) {
-            VictimHistoryDto dto = items.get(index);
-            if (dto == null) {
-                continue;
-            }
-
-            String requestId = safeText(dto.getRequestId());
-            if (requestId.isEmpty()) {
-                requestId = "history_" + page + "_" + index;
-            }
-
-            String cacheKey = requestId + "|" + timeRange + "|" + page;
-
-            entities.add(new VictimHistoryEntity(
-                cacheKey,
-                requestId,
-                safeText(dto.getTitle()),
-                safeText(dto.getStatus()),
-                safeText(dto.getStatusType()),
-                safeText(dto.getDateTime()),
-                safeText(dto.getLocation()),
-                safeText(dto.getType()),
-                safeText(dto.getDetail()),
-                timeRange,
-                page,
-                index,
-                hasNextPage,
-                now
-            ));
-        }
-
-        return entities;
-    }
-
-    private List<VictimHistoryDto> sanitizeItems(List<VictimHistoryDto> items) {
+    private List<HistoryResponse> sanitizeItems(List<HistoryResponse> items) {
         if (items == null || items.isEmpty()) {
             return Collections.emptyList();
         }
 
-        List<VictimHistoryDto> safeItems = new ArrayList<>();
-        for (VictimHistoryDto item : items) {
+        List<HistoryResponse> safeItems = new ArrayList<>();
+        for (HistoryResponse item : items) {
             if (item != null) {
                 safeItems.add(item);
             }

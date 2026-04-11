@@ -26,11 +26,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
-import com.drc.aidbridge.data.remote.dto.supply.SupplyCategoryDto;
-import com.drc.aidbridge.data.remote.dto.supply.SupplyItemDto;
 import com.drc.aidbridge.databinding.FragmentVictimSupplyTabBinding;
 import com.drc.aidbridge.databinding.ItemSupplyCategoryBinding;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.model.victim.VictimSupplyCategory;
+import com.drc.aidbridge.domain.model.victim.VictimSupplyItem;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.victim.VictimSupplyViewModel;
 import com.google.android.material.button.MaterialButton;
@@ -55,7 +55,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
     private ActivityResultLauncher<String> recordAudioPermissionLauncher;
     private ActivityResultLauncher<Intent> speechRecognizerLauncher;
 
-    private final List<SupplyCategoryDto> categoryData = new ArrayList<>();
+    private final List<VictimSupplyCategory> categoryData = new ArrayList<>();
     private final LinkedHashMap<String, Integer> itemQuantities = new LinkedHashMap<>();
 
     @Nullable
@@ -88,7 +88,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         );
     }
 
-    private void renderValidationError(@Nullable AuthValidationResult validation) {
+    private void renderValidationError(@Nullable ValidationResult validation) {
         if (validation == null || validation.isValid()) {
             return;
         }
@@ -110,7 +110,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         binding.btnSubmitSupply.setText(isLoading ? R.string.btn_loading : R.string.victim_supply_submit);
     }
 
-    private void handleCategoryState(NetworkResultWrapper<List<SupplyCategoryDto>> result) {
+    private void handleCategoryState(NetworkResultWrapper<List<VictimSupplyCategory>> result) {
         if (result == null) {
             return;
         }
@@ -139,7 +139,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
             return;
         }
 
-        List<SupplyCategoryDto> categories = result.getData();
+        List<VictimSupplyCategory> categories = result.getData();
         categoryData.clear();
         if (categories != null) {
             categoryData.addAll(categories);
@@ -154,12 +154,12 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         setupDynamicCategories(categoryData);
     }
 
-    private void setupDynamicCategories(List<SupplyCategoryDto> categories) {
+    private void setupDynamicCategories(List<VictimSupplyCategory> categories) {
         binding.containerCategories.removeAllViews();
         Set<String> validItemIds = new LinkedHashSet<>();
 
         int index = 0;
-        for (SupplyCategoryDto category : categories) {
+        for (VictimSupplyCategory category : categories) {
             if (category == null) {
                 continue;
             }
@@ -174,8 +174,8 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
             categoryBinding.tvCategoryName.setText(categoryName);
             categoryBinding.layoutHeader.setOnClickListener(v -> toggleCategory(categoryBinding));
 
-            List<SupplyItemDto> items = category.getItems() != null ? category.getItems() : new ArrayList<>();
-            for (SupplyItemDto item : items) {
+            List<VictimSupplyItem> items = category.getItems() != null ? category.getItems() : new ArrayList<>();
+            for (VictimSupplyItem item : items) {
                 if (item == null) {
                     continue;
                 }
@@ -210,8 +210,8 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
     }
 
     private View createItemQuantityRow(ItemSupplyCategoryBinding categoryBinding,
-                                       List<SupplyItemDto> categoryItems,
-                                       SupplyItemDto item) {
+                                       List<VictimSupplyItem> categoryItems,
+                                       VictimSupplyItem item) {
         LinearLayout row = new LinearLayout(requireContext());
         row.setLayoutParams(new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -308,9 +308,9 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         itemBinding.ivArrow.setContentDescription(getString(contentDescRes));
     }
 
-    private void updateSelectedCount(ItemSupplyCategoryBinding itemBinding, List<SupplyItemDto> categoryItems) {
+    private void updateSelectedCount(ItemSupplyCategoryBinding itemBinding, List<VictimSupplyItem> categoryItems) {
         int selectedCount = 0;
-        for (SupplyItemDto item : categoryItems) {
+        for (VictimSupplyItem item : categoryItems) {
             if (item == null) {
                 continue;
             }

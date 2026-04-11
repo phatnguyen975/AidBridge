@@ -15,7 +15,7 @@ import com.drc.aidbridge.R;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.FragmentVictimPersonalInfoBinding;
 import com.drc.aidbridge.domain.model.User;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.victim.VictimPersonalInfoViewModel;
 
@@ -80,7 +80,7 @@ public class VictimPersonalInfoFragment extends BaseFragment<FragmentVictimPerso
         viewModel.changePassword(currentPassword, newPassword, confirmPassword);
     }
 
-    private void renderValidationError(@Nullable AuthValidationResult validationResult) {
+    private void renderValidationError(@Nullable ValidationResult validationResult) {
         if (validationResult == null || validationResult.isValid()) {
             return;
         }

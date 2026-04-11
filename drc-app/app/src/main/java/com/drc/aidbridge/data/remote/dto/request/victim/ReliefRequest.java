@@ -1,10 +1,10 @@
-package com.drc.aidbridge.data.remote.dto.supply;
+package com.drc.aidbridge.data.remote.dto.request.victim;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class ReliefRequestDto {
+public class ReliefRequest {
 
     @SerializedName("adultsCount")
     private final int adultsCount;
@@ -19,13 +19,13 @@ public class ReliefRequestDto {
     private final String note;
 
     @SerializedName("requestedItems")
-    private final List<RequestedItemDto> requestedItems;
+    private final List<RequestedItemRequest> requestedItems;
 
-    public ReliefRequestDto(int adultsCount,
-                            int eldersCount,
-                            int childrenCount,
-                            String note,
-                            List<RequestedItemDto> requestedItems) {
+    public ReliefRequest(int adultsCount,
+                         int eldersCount,
+                         int childrenCount,
+                         String note,
+                         List<RequestedItemRequest> requestedItems) {
         this.adultsCount = adultsCount;
         this.eldersCount = eldersCount;
         this.childrenCount = childrenCount;
@@ -49,7 +49,7 @@ public class ReliefRequestDto {
         return note;
     }
 
-    public List<RequestedItemDto> getRequestedItems() {
+    public List<RequestedItemRequest> getRequestedItems() {
         return requestedItems;
     }
 }

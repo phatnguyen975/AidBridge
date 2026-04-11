@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentForgotEmailBinding;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.auth.viewmodel.ForgotEmailViewModel;
 
@@ -42,7 +42,7 @@ public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding
                 return;
             }
 
-            if (validation.getErrorField() == AuthValidationResult.Field.EMAIL) {
+            if (validation.getErrorField() == ValidationResult.Field.EMAIL) {
                 binding.tilEmail.setError(validation.getErrorMessage());
                 binding.tilEmail.requestFocus();
             } else {

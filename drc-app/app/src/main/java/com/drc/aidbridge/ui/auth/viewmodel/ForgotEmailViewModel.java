@@ -6,7 +6,7 @@ import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.usecase.auth.RequestResetOtpUseCase;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
 import javax.inject.Inject;
@@ -21,7 +21,7 @@ public class ForgotEmailViewModel extends BaseViewModel {
 
     private final RequestResetOtpUseCase requestResetOtpUseCase;
 
-    private final MutableLiveData<AuthValidationResult> validationError = new MutableLiveData<>();
+    private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
     private final MutableLiveData<SendOtpParams> sendOtpTrigger = new MutableLiveData<>();
     private final LiveData<NetworkResultWrapper<String>> sendOtpResult;
 
@@ -34,7 +34,7 @@ public class ForgotEmailViewModel extends BaseViewModel {
         );
     }
 
-    public LiveData<AuthValidationResult> getValidationError() {
+    public LiveData<ValidationResult> getValidationError() {
         return validationError;
     }
 
@@ -43,14 +43,14 @@ public class ForgotEmailViewModel extends BaseViewModel {
     }
 
     public void sendOtp(String email) {
-        AuthValidationResult validation = requestResetOtpUseCase.validate(email);
+        ValidationResult validation = requestResetOtpUseCase.validate(email);
 
         if (!validation.isValid()) {
             validationError.setValue(validation);
             return;
         }
 
-        validationError.setValue(AuthValidationResult.valid());
+        validationError.setValue(ValidationResult.valid());
         sendOtpTrigger.setValue(new SendOtpParams(email));
     }
 

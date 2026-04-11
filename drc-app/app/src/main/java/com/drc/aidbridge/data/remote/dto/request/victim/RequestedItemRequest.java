@@ -1,8 +1,8 @@
-package com.drc.aidbridge.data.remote.dto.supply;
+package com.drc.aidbridge.data.remote.dto.request.victim;
 
 import com.google.gson.annotations.SerializedName;
 
-public class RequestedItemDto {
+public class RequestedItemRequest {
 
     @SerializedName("itemId")
     private final String itemId;
@@ -10,7 +10,7 @@ public class RequestedItemDto {
     @SerializedName("quantity")
     private final int quantity;
 
-    public RequestedItemDto(String itemId, int quantity) {
+    public RequestedItemRequest(String itemId, int quantity) {
         this.itemId = itemId;
         this.quantity = quantity;
     }

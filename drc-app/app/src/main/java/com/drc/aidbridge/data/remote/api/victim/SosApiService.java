@@ -1,4 +1,4 @@
-package com.drc.aidbridge.data.remote.api;
+package com.drc.aidbridge.data.remote.api.victim;
 
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 

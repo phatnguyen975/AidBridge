@@ -8,12 +8,12 @@ import com.drc.aidbridge.domain.enums.UserRole;
 import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.domain.usecase.validation.AuthInputValidator;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 
 import javax.inject.Inject;
 
 /**
- * RegisterUseCase â€” validates and executes user registration.
+ * RegisterUseCase - validates and executes user registration.
  */
 public class RegisterUseCase {
 
@@ -26,24 +26,24 @@ public class RegisterUseCase {
         this.inputValidator = inputValidator;
     }
 
-    public AuthValidationResult validate(String name, String email, String phone,
+    public ValidationResult validate(String name, String email, String phone,
                                      String password, UserRole role) {
-        AuthValidationResult nameValidation = inputValidator.requireName(name);
+        ValidationResult nameValidation = inputValidator.requireName(name);
         if (!nameValidation.isValid()) {
             return nameValidation;
         }
 
-        AuthValidationResult emailValidation = inputValidator.requireValidEmail(email);
+        ValidationResult emailValidation = inputValidator.requireValidEmail(email);
         if (!emailValidation.isValid()) {
             return emailValidation;
         }
 
-        AuthValidationResult phoneValidation = inputValidator.requireValidPhone(phone);
+        ValidationResult phoneValidation = inputValidator.requireValidPhone(phone);
         if (!phoneValidation.isValid()) {
             return phoneValidation;
         }
 
-        AuthValidationResult passwordValidation = inputValidator.requirePassword(password);
+        ValidationResult passwordValidation = inputValidator.requirePassword(password);
         if (!passwordValidation.isValid()) {
             return passwordValidation;
         }

@@ -8,7 +8,7 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.enums.UserRole;
 import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.domain.usecase.auth.RegisterUseCase;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
 import javax.inject.Inject;
@@ -21,7 +21,7 @@ public class RegisterViewModel extends BaseViewModel {
     private final RegisterUseCase registerUseCase;
 
     private final MutableLiveData<UserRole> selectedRole = new MutableLiveData<>(null);
-    private final MutableLiveData<AuthValidationResult> validationError = new MutableLiveData<>();
+    private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
     private final MutableLiveData<RegisterParams> registerTrigger = new MutableLiveData<>();
 
     private final LiveData<NetworkResultWrapper<User>> registerResult;
@@ -45,7 +45,7 @@ public class RegisterViewModel extends BaseViewModel {
         return selectedRole;
     }
 
-    public LiveData<AuthValidationResult> getValidationError() {
+    public LiveData<ValidationResult> getValidationError() {
         return validationError;
     }
 
@@ -60,13 +60,13 @@ public class RegisterViewModel extends BaseViewModel {
     public void register(String name, String email, String phone, String password) {
         UserRole role = selectedRole.getValue();
 
-        AuthValidationResult validation = registerUseCase.validate(name, email, phone, password, role);
+        ValidationResult validation = registerUseCase.validate(name, email, phone, password, role);
         if (!validation.isValid()) {
             validationError.setValue(validation);
             return;
         }
 
-        validationError.setValue(AuthValidationResult.valid());
+        validationError.setValue(ValidationResult.valid());
         registerTrigger.setValue(new RegisterParams(name, email, phone, password, role));
     }
 

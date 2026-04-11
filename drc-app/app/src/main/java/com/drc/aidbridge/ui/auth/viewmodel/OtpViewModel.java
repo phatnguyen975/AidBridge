@@ -13,7 +13,7 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.dto.response.AuthResponse;
 import com.drc.aidbridge.domain.usecase.auth.ResendOtpUseCase;
 import com.drc.aidbridge.domain.usecase.auth.VerifyOtpUseCase;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 import com.drc.aidbridge.utils.Constants;
 import com.drc.aidbridge.utils.TokenManager;
@@ -42,7 +42,7 @@ public class OtpViewModel extends BaseViewModel {
     private final MutableLiveData<Integer> countdown = new MutableLiveData<>(Constants.OTP_COUNTDOWN_SEC);
     private final MutableLiveData<ResendUiState> resendUiState = new MutableLiveData<>(ResendUiState.TIMER_RUNNING);
 
-    private final MutableLiveData<AuthValidationResult> validationError = new MutableLiveData<>();
+    private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
     private final MutableLiveData<Integer> otpInlineErrorResId = new MutableLiveData<>();
     private final MutableLiveData<VerifyParams> verifyTrigger = new MutableLiveData<>();
     private final MutableLiveData<ResendParams> resendTrigger = new MutableLiveData<>();
@@ -102,7 +102,7 @@ public class OtpViewModel extends BaseViewModel {
         return otpInlineErrorResId;
     }
 
-    public LiveData<AuthValidationResult> getValidationError() {
+    public LiveData<ValidationResult> getValidationError() {
         return validationError;
     }
 
@@ -122,7 +122,7 @@ public class OtpViewModel extends BaseViewModel {
             return;
         }
 
-        AuthValidationResult validation = verifyOtpUseCase.validate(normalizedOtp);
+        ValidationResult validation = verifyOtpUseCase.validate(normalizedOtp);
         if (!validation.isValid()) {
             otpInlineErrorResId.setValue(R.string.otp_error_required_6_digits);
             return;
@@ -138,13 +138,13 @@ public class OtpViewModel extends BaseViewModel {
         }
 
         String email = getEmail();
-        AuthValidationResult validation = resendOtpUseCase.validate(email);
+        ValidationResult validation = resendOtpUseCase.validate(email);
         if (!validation.isValid()) {
             validationError.setValue(validation);
             return;
         }
 
-        validationError.setValue(AuthValidationResult.valid());
+        validationError.setValue(ValidationResult.valid());
         resendUiState.setValue(ResendUiState.LOADING);
         resendTrigger.setValue(new ResendParams(email));
     }
