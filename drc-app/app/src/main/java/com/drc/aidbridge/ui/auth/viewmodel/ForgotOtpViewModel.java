@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
 /**
- * ForgotOtpViewModel — Step 2 of the forgot-password flow.
+ * ForgotOtpViewModel â€” Step 2 of the forgot-password flow.
  */
 @HiltViewModel
 public class ForgotOtpViewModel extends BaseViewModel {
@@ -222,3 +222,4 @@ public class ForgotOtpViewModel extends BaseViewModel {
         cancelCountdown();
     }
 }
+

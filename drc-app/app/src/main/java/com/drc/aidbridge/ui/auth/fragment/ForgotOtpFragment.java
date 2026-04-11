@@ -20,7 +20,7 @@ import java.util.Arrays;
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * ForgotOtpFragment — Forgot Password: Step 2 — Enter OTP.
+ * ForgotOtpFragment â€” Forgot Password: Step 2 â€” Enter OTP.
  */
 @AndroidEntryPoint
 public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
@@ -175,3 +175,4 @@ public class ForgotOtpFragment extends BaseFragment<FragmentForgotOtpBinding> {
         navigateSafely(R.id.action_forgotOtpFragment_to_forgotNewPasswordFragment, args);
     }
 }
+

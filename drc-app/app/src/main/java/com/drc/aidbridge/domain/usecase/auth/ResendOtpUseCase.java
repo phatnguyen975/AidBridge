@@ -34,3 +34,4 @@ public class ResendOtpUseCase {
                 new RequestOtpRequest(inputValidator.normalizeEmail(email), null, otpType));
     }
 }
+

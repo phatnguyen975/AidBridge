@@ -7,10 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,7 +22,6 @@ public class UserController {
     private final LogoutUserUseCase logoutUserUseCase;
     private final UpdateFcmTokenUseCase updateFcmTokenUseCase;
     private final ResetPasswordUseCase resetPasswordUseCase;
-    private final ChangePasswordUseCase changePasswordUseCase;
 
     /**
      * POST /auth/register - Đăng ký user mới
@@ -106,7 +102,6 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("OTP verified successfully", response));
     }
 
-    
     /**
      * POST /auth/password/reset - Reset password với OTP
      */
@@ -115,29 +110,6 @@ public class UserController {
             @Valid @RequestBody ResetPasswordRequest request) {
         resetPasswordUseCase.execute(request);
         return ResponseEntity.ok(ApiResponse.success("Password reset successful", null));
-    }
-
-    /**
-     * POST /auth/password/change - Đổi password
-     */
-    @PostMapping("/password/change")
-    public ResponseEntity<ApiResponse<Void>> changePassword(
-            Authentication authentication,
-            @Valid @RequestBody ChangePasswordRequest request) {
-        UUID userId = resolveUserId(authentication);
-        changePasswordUseCase.execute(userId, request);
-        return ResponseEntity.ok(ApiResponse.success("Password changed successfully", null));
-    }
-
-    private UUID resolveUserId(Authentication authentication) {
-        if (authentication == null || authentication.getPrincipal() == null) {
-            throw new IllegalArgumentException("Authenticated user is required");
-        }
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UUID userId) {
-            return userId;
-        }
-        return UUID.fromString(principal.toString());
     }
 
     @PostMapping("/update-fcm")

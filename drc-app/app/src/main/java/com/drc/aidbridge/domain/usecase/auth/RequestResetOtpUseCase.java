@@ -34,3 +34,4 @@ public class RequestResetOtpUseCase {
                 new RequestOtpRequest(inputValidator.normalizeEmail(email), null, "PASSWORD_RESET"));
     }
 }
+

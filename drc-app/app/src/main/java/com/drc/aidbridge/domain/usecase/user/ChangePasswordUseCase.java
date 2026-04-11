@@ -41,3 +41,4 @@ public class ChangePasswordUseCase {
         return userRepository.changePassword(currentPassword, newPassword);
     }
 }
+

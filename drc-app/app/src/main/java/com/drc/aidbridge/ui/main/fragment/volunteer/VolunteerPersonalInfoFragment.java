@@ -2,22 +2,25 @@ package com.drc.aidbridge.ui.main.fragment.volunteer;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
+import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.databinding.FragmentVolunteerPersonalInfoBinding;
-import com.drc.aidbridge.domain.model.volunteer.VolunteerPersonalInfo;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
-import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerDashboardViewModel;
+import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerPersonalInfoViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class VolunteerPersonalInfoFragment extends BaseFragment<FragmentVolunteerPersonalInfoBinding> {
 
-	private VolunteerDashboardViewModel volunteerDashboardViewModel;
+	private VolunteerPersonalInfoViewModel volunteerPersonalInfoViewModel;
 
 	@Nullable
 	@Override
@@ -28,35 +31,52 @@ public class VolunteerPersonalInfoFragment extends BaseFragment<FragmentVoluntee
 
 	@Override
 	protected void setupViews() {
-		volunteerDashboardViewModel = new ViewModelProvider(requireActivity()).get(VolunteerDashboardViewModel.class);
-		mockProfileData();
+		volunteerPersonalInfoViewModel = new ViewModelProvider(this).get(VolunteerPersonalInfoViewModel.class);
 		setupClickListeners();
+		volunteerPersonalInfoViewModel.loadUserInfo();
 	}
 
 	@Override
 	protected void observeViewModel() {
-		if (volunteerDashboardViewModel == null) {
+		if (volunteerPersonalInfoViewModel == null) {
 			return;
 		}
 
-		volunteerDashboardViewModel.getVolunteerPersonalInfoResult().observe(
+		volunteerPersonalInfoViewModel.getValidationError().observe(getViewLifecycleOwner(),
+				this::renderValidationError);
+
+		volunteerPersonalInfoViewModel.getUserInfoResult().observe(
 				getViewLifecycleOwner(),
-				resultObserver(this::renderPersonalInfo, this::showToast));
+				resultObserver(this::renderPersonalInfoFromUser, this::showUpdateError));
+
+		volunteerPersonalInfoViewModel.getUpdateProfileResult().observe(
+				getViewLifecycleOwner(),
+				result -> {
+					renderUpdateInfoLoading(result != null && result.isLoading());
+					resultObserver(this::handleUpdateProfileSuccess, this::showUpdateError).onChanged(result);
+				});
+
+		volunteerPersonalInfoViewModel.getChangePasswordResult().observe(
+				getViewLifecycleOwner(),
+				result -> {
+					renderChangePasswordLoading(result != null && result.isLoading());
+					resultObserver(this::handleChangePasswordSuccess, this::showChangePasswordError).onChanged(result);
+				});
 	}
 
-	private void renderPersonalInfo(@Nullable VolunteerPersonalInfo info) {
-		if (info == null) {
+	private void renderPersonalInfoFromUser(@Nullable User user) {
+		if (user == null) {
 			return;
 		}
 
-		String fullName = info.getFullName() != null && !info.getFullName().trim().isEmpty()
-				? info.getFullName().trim()
+		String fullName = user.getName() != null && !user.getName().trim().isEmpty()
+				? user.getName().trim()
 				: getString(R.string.volunteer_personal_info_default_full_name);
-		String phoneNumber = info.getPhoneNumber() != null && !info.getPhoneNumber().trim().isEmpty()
-				? info.getPhoneNumber().trim()
+		String phoneNumber = user.getPhone() != null && !user.getPhone().trim().isEmpty()
+				? user.getPhone().trim()
 				: getString(R.string.volunteer_personal_info_default_phone);
-		String email = info.getEmail() != null && !info.getEmail().trim().isEmpty()
-				? info.getEmail().trim()
+		String email = user.getEmail() != null && !user.getEmail().trim().isEmpty()
+				? user.getEmail().trim()
 				: getString(R.string.volunteer_personal_info_default_email);
 
 		binding.etFullName.setText(fullName);
@@ -64,32 +84,90 @@ public class VolunteerPersonalInfoFragment extends BaseFragment<FragmentVoluntee
 		binding.etEmail.setText(email);
 	}
 
+	private void renderValidationError(@Nullable ValidationResult validationResult) {
+		if (validationResult == null || validationResult.isValid()) {
+			return;
+		}
+
+		String message = validationResult.getErrorMessage() != null
+				? validationResult.getErrorMessage()
+				: getString(R.string.error_generic);
+		showTopSnackbar(binding.getRoot(), message, true);
+	}
+
+	private void handleUpdateProfileSuccess(@Nullable User user) {
+		renderPersonalInfoFromUser(user);
+		showTopSnackbar(
+				binding.getRoot(),
+				getString(R.string.volunteer_personal_info_toast_update_success),
+				false);
+	}
+
+	private void showUpdateError(@NonNull String message) {
+		showTopSnackbar(binding.getRoot(), message, true);
+	}
+
+	private void handleChangePasswordSuccess(@Nullable String message) {
+		binding.etCurrentPassword.setText("");
+		binding.etNewPassword.setText("");
+		binding.etConfirmNewPassword.setText("");
+
+		String safeMessage = message != null && !message.trim().isEmpty()
+				? message
+				: getString(R.string.volunteer_personal_info_toast_change_password_success);
+		showTopSnackbar(binding.getRoot(), safeMessage, false);
+	}
+
+	private void showChangePasswordError(@NonNull String message) {
+		showTopSnackbar(binding.getRoot(), message, true);
+	}
+
 	private void setupClickListeners() {
 		binding.btnBack.setOnClickListener(v -> popBackStackSafely());
 
-		binding.btnUpdateInfo
-				.setOnClickListener(v -> showToast(getString(R.string.volunteer_personal_info_toast_update_success)));
+		binding.btnUpdateInfo.setOnClickListener(v -> {
+			clearInputFocusAndHideKeyboard();
+			volunteerPersonalInfoViewModel.updateProfile(
+					getRawText(binding.etFullName),
+					getRawText(binding.etPhone),
+					"");
+		});
 
 		binding.btnChangePassword.setOnClickListener(v -> {
+			clearInputFocusAndHideKeyboard();
+
+			String currentPassword = getRawText(binding.etCurrentPassword);
 			String newPassword = String.valueOf(binding.etNewPassword.getText()).trim();
 			String confirmPassword = String.valueOf(binding.etConfirmNewPassword.getText()).trim();
 
-			if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
-				showToast(getString(R.string.volunteer_personal_info_toast_change_password_empty));
-				return;
-			}
-
-			if (newPassword.equals(confirmPassword)) {
-				showToast(getString(R.string.volunteer_personal_info_toast_change_password_success));
-			} else {
-				showToast(getString(R.string.volunteer_personal_info_toast_change_password_mismatch));
-			}
+			volunteerPersonalInfoViewModel.changePassword(currentPassword, newPassword, confirmPassword);
 		});
 	}
 
-	private void mockProfileData() {
-		binding.etFullName.setText(getString(R.string.volunteer_personal_info_default_full_name));
-		binding.etPhone.setText(getString(R.string.volunteer_personal_info_default_phone));
-		binding.etEmail.setText(getString(R.string.volunteer_personal_info_default_email));
+	private String getRawText(@Nullable EditText editText) {
+		if (editText == null || editText.getText() == null) {
+			return "";
+		}
+
+		return editText.getText().toString().trim();
+	}
+
+	private void renderUpdateInfoLoading(boolean isLoading) {
+		applyActionLoadingState(
+				binding.btnUpdateInfo,
+				binding.progressUpdateInfoInline,
+				binding.tvUpdateInfoButtonText,
+				isLoading,
+				R.string.volunteer_personal_info_btn_update);
+	}
+
+	private void renderChangePasswordLoading(boolean isLoading) {
+		applyActionLoadingState(
+				binding.btnChangePassword,
+				binding.progressChangePasswordInline,
+				binding.tvChangePasswordButtonText,
+				isLoading,
+				R.string.volunteer_personal_info_btn_change_password);
 	}
 }
+

@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
 /**
- * ForgotEmailViewModel — Step 1 of the forgot-password flow.
+ * ForgotEmailViewModel â€” Step 1 of the forgot-password flow.
  */
 @HiltViewModel
 public class ForgotEmailViewModel extends BaseViewModel {
@@ -61,3 +61,4 @@ public class ForgotEmailViewModel extends BaseViewModel {
         }
     }
 }
+

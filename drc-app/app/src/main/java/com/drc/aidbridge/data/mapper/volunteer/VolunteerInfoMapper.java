@@ -3,9 +3,12 @@ package com.drc.aidbridge.data.mapper.volunteer;
 import androidx.annotation.Nullable;
 
 import com.drc.aidbridge.data.mapper.BaseMapper;
+import com.drc.aidbridge.data.remote.dto.response.UserDto;
+import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerHistoryItemDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerProfileDataDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerUserDto;
 import com.drc.aidbridge.domain.model.volunteer.VolunteerDashboardInfo;
+import com.drc.aidbridge.domain.model.volunteer.VolunteerHistoryItem;
 import com.drc.aidbridge.domain.model.volunteer.VolunteerPersonalInfo;
 
 import javax.inject.Inject;
@@ -65,5 +68,30 @@ public class VolunteerInfoMapper implements BaseMapper<VolunteerProfileDataDto, 
                 : "";
 
         return new VolunteerPersonalInfo(fullName, phoneNumber, email);
+    }
+
+    public VolunteerPersonalInfo mapToPersonalInfoDomain(@Nullable UserDto dto) {
+        if (dto == null) {
+            return new VolunteerPersonalInfo("", "", "");
+        }
+
+        String fullName = dto.getName() != null ? dto.getName().trim() : "";
+        String phoneNumber = dto.getPhone() != null ? dto.getPhone().trim() : "";
+        String email = dto.getEmail() != null ? dto.getEmail().trim() : "";
+
+        return new VolunteerPersonalInfo(fullName, phoneNumber, email);
+    }
+
+    public VolunteerHistoryItem mapToHistoryItemDomain(@Nullable VolunteerHistoryItemDto dto) {
+        if (dto == null) {
+            return new VolunteerHistoryItem("", "", "", "");
+        }
+
+        String missionId = dto.getMissionId() != null ? dto.getMissionId().trim() : "";
+        String type = dto.getType() != null ? dto.getType().trim() : "";
+        String completedAt = dto.getCompletedAt() != null ? dto.getCompletedAt().trim() : "";
+        String location = dto.getLocation() != null ? dto.getLocation().trim() : "";
+
+        return new VolunteerHistoryItem(missionId, type, completedAt, location);
     }
 }

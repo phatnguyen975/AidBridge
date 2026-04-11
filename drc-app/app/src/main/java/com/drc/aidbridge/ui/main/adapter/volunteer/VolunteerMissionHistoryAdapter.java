@@ -44,8 +44,7 @@ public class VolunteerMissionHistoryAdapter
         holder.binding.tvMissionLocation.setText(mission.getLocation());
         holder.binding.tvMissionDateTime.setText(mission.getTime());
 
-        if (holder.binding.getRoot().getContext().getString(R.string.volunteer_history_filter_rescue)
-                .equalsIgnoreCase(mission.getType())) {
+        if (isRescueMissionType(holder, mission.getType())) {
             holder.binding.cardMissionCategoryBadge.setCardBackgroundColor(
                     holder.binding.getRoot().getContext().getColor(R.color.sos_red));
         } else {
@@ -59,6 +58,18 @@ public class VolunteerMissionHistoryAdapter
                 .error(android.R.drawable.ic_menu_report_image)
                 .centerCrop()
                 .into(holder.binding.ivMissionPhoto);
+    }
+
+    private boolean isRescueMissionType(@NonNull VolunteerMissionHistoryViewHolder holder, String missionType) {
+        if (missionType == null) {
+            return false;
+        }
+
+        String rescueFilter = holder.binding.getRoot().getContext().getString(R.string.volunteer_history_filter_rescue);
+        String rescueType = holder.binding.getRoot().getContext().getString(R.string.volunteer_mission_type_rescue);
+        return missionType.equalsIgnoreCase("RESCUE")
+                || missionType.equalsIgnoreCase(rescueFilter)
+                || missionType.equalsIgnoreCase(rescueType);
     }
 
     @Override

@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
 /**
- * OtpViewModel — manages the OTP verification in the registration flow.
+ * OtpViewModel â€” manages the OTP verification in the registration flow.
  */
 @HiltViewModel
 public class OtpViewModel extends BaseViewModel {
@@ -235,3 +235,4 @@ public class OtpViewModel extends BaseViewModel {
         cancelCountdown();
     }
 }
+
