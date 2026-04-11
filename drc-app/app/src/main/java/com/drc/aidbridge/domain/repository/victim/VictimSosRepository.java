@@ -1,4 +1,4 @@
-package com.drc.aidbridge.domain.repository;
+package com.drc.aidbridge.domain.repository.victim;
 
 import androidx.lifecycle.LiveData;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 import okhttp3.MultipartBody;
 
-public interface SosRepository {
+public interface VictimSosRepository {
 
     LiveData<NetworkResultWrapper<String>> uploadSelfSos(String fullName,
                                                          int peopleCount,

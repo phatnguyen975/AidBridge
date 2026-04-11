@@ -16,7 +16,7 @@ import com.drc.aidbridge.domain.usecase.user.ChangePasswordUseCase;
 import com.drc.aidbridge.domain.usecase.user.GetCachedUserUseCase;
 import com.drc.aidbridge.domain.usecase.user.UpdateProfileUseCase;
 import com.drc.aidbridge.domain.usecase.user.UploadAvatarUseCase;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
 import java.util.concurrent.ExecutorService;
@@ -32,7 +32,7 @@ public class VictimPersonalInfoViewModel extends BaseViewModel {
     private final UpdateProfileUseCase updateProfileUseCase;
     private final ChangePasswordUseCase changePasswordUseCase;
 
-    private final MutableLiveData<AuthValidationResult> validationError = new MutableLiveData<>();
+    private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
 
     private final MutableLiveData<Long> loadUserTrigger = new MutableLiveData<>();
     private final MutableLiveData<UpdateProfileParams> updateProfileTrigger = new MutableLiveData<>();
@@ -71,7 +71,7 @@ public class VictimPersonalInfoViewModel extends BaseViewModel {
         );
     }
 
-    public LiveData<AuthValidationResult> getValidationError() {
+    public LiveData<ValidationResult> getValidationError() {
         return validationError;
     }
 
@@ -96,29 +96,29 @@ public class VictimPersonalInfoViewModel extends BaseViewModel {
     }
 
     public void updateProfile(String name, String phone, String address) {
-        AuthValidationResult validation = updateProfileUseCase.validate(name, phone);
+        ValidationResult validation = updateProfileUseCase.validate(name, phone);
         if (!validation.isValid()) {
             validationError.setValue(validation);
             return;
         }
 
-        validationError.setValue(AuthValidationResult.valid());
+        validationError.setValue(ValidationResult.valid());
         updateProfileTrigger.setValue(new UpdateProfileParams(name, phone, address));
     }
 
     public void changePassword(String currentPassword, String newPassword, String confirmPassword) {
-        AuthValidationResult validation = changePasswordUseCase.validate(currentPassword, newPassword, confirmPassword);
+        ValidationResult validation = changePasswordUseCase.validate(currentPassword, newPassword, confirmPassword);
         if (!validation.isValid()) {
             validationError.setValue(validation);
             return;
         }
 
-        validationError.setValue(AuthValidationResult.valid());
+        validationError.setValue(ValidationResult.valid());
         changePasswordTrigger.setValue(new ChangePasswordParams(currentPassword, newPassword));
     }
 
     public void uploadAvatar(Context context, Uri imageUri) {
-        validationError.postValue(AuthValidationResult.valid());
+        validationError.postValue(ValidationResult.valid());
         AvatarUploadCoordinator.uploadAvatar(
             context,
             imageUri,

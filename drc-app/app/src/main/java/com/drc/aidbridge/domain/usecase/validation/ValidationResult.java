@@ -3,7 +3,7 @@ package com.drc.aidbridge.domain.usecase.validation;
 /**
  * Shared validation contract for all use cases.
  */
-public final class AuthValidationResult {
+public final class ValidationResult {
 
     public enum Field {
         EMAIL,
@@ -24,18 +24,18 @@ public final class AuthValidationResult {
     private final String errorMessage;
     private final Field errorField;
 
-    private AuthValidationResult(boolean valid, String errorMessage, Field errorField) {
+    private ValidationResult(boolean valid, String errorMessage, Field errorField) {
         this.valid = valid;
         this.errorMessage = errorMessage;
         this.errorField = errorField;
     }
 
-    public static AuthValidationResult valid() {
-        return new AuthValidationResult(true, null, Field.NONE);
+    public static ValidationResult valid() {
+        return new ValidationResult(true, null, Field.NONE);
     }
 
-    public static AuthValidationResult invalid(Field errorField, String message) {
-        return new AuthValidationResult(false, message, errorField);
+    public static ValidationResult invalid(Field errorField, String message) {
+        return new ValidationResult(false, message, errorField);
     }
 
     public boolean isValid() {
@@ -50,4 +50,3 @@ public final class AuthValidationResult {
         return errorField;
     }
 }
-

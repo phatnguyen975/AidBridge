@@ -1,12 +1,13 @@
-package com.drc.aidbridge.data.repository;
+package com.drc.aidbridge.data.repository.victim;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
-import com.drc.aidbridge.data.remote.api.SosApiService;
+import com.drc.aidbridge.data.remote.api.victim.SosApiService;
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
-import com.drc.aidbridge.domain.repository.SosRepository;
+import com.drc.aidbridge.data.repository.BaseRepository;
+import com.drc.aidbridge.domain.repository.victim.VictimSosRepository;
 
 import java.util.List;
 
@@ -21,14 +22,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 @Singleton
-public class SosRepositoryImpl extends BaseRepository implements SosRepository {
+public class VictimSosRepositoryImpl extends BaseRepository implements VictimSosRepository {
 
     private static final MediaType TEXT_PLAIN = MediaType.get("text/plain");
 
     private final SosApiService sosApiService;
 
     @Inject
-    public SosRepositoryImpl(SosApiService sosApiService) {
+    public VictimSosRepositoryImpl(SosApiService sosApiService) {
         this.sosApiService = sosApiService;
     }
 

@@ -1,7 +1,7 @@
 package com.drc.aidbridge.domain.usecase.validation;
 
-import com.drc.aidbridge.data.remote.dto.supply.ReliefRequestDto;
-import com.drc.aidbridge.data.remote.dto.supply.RequestedItemDto;
+import com.drc.aidbridge.domain.model.victim.VictimReliefRequest;
+import com.drc.aidbridge.domain.model.victim.VictimRequestedItem;
 
 import java.util.List;
 
@@ -13,22 +13,22 @@ public class VictimSupplyInputValidator {
     public VictimSupplyInputValidator() {
     }
 
-    public AuthValidationResult validateReliefRequest(ReliefRequestDto requestDto) {
-        if (requestDto == null) {
-            return AuthValidationResult.invalid(
-                AuthValidationResult.Field.NONE,
-                "Du lieu yeu cau tiep te khong hop le."
+    public ValidationResult validateReliefRequest(VictimReliefRequest request) {
+        if (request == null) {
+            return ValidationResult.invalid(
+                ValidationResult.Field.NONE,
+                "Dữ liệu yêu cầu không hợp lệ."
             );
         }
 
-        List<RequestedItemDto> requestedItems = requestDto.getRequestedItems();
+        List<VictimRequestedItem> requestedItems = request.getRequestedItems();
         if (requestedItems == null || requestedItems.isEmpty()) {
-            return AuthValidationResult.invalid(
-                AuthValidationResult.Field.ITEMS,
-                "Vui long chon it nhat mot vat pham tiep te."
+            return ValidationResult.invalid(
+                ValidationResult.Field.ITEMS,
+                "Vui lòng chọn ít nhất một vật phẩm cần hỗ trợ."
             );
         }
 
-        return AuthValidationResult.valid();
+        return ValidationResult.valid();
     }
 }

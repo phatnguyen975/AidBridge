@@ -1,10 +1,10 @@
-package com.drc.aidbridge.data.remote.dto.supply;
+package com.drc.aidbridge.data.remote.dto.response.victim;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class SupplyCategoryDto {
+public class SupplyCategoryResponse {
 
     @SerializedName("id")
     private String id;
@@ -13,12 +13,12 @@ public class SupplyCategoryDto {
     private String name;
 
     @SerializedName("items")
-    private List<SupplyItemDto> items;
+    private List<SupplyItemResponse> items;
 
-    public SupplyCategoryDto() {
+    public SupplyCategoryResponse() {
     }
 
-    public SupplyCategoryDto(String id, String name, List<SupplyItemDto> items) {
+    public SupplyCategoryResponse(String id, String name, List<SupplyItemResponse> items) {
         this.id = id;
         this.name = name;
         this.items = items;
@@ -32,7 +32,7 @@ public class SupplyCategoryDto {
         return name;
     }
 
-    public List<SupplyItemDto> getItems() {
+    public List<SupplyItemResponse> getItems() {
         return items;
     }
 }

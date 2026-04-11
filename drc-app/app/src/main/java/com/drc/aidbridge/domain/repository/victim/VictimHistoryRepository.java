@@ -1,4 +1,4 @@
-package com.drc.aidbridge.domain.repository;
+package com.drc.aidbridge.domain.repository.victim;
 
 import androidx.lifecycle.LiveData;
 

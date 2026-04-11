@@ -1,8 +1,8 @@
-package com.drc.aidbridge.data.remote.dto.supply;
+package com.drc.aidbridge.data.remote.dto.response.victim;
 
 import com.google.gson.annotations.SerializedName;
 
-public class SupplyItemDto {
+public class SupplyItemResponse {
 
     @SerializedName("id")
     private String id;
@@ -10,10 +10,10 @@ public class SupplyItemDto {
     @SerializedName("name")
     private String name;
 
-    public SupplyItemDto() {
+    public SupplyItemResponse() {
     }
 
-    public SupplyItemDto(String id, String name) {
+    public SupplyItemResponse(String id, String name) {
         this.id = id;
         this.name = name;
     }

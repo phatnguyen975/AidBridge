@@ -6,7 +6,7 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.dto.request.ResetPasswordRequest;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.domain.usecase.validation.AuthInputValidator;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 
 import javax.inject.Inject;
 
@@ -25,16 +25,16 @@ public class ResetPasswordUseCase {
         this.inputValidator = inputValidator;
     }
 
-    public AuthValidationResult validate(String email, String otp, String newPassword, String confirmPassword) {
-        AuthValidationResult emailValidation = inputValidator.requireValidEmail(email);
+    public ValidationResult validate(String email, String otp, String newPassword, String confirmPassword) {
+        ValidationResult emailValidation = inputValidator.requireValidEmail(email);
         if (!emailValidation.isValid()) {
             return emailValidation;
         }
-        AuthValidationResult otpValidation = inputValidator.requireOtp(otp);
+        ValidationResult otpValidation = inputValidator.requireOtp(otp);
         if (!otpValidation.isValid()) {
             return otpValidation;
         }
-        AuthValidationResult passwordValidation = inputValidator.requirePassword(newPassword);
+        ValidationResult passwordValidation = inputValidator.requirePassword(newPassword);
         if (!passwordValidation.isValid()) {
             return passwordValidation;
         }

@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
-import com.drc.aidbridge.data.remote.dto.response.victim.VictimHistoryDto;
+import com.drc.aidbridge.domain.model.victim.VictimHistoryItem;
 import com.drc.aidbridge.domain.model.victim.VictimHistoryPage;
 import com.drc.aidbridge.domain.usecase.victim.GetVictimHistoryUseCase;
 import com.drc.aidbridge.ui.base.BaseViewModel;
@@ -142,29 +142,29 @@ public class VictimHistoryViewModel extends BaseViewModel {
         )));
     }
 
-    private List<VictimHistoryAdapter.HistoryModel> mapToUiModels(List<VictimHistoryDto> dtos) {
-        if (dtos == null || dtos.isEmpty()) {
+    private List<VictimHistoryAdapter.HistoryModel> mapToUiModels(List<VictimHistoryItem> items) {
+        if (items == null || items.isEmpty()) {
             return Collections.emptyList();
         }
 
         List<VictimHistoryAdapter.HistoryModel> models = new ArrayList<>();
-        for (VictimHistoryDto dto : dtos) {
-            if (dto == null) {
+        for (VictimHistoryItem item : items) {
+            if (item == null) {
                 continue;
             }
 
-            String type = mapType(dto.getType(), dto.getTitle());
-            String statusType = mapStatusType(dto.getStatusType(), dto.getStatus());
+            String type = mapType(item.getType(), item.getTitle());
+            String statusType = mapStatusType(item.getStatusType(), item.getStatus());
 
             models.add(new VictimHistoryAdapter.HistoryModel(
-                safeText(dto.getRequestId()),
-                safeText(dto.getTitle()),
-                safeText(dto.getStatus()),
+                safeText(item.getRequestId()),
+                safeText(item.getTitle()),
+                safeText(item.getStatus()),
                 statusType,
-                safeText(dto.getDateTime()),
-                safeText(dto.getLocation()),
+                safeText(item.getDateTime()),
+                safeText(item.getLocation()),
                 type,
-                safeText(dto.getDetail())
+                safeText(item.getDetail())
             ));
         }
         return models;

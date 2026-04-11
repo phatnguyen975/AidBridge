@@ -8,51 +8,51 @@ public class VictimSosInputValidator {
     public VictimSosInputValidator() {
     }
 
-    public AuthValidationResult validateSelfSos(String fullName,
+    public ValidationResult validateSelfSos(String fullName,
                                                 int peopleCount,
                                                 String severity,
                                                 String note) {
         if (peopleCount <= 0) {
-            return AuthValidationResult.invalid(
-                AuthValidationResult.Field.PEOPLE_COUNT,
-                "So nguoi can lon hon 0."
+            return ValidationResult.invalid(
+                ValidationResult.Field.PEOPLE_COUNT,
+                "Số người cần hỗ trợ phải lớn hơn 0."
             );
         }
 
         if (severity == null || severity.trim().isEmpty()) {
-            return AuthValidationResult.invalid(
-                AuthValidationResult.Field.SEVERITY,
-                "Vui long chon muc do khan cap."
+            return ValidationResult.invalid(
+                ValidationResult.Field.SEVERITY,
+                "Vui lòng chọn mức độ khẩn cấp."
             );
         }
 
-        return AuthValidationResult.valid();
+        return ValidationResult.valid();
     }
 
-    public AuthValidationResult validateRelativeSos(String relativeName,
+    public ValidationResult validateRelativeSos(String relativeName,
                                                     String relativeAddress,
                                                     String severity) {
         if (relativeName == null || relativeName.trim().isEmpty()) {
-            return AuthValidationResult.invalid(
-                AuthValidationResult.Field.NAME,
-                "Vui long nhap ho ten nguoi than can ho tro."
+            return ValidationResult.invalid(
+                ValidationResult.Field.NAME,
+                "Vui lòng nhập họ tên người thân cần hỗ trợ."
             );
         }
 
         if (relativeAddress == null || relativeAddress.trim().isEmpty()) {
-            return AuthValidationResult.invalid(
-                AuthValidationResult.Field.ADDRESS,
-                "Vui long nhap dia chi hoac mo ta vi tri nguoi than."
+            return ValidationResult.invalid(
+                ValidationResult.Field.ADDRESS,
+                "Vui lòng nhập địa chỉ hoặc mô tả vị trí người thân."
             );
         }
 
         if (severity == null || severity.trim().isEmpty()) {
-            return AuthValidationResult.invalid(
-                AuthValidationResult.Field.SEVERITY,
-                "Vui long chon muc do khan cap."
+            return ValidationResult.invalid(
+                ValidationResult.Field.SEVERITY,
+                "Vui lòng chọn mức độ khẩn cấp."
             );
         }
 
-        return AuthValidationResult.valid();
+        return ValidationResult.valid();
     }
 }

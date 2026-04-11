@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.drc.aidbridge.BuildConfig;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVictimRescueTabBinding;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.adapter.victim.VictimImageAdapter;
 import com.drc.aidbridge.ui.main.viewmodel.victim.VictimSosViewModel;
@@ -88,7 +88,7 @@ public class VictimRescueTabFragment extends BaseFragment<FragmentVictimRescueTa
         );
     }
 
-    private void renderValidationError(@Nullable AuthValidationResult validation) {
+    private void renderValidationError(@Nullable ValidationResult validation) {
         if (validation == null || validation.isValid()) {
             return;
         }

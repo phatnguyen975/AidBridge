@@ -2,7 +2,7 @@ package com.drc.aidbridge.data.remote.dto.response.victim;
 
 import com.google.gson.annotations.SerializedName;
 
-public class VictimHistoryDto {
+public class HistoryResponse {
 
     @SerializedName(value = "id", alternate = {"requestId", "request_id", "code", "requestCode"})
     private String requestId;
@@ -28,17 +28,17 @@ public class VictimHistoryDto {
     @SerializedName(value = "note", alternate = {"description", "detail", "details"})
     private String detail;
 
-    public VictimHistoryDto() {
+    public HistoryResponse() {
     }
 
-    public VictimHistoryDto(String requestId,
-                            String title,
-                            String status,
-                            String statusType,
-                            String dateTime,
-                            String location,
-                            String type,
-                            String detail) {
+    public HistoryResponse(String requestId,
+                           String title,
+                           String status,
+                           String statusType,
+                           String dateTime,
+                           String location,
+                           String type,
+                           String detail) {
         this.requestId = requestId;
         this.title = title;
         this.status = status;

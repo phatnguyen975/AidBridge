@@ -7,12 +7,12 @@ import com.drc.aidbridge.data.remote.dto.request.OtpVerifyRequest;
 import com.drc.aidbridge.data.remote.dto.response.AuthResponse;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.domain.usecase.validation.AuthInputValidator;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 
 import javax.inject.Inject;
 
 /**
- * VerifyOtpUseCase â€” validates OTP format and delegates to AuthRepository.
+ * VerifyOtpUseCase - validates OTP format and delegates to AuthRepository.
  */
 public class VerifyOtpUseCase {
 
@@ -25,7 +25,7 @@ public class VerifyOtpUseCase {
         this.inputValidator = inputValidator;
     }
 
-    public AuthValidationResult validate(String otp) {
+    public ValidationResult validate(String otp) {
         return inputValidator.requireOtp(otp);
     }
 

@@ -6,7 +6,7 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.dto.request.RequestOtpRequest;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.domain.usecase.validation.AuthInputValidator;
-import com.drc.aidbridge.domain.usecase.validation.AuthValidationResult;
+import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 
 import javax.inject.Inject;
 
@@ -25,7 +25,7 @@ public class RequestResetOtpUseCase {
         this.inputValidator = inputValidator;
     }
 
-    public AuthValidationResult validate(String email) {
+    public ValidationResult validate(String email) {
         return inputValidator.requireValidEmail(email);
     }
 
