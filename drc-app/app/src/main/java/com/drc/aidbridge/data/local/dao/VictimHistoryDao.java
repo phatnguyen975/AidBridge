@@ -23,4 +23,7 @@ public interface VictimHistoryDao {
 
     @Query("SELECT hasNextPage FROM victim_history_cache WHERE timeRange = :timeRange AND page = :page LIMIT 1")
     Integer getHasNextPage(String timeRange, int page);
+
+    @Query("SELECT * FROM victim_history_cache ORDER BY cachedAt DESC, page ASC, orderInPage ASC")
+    List<VictimHistoryEntity> getAllCached();
 }

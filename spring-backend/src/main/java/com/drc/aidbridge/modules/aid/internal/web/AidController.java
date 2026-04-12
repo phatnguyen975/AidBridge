@@ -19,10 +19,20 @@ import java.util.UUID;
 public class AidController {
 
     private final CreateAidRequestUseCase createAidRequestUseCase;
+    private final ListAidCategoriesUseCase listAidCategoriesUseCase;
     private final GetAidRequestUseCase getAidRequestUseCase;
     private final CancelAidRequestUseCase cancelAidRequestUseCase;
     private final ListAidRequestsUseCase listAidRequestsUseCase;
     private final TranscribeAidRequestVoiceUseCase transcribeAidRequestVoiceUseCase;
+
+    /**
+     * Returns 2-level aid item categories for victim supply request form.
+     */
+    @GetMapping("/categories")
+    public ResponseEntity<ApiResponse<java.util.List<AidCategoryResponse>>> listAidCategories() {
+        java.util.List<AidCategoryResponse> response = listAidCategoriesUseCase.execute();
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
 
     @PostMapping
     public ResponseEntity<ApiResponse<AidRequestResponse>> createAidRequest(

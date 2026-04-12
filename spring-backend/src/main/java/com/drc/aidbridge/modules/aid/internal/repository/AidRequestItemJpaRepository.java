@@ -18,7 +18,7 @@ public interface AidRequestItemJpaRepository extends JpaRepository<AidRequestIte
     /**
      * Aggregates aid request items by item category for detail payload.
      *
-     * Runtime DB may not expose quantity/description/created_at on aid_request_items,
+        * Runtime DB may not expose quantity/description columns on aid_request_items,
      * so item quantity is derived from COUNT(*) per item_category_id.
      */
     @Query(value = """
@@ -30,12 +30,28 @@ public interface AidRequestItemJpaRepository extends JpaRepository<AidRequestIte
         from aid_request_items ari
         left join item_categories ic
             on ic.id = ari.item_category_id
-            and ic.parent_id is not null
         where ari.aid_request_id = :aidRequestId
         group by ari.item_category_id, ic.name, ic.unit
         order by ic.name asc nulls last
         """, nativeQuery = true)
     List<AidRequestItemDetailProjection> findDetailRowsByAidRequestId(@Param("aidRequestId") UUID aidRequestId);
+
+    /**
+     * Returns 2-level aid categories (parent + child) from item_categories table.
+     */
+    @Query(value = """
+        select
+            p.id as parentId,
+            p.name as parentName,
+            c.id as childId,
+            c.name as childName,
+            c.unit as childUnit
+        from item_categories p
+        left join item_categories c on c.parent_id = p.id
+        where p.parent_id is null
+        order by p.sort_order asc nulls last, p.name asc, c.sort_order asc nulls last, c.name asc
+        """, nativeQuery = true)
+    List<AidCategoryProjection> findAidCategoryRows();
 
     interface AidRequestItemDetailProjection {
         UUID getItemCategoryId();
@@ -45,5 +61,17 @@ public interface AidRequestItemJpaRepository extends JpaRepository<AidRequestIte
         String getUnit();
 
         Long getItemCount();
+    }
+
+    interface AidCategoryProjection {
+        UUID getParentId();
+
+        String getParentName();
+
+        UUID getChildId();
+
+        String getChildName();
+
+        String getChildUnit();
     }
 }

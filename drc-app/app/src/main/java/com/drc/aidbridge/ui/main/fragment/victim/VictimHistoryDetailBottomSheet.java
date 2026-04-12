@@ -167,24 +167,29 @@ public class VictimHistoryDetailBottomSheet extends BottomSheetDialogFragment {
             return;
         }
 
-        for (int i = 0; i < items.size(); i++) {
-            VictimHistoryViewModel.HistoryDetailAidItemUiModel item = items.get(i);
+        List<String> itemNames = new java.util.ArrayList<>();
+        String notAvailableText = getString(R.string.victim_history_detail_not_available);
+        for (VictimHistoryViewModel.HistoryDetailAidItemUiModel item : items) {
             if (item == null) {
                 continue;
             }
 
             String name = fallbackText(item.categoryName);
-            String quantity = String.valueOf(Math.max(0, item.quantity));
-            String unit = fallbackText(item.unit);
+            if (!isBlank(name) && !notAvailableText.equals(name)) {
+                itemNames.add(name);
+            }
+        }
 
-            builder.append(name)
-                .append(": ")
-                .append(quantity)
-                .append(" (")
-                .append(unit)
-                .append(")");
+        if (itemNames.isEmpty()) {
+            builder.append(getString(R.string.victim_history_detail_not_available));
+            return;
+        }
 
-            if (i < items.size() - 1) {
+        for (int index = 0; index < itemNames.size(); index++) {
+            builder.append("\u2022 ")
+                .append(itemNames.get(index));
+
+            if (index < itemNames.size() - 1) {
                 builder.append('\n').append('\n');
             }
         }

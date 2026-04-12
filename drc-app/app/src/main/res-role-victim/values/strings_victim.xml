@@ -161,6 +161,7 @@
     <string name="victim_supply_list_expand_desc">Mở rộng danh sách</string>
     <string name="victim_supply_list_collapse_desc">Thu gọn danh sách</string>
     <string name="victim_supply_empty_state">Không có dữ liệu.</string>
+    <string name="victim_supply_level2_empty">Không có</string>
     <string name="victim_supply_loading_categories">Đang tải danh mục tiếp tế...</string>
     <string name="victim_supply_load_categories_error">Không thể tải danh mục tiếp tế. Vui lòng thử lại.</string>
     <string name="victim_supply_submit_success">Yêu cầu tiếp tế đã được gửi thành công.</string>
@@ -169,6 +170,11 @@
     <string name="victim_supply_voice_permission_denied">Bạn cần cấp quyền micro để sử dụng nhập liệu giọng nói.</string>
     <string name="victim_supply_voice_result_error">Không nhận diện được giọng nói. Vui lòng thử lại.</string>
     <string name="victim_supply_voice_not_supported">Thiết bị không hỗ trợ nhập liệu giọng nói.</string>
+    <string name="victim_supply_validation_items_required">Vui lòng chọn ít nhất một vật phẩm cần hỗ trợ.</string>
+    <string name="victim_supply_validation_people_required">Vui lòng nhập số lượng người cần hỗ trợ.</string>
+    <string name="victim_supply_permission_location_denied">Bạn cần cấp quyền vị trí để gửi yêu cầu tiếp tế.</string>
+    <string name="victim_supply_location_disabled">Vui lòng bật GPS để gửi yêu cầu tiếp tế.</string>
+    <string name="victim_supply_location_unavailable">Không thể lấy vị trí hiện tại. Vui lòng thử lại.</string>
 
     <!-- Victim SOS Relative -->
     <string name="victim_relative_sos_title">HỖ TRỢ NGƯỜI THÂN</string>

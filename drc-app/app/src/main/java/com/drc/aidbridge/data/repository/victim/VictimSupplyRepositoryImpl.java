@@ -90,16 +90,16 @@ public class VictimSupplyRepositoryImpl extends BaseRepository implements Victim
 
         ReliefRequest apiRequest = victimSupplyMapper.mapReliefRequestToRequest(request);
 
-        supplyApiService.submitReliefRequest(apiRequest).enqueue(new Callback<BaseResponse<String>>() {
+        supplyApiService.submitReliefRequest(apiRequest).enqueue(new Callback<BaseResponse<Object>>() {
             @Override
-            public void onResponse(Call<BaseResponse<String>> call,
-                                   Response<BaseResponse<String>> response) {
+            public void onResponse(Call<BaseResponse<Object>> call,
+                                   Response<BaseResponse<Object>> response) {
                 if (!response.isSuccessful()) {
                     result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
                     return;
                 }
 
-                BaseResponse<String> body = response.body();
+                BaseResponse<Object> body = response.body();
                 if (body == null) {
                     result.postValue(NetworkResultWrapper.error("Phản hồi gửi yêu cầu tiếp tế không hợp lệ."));
                     return;
@@ -115,10 +115,7 @@ public class VictimSupplyRepositoryImpl extends BaseRepository implements Victim
                     return;
                 }
 
-                String message = body.getData();
-                if (message == null || message.trim().isEmpty()) {
-                    message = body.getMessage();
-                }
+                String message = body.getMessage();
                 if (message == null || message.trim().isEmpty()) {
                     message = "Gửi yêu cầu tiếp tế thành công.";
                 }
@@ -127,7 +124,7 @@ public class VictimSupplyRepositoryImpl extends BaseRepository implements Victim
             }
 
             @Override
-            public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<Object>> call, Throwable t) {
                 result.postValue(NetworkResultWrapper.error("Gửi yêu cầu tiếp tế thất bại: " + safeMessage(t)));
             }
         });

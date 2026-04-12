@@ -113,7 +113,10 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
             isScreenLoading = true;
             showRefreshSuccessNotice = false;
             renderEmptyState(false);
-            viewModel.applyTimeRange(mapFilterCode(position), isNetworkAvailable());
+
+            Object selectedItem = parent != null ? parent.getItemAtPosition(position) : null;
+            String selectedLabel = selectedItem != null ? selectedItem.toString() : "";
+            viewModel.applyTimeRange(mapFilterCode(selectedLabel, position), isNetworkAvailable());
         });
     }
 
@@ -272,8 +275,22 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
         binding.tvEmptyState.setVisibility(View.VISIBLE);
     }
 
-    private String mapFilterCode(int position) {
-        switch (position) {
+    private String mapFilterCode(String selectedLabel, int fallbackPosition) {
+        int resolvedPosition = fallbackPosition;
+        String normalizedLabel = selectedLabel != null ? selectedLabel.trim() : "";
+        String[] options = getResources().getStringArray(R.array.victim_history_time_filters);
+
+        if (!normalizedLabel.isEmpty() && options != null && options.length > 0) {
+            for (int index = 0; index < options.length; index++) {
+                String option = options[index] != null ? options[index].trim() : "";
+                if (normalizedLabel.equalsIgnoreCase(option)) {
+                    resolvedPosition = index;
+                    break;
+                }
+            }
+        }
+
+        switch (resolvedPosition) {
             case 1:
                 return "24h";
             case 2:

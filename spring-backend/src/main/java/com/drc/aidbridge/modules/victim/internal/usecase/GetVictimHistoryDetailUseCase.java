@@ -131,15 +131,11 @@ public class GetVictimHistoryDetailUseCase {
                 continue;
             }
 
-            String fallbackName = row.getItemCategoryId() != null
-                ? row.getItemCategoryId().toString()
-                : "";
-
             long itemCount = row.getItemCount() != null ? row.getItemCount() : 0L;
             int quantity = itemCount > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) Math.max(0L, itemCount);
 
             items.add(VictimHistoryAidItemDetailResponse.builder()
-                .categoryName(firstNonBlank(safeText(row.getCategoryName()), fallbackName))
+                .categoryName(safeText(row.getCategoryName()))
                 .quantity(quantity)
                 .unit(safeText(row.getUnit()))
                 .build());
