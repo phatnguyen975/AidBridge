@@ -40,9 +40,6 @@ public class Mission {
     @Column(name = "aid_request_id")
     private UUID aidRequestId;
 
-    @Column(name = "help_request_id")
-    private UUID helpRequestId;
-
     @Column(name = "volunteer_id")
     private UUID volunteerId;
 

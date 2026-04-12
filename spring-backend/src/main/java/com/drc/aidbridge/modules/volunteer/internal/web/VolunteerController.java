@@ -21,6 +21,7 @@ public class VolunteerController {
     private final ToggleVolunteerStatusUseCase toggleVolunteerStatusUseCase;
     private final PingVolunteerHeartbeatUseCase pingVolunteerHeartbeatUseCase;
     private final GetVolunteerStatisticsUseCase getVolunteerStatisticsUseCase;
+    private final GetVolunteerMissionHistoryUseCase getVolunteerMissionHistoryUseCase;
 
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<VolunteerProfileResponse>> getVolunteerProfile(
@@ -64,6 +65,16 @@ public class VolunteerController {
             @PathVariable UUID volunteerId) {
         VolunteerStatisticsResponse response = getVolunteerStatisticsUseCase.execute(volunteerId);
         return ResponseEntity.ok(ApiResponse.success("Volunteer statistics retrieved successfully", response));
+    }
+
+    @GetMapping("/missions/history")
+    public ResponseEntity<ApiResponse<VolunteerMissionHistoryResponse>> getVolunteerMissionHistory(
+            Authentication authentication,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit) {
+        UUID userId = UUID.fromString(authentication.getName());
+        VolunteerMissionHistoryResponse response = getVolunteerMissionHistoryUseCase.execute(userId, page, limit);
+        return ResponseEntity.ok(ApiResponse.success("Volunteer mission history retrieved successfully", response));
     }
 
     // Current misssion of current volunteer 

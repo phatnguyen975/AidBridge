@@ -42,7 +42,6 @@ public class CreateMissionUseCase {
                 .missionType(request.getMissionType())
                 .sosRequestId(request.getSosRequestId())
                 .aidRequestId(request.getAidRequestId())
-                .helpRequestId(request.getHelpRequestId())
                 .hubId(request.getHubId())
                 .status(MissionStatus.PENDING)
                 .priorityScore(request.getPriorityScore() != null ? request.getPriorityScore() : BigDecimal.ZERO)
