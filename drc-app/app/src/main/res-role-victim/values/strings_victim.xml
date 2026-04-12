@@ -68,7 +68,24 @@
     <string name="victim_history_detail_section_request">Thông tin yêu cầu</string>
     <string name="victim_history_detail_unknown">Không xác định</string>
     <string name="victim_history_placeholder_value">-</string>
+    <string name="victim_history_detail_not_available">Không có</string>
+    <string name="victim_history_detail_load_error">Không thể tải chi tiết yêu cầu. Vui lòng thử lại.</string>
+    <string name="victim_history_detail_empty_error">Không có dữ liệu chi tiết yêu cầu.</string>
     <string name="victim_history_detail_note_empty">Không có ghi chú bổ sung.</string>
+    <string name="victim_history_detail_label_request_id">Mã yêu cầu</string>
+    <string name="victim_history_detail_label_request_type">Loại yêu cầu</string>
+    <string name="victim_history_detail_label_status">Trạng thái</string>
+    <string name="victim_history_detail_label_time">Thời gian</string>
+    <string name="victim_history_detail_label_location">Địa điểm</string>
+    <string name="victim_history_detail_label_condition">Mức độ khẩn cấp</string>
+    <string name="victim_history_detail_label_people_count">Số người</string>
+    <string name="victim_history_detail_label_contact_name">Họ tên liên hệ</string>
+    <string name="victim_history_detail_label_contact_phone">Số điện thoại liên hệ</string>
+    <string name="victim_history_detail_label_health_detail">Chi tiết sức khỏe</string>
+    <string name="victim_history_detail_label_adult_count">Người lớn</string>
+    <string name="victim_history_detail_label_elderly_count">Người già</string>
+    <string name="victim_history_detail_label_children_count">Trẻ em</string>
+    <string name="victim_history_detail_label_requested_items">Danh sách vật phẩm yêu cầu</string>
     <string name="victim_history_detail_content_template">
         Mã yêu cầu: %1$s
         Loại yêu cầu: %2$s
@@ -144,6 +161,7 @@
     <string name="victim_supply_list_expand_desc">Mở rộng danh sách</string>
     <string name="victim_supply_list_collapse_desc">Thu gọn danh sách</string>
     <string name="victim_supply_empty_state">Không có dữ liệu.</string>
+    <string name="victim_supply_level2_empty">Không có</string>
     <string name="victim_supply_loading_categories">Đang tải danh mục tiếp tế...</string>
     <string name="victim_supply_load_categories_error">Không thể tải danh mục tiếp tế. Vui lòng thử lại.</string>
     <string name="victim_supply_submit_success">Yêu cầu tiếp tế đã được gửi thành công.</string>
@@ -152,11 +170,24 @@
     <string name="victim_supply_voice_permission_denied">Bạn cần cấp quyền micro để sử dụng nhập liệu giọng nói.</string>
     <string name="victim_supply_voice_result_error">Không nhận diện được giọng nói. Vui lòng thử lại.</string>
     <string name="victim_supply_voice_not_supported">Thiết bị không hỗ trợ nhập liệu giọng nói.</string>
+    <string name="victim_supply_validation_items_required">Vui lòng chọn ít nhất một vật phẩm cần hỗ trợ.</string>
+    <string name="victim_supply_validation_people_required">Vui lòng nhập số lượng người cần hỗ trợ.</string>
+    <string name="victim_supply_permission_location_denied">Bạn cần cấp quyền vị trí để gửi yêu cầu tiếp tế.</string>
+    <string name="victim_supply_location_disabled">Vui lòng bật GPS để gửi yêu cầu tiếp tế.</string>
+    <string name="victim_supply_location_unavailable">Không thể lấy vị trí hiện tại. Vui lòng thử lại.</string>
 
     <!-- Victim SOS Relative -->
     <string name="victim_relative_sos_title">HỖ TRỢ NGƯỜI THÂN</string>
-    <string name="victim_relative_sos_map_desc">Ảnh bản đồ mô phỏng vị trí người cần hỗ trợ</string>
-    <string name="victim_relative_sos_map_hint">Kéo bản đồ để đặt ghim chính xác vị trí</string>
+    <string name="victim_relative_sos_map_desc">Bản đồ ghim vị trí người cần hỗ trợ</string>
+    <string name="victim_relative_sos_map_hint">Nhập địa chỉ, bấm Tìm vị trí và kiểm tra ghim trước khi gửi yêu cầu</string>
+    <string name="victim_relative_sos_search_label">Tìm vị trí nhà người thân</string>
+    <string name="victim_relative_sos_search_hint">Nhập địa chỉ cần tìm trên bản đồ</string>
+    <string name="victim_relative_sos_search_action">Tìm vị trí</string>
+    <string name="victim_relative_sos_search_required">Vui lòng nhập địa chỉ cần tìm.</string>
+    <string name="victim_relative_sos_search_failed">Không thể tìm vị trí từ Google Maps. Vui lòng thử lại.</string>
+    <string name="victim_relative_sos_search_not_found">Không tìm thấy địa chỉ phù hợp tại Việt Nam. Vui lòng nhập chi tiết hơn (ví dụ: số nhà, phường/xã, quận/huyện, tỉnh/thành).</string>
+    <string name="victim_relative_sos_location_required">Vui lòng tìm và ghim vị trí người thân trước khi gửi yêu cầu.</string>
+    <string name="victim_relative_sos_pin_title">Vị trí người thân</string>
     <string name="victim_relative_sos_info_icon_desc">Biểu tượng hướng dẫn vị trí</string>
     <string name="victim_relative_sos_section_info">Thông tin người thân</string>
     <string name="victim_relative_sos_name_label">Họ và tên</string>
@@ -169,8 +200,6 @@
     <string name="victim_relative_sos_severity_hint">Chọn tình trạng khẩn cấp</string>
     <string name="victim_relative_sos_submit">GỬI YÊU CẦU</string>
     <string name="victim_relative_sos_disclaimer">Bằng việc gửi yêu cầu, bạn cam kết các thông tin trên là chính xác để lực lượng cứu hộ có thể tiếp cận nhanh nhất</string>
-    <string name="victim_relative_sos_permission_location_denied">Bạn cần cấp quyền vị trí để gửi SOS cho người thân.</string>
-    <string name="victim_relative_sos_location_unavailable">Không thể lấy vị trí hiện tại để gửi SOS cho người thân.</string>
     <string name="victim_relative_sos_submit_success">Yêu cầu SOS cho người thân đã được gửi thành công.</string>
     <string name="victim_relative_sos_submit_error">Không thể gửi SOS cho người thân. Vui lòng thử lại.</string>
 </resources>

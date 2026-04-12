@@ -13,9 +13,9 @@ import retrofit2.http.POST;
 
 public interface SupplyApiService {
 
-    @GET("supplies/categories")
+    @GET("aid-requests/categories")
     Call<BaseResponse<List<SupplyCategoryResponse>>> getSupplyCategories();
 
-    @POST("relief-requests")
-    Call<BaseResponse<String>> submitReliefRequest(@Body ReliefRequest request);
+    @POST("aid-requests")
+    Call<BaseResponse<Object>> submitReliefRequest(@Body ReliefRequest request);
 }

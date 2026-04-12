@@ -79,10 +79,15 @@ public class VictimSupplyViewModel extends BaseViewModel {
                               int elders,
                               int children,
                               String note,
-                              List<RequestedItem> items) {
+                              List<RequestedItem> items,
+                              Double latitude,
+                              Double longitude) {
         workerExecutor.execute(() -> {
             List<VictimRequestedItem> requestedItems = mapRequestedItems(items);
             VictimReliefRequest request = new VictimReliefRequest(
+                latitude,
+                longitude,
+                "",
                 Math.max(0, adults),
                 Math.max(0, elders),
                 Math.max(0, children),

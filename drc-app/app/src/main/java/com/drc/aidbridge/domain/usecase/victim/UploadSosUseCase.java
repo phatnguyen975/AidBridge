@@ -7,11 +7,7 @@ import com.drc.aidbridge.domain.repository.victim.VictimSosRepository;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.domain.usecase.validation.VictimSosInputValidator;
 
-import java.util.List;
-
 import javax.inject.Inject;
-
-import okhttp3.MultipartBody;
 
 /**
  * UploadSosUseCase orchestrates SOS submission for victim self and relative flows.
@@ -47,7 +43,7 @@ public class UploadSosUseCase {
                                                                  String note,
                                                                  double latitude,
                                                                  double longitude,
-                                                                 List<MultipartBody.Part> imageParts) {
+                                                                 String firstImageUrl) {
         return victimSosRepository.uploadSelfSos(
             fullName,
             peopleCount,
@@ -55,7 +51,7 @@ public class UploadSosUseCase {
             note,
             latitude,
             longitude,
-            imageParts
+            firstImageUrl
         );
     }
 

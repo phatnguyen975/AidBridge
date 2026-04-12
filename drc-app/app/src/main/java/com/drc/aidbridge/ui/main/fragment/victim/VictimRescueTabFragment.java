@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.drc.aidbridge.BuildConfig;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVictimRescueTabBinding;
+import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.adapter.victim.VictimImageAdapter;
@@ -76,16 +77,36 @@ public class VictimRescueTabFragment extends BaseFragment<FragmentVictimRescueTa
         setupSeverityDefault();
         setupInteractions();
         fetchCurrentLocation(false);
+        viewModel.loadCachedUser();
     }
 
     @Override
     protected void observeViewModel() {
+        viewModel.getCachedUserResult().observe(getViewLifecycleOwner(), result -> {
+            if (result == null || result.isLoading() || result.hasBeenHandled()) {
+                return;
+            }
+
+            result.markAsHandled();
+            if (result.isSuccess()) {
+                bindCachedUser(result.getData());
+            }
+        });
+
         viewModel.getValidationError().observe(getViewLifecycleOwner(), this::renderValidationError);
 
         viewModel.getSubmitSelfSosResult().observe(
             getViewLifecycleOwner(),
             resultObserver(this::handleSubmitSuccess, this::handleSubmitError)
         );
+    }
+
+    private void bindCachedUser(@Nullable User user) {
+        if (user == null || user.getName() == null || user.getName().trim().isEmpty()) {
+            return;
+        }
+
+        binding.etFullName.setText(user.getName().trim());
     }
 
     private void renderValidationError(@Nullable ValidationResult validation) {

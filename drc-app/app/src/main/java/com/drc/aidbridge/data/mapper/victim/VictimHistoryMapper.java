@@ -3,7 +3,11 @@ package com.drc.aidbridge.data.mapper.victim;
 import androidx.annotation.Nullable;
 
 import com.drc.aidbridge.data.local.entity.VictimHistoryEntity;
+import com.drc.aidbridge.data.remote.dto.response.victim.HistoryDetailItemResponse;
+import com.drc.aidbridge.data.remote.dto.response.victim.HistoryDetailResponse;
 import com.drc.aidbridge.data.remote.dto.response.victim.HistoryResponse;
+import com.drc.aidbridge.domain.model.victim.VictimHistoryAidItemDetail;
+import com.drc.aidbridge.domain.model.victim.VictimHistoryDetail;
 import com.drc.aidbridge.domain.model.victim.VictimHistoryItem;
 
 import java.util.ArrayList;
@@ -118,6 +122,69 @@ public class VictimHistoryMapper {
             ));
         }
         return entities;
+    }
+
+    public VictimHistoryDetail mapDetailResponseToDomain(@Nullable HistoryDetailResponse response) {
+        if (response == null) {
+            return new VictimHistoryDetail(
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                null,
+                null,
+                null,
+                null,
+                "",
+                "",
+                "",
+                Collections.emptyList()
+            );
+        }
+
+        return new VictimHistoryDetail(
+            safeText(response.getId()),
+            safeText(response.getType()),
+            safeText(response.getStatus()),
+            safeText(response.getStatusType()),
+            safeText(response.getCreatedAt()),
+            safeText(response.getLocation()),
+            safeText(response.getCondition()),
+            response.getPeopleCount(),
+            response.getNumberAdult(),
+            response.getNumberElderly(),
+            response.getNumberChildren(),
+            safeText(response.getNoteFullName()),
+            safeText(response.getNotePhoneNumber()),
+            safeText(response.getNoteHealthDetail()),
+            mapDetailItemsToDomain(response.getRequestedItems())
+        );
+    }
+
+    private List<VictimHistoryAidItemDetail> mapDetailItemsToDomain(
+        @Nullable List<HistoryDetailItemResponse> responses
+    ) {
+        if (responses == null || responses.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<VictimHistoryAidItemDetail> items = new ArrayList<>();
+        for (HistoryDetailItemResponse response : responses) {
+            if (response == null) {
+                continue;
+            }
+
+            int quantity = response.getQuantity() != null ? response.getQuantity() : 0;
+            items.add(new VictimHistoryAidItemDetail(
+                safeText(response.getCategoryName()),
+                quantity,
+                safeText(response.getUnit())
+            ));
+        }
+        return items;
     }
 
     private String safeText(String value) {

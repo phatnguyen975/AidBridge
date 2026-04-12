@@ -47,10 +47,16 @@ public class VictimSupplyMapper {
 
     public ReliefRequest mapReliefRequestToRequest(@Nullable VictimReliefRequest domainModel) {
         if (domainModel == null) {
-            return new ReliefRequest(0, 0, 0, "", Collections.emptyList());
+            return new ReliefRequest(0D, 0D, "", 0, 0, 0, "", Collections.emptyList());
         }
 
+        double lat = domainModel.getLatitude() != null ? domainModel.getLatitude() : 0D;
+        double lng = domainModel.getLongitude() != null ? domainModel.getLongitude() : 0D;
+
         return new ReliefRequest(
+            lat,
+            lng,
+            safeText(domainModel.getAddress()),
             domainModel.getAdultsCount(),
             domainModel.getEldersCount(),
             domainModel.getChildrenCount(),

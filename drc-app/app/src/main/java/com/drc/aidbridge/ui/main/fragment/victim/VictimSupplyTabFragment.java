@@ -5,12 +5,11 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.graphics.Typeface;
+import android.location.LocationManager;
 import android.speech.RecognizerIntent;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,10 @@ import com.drc.aidbridge.domain.model.victim.VictimSupplyItem;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.victim.VictimSupplyViewModel;
-import com.google.android.material.button.MaterialButton;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
+import com.google.android.material.checkbox.MaterialCheckBox;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -53,10 +55,15 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
     private boolean isRecording;
     private AnimatorSet voicePulseAnimator;
     private ActivityResultLauncher<String> recordAudioPermissionLauncher;
+    private ActivityResultLauncher<String[]> locationPermissionLauncher;
     private ActivityResultLauncher<Intent> speechRecognizerLauncher;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private Double currentLatitude;
+    private Double currentLongitude;
+    private PendingSubmitInput pendingSubmitInput;
 
     private final List<VictimSupplyCategory> categoryData = new ArrayList<>();
-    private final LinkedHashMap<String, Integer> itemQuantities = new LinkedHashMap<>();
+    private final LinkedHashMap<String, Boolean> itemSelections = new LinkedHashMap<>();
 
     @Nullable
     @Override
@@ -67,13 +74,16 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
     @Override
     protected void setupViews() {
         viewModel = new ViewModelProvider(this).get(VictimSupplyViewModel.class);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
         setupSteppers();
         setupSpeechToText();
+        setupLocationPermissionLauncher();
         binding.btnSubmitSupply.setOnClickListener(v -> extractDataAndSubmit());
 
         renderCategoriesLoading(true);
         viewModel.loadCategories();
+        fetchCurrentLocation(false);
     }
 
     @Override
@@ -186,11 +196,15 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
                 }
 
                 validItemIds.add(itemId);
-                if (!itemQuantities.containsKey(itemId)) {
-                    itemQuantities.put(itemId, 0);
+                if (!itemSelections.containsKey(itemId)) {
+                    itemSelections.put(itemId, false);
                 }
 
-                categoryBinding.layoutContent.addView(createItemQuantityRow(categoryBinding, items, item));
+                categoryBinding.layoutContent.addView(createItemSelectionRow(categoryBinding, items, item));
+            }
+
+            if (items.isEmpty()) {
+                categoryBinding.layoutContent.addView(createEmptyCategoryItemView());
             }
 
             updateSelectedCount(categoryBinding, items);
@@ -206,94 +220,48 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
             index++;
         }
 
-        itemQuantities.keySet().retainAll(validItemIds);
+        itemSelections.keySet().retainAll(validItemIds);
     }
 
-    private View createItemQuantityRow(ItemSupplyCategoryBinding categoryBinding,
-                                       List<VictimSupplyItem> categoryItems,
-                                       VictimSupplyItem item) {
-        LinearLayout row = new LinearLayout(requireContext());
-        row.setLayoutParams(new LinearLayout.LayoutParams(
+    private View createItemSelectionRow(ItemSupplyCategoryBinding categoryBinding,
+                                        List<VictimSupplyItem> categoryItems,
+                                        VictimSupplyItem item) {
+        LinearLayout container = new LinearLayout(requireContext());
+        container.setLayoutParams(new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         ));
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, getResources().getDimensionPixelSize(R.dimen.spacing_xs), 0, 0);
-
-        TextView tvItemName = new TextView(requireContext());
-        LinearLayout.LayoutParams nameParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        tvItemName.setLayoutParams(nameParams);
-        tvItemName.setText(safeText(item.getName()));
-        tvItemName.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary));
-        tvItemName.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_sm));
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setPadding(0, getResources().getDimensionPixelSize(R.dimen.spacing_xs), 0, 0);
 
         String itemId = safeText(item.getId());
-        int initialCount = getItemQuantity(itemId);
-
-        MaterialButton btnMinus = createStepperButton(
-            R.drawable.ic_minus,
-            R.color.border_default,
-            R.string.victim_supply_stepper_decrease_desc
-        );
-
-        MaterialButton btnPlus = createStepperButton(
-            R.drawable.ic_plus,
-            R.color.color_primary,
-            R.string.victim_supply_stepper_increase_desc
-        );
-
-        TextView tvCount = new TextView(requireContext());
-        LinearLayout.LayoutParams countParams = new LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
+        MaterialCheckBox checkBox = new MaterialCheckBox(requireContext());
+        checkBox.setLayoutParams(new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        int horizontalMargin = getResources().getDimensionPixelSize(R.dimen.spacing_md);
-        countParams.setMarginStart(horizontalMargin);
-        countParams.setMarginEnd(horizontalMargin);
-        tvCount.setLayoutParams(countParams);
-        tvCount.setText(String.valueOf(initialCount));
-        tvCount.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary));
-        tvCount.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_md));
-        tvCount.setTypeface(tvCount.getTypeface(), Typeface.BOLD);
-
-        btnMinus.setOnClickListener(v -> {
-            updateItemQuantity(itemId, -1, tvCount);
+        ));
+        checkBox.setText(safeText(item.getName()));
+        checkBox.setChecked(isItemSelected(itemId));
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            setItemSelected(itemId, isChecked);
             updateSelectedCount(categoryBinding, categoryItems);
         });
 
-        btnPlus.setOnClickListener(v -> {
-            updateItemQuantity(itemId, 1, tvCount);
-            updateSelectedCount(categoryBinding, categoryItems);
-        });
-
-        row.addView(tvItemName);
-        row.addView(btnMinus);
-        row.addView(tvCount);
-        row.addView(btnPlus);
-        return row;
+        container.addView(checkBox);
+        return container;
     }
 
-    private MaterialButton createStepperButton(int iconRes,
-                                               int backgroundColorRes,
-                                               int contentDescRes) {
-        MaterialButton button = new MaterialButton(
-            requireContext(),
-            null,
-            com.google.android.material.R.attr.materialButtonOutlinedStyle
-        );
-
-        int size = getResources().getDimensionPixelSize(R.dimen.victim_supply_stepper_button_size);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
-        button.setLayoutParams(params);
-        button.setIconResource(iconRes);
-        button.setIconGravity(MaterialButton.ICON_GRAVITY_TEXT_START);
-        button.setIconPadding(0);
-        button.setContentDescription(getString(contentDescRes));
-        button.setBackgroundTintList(ColorStateList.valueOf(
-            ContextCompat.getColor(requireContext(), backgroundColorRes)
+    private View createEmptyCategoryItemView() {
+        TextView textView = new TextView(requireContext());
+        textView.setLayoutParams(new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
         ));
-        button.setCornerRadius(getResources().getDimensionPixelSize(R.dimen.radius_sm));
-        return button;
+        textView.setPadding(0, getResources().getDimensionPixelSize(R.dimen.spacing_xs), 0, 0);
+        textView.setText(R.string.victim_supply_level2_empty);
+        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_secondary));
+        textView.setTextSize(14);
+        return textView;
     }
 
     private void toggleCategory(ItemSupplyCategoryBinding itemBinding) {
@@ -320,7 +288,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
                 continue;
             }
 
-            if (getItemQuantity(itemId) > 0) {
+            if (isItemSelected(itemId)) {
                 selectedCount++;
             }
         }
@@ -328,16 +296,12 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         itemBinding.tvSelectedCount.setText(getString(R.string.victim_supply_selected_count_format, selectedCount));
     }
 
-    private int getItemQuantity(String itemId) {
-        Integer quantity = itemQuantities.get(itemId);
-        return quantity != null ? quantity : 0;
+    private boolean isItemSelected(String itemId) {
+        return Boolean.TRUE.equals(itemSelections.get(itemId));
     }
 
-    private void updateItemQuantity(String itemId, int delta, TextView countView) {
-        int current = getItemQuantity(itemId);
-        int next = Math.max(0, current + delta);
-        itemQuantities.put(itemId, next);
-        countView.setText(String.valueOf(next));
+    private void setItemSelected(String itemId, boolean isSelected) {
+        itemSelections.put(itemId, isSelected);
     }
 
     private void renderCategoriesLoading(boolean isLoading) {
@@ -359,15 +323,15 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
 
     private List<VictimSupplyViewModel.RequestedItem> collectRequestedItems() {
         List<VictimSupplyViewModel.RequestedItem> requestedItems = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : itemQuantities.entrySet()) {
+        for (Map.Entry<String, Boolean> entry : itemSelections.entrySet()) {
             String itemId = entry.getKey();
-            Integer quantity = entry.getValue();
+            Boolean selected = entry.getValue();
 
-            if (itemId == null || itemId.trim().isEmpty() || quantity == null || quantity <= 0) {
+            if (itemId == null || itemId.trim().isEmpty() || !Boolean.TRUE.equals(selected)) {
                 continue;
             }
 
-            requestedItems.add(new VictimSupplyViewModel.RequestedItem(itemId.trim(), quantity));
+            requestedItems.add(new VictimSupplyViewModel.RequestedItem(itemId.trim(), 1));
         }
 
         return requestedItems;
@@ -530,7 +494,193 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         int childCount = parseInt(String.valueOf(binding.tvCountChild.getText()).trim());
         String notes = String.valueOf(binding.etNotes.getText()).trim();
 
-        viewModel.submitRequest(adultCount, elderlyCount, childCount, notes, requestedItems);
+        if (requestedItems.isEmpty()) {
+            showTopSnackbar(
+                binding.getRoot(),
+                getString(R.string.victim_supply_validation_items_required),
+                true
+            );
+            return;
+        }
+
+        if ((adultCount + elderlyCount + childCount) <= 0) {
+            showTopSnackbar(
+                binding.getRoot(),
+                getString(R.string.victim_supply_validation_people_required),
+                true
+            );
+            return;
+        }
+
+        PendingSubmitInput input = new PendingSubmitInput(
+            adultCount,
+            elderlyCount,
+            childCount,
+            notes,
+            requestedItems
+        );
+
+        submitOrFetchLocation(input);
+    }
+
+    private void submitOrFetchLocation(PendingSubmitInput input) {
+        if (input == null) {
+            return;
+        }
+
+        if (currentLatitude != null && currentLongitude != null) {
+            submitToViewModel(input, currentLatitude, currentLongitude);
+            return;
+        }
+
+        pendingSubmitInput = input;
+        fetchCurrentLocation(true);
+    }
+
+    private void submitToViewModel(PendingSubmitInput input, Double latitude, Double longitude) {
+        if (input == null) {
+            return;
+        }
+
+        viewModel.submitRequest(
+            input.adultCount,
+            input.elderlyCount,
+            input.childCount,
+            input.notes,
+            input.requestedItems,
+            latitude,
+            longitude
+        );
+        pendingSubmitInput = null;
+    }
+
+    private void setupLocationPermissionLauncher() {
+        locationPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestMultiplePermissions(),
+            result -> {
+                if (isLocationPermissionGranted()) {
+                    fetchCurrentLocation(pendingSubmitInput != null);
+                    return;
+                }
+
+                pendingSubmitInput = null;
+                showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_permission_location_denied), true);
+            }
+        );
+    }
+
+    private void fetchCurrentLocation(boolean trySubmitAfterFetch) {
+        if (!isAdded()) {
+            return;
+        }
+
+        if (!isLocationPermissionGranted()) {
+            locationPermissionLauncher.launch(new String[] {
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            });
+            return;
+        }
+
+        if (!isLocationProviderEnabled()) {
+            if (trySubmitAfterFetch) {
+                pendingSubmitInput = null;
+            }
+            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_location_disabled), true);
+            return;
+        }
+
+        try {
+            fusedLocationProviderClient
+                .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                .addOnSuccessListener(location -> {
+                    if (!isAdded()) {
+                        return;
+                    }
+
+                    if (location != null) {
+                        currentLatitude = location.getLatitude();
+                        currentLongitude = location.getLongitude();
+
+                        if (trySubmitAfterFetch && pendingSubmitInput != null) {
+                            submitToViewModel(pendingSubmitInput, currentLatitude, currentLongitude);
+                        }
+                        return;
+                    }
+
+                    requestLastKnownLocation(trySubmitAfterFetch);
+                })
+                .addOnFailureListener(ignored -> requestLastKnownLocation(trySubmitAfterFetch));
+        } catch (SecurityException exception) {
+            if (trySubmitAfterFetch) {
+                pendingSubmitInput = null;
+            }
+            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_permission_location_denied), true);
+        }
+    }
+
+    private void requestLastKnownLocation(boolean trySubmitAfterFetch) {
+        try {
+            fusedLocationProviderClient.getLastLocation()
+                .addOnSuccessListener(location -> {
+                    if (!isAdded()) {
+                        return;
+                    }
+
+                    if (location != null) {
+                        currentLatitude = location.getLatitude();
+                        currentLongitude = location.getLongitude();
+
+                        if (trySubmitAfterFetch && pendingSubmitInput != null) {
+                            submitToViewModel(pendingSubmitInput, currentLatitude, currentLongitude);
+                        }
+                        return;
+                    }
+
+                    if (trySubmitAfterFetch) {
+                        pendingSubmitInput = null;
+                    }
+                    showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_location_unavailable), true);
+                })
+                .addOnFailureListener(ignored -> {
+                    if (!isAdded()) {
+                        return;
+                    }
+
+                    if (trySubmitAfterFetch) {
+                        pendingSubmitInput = null;
+                    }
+                    showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_location_unavailable), true);
+                });
+        } catch (SecurityException exception) {
+            if (trySubmitAfterFetch) {
+                pendingSubmitInput = null;
+            }
+            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_permission_location_denied), true);
+        }
+    }
+
+    private boolean isLocationPermissionGranted() {
+        Context context = getContext();
+        if (context == null) {
+            return false;
+        }
+
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean isLocationProviderEnabled() {
+        LocationManager locationManager =
+            (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager == null) {
+            return false;
+        }
+
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+            || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
     private int parseInt(String value) {
@@ -569,8 +719,8 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         binding.tvCountElderly.setText(R.string.victim_supply_count_default);
         binding.tvCountChild.setText(R.string.victim_supply_count_default);
 
-        for (String itemId : new ArrayList<>(itemQuantities.keySet())) {
-            itemQuantities.put(itemId, 0);
+        for (String itemId : new ArrayList<>(itemSelections.keySet())) {
+            itemSelections.put(itemId, false);
         }
 
         if (!categoryData.isEmpty()) {
@@ -583,5 +733,25 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         stopVoicePulse();
         voicePulseAnimator = null;
         super.onDestroyView();
+    }
+
+    private static final class PendingSubmitInput {
+        private final int adultCount;
+        private final int elderlyCount;
+        private final int childCount;
+        private final String notes;
+        private final List<VictimSupplyViewModel.RequestedItem> requestedItems;
+
+        private PendingSubmitInput(int adultCount,
+                                   int elderlyCount,
+                                   int childCount,
+                                   String notes,
+                                   List<VictimSupplyViewModel.RequestedItem> requestedItems) {
+            this.adultCount = Math.max(0, adultCount);
+            this.elderlyCount = Math.max(0, elderlyCount);
+            this.childCount = Math.max(0, childCount);
+            this.notes = notes != null ? notes.trim() : "";
+            this.requestedItems = requestedItems != null ? requestedItems : new ArrayList<>();
+        }
     }
 }

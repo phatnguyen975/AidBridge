@@ -16,13 +16,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.ItemVictimHistoryCardBinding;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * VictimHistoryAdapter renders paginated history cards with dynamic icon/color per request type.
  */
 public class VictimHistoryAdapter extends RecyclerView.Adapter<VictimHistoryAdapter.HistoryViewHolder> {
+
+    private static final DateTimeFormatter HISTORY_DATE_FORMAT =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.US);
 
     public static final String TYPE_SOS_SELF = "TYPE_SOS_SELF";
     public static final String TYPE_SUPPLY = "TYPE_SUPPLY";
@@ -49,7 +58,6 @@ public class VictimHistoryAdapter extends RecyclerView.Adapter<VictimHistoryAdap
 
         holder.binding.tvTitle.setText(resolveTitle(holder, model));
         holder.binding.tvDate.setText(resolveDate(holder, model));
-        holder.binding.tvLocation.setText(resolveLocation(holder, model));
         holder.binding.tvStatus.setText(resolveStatus(holder, model));
 
         int iconRes;
@@ -195,14 +203,25 @@ public class VictimHistoryAdapter extends RecyclerView.Adapter<VictimHistoryAdap
 
     private String resolveDate(@NonNull HistoryViewHolder holder, @NonNull HistoryModel model) {
         return model.date != null && !model.date.trim().isEmpty()
-            ? model.date.trim()
+            ? formatDateTime(model.date.trim())
             : holder.binding.getRoot().getContext().getString(R.string.victim_history_placeholder_value);
     }
 
-    private String resolveLocation(@NonNull HistoryViewHolder holder, @NonNull HistoryModel model) {
-        return model.location != null && !model.location.trim().isEmpty()
-            ? model.location.trim()
-            : holder.binding.getRoot().getContext().getString(R.string.victim_history_placeholder_value);
+    private String formatDateTime(String rawDateTime) {
+        try {
+            Instant instant = Instant.parse(rawDateTime);
+            LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+            return localDateTime.format(HISTORY_DATE_FORMAT);
+        } catch (DateTimeParseException ignored) {
+        }
+
+        try {
+            LocalDateTime localDateTime = LocalDateTime.parse(rawDateTime);
+            return localDateTime.format(HISTORY_DATE_FORMAT);
+        } catch (DateTimeParseException ignored) {
+        }
+
+        return rawDateTime;
     }
 
     static class HistoryViewHolder extends RecyclerView.ViewHolder {
