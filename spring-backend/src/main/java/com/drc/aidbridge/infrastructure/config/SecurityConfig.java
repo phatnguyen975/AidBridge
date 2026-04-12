@@ -50,13 +50,16 @@ public class SecurityConfig {
                         // Permit for springdoc OpenAPI
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sos-requests").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/sos-requests").permitAll()
                         .requestMatchers("/api/sos-requests/**").permitAll() // Allow public access to SOS request endpoints
                         .requestMatchers(HttpMethod.GET, "/api/hubs", "/api/hubs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/hubs").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/hubs/**").hasRole("ADMIN")
+                        .requestMatchers("/api/routing/**").permitAll() // GraphHopper routing endpoints
                         // Role-based endpoint authorization
                         // ADMIN - full system access
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
 
 
                         // STAFF - hub management, can do most admin tasks
@@ -69,6 +72,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/sponsor/**").hasAnyRole("SPONSOR", "STAFF", "ADMIN")
 
                         // VICTIM - aid requests, accessible by all authenticated users
+                        .requestMatchers("/api/aid-requests/**")
+                        .hasAnyRole("VICTIM", "VOLUNTEER", "SPONSOR", "STAFF", "ADMIN")
                         .requestMatchers("/api/aid-requests/**")
                         .hasAnyRole("VICTIM", "VOLUNTEER", "SPONSOR", "STAFF", "ADMIN")
                         .requestMatchers("/api/victim/**")

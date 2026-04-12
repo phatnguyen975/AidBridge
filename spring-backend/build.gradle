@@ -125,6 +125,13 @@ dependencies {
     implementation 'com.cloudinary:cloudinary-http5:2.3.2'
 
     // ===========================
+    // GraphHopper Routing Engine (Embedded)
+    // ===========================
+    // Offline routing engine — reads OSM data, builds graph, calculates routes
+    // reader-osm is bundled inside graphhopper-core since v8+
+    implementation 'com.graphhopper:graphhopper-core:11.0'
+
+    // ===========================
     // Testing
     // ===========================
     // Spring Boot Test - JUnit 5, Mockito, MockMvc, @SpringBootTest, @DataJpaTest
@@ -142,10 +149,9 @@ tasks.named('test') {
 }
 
 bootRun {
-    jvmArgs = ['-Djava.net.preferIPv4Stack=true']
+    // -Xmx3g needed for first-time graph building from OSM (~350MB file)
+    // After graph is cached, can reduce to -Xmx1g
+    jvmArgs = ['-Djava.net.preferIPv4Stack=true', '-Xmx3g', '-Xms1g']
     sourceResources sourceSets.main
     classpath = sourceSets.main.runtimeClasspath
-}
-bootRun {
-    jvmArgs = ['-Djava.net.preferIPv4Stack=true']
 }

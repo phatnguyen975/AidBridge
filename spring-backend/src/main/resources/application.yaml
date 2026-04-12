@@ -5,9 +5,27 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
 
 app:
   name: AidBridge
+  routing:
+    enabled: true
+    osm-file: data/vietnam.osm.pbf
+    graph-dir: ./graph-data
+    data-access: MMAP # MMAP for low RAM, RAM_STORE for fast performance
+    
+    # Configure routing strategy profiles for different use cases
+    profiles:
+      urgent_response: routing-profiles/car-urgent_response.json
+      disaster_safe: routing-profiles/car-disaster_safe.json
+      heavy_aid: routing-profiles/car-heavy_aid.json
+      community_delivery: routing-profiles/car-community_delivery.json
+      offroad_terrain: routing-profiles/car-offroad_terrain.json
 
 jwt:
   access-token:
@@ -69,3 +87,12 @@ logging:
   level:
     root: WARN
     com.drc.aidbridge: INFO
+
+# ===========================
+# GraphHopper Routing Engine
+# ===========================
+graphhopper:
+  osm-file: data/vietnam.osm.pbf
+  graph-dir: ./graph-data
+
+  
