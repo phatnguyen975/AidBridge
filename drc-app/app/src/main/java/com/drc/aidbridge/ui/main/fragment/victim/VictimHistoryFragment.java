@@ -32,6 +32,7 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private boolean isOfflineData = false;
+    private boolean isDetailLoading = false;
     private boolean showRefreshSuccessNotice = false;
 
     @Override
@@ -58,6 +59,7 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
     @Override
     protected void observeViewModel() {
         viewModel.getHistoryResult().observe(getViewLifecycleOwner(), this::handleHistoryResult);
+        viewModel.getHistoryDetailResult().observe(getViewLifecycleOwner(), this::handleHistoryDetailResult);
     }
 
     private void setupToolbar() {
@@ -65,11 +67,12 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
     }
 
     private void setupRecyclerView() {
-        adapter = new VictimHistoryAdapter(model ->
-            VictimHistoryDetailBottomSheet
-                .newInstance(model)
-                .show(getParentFragmentManager(), DETAIL_SHEET_TAG)
-        );
+        adapter = new VictimHistoryAdapter(model -> {
+            if (isDetailLoading) {
+                return;
+            }
+            viewModel.loadDetail(model);
+        });
 
         binding.rvHistory.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvHistory.setAdapter(adapter);
@@ -109,9 +112,11 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
             isOfflineData = false;
             isScreenLoading = true;
             showRefreshSuccessNotice = false;
-            renderOfflineIndicator(false);
             renderEmptyState(false);
-            viewModel.applyTimeRange(mapFilterCode(position), isNetworkAvailable());
+
+            Object selectedItem = parent != null ? parent.getItemAtPosition(position) : null;
+            String selectedLabel = selectedItem != null ? selectedItem.toString() : "";
+            viewModel.applyTimeRange(mapFilterCode(selectedLabel, position), isNetworkAvailable());
         });
     }
 
@@ -122,7 +127,6 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
             isOfflineData = false;
             isScreenLoading = true;
             showRefreshSuccessNotice = true;
-            renderOfflineIndicator(false);
             renderEmptyState(false);
             viewModel.refresh(isNetworkAvailable());
         });
@@ -158,7 +162,6 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
                     : getString(R.string.victim_history_load_error),
                 true
             );
-            renderOfflineIndicator(isOfflineData);
             renderEmptyState(isScreenLoading || adapter.getItemCount() == 0);
             return;
         }
@@ -166,7 +169,6 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
         VictimHistoryViewModel.HistoryUiPage uiPage = result.getData();
         if (uiPage == null) {
             showRefreshSuccessNotice = false;
-            renderOfflineIndicator(false);
             renderEmptyState(isScreenLoading || adapter.getItemCount() == 0);
             return;
         }
@@ -186,8 +188,53 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
             showRefreshSuccessNotice = false;
         }
 
-        renderOfflineIndicator(isOfflineData);
+        if (isOfflineData && !uiPage.isAppend()) {
+            showTopSnackbar(binding.getRoot(), getString(R.string.victim_history_offline_indicator), false);
+        }
+
         renderEmptyState(adapter.getItemCount() == 0);
+    }
+
+    private void handleHistoryDetailResult(
+        NetworkResultWrapper<VictimHistoryViewModel.HistoryDetailUiModel> result
+    ) {
+        if (result == null) {
+            return;
+        }
+
+        if (result.isLoading()) {
+            isDetailLoading = true;
+            return;
+        }
+
+        if (result.hasBeenHandled()) {
+            return;
+        }
+
+        result.markAsHandled();
+        isDetailLoading = false;
+
+        if (result.isError()) {
+            String message = result.getMessage();
+            showTopSnackbar(
+                binding.getRoot(),
+                message != null && !message.trim().isEmpty()
+                    ? message.trim()
+                    : getString(R.string.victim_history_detail_load_error),
+                true
+            );
+            return;
+        }
+
+        VictimHistoryViewModel.HistoryDetailUiModel detail = result.getData();
+        if (detail == null) {
+            showTopSnackbar(binding.getRoot(), getString(R.string.victim_history_detail_empty_error), true);
+            return;
+        }
+
+        VictimHistoryDetailBottomSheet
+            .newInstance(detail)
+            .show(getParentFragmentManager(), DETAIL_SHEET_TAG);
     }
 
     private void updatePaginationLoading(boolean show) {
@@ -214,10 +261,6 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
         );
     }
 
-    private void renderOfflineIndicator(boolean isOffline) {
-        binding.tvOfflineIndicator.setVisibility(isOffline ? View.VISIBLE : View.GONE);
-    }
-
     private void renderEmptyState(boolean isEmpty) {
         if (!isEmpty) {
             binding.tvEmptyState.setVisibility(View.GONE);
@@ -232,8 +275,22 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
         binding.tvEmptyState.setVisibility(View.VISIBLE);
     }
 
-    private String mapFilterCode(int position) {
-        switch (position) {
+    private String mapFilterCode(String selectedLabel, int fallbackPosition) {
+        int resolvedPosition = fallbackPosition;
+        String normalizedLabel = selectedLabel != null ? selectedLabel.trim() : "";
+        String[] options = getResources().getStringArray(R.array.victim_history_time_filters);
+
+        if (!normalizedLabel.isEmpty() && options != null && options.length > 0) {
+            for (int index = 0; index < options.length; index++) {
+                String option = options[index] != null ? options[index].trim() : "";
+                if (normalizedLabel.equalsIgnoreCase(option)) {
+                    resolvedPosition = index;
+                    break;
+                }
+            }
+        }
+
+        switch (resolvedPosition) {
             case 1:
                 return "24h";
             case 2:

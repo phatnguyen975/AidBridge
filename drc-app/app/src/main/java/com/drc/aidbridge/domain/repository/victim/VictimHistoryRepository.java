@@ -3,6 +3,7 @@ package com.drc.aidbridge.domain.repository.victim;
 import androidx.lifecycle.LiveData;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
+import com.drc.aidbridge.domain.model.victim.VictimHistoryDetail;
 import com.drc.aidbridge.domain.model.victim.VictimHistoryPage;
 
 public interface VictimHistoryRepository {
@@ -11,4 +12,7 @@ public interface VictimHistoryRepository {
                                                                        int size,
                                                                        String timeRange,
                                                                        boolean forceOffline);
+
+    LiveData<NetworkResultWrapper<VictimHistoryDetail>> getVictimHistoryDetail(String requestId,
+                                                                                String type);
 }

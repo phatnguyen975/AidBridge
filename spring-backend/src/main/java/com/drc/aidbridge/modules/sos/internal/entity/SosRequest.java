@@ -40,9 +40,9 @@ public class SosRequest {
     @Builder.Default
     private Integer peopleCount = 1;
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "urgency_level", nullable = false)
-    @Builder.Default
-    private UrgencyLevel urgencyLevel = UrgencyLevel.MEDIUM;
+    private UrgencyLevel urgencyLevel;
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "status", nullable = false)
     private SosStatus status;

@@ -7,8 +7,8 @@
     android:padding="@dimen/spacing_md">
 
     <View
-        android:layout_width="42dp"
-        android:layout_height="4dp"
+        android:layout_width="@dimen/victim_history_sheet_handle_width"
+        android:layout_height="@dimen/victim_history_sheet_handle_height"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="@dimen/spacing_md"
         android:background="@color/border_default" />
@@ -32,7 +32,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="520dp">
+        android:minHeight="@dimen/victim_history_sheet_min_height">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,6 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_sm"
+                android:lineSpacingExtra="@dimen/victim_history_detail_line_spacing_extra"
                 android:textColor="@color/text_primary"
                 android:textSize="@dimen/text_md" />
         </LinearLayout>

@@ -23,4 +23,10 @@
     <dimen name="victim_supply_voice_button_radius">48dp</dimen>
     <dimen name="victim_supply_stepper_button_size">36dp</dimen>
     <dimen name="victim_supply_category_item_margin_top">8dp</dimen>
+
+    <!-- Victim History Detail Bottom Sheet -->
+    <dimen name="victim_history_sheet_handle_width">42dp</dimen>
+    <dimen name="victim_history_sheet_handle_height">4dp</dimen>
+    <dimen name="victim_history_sheet_min_height">520dp</dimen>
+    <dimen name="victim_history_detail_line_spacing_extra">4dp</dimen>
 </resources>

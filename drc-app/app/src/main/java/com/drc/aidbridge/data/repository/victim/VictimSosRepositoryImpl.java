@@ -10,6 +10,7 @@ import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 import com.drc.aidbridge.data.remote.dto.response.victim.SosRequestResponse;
 import com.drc.aidbridge.data.repository.BaseRepository;
 import com.drc.aidbridge.domain.repository.victim.VictimSosRepository;
+import com.drc.aidbridge.utils.TokenManager;
 
 import java.text.Normalizer;
 import java.util.Locale;
@@ -25,10 +26,13 @@ import retrofit2.Response;
 public class VictimSosRepositoryImpl extends BaseRepository implements VictimSosRepository {
 
     private final SosApiService sosApiService;
+    private final TokenManager tokenManager;
 
     @Inject
-    public VictimSosRepositoryImpl(SosApiService sosApiService) {
+    public VictimSosRepositoryImpl(SosApiService sosApiService,
+                                   TokenManager tokenManager) {
         this.sosApiService = sosApiService;
+        this.tokenManager = tokenManager;
     }
 
     @Override
@@ -42,11 +46,15 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
         MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
+        String accountName = firstNonBlank(safeTrim(tokenManager.getUserName()), safeTrim(fullName));
+        String accountPhone = safeTrim(tokenManager.getUserPhone());
+        String description = buildSelfDescription(accountName, accountPhone, note);
+
         CreateSosRequest request = new CreateSosRequest(
             latitude,
             longitude,
             null,
-            safeTrim(note),
+            description,
             peopleCount,
             mapSeverityToUrgencyLevel(severity),
             safeTrim(firstImageUrl)
@@ -152,14 +160,19 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
     }
 
     private String buildRelativeDescription(String relativeName, String relativePhone) {
-        String name = safeTrim(relativeName);
-        String phone = safeTrim(relativePhone);
-        return firstNonBlank(
-            (name.isEmpty() && phone.isEmpty())
-                ? "Yeu cau SOS cho nguoi than"
-                : ("Ho ten: " + name + ". So dien thoai lien he: " + phone),
-            "Yeu cau SOS cho nguoi than"
-        );
+        String name = firstNonBlank(safeTrim(relativeName), "Không có");
+        String phone = firstNonBlank(safeTrim(relativePhone), "Không có");
+        return "Loại yêu cầu: SOS người thân. Họ tên: " + name + ". Số điện thoại liên hệ: " + phone;
+    }
+
+    private String buildSelfDescription(String fullName, String phoneNumber, String healthDetail) {
+        String name = firstNonBlank(safeTrim(fullName), "Không có");
+        String phone = firstNonBlank(safeTrim(phoneNumber), "Không có");
+        String health = firstNonBlank(safeTrim(healthDetail), "Không có");
+
+        return "Loại yêu cầu: SOS bản thân. Họ tên: " + name
+            + ". Số điện thoại liên hệ: " + phone
+            + ". Chi tiết sức khỏe: " + health;
     }
 
     private String mapSeverityToUrgencyLevel(String severity) {
@@ -168,16 +181,22 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
             return "CRITICAL";
         }
 
-        if ("CRITICAL".equals(value) || value.contains("NGUY") || value.contains("KICH")) {
+        if ("CRITICAL".equals(value)
+            || "NGUY KICH".equals(value)
+            || "NGUYKICH".equals(value)) {
             return "CRITICAL";
         }
-        if ("HIGH".equals(value) || value.contains("NGHIEM") || value.contains("TRONG")) {
+        if ("HIGH".equals(value)
+            || "NGHIEM TRONG".equals(value)
+            || "NGHIEMTRONG".equals(value)) {
             return "HIGH";
         }
-        if ("LOW".equals(value) || value.contains("NHE")) {
+        if ("LOW".equals(value) || "NHE".equals(value)) {
             return "LOW";
         }
-        if ("MEDIUM".equals(value) || value.contains("TRUNG") || value.contains("BINH")) {
+        if ("MEDIUM".equals(value)
+            || "TRUNG BINH".equals(value)
+            || "TRUNGBINH".equals(value)) {
             return "MEDIUM";
         }
 

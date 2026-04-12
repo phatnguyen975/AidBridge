@@ -70,11 +70,11 @@ public class AidMapper {
     public AidItemResponse toItemResponse(AidRequestItem item) {
         return AidItemResponse.builder()
                 .id(item.getId())
-                .aidRequestId(item.getAidRequest().getId())
+                .aidRequestId(item.getAidRequest() != null ? item.getAidRequest().getId() : null)
                 .itemCategoryId(item.getItemCategoryId())
                 .quantity(item.getQuantity())
                 .description(item.getDescription())
-                .createdAt(item.getCreatedAt())
+                .createdAt(null)
                 .build();
     }
 }
