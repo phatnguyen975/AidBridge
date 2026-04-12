@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -14,4 +15,6 @@ public interface AidRequestJpaRepository extends JpaRepository<AidRequest, UUID>
 
 	List<AidRequest> findByRequesterIdAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(UUID requesterId,
 																						Instant createdAt);
+
+	Optional<AidRequest> findByIdAndRequesterId(UUID id, UUID requesterId);
 }

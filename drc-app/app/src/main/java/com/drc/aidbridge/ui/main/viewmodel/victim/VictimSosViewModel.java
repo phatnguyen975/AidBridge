@@ -9,6 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
+import com.drc.aidbridge.domain.model.User;
+import com.drc.aidbridge.domain.usecase.user.GetCachedUserUseCase;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.domain.usecase.victim.UploadSosUseCase;
 import com.drc.aidbridge.ui.base.BaseViewModel;
@@ -31,21 +33,32 @@ public class VictimSosViewModel extends BaseViewModel {
     private static final String DEFAULT_SEVERITY = "Nguy kịch";
 
     private final UploadSosUseCase uploadSosUseCase;
+    private final GetCachedUserUseCase getCachedUserUseCase;
     private final ExecutorService imageProcessingExecutor = Executors.newSingleThreadExecutor();
 
+    private final MutableLiveData<Long> loadCachedUserTrigger = new MutableLiveData<>();
     private final MutableLiveData<SelfSosPayload> selfSosTrigger = new MutableLiveData<>();
     private final MutableLiveData<RelativeSosPayload> relativeSosTrigger = new MutableLiveData<>();
 
+    private final LiveData<NetworkResultWrapper<User>> cachedUserSource;
     private final LiveData<NetworkResultWrapper<String>> selfSosSource;
     private final LiveData<NetworkResultWrapper<String>> relativeSosSource;
 
+    private final MediatorLiveData<NetworkResultWrapper<User>> cachedUserResult = new MediatorLiveData<>();
     private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<String>> submitSelfSosResult = new MediatorLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<String>> submitRelativeSosResult = new MediatorLiveData<>();
 
     @Inject
-    public VictimSosViewModel(UploadSosUseCase uploadSosUseCase) {
+    public VictimSosViewModel(UploadSosUseCase uploadSosUseCase,
+                              GetCachedUserUseCase getCachedUserUseCase) {
         this.uploadSosUseCase = uploadSosUseCase;
+        this.getCachedUserUseCase = getCachedUserUseCase;
+
+        cachedUserSource = Transformations.switchMap(
+            loadCachedUserTrigger,
+            ignored -> this.getCachedUserUseCase.execute()
+        );
 
         selfSosSource = Transformations.switchMap(selfSosTrigger, payload ->
             this.uploadSosUseCase.uploadSelfSos(
@@ -73,6 +86,15 @@ public class VictimSosViewModel extends BaseViewModel {
         submitSelfSosResult.addSource(selfSosSource, submitSelfSosResult::postValue);
 
         submitRelativeSosResult.addSource(relativeSosSource, submitRelativeSosResult::postValue);
+        cachedUserResult.addSource(cachedUserSource, cachedUserResult::postValue);
+    }
+
+    public LiveData<NetworkResultWrapper<User>> getCachedUserResult() {
+        return cachedUserResult;
+    }
+
+    public void loadCachedUser() {
+        loadCachedUserTrigger.setValue(System.currentTimeMillis());
     }
 
     public LiveData<NetworkResultWrapper<String>> getSubmitSelfSosResult() {

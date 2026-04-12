@@ -10,8 +10,10 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.api.victim.HistoryApiService;
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 import com.drc.aidbridge.data.remote.dto.response.PaginatedData;
+import com.drc.aidbridge.data.remote.dto.response.victim.HistoryDetailResponse;
 import com.drc.aidbridge.data.remote.dto.response.victim.HistoryResponse;
 import com.drc.aidbridge.data.repository.BaseRepository;
+import com.drc.aidbridge.domain.model.victim.VictimHistoryDetail;
 import com.drc.aidbridge.domain.model.victim.VictimHistoryPage;
 import com.drc.aidbridge.domain.repository.victim.VictimHistoryRepository;
 
@@ -133,6 +135,68 @@ public class VictimHistoryRepositoryImpl extends BaseRepository implements Victi
                                       Throwable t) {
                     fallbackToCache(result, normalizedTimeRange, page,
                         "Tải lịch sử yêu cầu thất bại: " + safeMessage(t), 0);
+                }
+            });
+
+        return result;
+    }
+
+    @Override
+    public LiveData<NetworkResultWrapper<VictimHistoryDetail>> getVictimHistoryDetail(String requestId,
+                                                                                        String type) {
+        MutableLiveData<NetworkResultWrapper<VictimHistoryDetail>> result = new MutableLiveData<>();
+        result.postValue(NetworkResultWrapper.loading());
+
+        String normalizedRequestId = safeText(requestId);
+        String normalizedType = safeText(type);
+
+        if (normalizedRequestId.isEmpty()) {
+            result.postValue(NetworkResultWrapper.error("Không tìm thấy mã yêu cầu để tải chi tiết."));
+            return result;
+        }
+
+        historyApiService.getVictimHistoryDetail(normalizedRequestId, normalizedType)
+            .enqueue(new Callback<BaseResponse<HistoryDetailResponse>>() {
+                @Override
+                public void onResponse(Call<BaseResponse<HistoryDetailResponse>> call,
+                                       Response<BaseResponse<HistoryDetailResponse>> response) {
+                    if (!response.isSuccessful()) {
+                        result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
+                        return;
+                    }
+
+                    BaseResponse<HistoryDetailResponse> body = response.body();
+                    if (body == null) {
+                        result.postValue(NetworkResultWrapper.error("Phản hồi chi tiết yêu cầu không hợp lệ."));
+                        return;
+                    }
+
+                    if (!body.isSuccess()) {
+                        String message = body.getMessage();
+                        result.postValue(NetworkResultWrapper.error(
+                            message != null && !message.trim().isEmpty()
+                                ? message.trim()
+                                : "Không thể tải chi tiết yêu cầu."
+                        ));
+                        return;
+                    }
+
+                    HistoryDetailResponse detailResponse = body.getData();
+                    if (detailResponse == null) {
+                        result.postValue(NetworkResultWrapper.error("Không có dữ liệu chi tiết yêu cầu."));
+                        return;
+                    }
+
+                    result.postValue(NetworkResultWrapper.success(
+                        victimHistoryMapper.mapDetailResponseToDomain(detailResponse)
+                    ));
+                }
+
+                @Override
+                public void onFailure(Call<BaseResponse<HistoryDetailResponse>> call, Throwable t) {
+                    result.postValue(NetworkResultWrapper.error(
+                        "Tải chi tiết yêu cầu thất bại: " + safeMessage(t)
+                    ));
                 }
             });
 

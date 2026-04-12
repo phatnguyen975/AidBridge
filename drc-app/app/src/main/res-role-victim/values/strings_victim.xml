@@ -68,7 +68,24 @@
     <string name="victim_history_detail_section_request">Thông tin yêu cầu</string>
     <string name="victim_history_detail_unknown">Không xác định</string>
     <string name="victim_history_placeholder_value">-</string>
+    <string name="victim_history_detail_not_available">Không có</string>
+    <string name="victim_history_detail_load_error">Không thể tải chi tiết yêu cầu. Vui lòng thử lại.</string>
+    <string name="victim_history_detail_empty_error">Không có dữ liệu chi tiết yêu cầu.</string>
     <string name="victim_history_detail_note_empty">Không có ghi chú bổ sung.</string>
+    <string name="victim_history_detail_label_request_id">Mã yêu cầu</string>
+    <string name="victim_history_detail_label_request_type">Loại yêu cầu</string>
+    <string name="victim_history_detail_label_status">Trạng thái</string>
+    <string name="victim_history_detail_label_time">Thời gian</string>
+    <string name="victim_history_detail_label_location">Địa điểm</string>
+    <string name="victim_history_detail_label_condition">Mức độ khẩn cấp</string>
+    <string name="victim_history_detail_label_people_count">Số người</string>
+    <string name="victim_history_detail_label_contact_name">Họ tên liên hệ</string>
+    <string name="victim_history_detail_label_contact_phone">Số điện thoại liên hệ</string>
+    <string name="victim_history_detail_label_health_detail">Chi tiết sức khỏe</string>
+    <string name="victim_history_detail_label_adult_count">Người lớn</string>
+    <string name="victim_history_detail_label_elderly_count">Người già</string>
+    <string name="victim_history_detail_label_children_count">Trẻ em</string>
+    <string name="victim_history_detail_label_requested_items">Danh sách vật phẩm yêu cầu</string>
     <string name="victim_history_detail_content_template">
         Mã yêu cầu: %1$s
         Loại yêu cầu: %2$s

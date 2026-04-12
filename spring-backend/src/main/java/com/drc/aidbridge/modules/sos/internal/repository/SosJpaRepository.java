@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -15,5 +16,6 @@ public interface SosJpaRepository extends JpaRepository<SosRequest, UUID> {
     List<SosRequest> findByRequesterIdOrderByCreatedAtDesc(UUID requesterId);
     List<SosRequest> findByRequesterIdAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(UUID requesterId,
                                                                                         Instant createdAt);
+    Optional<SosRequest> findByIdAndRequesterId(UUID id, UUID requesterId);
     List<SosRequest> findByStatus(SosStatus status);
 }

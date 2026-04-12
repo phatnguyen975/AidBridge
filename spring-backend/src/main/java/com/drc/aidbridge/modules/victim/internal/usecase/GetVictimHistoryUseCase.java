@@ -1,8 +1,6 @@
 package com.drc.aidbridge.modules.victim.internal.usecase;
 
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequest;
-import com.drc.aidbridge.modules.aid.internal.entity.AidRequestItem;
-import com.drc.aidbridge.modules.aid.internal.repository.AidRequestItemJpaRepository;
 import com.drc.aidbridge.modules.aid.internal.repository.AidRequestJpaRepository;
 import com.drc.aidbridge.modules.shared.enums.AidStatus;
 import com.drc.aidbridge.modules.shared.enums.SosStatus;
@@ -22,10 +20,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -41,7 +37,6 @@ public class GetVictimHistoryUseCase {
 
     private final SosJpaRepository sosJpaRepository;
     private final AidRequestJpaRepository aidRequestJpaRepository;
-    private final AidRequestItemJpaRepository aidRequestItemJpaRepository;
 
     /**
      * Returns paginated victim history sorted by request creation time (desc).
@@ -63,17 +58,15 @@ public class GetVictimHistoryUseCase {
 
         List<AidRequest> aidRequests = fromTime == null
             ? aidRequestJpaRepository.findByRequesterIdOrderByCreatedAtDesc(requesterId)
-            : aidRequestJpaRepository.findByRequesterIdAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(requesterId, fromTime);
-
-        Map<UUID, List<AidRequestItem>> aidItemsByRequest = loadAidItemsByRequestId(aidRequests);
+            : aidRequestJpaRepository.findByRequesterIdAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(requesterId,
+                fromTime);
 
         List<HistoryRecord> merged = new ArrayList<>(sosRequests.size() + aidRequests.size());
         for (SosRequest sosRequest : sosRequests) {
             merged.add(mapSosRecord(sosRequest));
         }
         for (AidRequest aidRequest : aidRequests) {
-            List<AidRequestItem> items = aidItemsByRequest.getOrDefault(aidRequest.getId(), Collections.emptyList());
-            merged.add(mapAidRecord(aidRequest, items));
+            merged.add(mapAidRecord(aidRequest));
         }
 
         merged.sort(Comparator.comparing(HistoryRecord::createdAt, Comparator.nullsLast(Comparator.reverseOrder())));
@@ -113,37 +106,9 @@ public class GetVictimHistoryUseCase {
             .build();
     }
 
-    private Map<UUID, List<AidRequestItem>> loadAidItemsByRequestId(List<AidRequest> aidRequests) {
-        if (aidRequests == null || aidRequests.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        List<UUID> requestIds = aidRequests.stream()
-            .map(AidRequest::getId)
-            .filter(id -> id != null)
-            .collect(Collectors.toList());
-
-        if (requestIds.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        List<AidRequestItem> aidItems = aidRequestItemJpaRepository.findByAidRequestIdIn(requestIds);
-        if (aidItems == null || aidItems.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        Map<UUID, List<AidRequestItem>> itemsByRequest = new HashMap<>();
-        for (AidRequestItem item : aidItems) {
-            if (item == null || item.getAidRequest() == null || item.getAidRequest().getId() == null) {
-                continue;
-            }
-            itemsByRequest.computeIfAbsent(item.getAidRequest().getId(), key -> new ArrayList<>()).add(item);
-        }
-        return itemsByRequest;
-    }
-
     private HistoryRecord mapSosRecord(SosRequest request) {
-        boolean relativeRequest = isRelativeSos(request != null ? request.getDescription() : null);
+        boolean relativeRequest = isRelativeSos(request != null ? request.getDescription() : null)
+            || !safeText(request != null ? request.getAddress() : null).isBlank();
         SosStatus status = request != null ? request.getStatus() : null;
 
         VictimHistoryItemResponse item = VictimHistoryItemResponse.builder()
@@ -162,7 +127,7 @@ public class GetVictimHistoryUseCase {
         return new HistoryRecord(request != null ? request.getCreatedAt() : null, item);
     }
 
-    private HistoryRecord mapAidRecord(AidRequest request, List<AidRequestItem> aidItems) {
+    private HistoryRecord mapAidRecord(AidRequest request) {
         AidStatus status = request != null ? request.getStatus() : null;
 
         VictimHistoryItemResponse item = VictimHistoryItemResponse.builder()
@@ -175,7 +140,7 @@ public class GetVictimHistoryUseCase {
                 request != null ? request.getLat() : null,
                 request != null ? request.getLng() : null))
             .type("supply")
-            .note(buildAidDetail(request, aidItems))
+            .note("")
             .build();
 
         return new HistoryRecord(request != null ? request.getCreatedAt() : null, item);
@@ -196,34 +161,6 @@ public class GetVictimHistoryUseCase {
 
         return "Urgency: " + urgency
             + " | People: " + peopleCount
-            + " | Note: " + description;
-    }
-
-    private String buildAidDetail(AidRequest request, List<AidRequestItem> aidItems) {
-        if (request == null) {
-            return "No detail";
-        }
-
-        int elderly = request.getNumberElderly() != null ? request.getNumberElderly() : 0;
-        int adults = request.getNumberAdult() != null ? request.getNumberAdult() : 0;
-        int children = request.getNumberChildren() != null ? request.getNumberChildren() : 0;
-
-        List<AidRequestItem> safeItems = aidItems != null ? aidItems : Collections.emptyList();
-        int itemCategories = safeItems.size();
-        int totalQuantity = safeItems.stream()
-            .mapToInt(item -> item != null && item.getQuantity() != null ? item.getQuantity() : 0)
-            .sum();
-
-        String description = safeText(request.getDescription());
-        if (description.isBlank()) {
-            description = "No note";
-        }
-
-        return "Adults: " + adults
-            + " | Elderly: " + elderly
-            + " | Children: " + children
-            + " | Item categories: " + itemCategories
-            + " | Total quantity: " + totalQuantity
             + " | Note: " + description;
     }
 
@@ -278,8 +215,9 @@ public class GetVictimHistoryUseCase {
     private boolean isRelativeSos(String description) {
         String normalized = normalizeText(description);
         return normalized.contains("relative")
-            || normalized.contains("thong tin nguoi than")
-            || normalized.contains("ho ten");
+            || normalized.contains("sos nguoi than")
+            || normalized.contains("loai yeu cau: sos nguoi than")
+            || normalized.contains("thong tin nguoi than");
     }
 
     private Instant resolveFromTime(String timeRange) {

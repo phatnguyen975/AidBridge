@@ -75,7 +75,6 @@
                 android:id="@+id/etFullName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/victim_rescue_default_name"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_hint" />
         </com.google.android.material.textfield.TextInputLayout>

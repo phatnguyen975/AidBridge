@@ -1,12 +1,14 @@
 package com.drc.aidbridge.modules.aid.internal.web;
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
+import com.drc.aidbridge.modules.shared.exception.AuthenticationException;
 import com.drc.aidbridge.modules.aid.internal.usecase.*;
 import com.drc.aidbridge.modules.aid.internal.web.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -25,7 +27,8 @@ public class AidController {
     @PostMapping
     public ResponseEntity<ApiResponse<AidRequestResponse>> createAidRequest(
             @Valid @RequestBody CreateAidRequest request,
-            @AuthenticationPrincipal UUID userId) {
+            Authentication authentication) {
+        UUID userId = resolveAuthenticatedUserId(authentication);
         AidRequestResponse response = createAidRequestUseCase.execute(userId, request);
         return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
     }
@@ -39,8 +42,9 @@ public class AidController {
     @PostMapping("/{id}/cancel")
     public ResponseEntity<ApiResponse<AidRequestResponse>> cancelAidRequest(
             @PathVariable UUID id,
-            @AuthenticationPrincipal UUID userId,
+            Authentication authentication,
             @RequestBody(required = false) CancelAidRequest request) {
+        UUID userId = resolveAuthenticatedUserId(authentication);
         if (request == null) {
             request = new CancelAidRequest();
         }
@@ -58,11 +62,33 @@ public class AidController {
 
     @PostMapping(value = "/voice", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<String>> transcribeVoice(
-            @RequestPart("file") org.springframework.web.multipart.MultipartFile audioFile,
-            @AuthenticationPrincipal java.util.UUID userId) {
+            @RequestPart("file") org.springframework.web.multipart.MultipartFile audioFile) {
 
-        // userId có thể dùng để xác thực quyền nếu cần (import sẵn ở trên)
         String transcript = transcribeAidRequestVoiceUseCase.execute(audioFile);
         return ResponseEntity.ok(ApiResponse.success("Voice transcription completed", transcript));
+    }
+
+    private UUID resolveAuthenticatedUserId(Authentication authentication) {
+        if (authentication == null
+            || !authentication.isAuthenticated()
+            || "anonymousUser".equals(authentication.getName())) {
+            throw new AuthenticationException("Unauthorized request");
+        }
+
+        String userIdCandidate = authentication.getName();
+        if ((userIdCandidate == null || userIdCandidate.isBlank())
+            && authentication.getPrincipal() instanceof Jwt jwt) {
+            userIdCandidate = jwt.getSubject();
+        }
+
+        if (userIdCandidate == null || userIdCandidate.isBlank()) {
+            throw new AuthenticationException("Invalid authentication context");
+        }
+
+        try {
+            return UUID.fromString(userIdCandidate);
+        } catch (IllegalArgumentException ex) {
+            throw new AuthenticationException("Invalid authentication context");
+        }
     }
 }

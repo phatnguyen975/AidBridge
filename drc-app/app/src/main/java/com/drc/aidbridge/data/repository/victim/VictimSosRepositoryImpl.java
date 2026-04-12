@@ -10,6 +10,7 @@ import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 import com.drc.aidbridge.data.remote.dto.response.victim.SosRequestResponse;
 import com.drc.aidbridge.data.repository.BaseRepository;
 import com.drc.aidbridge.domain.repository.victim.VictimSosRepository;
+import com.drc.aidbridge.utils.TokenManager;
 
 import java.text.Normalizer;
 import java.util.Locale;
@@ -25,10 +26,13 @@ import retrofit2.Response;
 public class VictimSosRepositoryImpl extends BaseRepository implements VictimSosRepository {
 
     private final SosApiService sosApiService;
+    private final TokenManager tokenManager;
 
     @Inject
-    public VictimSosRepositoryImpl(SosApiService sosApiService) {
+    public VictimSosRepositoryImpl(SosApiService sosApiService,
+                                   TokenManager tokenManager) {
         this.sosApiService = sosApiService;
+        this.tokenManager = tokenManager;
     }
 
     @Override
@@ -42,7 +46,9 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
         MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
-        String description = buildSelfDescription(fullName, null, note);
+        String accountName = firstNonBlank(safeTrim(tokenManager.getUserName()), safeTrim(fullName));
+        String accountPhone = safeTrim(tokenManager.getUserPhone());
+        String description = buildSelfDescription(accountName, accountPhone, note);
 
         CreateSosRequest request = new CreateSosRequest(
             latitude,
@@ -156,7 +162,7 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
     private String buildRelativeDescription(String relativeName, String relativePhone) {
         String name = firstNonBlank(safeTrim(relativeName), "Không có");
         String phone = firstNonBlank(safeTrim(relativePhone), "Không có");
-        return "Họ tên: " + name + ". Số điện thoại liên hệ: " + phone;
+        return "Loại yêu cầu: SOS người thân. Họ tên: " + name + ". Số điện thoại liên hệ: " + phone;
     }
 
     private String buildSelfDescription(String fullName, String phoneNumber, String healthDetail) {
@@ -164,7 +170,7 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
         String phone = firstNonBlank(safeTrim(phoneNumber), "Không có");
         String health = firstNonBlank(safeTrim(healthDetail), "Không có");
 
-        return "Họ tên: " + name
+        return "Loại yêu cầu: SOS bản thân. Họ tên: " + name
             + ". Số điện thoại liên hệ: " + phone
             + ". Chi tiết sức khỏe: " + health;
     }
