@@ -178,8 +178,16 @@
 
     <!-- Victim SOS Relative -->
     <string name="victim_relative_sos_title">HỖ TRỢ NGƯỜI THÂN</string>
-    <string name="victim_relative_sos_map_desc">Ảnh bản đồ mô phỏng vị trí người cần hỗ trợ</string>
-    <string name="victim_relative_sos_map_hint">Kéo bản đồ để đặt ghim chính xác vị trí</string>
+    <string name="victim_relative_sos_map_desc">Bản đồ ghim vị trí người cần hỗ trợ</string>
+    <string name="victim_relative_sos_map_hint">Nhập địa chỉ, bấm Tìm vị trí và kiểm tra ghim trước khi gửi yêu cầu</string>
+    <string name="victim_relative_sos_search_label">Tìm vị trí nhà người thân</string>
+    <string name="victim_relative_sos_search_hint">Nhập địa chỉ cần tìm trên bản đồ</string>
+    <string name="victim_relative_sos_search_action">Tìm vị trí</string>
+    <string name="victim_relative_sos_search_required">Vui lòng nhập địa chỉ cần tìm.</string>
+    <string name="victim_relative_sos_search_failed">Không thể tìm vị trí từ Google Maps. Vui lòng thử lại.</string>
+    <string name="victim_relative_sos_search_not_found">Không tìm thấy địa chỉ phù hợp tại Việt Nam. Vui lòng nhập chi tiết hơn (ví dụ: số nhà, phường/xã, quận/huyện, tỉnh/thành).</string>
+    <string name="victim_relative_sos_location_required">Vui lòng tìm và ghim vị trí người thân trước khi gửi yêu cầu.</string>
+    <string name="victim_relative_sos_pin_title">Vị trí người thân</string>
     <string name="victim_relative_sos_info_icon_desc">Biểu tượng hướng dẫn vị trí</string>
     <string name="victim_relative_sos_section_info">Thông tin người thân</string>
     <string name="victim_relative_sos_name_label">Họ và tên</string>
@@ -192,8 +200,6 @@
     <string name="victim_relative_sos_severity_hint">Chọn tình trạng khẩn cấp</string>
     <string name="victim_relative_sos_submit">GỬI YÊU CẦU</string>
     <string name="victim_relative_sos_disclaimer">Bằng việc gửi yêu cầu, bạn cam kết các thông tin trên là chính xác để lực lượng cứu hộ có thể tiếp cận nhanh nhất</string>
-    <string name="victim_relative_sos_permission_location_denied">Bạn cần cấp quyền vị trí để gửi SOS cho người thân.</string>
-    <string name="victim_relative_sos_location_unavailable">Không thể lấy vị trí hiện tại để gửi SOS cho người thân.</string>
     <string name="victim_relative_sos_submit_success">Yêu cầu SOS cho người thân đã được gửi thành công.</string>
     <string name="victim_relative_sos_submit_error">Không thể gửi SOS cho người thân. Vui lòng thử lại.</string>
 </resources>
