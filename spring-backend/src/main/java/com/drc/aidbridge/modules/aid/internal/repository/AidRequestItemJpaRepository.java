@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface AidRequestItemJpaRepository extends JpaRepository<AidRequestItem, UUID> {
     List<AidRequestItem> findByAidRequestId(UUID aidRequestId);
+
+    List<AidRequestItem> findByAidRequestIdIn(List<UUID> aidRequestIds);
 }

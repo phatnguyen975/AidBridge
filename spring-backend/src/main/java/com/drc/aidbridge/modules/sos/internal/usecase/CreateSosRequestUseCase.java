@@ -31,6 +31,10 @@ public class CreateSosRequestUseCase {
     public SosRequestResponse execute(UUID requesterId, CreateSosRequest createDto) {
         UserDTO requester = userFacade.getUserById(requesterId);
         String finalImageUrl = sosSceneImageService.resolveImageUrl(createDto.getImageUrl());
+
+        if (createDto.getUrgencyLevel() == null) {
+            throw new IllegalArgumentException("urgency_level is required");
+        }
         
         // Create SOS request
         SosRequest sosRequest = SosRequest.builder()
@@ -52,8 +56,6 @@ public class CreateSosRequestUseCase {
                 savedSos.getLat(),
                 savedSos.getLng()
         ));
-
-        System.out.println("✅ END execute()");
 
         return sosMapper.toResponse(savedSos, null);
     }

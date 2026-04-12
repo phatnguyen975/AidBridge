@@ -26,6 +26,10 @@ public class CreateGuestSosRequestUseCase {
     public SosRequestResponse execute(CreateGuestSosRequest createDto) {
         String finalImageUrl = sosSceneImageService.resolveImageUrl(createDto.getImageUrl());
 
+        if (createDto.getUrgencyLevel() == null) {
+            throw new IllegalArgumentException("urgency_level is required");
+        }
+
         // Create guest SOS request
         SosRequest sosRequest = SosRequest.builder()
                 .requesterId(null)
@@ -34,7 +38,7 @@ public class CreateGuestSosRequestUseCase {
                 .description(createDto.getDescription())
                 .peopleCount(createDto.getPeopleCount() != null ? createDto.getPeopleCount() : 1)
                 .urgencyLevel(createDto.getUrgencyLevel())
-                .imageUrl(finalImageUrl)
+            .imageUrl(finalImageUrl)
                 .status(SosStatus.PENDING)
                 .build();
 
@@ -46,8 +50,6 @@ public class CreateGuestSosRequestUseCase {
                 savedSos.getLat(),
                 savedSos.getLng()
         ));
-
-        System.out.println("✅ END execute()");
 
         return sosMapper.toResponse(savedSos, null);
     }

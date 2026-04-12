@@ -1,0 +1,317 @@
+package com.drc.aidbridge.modules.victim.internal.usecase;
+
+import com.drc.aidbridge.modules.aid.internal.entity.AidRequest;
+import com.drc.aidbridge.modules.aid.internal.entity.AidRequestItem;
+import com.drc.aidbridge.modules.aid.internal.repository.AidRequestItemJpaRepository;
+import com.drc.aidbridge.modules.aid.internal.repository.AidRequestJpaRepository;
+import com.drc.aidbridge.modules.shared.enums.AidStatus;
+import com.drc.aidbridge.modules.shared.enums.SosStatus;
+import com.drc.aidbridge.modules.shared.exception.AuthenticationException;
+import com.drc.aidbridge.modules.sos.internal.entity.SosRequest;
+import com.drc.aidbridge.modules.sos.internal.repository.SosJpaRepository;
+import com.drc.aidbridge.modules.victim.internal.web.dto.VictimHistoryItemResponse;
+import com.drc.aidbridge.modules.victim.internal.web.dto.VictimHistoryPageResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.text.Normalizer;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+/**
+ * Builds a unified history timeline for victim from SOS and Aid requests.
+ */
+@Component
+@RequiredArgsConstructor
+public class GetVictimHistoryUseCase {
+
+    private static final int DEFAULT_PAGE = 1;
+    private static final int MAX_SIZE = 50;
+
+    private final SosJpaRepository sosJpaRepository;
+    private final AidRequestJpaRepository aidRequestJpaRepository;
+    private final AidRequestItemJpaRepository aidRequestItemJpaRepository;
+
+    /**
+     * Returns paginated victim history sorted by request creation time (desc).
+     */
+    @Transactional(readOnly = true)
+    public VictimHistoryPageResponse execute(UUID requesterId, int page, int size, String timeRange) {
+        if (requesterId == null) {
+            throw new AuthenticationException("Unauthorized request");
+        }
+
+        int safePage = Math.max(page, DEFAULT_PAGE);
+        int safeSize = Math.max(1, Math.min(size, MAX_SIZE));
+
+        Instant fromTime = resolveFromTime(timeRange);
+
+        List<SosRequest> sosRequests = fromTime == null
+            ? sosJpaRepository.findByRequesterIdOrderByCreatedAtDesc(requesterId)
+            : sosJpaRepository.findByRequesterIdAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(requesterId, fromTime);
+
+        List<AidRequest> aidRequests = fromTime == null
+            ? aidRequestJpaRepository.findByRequesterIdOrderByCreatedAtDesc(requesterId)
+            : aidRequestJpaRepository.findByRequesterIdAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(requesterId, fromTime);
+
+        Map<UUID, List<AidRequestItem>> aidItemsByRequest = loadAidItemsByRequestId(aidRequests);
+
+        List<HistoryRecord> merged = new ArrayList<>(sosRequests.size() + aidRequests.size());
+        for (SosRequest sosRequest : sosRequests) {
+            merged.add(mapSosRecord(sosRequest));
+        }
+        for (AidRequest aidRequest : aidRequests) {
+            List<AidRequestItem> items = aidItemsByRequest.getOrDefault(aidRequest.getId(), Collections.emptyList());
+            merged.add(mapAidRecord(aidRequest, items));
+        }
+
+        merged.sort(Comparator.comparing(HistoryRecord::createdAt, Comparator.nullsLast(Comparator.reverseOrder())));
+
+        long totalItems = merged.size();
+        int totalPages = totalItems == 0
+            ? 0
+            : (int) Math.ceil((double) totalItems / safeSize);
+
+        long fromIndexLong = (long) (safePage - 1) * safeSize;
+        if (fromIndexLong >= totalItems) {
+            return VictimHistoryPageResponse.builder()
+                .items(Collections.emptyList())
+                .page(safePage)
+                .size(safeSize)
+                .totalPages(totalPages)
+                .totalItems(totalItems)
+                .hasNext(false)
+                .build();
+        }
+
+        int fromIndex = (int) fromIndexLong;
+        int toIndex = Math.min(fromIndex + safeSize, merged.size());
+
+        List<VictimHistoryItemResponse> pageItems = merged.subList(fromIndex, toIndex)
+            .stream()
+            .map(HistoryRecord::item)
+            .collect(Collectors.toList());
+
+        return VictimHistoryPageResponse.builder()
+            .items(pageItems)
+            .page(safePage)
+            .size(safeSize)
+            .totalPages(totalPages)
+            .totalItems(totalItems)
+            .hasNext(toIndex < merged.size())
+            .build();
+    }
+
+    private Map<UUID, List<AidRequestItem>> loadAidItemsByRequestId(List<AidRequest> aidRequests) {
+        if (aidRequests == null || aidRequests.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<UUID> requestIds = aidRequests.stream()
+            .map(AidRequest::getId)
+            .filter(id -> id != null)
+            .collect(Collectors.toList());
+
+        if (requestIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<AidRequestItem> aidItems = aidRequestItemJpaRepository.findByAidRequestIdIn(requestIds);
+        if (aidItems == null || aidItems.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<UUID, List<AidRequestItem>> itemsByRequest = new HashMap<>();
+        for (AidRequestItem item : aidItems) {
+            if (item == null || item.getAidRequest() == null || item.getAidRequest().getId() == null) {
+                continue;
+            }
+            itemsByRequest.computeIfAbsent(item.getAidRequest().getId(), key -> new ArrayList<>()).add(item);
+        }
+        return itemsByRequest;
+    }
+
+    private HistoryRecord mapSosRecord(SosRequest request) {
+        boolean relativeRequest = isRelativeSos(request != null ? request.getDescription() : null);
+        SosStatus status = request != null ? request.getStatus() : null;
+
+        VictimHistoryItemResponse item = VictimHistoryItemResponse.builder()
+            .id(request != null && request.getId() != null ? request.getId().toString() : "")
+            .title("")
+            .status(resolveSosStatusLabel(status))
+            .statusType(resolveSosStatusType(status))
+            .createdAt(request != null && request.getCreatedAt() != null ? request.getCreatedAt().toString() : "")
+            .location(buildLocation(request != null ? request.getAddress() : null,
+                request != null ? request.getLat() : null,
+                request != null ? request.getLng() : null))
+            .type(relativeRequest ? "relative" : "self")
+            .note(buildSosDetail(request))
+            .build();
+
+        return new HistoryRecord(request != null ? request.getCreatedAt() : null, item);
+    }
+
+    private HistoryRecord mapAidRecord(AidRequest request, List<AidRequestItem> aidItems) {
+        AidStatus status = request != null ? request.getStatus() : null;
+
+        VictimHistoryItemResponse item = VictimHistoryItemResponse.builder()
+            .id(request != null && request.getId() != null ? request.getId().toString() : "")
+            .title("")
+            .status(resolveAidStatusLabel(status))
+            .statusType(resolveAidStatusType(status))
+            .createdAt(request != null && request.getCreatedAt() != null ? request.getCreatedAt().toString() : "")
+            .location(buildLocation(request != null ? request.getAddress() : null,
+                request != null ? request.getLat() : null,
+                request != null ? request.getLng() : null))
+            .type("supply")
+            .note(buildAidDetail(request, aidItems))
+            .build();
+
+        return new HistoryRecord(request != null ? request.getCreatedAt() : null, item);
+    }
+
+    private String buildSosDetail(SosRequest request) {
+        if (request == null) {
+            return "No detail";
+        }
+
+        String urgency = request.getUrgencyLevel() != null ? request.getUrgencyLevel().name() : "UNKNOWN";
+        String peopleCount = request.getPeopleCount() != null ? String.valueOf(request.getPeopleCount()) : "1";
+        String description = safeText(request.getDescription());
+
+        if (description.isBlank()) {
+            description = "No note";
+        }
+
+        return "Urgency: " + urgency
+            + " | People: " + peopleCount
+            + " | Note: " + description;
+    }
+
+    private String buildAidDetail(AidRequest request, List<AidRequestItem> aidItems) {
+        if (request == null) {
+            return "No detail";
+        }
+
+        int elderly = request.getNumberElderly() != null ? request.getNumberElderly() : 0;
+        int adults = request.getNumberAdult() != null ? request.getNumberAdult() : 0;
+        int children = request.getNumberChildren() != null ? request.getNumberChildren() : 0;
+
+        List<AidRequestItem> safeItems = aidItems != null ? aidItems : Collections.emptyList();
+        int itemCategories = safeItems.size();
+        int totalQuantity = safeItems.stream()
+            .mapToInt(item -> item != null && item.getQuantity() != null ? item.getQuantity() : 0)
+            .sum();
+
+        String description = safeText(request.getDescription());
+        if (description.isBlank()) {
+            description = "No note";
+        }
+
+        return "Adults: " + adults
+            + " | Elderly: " + elderly
+            + " | Children: " + children
+            + " | Item categories: " + itemCategories
+            + " | Total quantity: " + totalQuantity
+            + " | Note: " + description;
+    }
+
+    private String buildLocation(String address, BigDecimal lat, BigDecimal lng) {
+        if (!safeText(address).isBlank()) {
+            return safeText(address);
+        }
+        if (lat != null && lng != null) {
+            return lat.toPlainString() + ", " + lng.toPlainString();
+        }
+        return "Unknown location";
+    }
+
+    private String resolveSosStatusType(SosStatus status) {
+        if (status == null) {
+            return "processing";
+        }
+
+        return switch (status) {
+            case PENDING -> "pending";
+            case COMPLETED -> "completed";
+            default -> "processing";
+        };
+    }
+
+    private String resolveAidStatusType(AidStatus status) {
+        if (status == null) {
+            return "processing";
+        }
+
+        return switch (status) {
+            case PENDING -> "pending";
+            case COMPLETED -> "completed";
+            default -> "processing";
+        };
+    }
+
+    private String resolveSosStatusLabel(SosStatus status) {
+        if (status == SosStatus.CANCELLED) {
+            return "Cancelled";
+        }
+        return "";
+    }
+
+    private String resolveAidStatusLabel(AidStatus status) {
+        if (status == AidStatus.CANCELLED) {
+            return "Cancelled";
+        }
+        return "";
+    }
+
+    private boolean isRelativeSos(String description) {
+        String normalized = normalizeText(description);
+        return normalized.contains("relative")
+            || normalized.contains("thong tin nguoi than")
+            || normalized.contains("ho ten");
+    }
+
+    private Instant resolveFromTime(String timeRange) {
+        String normalized = safeText(timeRange).toLowerCase(Locale.US);
+        Instant now = Instant.now();
+
+        return switch (normalized) {
+            case "1h" -> now.minus(Duration.ofHours(1));
+            case "24h" -> now.minus(Duration.ofHours(24));
+            case "7d" -> now.minus(Duration.ofDays(7));
+            case "1m" -> now.minus(Duration.ofDays(30));
+            case "all" -> null;
+            default -> now.minus(Duration.ofHours(1));
+        };
+    }
+
+    private String normalizeText(String value) {
+        String safeValue = safeText(value);
+        if (safeValue.isBlank()) {
+            return "";
+        }
+
+        return Normalizer.normalize(safeValue, Normalizer.Form.NFD)
+            .replaceAll("\\p{M}", "")
+            .toLowerCase(Locale.US)
+            .trim();
+    }
+
+    private String safeText(String value) {
+        return value != null ? value.trim() : "";
+    }
+
+    private record HistoryRecord(Instant createdAt, VictimHistoryItemResponse item) {
+    }
+}

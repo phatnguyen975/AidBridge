@@ -42,11 +42,13 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
         MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
+        String description = buildSelfDescription(fullName, null, note);
+
         CreateSosRequest request = new CreateSosRequest(
             latitude,
             longitude,
             null,
-            safeTrim(note),
+            description,
             peopleCount,
             mapSeverityToUrgencyLevel(severity),
             safeTrim(firstImageUrl)
@@ -152,14 +154,19 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
     }
 
     private String buildRelativeDescription(String relativeName, String relativePhone) {
-        String name = safeTrim(relativeName);
-        String phone = safeTrim(relativePhone);
-        return firstNonBlank(
-            (name.isEmpty() && phone.isEmpty())
-                ? "Yeu cau SOS cho nguoi than"
-                : ("Ho ten: " + name + ". So dien thoai lien he: " + phone),
-            "Yeu cau SOS cho nguoi than"
-        );
+        String name = firstNonBlank(safeTrim(relativeName), "Không có");
+        String phone = firstNonBlank(safeTrim(relativePhone), "Không có");
+        return "Họ tên: " + name + ". Số điện thoại liên hệ: " + phone;
+    }
+
+    private String buildSelfDescription(String fullName, String phoneNumber, String healthDetail) {
+        String name = firstNonBlank(safeTrim(fullName), "Không có");
+        String phone = firstNonBlank(safeTrim(phoneNumber), "Không có");
+        String health = firstNonBlank(safeTrim(healthDetail), "Không có");
+
+        return "Họ tên: " + name
+            + ". Số điện thoại liên hệ: " + phone
+            + ". Chi tiết sức khỏe: " + health;
     }
 
     private String mapSeverityToUrgencyLevel(String severity) {
@@ -168,16 +175,22 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
             return "CRITICAL";
         }
 
-        if ("CRITICAL".equals(value) || value.contains("NGUY") || value.contains("KICH")) {
+        if ("CRITICAL".equals(value)
+            || "NGUY KICH".equals(value)
+            || "NGUYKICH".equals(value)) {
             return "CRITICAL";
         }
-        if ("HIGH".equals(value) || value.contains("NGHIEM") || value.contains("TRONG")) {
+        if ("HIGH".equals(value)
+            || "NGHIEM TRONG".equals(value)
+            || "NGHIEMTRONG".equals(value)) {
             return "HIGH";
         }
-        if ("LOW".equals(value) || value.contains("NHE")) {
+        if ("LOW".equals(value) || "NHE".equals(value)) {
             return "LOW";
         }
-        if ("MEDIUM".equals(value) || value.contains("TRUNG") || value.contains("BINH")) {
+        if ("MEDIUM".equals(value)
+            || "TRUNG BINH".equals(value)
+            || "TRUNGBINH".equals(value)) {
             return "MEDIUM";
         }
 
