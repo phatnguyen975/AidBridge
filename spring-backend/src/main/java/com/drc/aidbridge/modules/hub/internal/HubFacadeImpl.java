@@ -5,8 +5,10 @@ import com.drc.aidbridge.modules.hub.HubFacade;
 import com.drc.aidbridge.modules.hub.internal.usecase.CreateHubUseCase;
 import com.drc.aidbridge.modules.hub.internal.usecase.GetHubByIdUseCase;
 import com.drc.aidbridge.modules.hub.internal.usecase.ListHubsUseCase;
+import com.drc.aidbridge.modules.hub.internal.usecase.StockInHubInventoryUseCase;
 import com.drc.aidbridge.modules.hub.internal.usecase.UpdateHubUseCase;
 import com.drc.aidbridge.modules.hub.internal.web.dto.CreateHubRequest;
+import com.drc.aidbridge.modules.hub.internal.web.dto.StockInHubInventoryRequest;
 import com.drc.aidbridge.modules.hub.internal.web.dto.UpdateHubRequest;
 import com.drc.aidbridge.modules.shared.enums.HubStatus;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class HubFacadeImpl implements HubFacade {
     private final GetHubByIdUseCase getHubByIdUseCase;
     private final CreateHubUseCase createHubUseCase;
     private final UpdateHubUseCase updateHubUseCase;
+    private final StockInHubInventoryUseCase stockInHubInventoryUseCase;
 
     @Override
     public HubDTO getById(UUID id) {
@@ -42,5 +45,10 @@ public class HubFacadeImpl implements HubFacade {
     @Override
     public HubDTO update(UUID id, UpdateHubRequest request) {
         return updateHubUseCase.execute(id, request);
+    }
+
+    @Override
+    public HubDTO stockIn(UUID id, StockInHubInventoryRequest request) {
+        return stockInHubInventoryUseCase.execute(id, request);
     }
 }

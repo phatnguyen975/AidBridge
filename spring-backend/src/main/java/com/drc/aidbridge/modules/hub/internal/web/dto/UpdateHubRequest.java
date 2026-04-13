@@ -8,10 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.validation.Valid;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @Builder
@@ -43,7 +41,4 @@ public class UpdateHubRequest {
     @DecimalMin(value = "-180.0", message = "lng must be >= -180")
     @DecimalMax(value = "180.0", message = "lng must be <= 180")
     private BigDecimal lng;
-
-    @Valid
-    private List<HubInventoryElementRequest> elements;
 }

@@ -54,6 +54,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/sos-requests/**").permitAll() // Allow public access to SOS request endpoints
                         .requestMatchers(HttpMethod.GET, "/api/hubs", "/api/hubs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/hubs").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/hubs/*/inventory/import").hasAnyRole("STAFF", "ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/hubs/**").hasRole("ADMIN")
                         .requestMatchers("/api/routing/**").permitAll() // GraphHopper routing endpoints
                         // Role-based endpoint authorization
