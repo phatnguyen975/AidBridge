@@ -20,6 +20,8 @@ public class VolunteerController {
     private final UpdateVolunteerProfileUseCase updateVolunteerProfileUseCase;
     private final ToggleVolunteerStatusUseCase toggleVolunteerStatusUseCase;
     private final PingVolunteerHeartbeatUseCase pingVolunteerHeartbeatUseCase;
+    private final GetVolunteerStatisticsUseCase getVolunteerStatisticsUseCase;
+    private final GetVolunteerMissionHistoryUseCase getVolunteerMissionHistoryUseCase;
 
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<VolunteerProfileResponse>> getVolunteerProfile(
@@ -57,4 +59,29 @@ public class VolunteerController {
         VolunteerProfileResponse response = pingVolunteerHeartbeatUseCase.execute(userId, request);
         return ResponseEntity.ok(ApiResponse.success("Heartbeat ping received", response));
     }
+
+    @GetMapping("/{volunteerId}/statistics")
+    public ResponseEntity<ApiResponse<VolunteerStatisticsResponse>> getVolunteerStatistics(
+            @PathVariable UUID volunteerId) {
+        VolunteerStatisticsResponse response = getVolunteerStatisticsUseCase.execute(volunteerId);
+        return ResponseEntity.ok(ApiResponse.success("Volunteer statistics retrieved successfully", response));
+    }
+
+    @GetMapping("/missions/history")
+    public ResponseEntity<ApiResponse<VolunteerMissionHistoryResponse>> getVolunteerMissionHistory(
+            Authentication authentication,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit) {
+        UUID userId = UUID.fromString(authentication.getName());
+        VolunteerMissionHistoryResponse response = getVolunteerMissionHistoryUseCase.execute(userId, page, limit);
+        return ResponseEntity.ok(ApiResponse.success("Volunteer mission history retrieved successfully", response));
+    }
+
+    // Current misssion of current volunteer 
+    // @GetMapping("/me/current-mission")
+    // public ResponseEntity<ApiResponse<VolunteerMissionResponse>> getCurrentMission(Authentication authentication) {
+    //     UUID userId = UUID.fromString(authentication.getName());
+    //     VolunteerMissionResponse response = getVolunteerProfileUseCase.getCurrentMission(userId);
+    //     return ResponseEntity.ok(ApiResponse.success("Current mission retrieved successfully", response));
+    // }
 }

@@ -154,6 +154,27 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
         }
 
         /**
+         * Join-based volunteer mission history for API response without facade calls.
+         */
+        @Query(value = "SELECT " +
+                        "CAST(m.mission_type AS text) AS \"missionType\", " +
+                        "m.completed_at AS \"completedAt\", " +
+                        "CASE " +
+                        "WHEN m.mission_type = 'RESCUE' THEN s.address " +
+                        "WHEN m.mission_type = 'DELIVERY' THEN a.address " +
+                        "ELSE NULL END AS \"address\" " +
+                        "FROM missions m " +
+                        "LEFT JOIN sos_requests s ON s.id = m.sos_request_id " +
+                        "LEFT JOIN aid_requests a ON a.id = m.aid_request_id " +
+                        "WHERE m.volunteer_id = :volunteerId " +
+                        "AND m.status = 'COMPLETED' " +
+                        "ORDER BY m.completed_at DESC",
+                        countQuery = "SELECT COUNT(*) FROM missions m WHERE m.volunteer_id = :volunteerId AND m.status = 'COMPLETED'",
+                        nativeQuery = true)
+        Page<MissionHistoryProjection> findHistoryProjectionByVolunteerId(@Param("volunteerId") UUID volunteerId,
+                        Pageable pageable);
+
+        /**
          * Statistics: Đếm missions trong khoảng thời gian
          */
         @Query("SELECT COUNT(m) FROM Mission m WHERE m.createdAt >= :from AND m.createdAt <= :to")

@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -27,7 +28,8 @@ public class AidController {
     @PostMapping
     public ResponseEntity<ApiResponse<AidRequestResponse>> createAidRequest(
             @Valid @RequestBody CreateAidRequest request,
-            @AuthenticationPrincipal UUID userId) {
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = resolveUserId(jwt);
         AidRequestResponse response = createAidRequestUseCase.execute(userId, request);
         return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
     }
@@ -41,8 +43,9 @@ public class AidController {
     @PostMapping("/{id}/cancel")
     public ResponseEntity<ApiResponse<AidRequestResponse>> cancelAidRequest(
             @PathVariable UUID id,
-            @AuthenticationPrincipal UUID userId,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody(required = false) CancelAidRequest request) {
+        UUID userId = resolveUserId(jwt);
         if (request == null) {
             request = new CancelAidRequest();
         }
@@ -59,9 +62,15 @@ public class AidController {
     }
 
     @PostMapping(value = "/voice", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<String>> transcribeVoice(
+    public ResponseEntity<ApiResponse<AidRequestResponse>> transcribeVoice(
             @RequestPart("file") org.springframework.web.multipart.MultipartFile audioFile,
-            @AuthenticationPrincipal java.util.UUID userId) {
+            @Valid @ModelAttribute CreateAidRequestVoiceInput request,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = resolveUserId(jwt);
+        System.out.println(System.getProperty("file.encoding"));
+        AidRequestResponse response = transcribeAidRequestVoiceUseCase.execute(userId, audioFile, request);
+        return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
+    }
 
         // Validate audio file
         if (audioFile == null || audioFile.isEmpty()) {

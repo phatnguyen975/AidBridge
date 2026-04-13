@@ -62,8 +62,6 @@ public class AidMapper {
     public AidRequestItem toItemEntity(AidItemInput dto) {
         return AidRequestItem.builder()
                 .itemCategoryId(dto.getItemCategoryId())
-                .quantity(dto.getQuantity())
-                .description(dto.getDescription())
                 .build();
     }
 
@@ -72,9 +70,6 @@ public class AidMapper {
                 .id(item.getId())
                 .aidRequestId(item.getAidRequest().getId())
                 .itemCategoryId(item.getItemCategoryId())
-                .quantity(item.getQuantity())
-                .description(item.getDescription())
-                .createdAt(item.getCreatedAt())
                 .build();
     }
 }

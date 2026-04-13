@@ -65,7 +65,7 @@ Accept: application/json
 #     "id": "8f6d3f86-8586-4f6b-844b-18e9862f75e7",
 #     "status": "ASSIGNED",
 #     "items": [
-#       { "id": "0a3d", "item_category_id": "food", "quantity": 10 }
+#       { "id": "0a3d", "item_category_id": "food" }
 #     ]
 #   }
 # }

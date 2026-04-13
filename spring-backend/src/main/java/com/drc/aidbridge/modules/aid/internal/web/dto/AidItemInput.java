@@ -1,6 +1,5 @@
 package com.drc.aidbridge.modules.aid.internal.web.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,10 +16,4 @@ public class AidItemInput {
 
     @NotNull
     private UUID itemCategoryId;
-
-    @NotNull
-    @Min(1)
-    private Integer quantity;
-
-    private String description;
 }

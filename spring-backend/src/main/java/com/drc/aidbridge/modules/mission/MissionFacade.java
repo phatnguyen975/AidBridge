@@ -20,4 +20,6 @@ public interface MissionFacade {
 
     // Added to support SOS module creation
     MissionDTO createRescueMission(UUID sosRequestId, BigDecimal lat, BigDecimal lng);
+
+    
 }
