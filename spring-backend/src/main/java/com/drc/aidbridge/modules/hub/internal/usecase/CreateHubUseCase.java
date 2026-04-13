@@ -77,7 +77,7 @@ public class CreateHubUseCase {
             UUID itemCategoryId = element.getItemCategoryId();
             InventoryAggregate current = aggregateMap.get(itemCategoryId);
 
-            int quantity = element.getQuantity();
+            int quantity = element.getQuantity() != null ? element.getQuantity() : 0;
             int threshold = element.getLowStockThreshold() != null
                     ? element.getLowStockThreshold()
                     : DEFAULT_LOW_STOCK_THRESHOLD;

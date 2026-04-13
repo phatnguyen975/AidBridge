@@ -18,7 +18,6 @@ public class HubInventoryElementRequest {
     @NotNull(message = "itemCategoryId is required")
     private UUID itemCategoryId;
 
-    @NotNull(message = "quantity is required")
     @Min(value = 0, message = "quantity must be >= 0")
     private Integer quantity;
 
