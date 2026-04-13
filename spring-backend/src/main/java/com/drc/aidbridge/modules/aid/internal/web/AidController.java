@@ -1,6 +1,8 @@
 package com.drc.aidbridge.modules.aid.internal.web;
+
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
+import com.drc.aidbridge.modules.shared.exception.BadRequestException;
 import com.drc.aidbridge.modules.aid.internal.usecase.*;
 import com.drc.aidbridge.modules.aid.internal.web.dto.*;
 import jakarta.validation.Valid;
@@ -29,7 +31,7 @@ public class AidController {
         AidRequestResponse response = createAidRequestUseCase.execute(userId, request);
         return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<AidRequestResponse>> getAidRequest(@PathVariable UUID id) {
         AidRequestResponse response = getAidRequestUseCase.execute(id);
@@ -60,6 +62,15 @@ public class AidController {
     public ResponseEntity<ApiResponse<String>> transcribeVoice(
             @RequestPart("file") org.springframework.web.multipart.MultipartFile audioFile,
             @AuthenticationPrincipal java.util.UUID userId) {
+
+        // Validate audio file
+        if (audioFile == null || audioFile.isEmpty()) {
+            throw new BadRequestException("Audio file is required and cannot be empty");
+        }
+
+        if (audioFile.getSize() == 0) {
+            throw new BadRequestException("Audio file cannot be empty");
+        }
 
         // userId có thể dùng để xác thực quyền nếu cần (import sẵn ở trên)
         String transcript = transcribeAidRequestVoiceUseCase.execute(audioFile);

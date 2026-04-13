@@ -45,7 +45,7 @@ public interface AuthApiService {
     @POST("auth/reset-password")
     Call<BaseResponse<String>> resetPassword(@Body ResetPasswordRequest request);
 
-    @POST("auth/refresh-token")
+    @POST("auth/refresh")
     Call<BaseResponse<AuthResponse>> refreshToken(@Body RefreshTokenRequest request);
 
     @POST("auth/logout")

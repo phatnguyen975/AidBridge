@@ -21,37 +21,36 @@ public interface VolunteerJpaRepository extends JpaRepository<Volunteer, UUID> {
         boolean existsByUserId(UUID userId);
 
         /**
-         * Tìm các volunteers đang online trong bán kính (meters) từ một vị trí cho
-         * trước.
+         * Tìm các volunteers có current_location trong bán kính (meters) từ một vị trí
+         * cho trước.
          * Sử dụng PostGIS ST_DWithin để tìm kiếm hiệu quả với geography type.
-         * 
+         *
          * @param location     điểm trung tâm tìm kiếm
          * @param radiusMeters bán kính tìm kiếm (đơn vị: meters)
          * @return danh sách volunteers trong bán kính, sắp xếp theo khoảng cách tăng
          *         dần
          */
         @Query(value = "SELECT v.* FROM volunteer_profiles v " +
-                        "WHERE v.is_online = true " +
-                        "AND v.current_location IS NOT NULL " +
+                        "WHERE v.current_location IS NOT NULL " +
                         "AND ST_DWithin(v.current_location, CAST(:location AS geography), :radiusMeters) " +
                         "ORDER BY ST_Distance(v.current_location, CAST(:location AS geography))", nativeQuery = true)
-        List<Volunteer> findNearbyOnlineVolunteers(
+        List<Volunteer> findNearbyVolunteers(
                         @Param("location") Point location,
                         @Param("radiusMeters") double radiusMeters);
 
         /**
-         * Tìm tất cả volunteers đang online, sắp xếp theo khoảng cách từ một vị trí cho
-         * trước.
+         * Tìm tất cả volunteers có current_location, sắp xếp theo khoảng cách từ một vị
+         * trí cho trước.
          * Sử dụng PostGIS ST_Distance để tính khoảng cách trên mặt cầu (geography).
-         * 
+         *
          * @param location điểm tham chiếu để tính khoảng cách
-         * @return danh sách tất cả volunteers online, sắp xếp theo khoảng cách tăng dần
+         * @return danh sách tất cả volunteers có vị trí, sắp xếp theo khoảng cách tăng
+         *         dần
          */
         @Query(value = "SELECT v.* FROM volunteer_profiles v " +
-                        "WHERE v.is_online = true " +
-                        "AND v.current_location IS NOT NULL " +
+                        "WHERE v.current_location IS NOT NULL " +
                         "ORDER BY ST_Distance(v.current_location, CAST(:location AS geography))", nativeQuery = true)
-        List<Volunteer> findOnlineVolunteersOrderByDistance(@Param("location") Point location);
+        List<Volunteer> findVolunteersOrderByDistance(@Param("location") Point location);
 
         /**
          * Tính khoảng cách (meters) từ volunteer đến một vị trí cho trước.

@@ -37,11 +37,6 @@ public class CreateMissionRequest {
     private UUID aidRequestId;
 
     /**
-     * ID của Help request (optional)
-     */
-    private UUID helpRequestId;
-
-    /**
      * ID của Hub (bắt buộc nếu DELIVERY)
      */
     private UUID hubId;

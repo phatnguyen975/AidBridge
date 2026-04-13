@@ -21,7 +21,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.drc.aidbridge.R;
@@ -31,6 +33,9 @@ import com.drc.aidbridge.domain.enums.UserRole;
 import com.drc.aidbridge.domain.usecase.auth.LogoutUseCase;
 import com.drc.aidbridge.ui.auth.AuthActivity;
 import com.drc.aidbridge.ui.base.BaseActivity;
+import com.drc.aidbridge.ui.main.fragment.volunteer.VoluteerMissionAcceptanceFragment;
+import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
+import com.drc.aidbridge.utils.Constants;
 import com.drc.aidbridge.utils.TokenManager;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -70,12 +75,17 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupNavigation();
-        
-        // 1. Request Notification Permission for Android 13+
+
         askNotificationPermission();
-        
-        // 2. Fetch and Log FCM Token for Testing
         fetchFcmToken();
+        handleLaunchIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleLaunchIntent(intent);
     }
 
     private void askNotificationPermission() {
@@ -169,6 +179,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             }
 
             int destinationId = destination.getId();
+            if (destinationId == R.id.volunteerSosAcceptanceFragment) {
+                if (binding.bottomNav.getMenu().findItem(R.id.volunteerMissionListFragment) != null
+                        && binding.bottomNav.getSelectedItemId() != R.id.volunteerMissionListFragment) {
+                    binding.bottomNav.getMenu().findItem(R.id.volunteerMissionListFragment).setChecked(true);
+                }
+                return;
+            }
+
             if (destinationId == R.id.victimSosSelfFragment
                     || destinationId == R.id.victimSosRelativeFragment) {
                 if (binding.bottomNav.getSelectedItemId() != R.id.victimSosFragment) {
@@ -185,6 +203,57 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         });
 
         binding.bottomNav.setSelectedItemId(navController.getGraph().getStartDestinationId());
+    }
+
+    private void handleLaunchIntent(Intent intent) {
+        if (intent == null || navController == null) {
+            return;
+        }
+
+        String notificationType = sanitize(intent.getStringExtra(Constants.EXTRA_NOTIFICATION_TYPE));
+        if (!Constants.NOTIFICATION_TYPE_DISPATCH_REQUEST.equals(notificationType)) {
+            return;
+        }
+
+        UserRole role = UserRole.fromStringSafe(tokenManager.getUserRole());
+        if (role != UserRole.VOLUNTEER) {
+            clearDispatchExtras(intent);
+            return;
+        }
+
+        String missionId = sanitize(intent.getStringExtra(Constants.EXTRA_MISSION_ID));
+        String dispatchAttemptId = sanitize(intent.getStringExtra(Constants.EXTRA_DISPATCH_ATTEMPT_ID));
+        String missionType = sanitize(intent.getStringExtra(Constants.EXTRA_MISSION_TYPE));
+        String expiresAt = sanitize(intent.getStringExtra(Constants.EXTRA_EXPIRES_AT));
+        if (missionId == null || dispatchAttemptId == null) {
+            clearDispatchExtras(intent);
+            return;
+        }
+
+        new ViewModelProvider(this)
+                .get(VolunteerTaskViewModel.class)
+                .openDispatchRequest(missionId, dispatchAttemptId, missionType, expiresAt);
+
+        if (binding.bottomNav.getMenu().findItem(R.id.volunteerMissionListFragment) != null) {
+            binding.bottomNav.getMenu().findItem(R.id.volunteerMissionListFragment).setChecked(true);
+        }
+
+        if (navController.getGraph().findNode(R.id.volunteerSosAcceptanceFragment) != null
+                && (navController.getCurrentDestination() == null
+                || navController.getCurrentDestination().getId() != R.id.volunteerSosAcceptanceFragment)) {
+            Bundle args = new Bundle();
+            args.putString(VoluteerMissionAcceptanceFragment.ARG_MISSION_ID, missionId);
+            args.putString(VoluteerMissionAcceptanceFragment.ARG_DISPATCH_ATTEMPT_ID, dispatchAttemptId);
+            args.putString(VoluteerMissionAcceptanceFragment.ARG_MISSION_TYPE, missionType);
+            args.putString(VoluteerMissionAcceptanceFragment.ARG_EXPIRES_AT, expiresAt);
+            navController.navigate(
+                    R.id.volunteerSosAcceptanceFragment,
+                    args,
+                    new NavOptions.Builder().setLaunchSingleTop(true).build()
+            );
+        }
+
+        clearDispatchExtras(intent);
     }
 
     private void showVictimSosPopupWindow() {
@@ -352,5 +421,26 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void clearDispatchExtras(@NonNull Intent intent) {
+        intent.removeExtra(Constants.EXTRA_NOTIFICATION_TYPE);
+        intent.removeExtra(Constants.EXTRA_NOTIFICATION_TITLE);
+        intent.removeExtra(Constants.EXTRA_NOTIFICATION_BODY);
+        intent.removeExtra(Constants.EXTRA_MISSION_ID);
+        intent.removeExtra(Constants.EXTRA_DISPATCH_ATTEMPT_ID);
+        intent.removeExtra(Constants.EXTRA_MISSION_TYPE);
+        intent.removeExtra(Constants.EXTRA_DISPATCH_TYPE);
+        intent.removeExtra(Constants.EXTRA_EXPIRES_AT);
+        intent.removeExtra(Constants.EXTRA_CHANNEL_ID);
+        intent.removeExtra(Constants.EXTRA_CLICK_ACTION);
+    }
+
+    private String sanitize(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

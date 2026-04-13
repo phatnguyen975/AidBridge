@@ -24,6 +24,7 @@ public class UserController {
     private final RequestOtpUseCase requestOtpUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
     private final LogoutUserUseCase logoutUserUseCase;
+    private final UpdateFcmTokenUseCase updateFcmTokenUseCase;
     private final ResetPasswordUseCase resetPasswordUseCase;
     private final ChangePasswordUseCase changePasswordUseCase;
     private final GetCurrentUserUseCase getCurrentUserUseCase;
@@ -71,6 +72,18 @@ public class UserController {
             @RequestBody(required = false) LogoutRequest request) {
         logoutUserUseCase.execute(authHeader, request);
         return ResponseEntity.ok(ApiResponse.success("Logged out successfully", null));
+    }
+
+    /**
+     * POST /api/auth/update-fcm - Cập nhật FCM token cho phiên hiện tại
+     */
+    @PostMapping("/api/auth/update-fcm")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<Void>> updateFcmToken(
+            @RequestHeader("Authorization") String authHeader,
+            @Valid @RequestBody UpdateFcmTokenRequest request) {
+        updateFcmTokenUseCase.execute(authHeader, request);
+        return ResponseEntity.ok(ApiResponse.success("FCM token updated successfully", null));
     }
 
     /**

@@ -25,7 +25,6 @@ public class MissionResponse {
 
     private UUID sosRequestId;
     private UUID aidRequestId;
-    private UUID helpRequestId;
     private UUID volunteerId;
     private UUID hubId;
 

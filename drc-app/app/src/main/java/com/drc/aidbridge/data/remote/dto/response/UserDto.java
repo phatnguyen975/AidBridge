@@ -8,13 +8,13 @@ public class UserDto {
     @SerializedName("id")
     private String id;
 
-    @SerializedName("name")
+    @SerializedName(value = "full_name", alternate = {"name"})
     private String name;
 
     @SerializedName("email")
     private String email;
 
-    @SerializedName("phone")
+    @SerializedName(value = "phone_number", alternate = {"phone"})
     private String phone;
 
     @Nullable
@@ -25,10 +25,10 @@ public class UserDto {
     private String role;
 
     @Nullable
-    @SerializedName("avatarUrl")
+    @SerializedName(value = "avatar_url", alternate = {"avatarUrl"})
     private String avatarUrl;
 
-    @SerializedName("verified")
+    @SerializedName(value = "is_verified", alternate = {"verified"})
     private boolean verified;
 
     public UserDto() {

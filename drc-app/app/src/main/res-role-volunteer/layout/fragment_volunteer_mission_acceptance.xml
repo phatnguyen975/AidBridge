@@ -169,6 +169,7 @@
                     app:cardCornerRadius="@dimen/volunteer_sos_acceptance_distance_badge_radius">
 
                     <TextView
+                        android:id="@+id/tvDistanceValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="@dimen/spacing_sm"
@@ -279,6 +280,7 @@
                                     android:textSize="@dimen/volunteer_sos_acceptance_label_text_size" />
 
                                 <TextView
+                                    android:id="@+id/tvVictimValue"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="@dimen/spacing_xs"

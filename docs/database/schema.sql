@@ -50,13 +50,12 @@ CREATE TYPE dispatch_response AS ENUM (
 CREATE TYPE badge_level AS ENUM ('BRONZE', 'SILVER', 'GOLD', 'PLATINUM');
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
 CREATE TABLE public.aid_request_items (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
     aid_request_id uuid NOT NULL,
     item_category_id uuid NOT NULL,
-    quantity integer NOT NULL CHECK (quantity > 0),
-    description text,
-    created_at timestamp with time zone NOT NULL DEFAULT now(),
     CONSTRAINT aid_request_items_pkey PRIMARY KEY (id),
     CONSTRAINT aid_request_items_aid_request_id_fkey FOREIGN KEY (aid_request_id) REFERENCES public.aid_requests(id),
     CONSTRAINT aid_request_items_item_category_id_fkey FOREIGN KEY (item_category_id) REFERENCES public.item_categories(id)
@@ -65,8 +64,6 @@ CREATE TABLE public.aid_requests (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
     requester_id uuid NOT NULL,
     status character varying NOT NULL DEFAULT 'PENDING'::aid_status,
-    lat numeric NOT NULL,
-    lng numeric NOT NULL,
     address character varying,
     description text,
     number_elderly integer NOT NULL DEFAULT 0,
@@ -74,8 +71,23 @@ CREATE TABLE public.aid_requests (
     number_children integer NOT NULL DEFAULT 0,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    location USER - DEFINED NOT NULL,
     CONSTRAINT aid_requests_pkey PRIMARY KEY (id),
     CONSTRAINT aid_requests_requester_id_fkey FOREIGN KEY (requester_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.attachments (
+    id uuid NOT NULL,
+    cloudinary_public_id character varying NOT NULL UNIQUE,
+    created_at timestamp with time zone NOT NULL,
+    file_name character varying NOT NULL,
+    file_size bigint NOT NULL,
+    mime_type character varying NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    uploaded_by uuid NOT NULL,
+    url character varying NOT NULL,
+    reference_id uuid,
+    reference_type character varying,
+    CONSTRAINT attachments_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.chat_messages (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -97,7 +109,7 @@ CREATE TABLE public.dispatch_attempts (
     dispatch_type character varying NOT NULL,
     batch_number integer NOT NULL DEFAULT 1,
     radius_km numeric,
-    response USER - DEFINED NOT NULL DEFAULT 'PENDING'::dispatch_response,
+    response character varying NOT NULL DEFAULT 'PENDING'::dispatch_response,
     responded_at timestamp with time zone,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     CONSTRAINT dispatch_attempts_pkey PRIMARY KEY (id),
@@ -133,19 +145,6 @@ CREATE TABLE public.donations (
     CONSTRAINT donations_sponsor_id_fkey FOREIGN KEY (sponsor_id) REFERENCES public.users(id),
     CONSTRAINT donations_hub_id_fkey FOREIGN KEY (hub_id) REFERENCES public.hubs(id),
     CONSTRAINT donations_received_by_fkey FOREIGN KEY (received_by) REFERENCES public.users(id)
-);
-CREATE TABLE public.help_requests (
-    id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    name_victim character varying,
-    address character varying,
-    phone_number character varying,
-    lat numeric,
-    lng numeric,
-    status character varying NOT NULL DEFAULT 'PENDING'::character varying,
-    description text,
-    created_at timestamp with time zone NOT NULL DEFAULT now(),
-    updated_at timestamp with time zone NOT NULL DEFAULT now(),
-    CONSTRAINT help_requests_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.hub_accepted_categories (
     hub_id uuid NOT NULL,
@@ -185,14 +184,13 @@ CREATE TABLE public.hubs (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
     name character varying NOT NULL,
     address character varying,
-    lat numeric NOT NULL,
-    lng numeric NOT NULL,
     phone_number character varying,
     image_url character varying,
     status USER - DEFINED NOT NULL DEFAULT 'ACTIVE'::hub_status,
     operating_hours character varying,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    location USER - DEFINED NOT NULL,
     CONSTRAINT hubs_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.inventory_logs (
@@ -228,14 +226,11 @@ CREATE TABLE public.missions (
     mission_type USER - DEFINED NOT NULL,
     sos_request_id uuid,
     aid_request_id uuid,
-    help_request_id uuid,
     volunteer_id uuid,
     hub_id uuid,
     status USER - DEFINED NOT NULL DEFAULT 'PENDING'::mission_status,
     qr_code_token character varying UNIQUE,
     priority_score numeric DEFAULT 0.00,
-    victim_lat numeric,
-    victim_lng numeric,
     cancellation_reason text,
     image_url character varying,
     comment text,
@@ -247,10 +242,10 @@ CREATE TABLE public.missions (
     cancelled_at timestamp with time zone,
     confirmation_image_url character varying,
     picked_up_at timestamp with time zone,
+    victim_location USER - DEFINED,
     CONSTRAINT missions_pkey PRIMARY KEY (id),
     CONSTRAINT missions_sos_request_id_fkey FOREIGN KEY (sos_request_id) REFERENCES public.sos_requests(id),
     CONSTRAINT missions_aid_request_id_fkey FOREIGN KEY (aid_request_id) REFERENCES public.aid_requests(id),
-    CONSTRAINT missions_help_request_id_fkey FOREIGN KEY (help_request_id) REFERENCES public.help_requests(id),
     CONSTRAINT missions_volunteer_id_fkey FOREIGN KEY (volunteer_id) REFERENCES public.users(id),
     CONSTRAINT missions_hub_id_fkey FOREIGN KEY (hub_id) REFERENCES public.hubs(id)
 );
@@ -265,22 +260,6 @@ CREATE TABLE public.notifications (
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     CONSTRAINT notifications_pkey PRIMARY KEY (id),
     CONSTRAINT notifications_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
-);
-CREATE TABLE public.ratings (
-    id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    mission_id uuid NOT NULL UNIQUE,
-    rater_id uuid NOT NULL,
-    ratee_id uuid NOT NULL,
-    score integer NOT NULL CHECK (
-        score >= 1
-        AND score <= 5
-    ),
-    comment text,
-    created_at timestamp with time zone NOT NULL DEFAULT now(),
-    CONSTRAINT ratings_pkey PRIMARY KEY (id),
-    CONSTRAINT ratings_mission_id_fkey FOREIGN KEY (mission_id) REFERENCES public.missions(id),
-    CONSTRAINT ratings_rater_id_fkey FOREIGN KEY (rater_id) REFERENCES public.users(id),
-    CONSTRAINT ratings_ratee_id_fkey FOREIGN KEY (ratee_id) REFERENCES public.users(id)
 );
 CREATE TABLE public.refresh_tokens (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -298,8 +277,6 @@ CREATE TABLE public.shelters (
     hub_id uuid,
     name character varying NOT NULL,
     address character varying,
-    lat numeric NOT NULL,
-    lng numeric NOT NULL,
     max_capacity integer NOT NULL,
     current_capacity integer NOT NULL DEFAULT 0,
     phone_number character varying,
@@ -307,6 +284,7 @@ CREATE TABLE public.shelters (
     is_active boolean NOT NULL DEFAULT true,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    location USER - DEFINED NOT NULL,
     CONSTRAINT shelters_pkey PRIMARY KEY (id),
     CONSTRAINT shelters_hub_id_fkey FOREIGN KEY (hub_id) REFERENCES public.hubs(id)
 );
@@ -315,8 +293,6 @@ CREATE TABLE public.sos_requests (
     requester_id uuid,
     urgency USER - DEFINED NOT NULL DEFAULT 'MEDIUM'::urgency_level,
     status USER - DEFINED NOT NULL DEFAULT 'PENDING'::sos_status,
-    lat double precision NOT NULL,
-    lng double precision NOT NULL,
     address character varying,
     description text,
     people_count integer NOT NULL DEFAULT 1 CHECK (people_count > 0),
@@ -328,8 +304,20 @@ CREATE TABLE public.sos_requests (
             ARRAY ['CRITICAL'::character varying, 'HIGH'::character varying, 'MEDIUM'::character varying, 'LOW'::character varying]::text []
         )
     ),
+    location USER - DEFINED NOT NULL,
     CONSTRAINT sos_requests_pkey PRIMARY KEY (id),
     CONSTRAINT sos_requests_requester_id_fkey FOREIGN KEY (requester_id) REFERENCES public.users(id)
+);
+CREATE TABLE public.spatial_ref_sys (
+    srid integer NOT NULL CHECK (
+        srid > 0
+        AND srid <= 998999
+    ),
+    auth_name character varying,
+    auth_srid integer,
+    srtext character varying,
+    proj4text character varying,
+    CONSTRAINT spatial_ref_sys_pkey PRIMARY KEY (srid)
 );
 CREATE TABLE public.sponsor_profiles (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -380,12 +368,10 @@ CREATE TABLE public.volunteer_profiles (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
     user_id uuid NOT NULL UNIQUE,
     is_online boolean NOT NULL DEFAULT false,
-    current_lat numeric,
-    current_lng numeric,
     avg_rating numeric DEFAULT 0.00,
     total_tasks_completed integer NOT NULL DEFAULT 0,
     badge USER - DEFINED DEFAULT 'BRONZE'::badge_level,
-    last_location_update timestamp with time zone,
+    last_active_at timestamp with time zone,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     updated_at timestamp with time zone NOT NULL DEFAULT now(),
     avg_response_seconds integer NOT NULL,
@@ -394,6 +380,7 @@ CREATE TABLE public.volunteer_profiles (
             ARRAY ['MOTORBIKE'::character varying, 'CAR'::character varying, 'TRUCK'::character varying, 'BICYCLE'::character varying, 'WALK'::character varying]::text []
         )
     ),
+    current_location USER - DEFINED,
     CONSTRAINT volunteer_profiles_pkey PRIMARY KEY (id),
     CONSTRAINT volunteer_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
 );

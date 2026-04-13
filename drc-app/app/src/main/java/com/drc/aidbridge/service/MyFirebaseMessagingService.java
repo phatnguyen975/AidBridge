@@ -1,7 +1,6 @@
 package com.drc.aidbridge.service;
 
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -16,6 +15,7 @@ import com.drc.aidbridge.AidBridgeApplication;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.ui.main.MainActivity;
+import com.drc.aidbridge.utils.Constants;
 import com.drc.aidbridge.utils.TokenManager;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -42,25 +42,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        
+
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
         String title = null;
         String body = null;
-
-        // Ưu tiên lấy từ Notification Payload
         if (remoteMessage.getNotification() != null) {
             title = remoteMessage.getNotification().getTitle();
             body = remoteMessage.getNotification().getBody();
-        } 
-        // Nếu không có, lấy từ Data Payload (Server thường gửi dạng này để xử lý custom)
-        else if (remoteMessage.getData().size() > 0) {
-            title = remoteMessage.getData().get("title");
-            body = remoteMessage.getData().get("body");
+        } else if (!remoteMessage.getData().isEmpty()) {
+            title = remoteMessage.getData().get(Constants.EXTRA_NOTIFICATION_TITLE);
+            body = remoteMessage.getData().get(Constants.EXTRA_NOTIFICATION_BODY);
         }
 
         if (body != null) {
-            sendNotification(title, body);
+            sendNotification(title, body, remoteMessage);
         }
     }
 
@@ -68,10 +64,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onNewToken(@NonNull String newToken) {
         super.onNewToken(newToken);
         String sanitizedToken = sanitize(newToken);
-        if (sanitizedToken == null) return;
+        if (sanitizedToken == null) {
+            return;
+        }
 
         tokenManager.saveFcmToken(sanitizedToken);
-        if (!tokenManager.hasActiveSession()) return;
+        if (!tokenManager.hasActiveSession()) {
+            return;
+        }
 
         String deviceId = sanitize(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
         if (deviceId != null) {
@@ -79,33 +79,95 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-    private void sendNotification(String title, String messageBody) {
+    private void sendNotification(String title, String messageBody, @NonNull RemoteMessage remoteMessage) {
+        String missionType = sanitize(remoteMessage.getData().get(Constants.EXTRA_MISSION_TYPE));
+        int notificationId = resolveNotificationId(remoteMessage);
+
         Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
-                PendingIntent.FLAG_IMMUTABLE);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        attachDispatchExtras(intent, remoteMessage);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this,
+                notificationId,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        
-        // SỬ DỤNG FCM_CHANNEL_ID từ AidBridgeApplication
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, AidBridgeApplication.FCM_CHANNEL_ID)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(title != null ? title : getString(R.string.app_name))
-                        .setContentText(messageBody)
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
+                this,
+                resolveChannelId(remoteMessage, missionType)
+        )
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(title != null ? title : getString(R.string.app_name))
+                .setContentText(messageBody)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(messageBody))
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setCategory(NotificationCompat.CATEGORY_EVENT)
+                .setDefaults(NotificationCompat.DEFAULT_ALL);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        
-        // Kiểm tra quyền trước khi gửi (Dành cho Android 13+)
         try {
-            notificationManager.notify((int) System.currentTimeMillis(), notificationBuilder.build());
+            notificationManager.notify(notificationId, notificationBuilder.build());
         } catch (SecurityException e) {
             Log.e(TAG, "Permission not granted for notifications", e);
         }
+    }
+
+    private void attachDispatchExtras(@NonNull Intent intent, @NonNull RemoteMessage remoteMessage) {
+        if (remoteMessage.getData().isEmpty()) {
+            return;
+        }
+
+        for (String key : new String[]{
+                Constants.EXTRA_NOTIFICATION_TYPE,
+                Constants.EXTRA_NOTIFICATION_TITLE,
+                Constants.EXTRA_NOTIFICATION_BODY,
+                Constants.EXTRA_MISSION_ID,
+                Constants.EXTRA_DISPATCH_ATTEMPT_ID,
+                Constants.EXTRA_MISSION_TYPE,
+                Constants.EXTRA_DISPATCH_TYPE,
+                Constants.EXTRA_EXPIRES_AT,
+                Constants.EXTRA_CHANNEL_ID,
+                Constants.EXTRA_CLICK_ACTION
+        }) {
+            String value = sanitize(remoteMessage.getData().get(key));
+            if (value != null) {
+                intent.putExtra(key, value);
+            }
+        }
+    }
+
+    @NonNull
+    private String resolveChannelId(@NonNull RemoteMessage remoteMessage, String missionType) {
+        String explicitChannelId = sanitize(remoteMessage.getData().get(Constants.EXTRA_CHANNEL_ID));
+        if (explicitChannelId != null) {
+            return explicitChannelId;
+        }
+
+        if ("RESCUE".equalsIgnoreCase(missionType)) {
+            return AidBridgeApplication.FCM_CHANNEL_EMERGENCY;
+        }
+
+        if ("DELIVERY".equalsIgnoreCase(missionType)) {
+            return AidBridgeApplication.FCM_CHANNEL_UPDATES;
+        }
+
+        return AidBridgeApplication.FCM_CHANNEL_ID;
+    }
+
+    private int resolveNotificationId(@NonNull RemoteMessage remoteMessage) {
+        String dispatchAttemptId = sanitize(remoteMessage.getData().get(Constants.EXTRA_DISPATCH_ATTEMPT_ID));
+        if (dispatchAttemptId != null) {
+            return Math.abs(dispatchAttemptId.hashCode());
+        }
+        return (int) System.currentTimeMillis();
     }
 
     @Override
@@ -115,7 +177,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private String sanitize(String value) {
-        if (value == null) return null;
+        if (value == null) {
+            return null;
+        }
         String trimmed = value.trim();
         return trimmed.isEmpty() ? null : trimmed;
     }
