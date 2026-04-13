@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 
 import java.util.stream.Collectors;
 
@@ -81,7 +82,28 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("File size exceeds the allowed limit"));
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMultipartException(MultipartException ex) {
+        log.warn("Multipart request parsing failed: {}", ex.getMessage());
+        String message = ex.getMessage();
+
+        if (message != null && message.contains("no multipart boundary was found")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error("Invalid multipart request: missing or invalid Content-Type boundary. " +
+                            "Ensure the request has proper multipart/form-data encoding with a boundary parameter."));
+        }
+
+        if (message != null && message.contains("Stream closed")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error("Multipart request stream was closed or incomplete."));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error("Failed to parse multipart request: " +
+                        (message != null ? message : "Invalid multipart format")));
+    }
+
+    @ExceptionHandler({ IllegalArgumentException.class, IllegalStateException.class })
     public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentAndStateExceptions(RuntimeException ex) {
         String message = ex.getMessage() != null && !ex.getMessage().isBlank()
                 ? ex.getMessage()

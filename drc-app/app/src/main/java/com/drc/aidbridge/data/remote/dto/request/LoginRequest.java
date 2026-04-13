@@ -10,10 +10,10 @@ public class LoginRequest {
     @SerializedName("password")
     private final String password;
 
-    @SerializedName("deviceId")
+    @SerializedName("device_id")
     private final String deviceId;
 
-    @SerializedName("fcmToken")
+    @SerializedName("fcm_token")
     private final String fcmToken;
 
     public LoginRequest(String email, String password, String deviceId, String fcmToken) {

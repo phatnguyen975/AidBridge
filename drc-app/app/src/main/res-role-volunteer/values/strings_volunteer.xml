@@ -208,6 +208,21 @@
     <string name="volunteer_mission_acceptance_supply_items_label">Vật phẩm tiếp tế</string>
     <string name="volunteer_mission_acceptance_supply_items_value">Thuốc, Quần áo, Thức ăn, Nước uống, Khác</string>
     <string name="volunteer_mission_acceptance_supply_todo_toast">Chức năng chuyển sang màn hình tiếp tế đang được phát triển (TODO)</string>
+    <string name="volunteer_mission_acceptance_no_dispatch">Hiện chưa có nhiệm vụ điều phối để xử lý.</string>
+    <string name="volunteer_mission_acceptance_expired">Yêu cầu điều phối đã hết hạn.</string>
+    <string name="volunteer_mission_acceptance_address_fallback">Địa chỉ đang được cập nhật.</string>
+    <string name="volunteer_mission_acceptance_note_fallback">Chưa có ghi chú bổ sung cho nhiệm vụ này.</string>
+    <string name="volunteer_mission_acceptance_supply_items_fallback">Chi tiết vật phẩm sẽ được cập nhật sau khi xác nhận nhiệm vụ.</string>
+    <string name="volunteer_mission_acceptance_rescue_subject">Người cần cứu hộ</string>
+    <string name="volunteer_mission_acceptance_delivery_subject">Điểm tiếp nhận hỗ trợ</string>
+    <string name="volunteer_mission_acceptance_coordinates_badge">Tọa độ %.4f, %.4f</string>
+    <string name="volunteer_mission_acceptance_coordinates_fallback">Tọa độ %.4f, %.4f</string>
+    <string name="volunteer_mission_acceptance_distance_unavailable">Vị trí đang được cập nhật</string>
+    <string name="volunteer_mission_reject_reason_title">Chọn lý do từ chối</string>
+    <string name="volunteer_mission_reject_reason_busy">Đang bận</string>
+    <string name="volunteer_mission_reject_reason_too_far">Quá xa</string>
+    <string name="volunteer_mission_reject_reason_personal">Lý do cá nhân</string>
+    <string name="volunteer_mission_reject_reason_other">Khác</string>
 
     <!-- Volunteer Current SOS Mission -->
     <string name="volunteer_current_mission_title">Nhiệm vụ hiện tại</string>

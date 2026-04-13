@@ -1,6 +1,8 @@
 package com.drc.aidbridge.modules.aid.internal.web;
+
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
+import com.drc.aidbridge.modules.shared.exception.BadRequestException;
 import com.drc.aidbridge.modules.aid.internal.usecase.*;
 import com.drc.aidbridge.modules.aid.internal.web.dto.*;
 import jakarta.validation.Valid;
@@ -31,7 +33,7 @@ public class AidController {
         AidRequestResponse response = createAidRequestUseCase.execute(userId, request);
         return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<AidRequestResponse>> getAidRequest(@PathVariable UUID id) {
         AidRequestResponse response = getAidRequestUseCase.execute(id);
@@ -70,10 +72,17 @@ public class AidController {
         return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
     }
 
-    private UUID resolveUserId(Jwt jwt) {
-        if (jwt == null || jwt.getSubject() == null || jwt.getSubject().isBlank()) {
-            throw new IllegalArgumentException("Authenticated user is required");
+        // Validate audio file
+        if (audioFile == null || audioFile.isEmpty()) {
+            throw new BadRequestException("Audio file is required and cannot be empty");
         }
-        return UUID.fromString(jwt.getSubject());
+
+        if (audioFile.getSize() == 0) {
+            throw new BadRequestException("Audio file cannot be empty");
+        }
+
+        // userId có thể dùng để xác thực quyền nếu cần (import sẵn ở trên)
+        String transcript = transcribeAidRequestVoiceUseCase.execute(audioFile);
+        return ResponseEntity.ok(ApiResponse.success("Voice transcription completed", transcript));
     }
 }

@@ -22,7 +22,6 @@ public class MissionDTO {
     private MissionStatus status;
     private UUID sosRequestId;
     private UUID aidRequestId;
-    private UUID helpRequestId;
     private UUID volunteerId;
     private UUID hubId;
     private BigDecimal victimLat;

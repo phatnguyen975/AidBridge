@@ -1,6 +1,7 @@
 package com.drc.aidbridge.di;
 
 import com.drc.aidbridge.data.remote.api.AuthApiService;
+import com.drc.aidbridge.data.remote.api.MissionApiService;
 import com.drc.aidbridge.data.remote.api.UserApiService;
 
 import javax.inject.Singleton;
@@ -31,5 +32,11 @@ public class ApiModule {
     @Singleton
     public UserApiService provideUserApiService(Retrofit retrofit) {
         return retrofit.create(UserApiService.class);
+    }
+
+    @Provides
+    @Singleton
+    public MissionApiService provideMissionApiService(Retrofit retrofit) {
+        return retrofit.create(MissionApiService.class);
     }
 }

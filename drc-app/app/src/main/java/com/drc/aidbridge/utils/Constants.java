@@ -19,7 +19,7 @@ public final class Constants {
 
     // === Auth Endpoints ===
     public static final String AUTH_PATH_PREFIX = "/auth/";
-    public static final String REFRESH_TOKEN_ENDPOINT = "auth/refresh-token";
+    public static final String REFRESH_TOKEN_ENDPOINT = "auth/refresh";
 
     // === SharedPreferences / EncryptedSharedPreferences ===
     public static final String PREFS_NAME = "aidbridge_secure_prefs";
@@ -34,6 +34,20 @@ public final class Constants {
     public static final String KEY_USER_ADDRESS = "user_address";
     public static final String KEY_USER_VERIFIED = "user_verified";
     public static final String KEY_FCM_TOKEN = "fcm_token";
+
+    // === Dispatch Notifications ===
+    public static final String NOTIFICATION_TYPE_DISPATCH_REQUEST = "DISPATCH_REQUEST";
+    public static final String CLICK_ACTION_OPEN_DISPATCH_PREPARE = "OPEN_DISPATCH_PREPARE";
+    public static final String EXTRA_NOTIFICATION_TYPE = "type";
+    public static final String EXTRA_NOTIFICATION_TITLE = "title";
+    public static final String EXTRA_NOTIFICATION_BODY = "body";
+    public static final String EXTRA_MISSION_ID = "mission_id";
+    public static final String EXTRA_DISPATCH_ATTEMPT_ID = "dispatch_attempt_id";
+    public static final String EXTRA_MISSION_TYPE = "mission_type";
+    public static final String EXTRA_DISPATCH_TYPE = "dispatch_type";
+    public static final String EXTRA_EXPIRES_AT = "expires_at";
+    public static final String EXTRA_CHANNEL_ID = "channel_id";
+    public static final String EXTRA_CLICK_ACTION = "click_action";
 
     // === Room Database ===
     public static final String DB_NAME = "aidbridge_db";
