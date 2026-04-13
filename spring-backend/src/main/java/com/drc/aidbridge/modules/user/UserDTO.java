@@ -16,6 +16,7 @@ public class UserDTO {
     private String email;
     private String phone;
     private String role;
+    private String fcmToken;
     private String avatarUrl;
     private boolean isVerified;
 }

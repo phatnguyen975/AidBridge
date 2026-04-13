@@ -4,10 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class UpdateFcmTokenRequest {
 
-    @SerializedName("deviceId")
+    @SerializedName("device_id")
     private final String deviceId;
 
-    @SerializedName("fcmToken")
+    @SerializedName("fcm_token")
     private final String fcmToken;
 
     public UpdateFcmTokenRequest(String deviceId, String fcmToken) {

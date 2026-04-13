@@ -3,6 +3,7 @@ package com.drc.aidbridge.modules.mission.internal.repository;
 import com.drc.aidbridge.modules.shared.enums.MissionStatus;
 import com.drc.aidbridge.modules.shared.enums.MissionType;
 import com.drc.aidbridge.modules.mission.internal.entity.Mission;
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -151,6 +152,27 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
                 return findHistoryByVolunteerIdWithStatuses(volunteerId, MissionStatus.COMPLETED,
                                 MissionStatus.CANCELLED, pageable);
         }
+
+        /**
+         * Join-based volunteer mission history for API response without facade calls.
+         */
+        @Query(value = "SELECT " +
+                        "CAST(m.mission_type AS text) AS \"missionType\", " +
+                        "m.completed_at AS \"completedAt\", " +
+                        "CASE " +
+                        "WHEN m.mission_type = 'RESCUE' THEN s.address " +
+                        "WHEN m.mission_type = 'DELIVERY' THEN a.address " +
+                        "ELSE NULL END AS \"address\" " +
+                        "FROM missions m " +
+                        "LEFT JOIN sos_requests s ON s.id = m.sos_request_id " +
+                        "LEFT JOIN aid_requests a ON a.id = m.aid_request_id " +
+                        "WHERE m.volunteer_id = :volunteerId " +
+                        "AND m.status = 'COMPLETED' " +
+                        "ORDER BY m.completed_at DESC",
+                        countQuery = "SELECT COUNT(*) FROM missions m WHERE m.volunteer_id = :volunteerId AND m.status = 'COMPLETED'",
+                        nativeQuery = true)
+        Page<MissionHistoryProjection> findHistoryProjectionByVolunteerId(@Param("volunteerId") UUID volunteerId,
+                        Pageable pageable);
 
         /**
          * Statistics: Đếm missions trong khoảng thời gian

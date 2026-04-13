@@ -12,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.UUID;
 
+// Handle explicit online/offline toggle from user
 @Component
 @RequiredArgsConstructor
 public class ToggleVolunteerStatusUseCase {
@@ -29,15 +31,13 @@ public class ToggleVolunteerStatusUseCase {
         Volunteer volunteer = volunteerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Volunteer profile not found"));
 
+        // Cập nhật trạng thái online
         volunteer.setOnline(request.isOnline());
 
-        // if (request.getCurrentLat() != null) {
-        //     volunteer.setCurrentLat(request.getCurrentLat());
-        // }
-        // if (request.getCurrentLng() != null) {
-        //     volunteer.setCurrentLng(request.getCurrentLng());
-        // }
-        
+        // Update last active time if turning online to start heartbeat counter
+        if (request.isOnline()) {
+            volunteer.setLastActiveAt(Instant.now());
+        }
 
         volunteer = volunteerRepository.save(volunteer);
 

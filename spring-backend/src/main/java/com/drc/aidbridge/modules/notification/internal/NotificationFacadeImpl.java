@@ -3,10 +3,15 @@ package com.drc.aidbridge.modules.notification.internal;
 import com.drc.aidbridge.modules.notification.NotificationFacade;
 import com.drc.aidbridge.modules.notification.internal.service.EmailService;
 import com.drc.aidbridge.modules.notification.internal.service.FCMService;
+import com.drc.aidbridge.modules.shared.enums.DispatchType;
+import com.drc.aidbridge.modules.shared.enums.MissionType;
+import com.drc.aidbridge.modules.user.UserDTO;
+import com.drc.aidbridge.modules.user.UserFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 @Slf4j
@@ -14,7 +19,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class NotificationFacadeImpl implements NotificationFacade {
      
-    private final EmailService emailService; 
+    private final EmailService emailService;
+    private final UserFacade userFacade;
     private final Optional<FCMService> fcmService;
     
     @Override
@@ -58,5 +64,20 @@ public class NotificationFacadeImpl implements NotificationFacade {
             log.info("Prepared cancellation notification for mission {} with type {}", missionId,
                 notification.getType());
         }, () -> log.warn("FCM service unavailable, skipping cancellation notification for mission {}", missionId));
+    }
+
+    @Override
+    public void notifyDispatchRequest(UUID volunteerId, UUID missionId, UUID dispatchAttemptId,
+                                      Instant expiresAt, MissionType missionType, DispatchType dispatchType) {
+        fcmService.ifPresentOrElse(service -> {
+            UserDTO volunteer = userFacade.getUserById(volunteerId);
+            FCMService.MissionNotification notification = service.createDispatchRequestNotification(
+                    missionId,
+                    dispatchAttemptId,
+                    expiresAt,
+                    missionType,
+                    dispatchType);
+            service.sendMissionNotification(volunteer.getFcmToken(), notification);
+        }, () -> log.warn("FCM service unavailable, skipping dispatch notification for mission {}", missionId));
     }
 }

@@ -25,10 +25,4 @@ public class AidRequestItem {
 
     @Column(name = "item_category_id", nullable = false)
     private UUID itemCategoryId;
-
-    @Transient
-    private Integer quantity;
-
-    @Transient
-    private String description;
 }

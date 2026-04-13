@@ -1,12 +1,14 @@
 package com.drc.aidbridge.di;
 
 import com.drc.aidbridge.data.repository.AuthRepositoryImpl;
+import com.drc.aidbridge.data.repository.MissionRepositoryImpl;
 import com.drc.aidbridge.data.repository.UserRepositoryImpl;
 import com.drc.aidbridge.data.repository.victim.VictimHistoryRepositoryImpl;
 import com.drc.aidbridge.data.repository.victim.VictimSosRepositoryImpl;
 import com.drc.aidbridge.data.repository.victim.VictimSupplyRepositoryImpl;
 import com.drc.aidbridge.data.repository.volunteer.VolunteerRepositoryImpl;
 import com.drc.aidbridge.domain.repository.AuthRepository;
+import com.drc.aidbridge.domain.repository.MissionRepository;
 import com.drc.aidbridge.domain.repository.UserRepository;
 import com.drc.aidbridge.domain.repository.volunteer.VolunteerRepository;
 import com.drc.aidbridge.domain.repository.victim.VictimHistoryRepository;

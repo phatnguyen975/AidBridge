@@ -1,7 +1,6 @@
 package com.drc.aidbridge.ui.splash;
 
 import android.content.Intent;
-import android.view.animation.AnimationUtils;
 import android.view.LayoutInflater;
 
 import com.drc.aidbridge.databinding.ActivitySplashBinding;
@@ -32,6 +31,10 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     @Override
     protected void setupViews() {
         playFadeInAnimation();
+        if (shouldSkipSplashDelay()) {
+            navigateToNextScreen();
+            return;
+        }
         navigateAfterDelay();
     }
 
@@ -72,6 +75,21 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
         binding.getRoot().postDelayed(this::navigateToNextScreen, Constants.SPLASH_DELAY_MS);
     }
 
+    private boolean shouldSkipSplashDelay() {
+        Intent launchIntent = getIntent();
+        if (launchIntent == null) {
+            return false;
+        }
+
+        String notificationType = launchIntent.getStringExtra(Constants.EXTRA_NOTIFICATION_TYPE);
+        if (Constants.NOTIFICATION_TYPE_DISPATCH_REQUEST.equals(notificationType)) {
+            return true;
+        }
+
+        String clickAction = launchIntent.getStringExtra(Constants.EXTRA_CLICK_ACTION);
+        return Constants.CLICK_ACTION_OPEN_DISPATCH_PREPARE.equals(clickAction);
+    }
+
     /**
      * Determines the next screen based on the current authentication state:
      * - Token present and non-empty → navigate to MainActivity (authenticated shell).
@@ -90,6 +108,10 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
             }
         } else {
             intent = new Intent(this, AuthActivity.class);
+        }
+
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            intent.putExtras(getIntent().getExtras());
         }
 
         startActivity(intent);

@@ -47,13 +47,6 @@ public class ConfirmPickupUseCase {
                     "Mission must be in ASSIGNED status for pickup. Current: " + mission.getStatus());
         }
 
-        // Optional QR code verification
-        if (request.getQrCodeToken() != null && !request.getQrCodeToken().isEmpty()) {
-            if (!request.getQrCodeToken().equals(mission.getQrCodeToken())) {
-                throw new IllegalArgumentException("Invalid QR code token");
-            }
-        }
-
         mission.setStatus(MissionStatus.PICKED_UP);
         mission.setPickedUpAt(Instant.now());
         Mission saved = missionRepository.save(mission);
