@@ -85,9 +85,6 @@ public class AidController {
     }
 
     private UUID resolveUserId(Jwt jwt) {
-        if (jwt == null || jwt.getSubject() == null || jwt.getSubject().isBlank()) {
-            throw new IllegalArgumentException("Authenticated user is required");
-        }
         return UUID.fromString(jwt.getSubject());
     }
 

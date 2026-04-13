@@ -69,25 +69,23 @@ public interface VolunteerJpaRepository extends JpaRepository<Volunteer, UUID> {
                         @Param("volunteerId") UUID volunteerId,
                         @Param("location") Point location);
 
-    // Batch update: Mark volunteers offline if no heartbeat received within timeout
-    @Modifying
-    @Transactional
-    @Query("UPDATE Volunteer v SET v.isOnline = false WHERE v.isOnline = true AND v.lastActiveAt < :cutoffTime")
-    int updateOfflineVolunteers(@Param("cutoffTime") Instant cutoffTime);
+        // Batch update: Mark volunteers offline if no heartbeat received within timeout
+        @Modifying
+        @Transactional
+        @Query("UPDATE Volunteer v SET v.isOnline = false WHERE v.isOnline = true AND v.lastActiveAt < :cutoffTime")
+        int updateOfflineVolunteers(@Param("cutoffTime") Instant cutoffTime);
 
-    /**
-     * Native query returning a projection interface mapped to typed getters.
-     */
-    @Query(value = "SELECT "
-            + "(SELECT COUNT(*) FROM missions WHERE volunteer_id = :volunteerId AND status = 'COMPLETED') AS \"totalTasksCompleted\", "
-            + "(SELECT COUNT(*) FROM missions WHERE volunteer_id = :volunteerId AND mission_type = 'RESCUE') AS \"rescueMissions\", "
-            + "(SELECT COUNT(*) FROM missions WHERE volunteer_id = :volunteerId AND mission_type = 'DELIVERY') AS \"deliveryMissions\", "
-            + "(SELECT AVG(r.score) FROM ratings r WHERE r.ratee_id = (SELECT user_id FROM volunteer_profiles WHERE id = :volunteerId)) AS \"avgRating\", "
-            + "(SELECT COUNT(*) FROM ratings r WHERE r.ratee_id = (SELECT user_id FROM volunteer_profiles WHERE id = :volunteerId)) AS \"totalRatings\", "
-            + "(SELECT AVG(EXTRACT(EPOCH FROM (da.responded_at - da.created_at))) FROM dispatch_attempts da WHERE da.volunteer_id = :volunteerId AND da.responded_at IS NOT NULL) AS \"avgResponseSeconds\", "
-            + "(SELECT COALESCE(SUM(s.people_count),0) FROM missions m JOIN sos_requests s ON m.sos_request_id = s.id WHERE m.volunteer_id = :volunteerId AND m.status = 'COMPLETED') AS \"peopleHelped\"",
-            nativeQuery = true)
-    VolunteerStatisticsProjection findStatisticsByVolunteerId(@Param("volunteerId") UUID volunteerId);
+        /**
+         * Native query returning a projection interface mapped to typed getters.
+         */
+        @Query(value = "SELECT "
+                        + "(SELECT COUNT(*) FROM missions WHERE volunteer_id = :volunteerId AND status = 'COMPLETED') AS \"totalTasksCompleted\", "
+                        + "(SELECT COUNT(*) FROM missions WHERE volunteer_id = :volunteerId AND mission_type = 'RESCUE') AS \"rescueMissions\", "
+                        + "(SELECT COUNT(*) FROM missions WHERE volunteer_id = :volunteerId AND mission_type = 'DELIVERY') AS \"deliveryMissions\", "
+                        + "(SELECT AVG(r.score) FROM ratings r WHERE r.ratee_id = (SELECT user_id FROM volunteer_profiles WHERE id = :volunteerId)) AS \"avgRating\", "
+                        + "(SELECT COUNT(*) FROM ratings r WHERE r.ratee_id = (SELECT user_id FROM volunteer_profiles WHERE id = :volunteerId)) AS \"totalRatings\", "
+                        + "(SELECT AVG(EXTRACT(EPOCH FROM (da.responded_at - da.created_at))) FROM dispatch_attempts da WHERE da.volunteer_id = :volunteerId AND da.responded_at IS NOT NULL) AS \"avgResponseSeconds\", "
+                        + "(SELECT COALESCE(SUM(s.people_count),0) FROM missions m JOIN sos_requests s ON m.sos_request_id = s.id WHERE m.volunteer_id = :volunteerId AND m.status = 'COMPLETED') AS \"peopleHelped\"", nativeQuery = true)
+        VolunteerStatisticsProjection findStatisticsByVolunteerId(@Param("volunteerId") UUID volunteerId);
 
-   
 }
