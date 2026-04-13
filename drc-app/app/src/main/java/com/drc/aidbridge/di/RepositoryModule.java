@@ -48,6 +48,10 @@ public abstract class RepositoryModule {
 
     @Binds
     @Singleton
+    public abstract MissionRepository bindMissionRepository(MissionRepositoryImpl impl);
+
+    @Binds
+    @Singleton
     public abstract VolunteerRepository bindVolunteerRepository(VolunteerRepositoryImpl impl);
 
     @Binds

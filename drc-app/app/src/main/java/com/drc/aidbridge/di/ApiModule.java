@@ -47,6 +47,12 @@ public class ApiModule {
 
     @Provides
     @Singleton
+    public MissionApiService provideMissionApiService(Retrofit retrofit) {
+        return retrofit.create(MissionApiService.class);
+    }
+
+    @Provides
+    @Singleton
     public SosApiService provideSosApiService(Retrofit retrofit) {
         return retrofit.create(SosApiService.class);
     }
