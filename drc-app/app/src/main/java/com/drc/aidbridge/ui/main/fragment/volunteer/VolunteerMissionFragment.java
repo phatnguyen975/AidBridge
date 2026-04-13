@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVolunteerMissionBinding;
+import com.drc.aidbridge.domain.model.VolunteerMission;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
 
@@ -18,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class VolunteerMissionFragment extends BaseFragment<FragmentVolunteerMissionBinding> {
 
     private VolunteerTaskViewModel volunteerTaskViewModel;
-    private Integer lastRoutedActionId;
+    private Integer lastRoutedId;
 
     @Nullable
     @Override
@@ -39,14 +40,23 @@ public class VolunteerMissionFragment extends BaseFragment<FragmentVolunteerMiss
                 isAccepted -> evaluateMissionRouter());
         volunteerTaskViewModel.getCurrentMissionType().observe(getViewLifecycleOwner(),
                 missionType -> evaluateMissionRouter());
+        volunteerTaskViewModel.getPendingMission().observe(getViewLifecycleOwner(),
+                mission -> evaluateMissionRouter());
     }
 
     private void evaluateMissionRouter() {
         boolean missionAccepted = Boolean.TRUE.equals(volunteerTaskViewModel.getIsMissionAccepted().getValue());
         String missionType = volunteerTaskViewModel.getCurrentMissionType().getValue();
+        VolunteerMission pendingMission = volunteerTaskViewModel.getPendingMission().getValue();
+
+        if (!missionAccepted && pendingMission != null) {
+            showRouterLoading(true);
+            routeByDestinationIfNeeded(R.id.volunteerSosAcceptanceFragment);
+            return;
+        }
 
         if (!missionAccepted) {
-            lastRoutedActionId = null;
+            lastRoutedId = null;
             showRouterLoading(false);
             binding.tvMissionPlaceholder.setVisibility(View.VISIBLE);
             binding.tvMissionRouterHint.setVisibility(View.VISIBLE);
@@ -59,7 +69,7 @@ public class VolunteerMissionFragment extends BaseFragment<FragmentVolunteerMiss
             return;
         }
 
-        if (VoluteerMissionAcceptanceFragment.MISSION_TYPE_SUPPLY.equalsIgnoreCase(missionType)) {
+        if (VoluteerMissionAcceptanceFragment.isDeliveryMissionType(missionType)) {
             showRouterLoading(true);
             routeByActionIfNeeded(R.id.action_mission_list_to_delivery_mission);
             return;
@@ -71,12 +81,21 @@ public class VolunteerMissionFragment extends BaseFragment<FragmentVolunteerMiss
     }
 
     private void routeByActionIfNeeded(int actionId) {
-        if (lastRoutedActionId != null && lastRoutedActionId == actionId) {
+        if (lastRoutedId != null && lastRoutedId == actionId) {
             return;
         }
 
-        lastRoutedActionId = actionId;
+        lastRoutedId = actionId;
         navigateSafely(actionId);
+    }
+
+    private void routeByDestinationIfNeeded(int destinationId) {
+        if (lastRoutedId != null && lastRoutedId == destinationId) {
+            return;
+        }
+
+        lastRoutedId = destinationId;
+        navigateToDestinationSafely(destinationId);
     }
 
     private void showRouterLoading(boolean isLoading) {

@@ -26,6 +26,7 @@ public class UserMapper {
                 .email(user.getEmail())
                 .phone(user.getPhoneNumber())
                 .role(user.getRole().name())
+                .fcmToken(user.getFcmToken())
                 .avatarUrl(user.getAvatarUrl())
                 .isVerified(user.isVerified())
                 .build();

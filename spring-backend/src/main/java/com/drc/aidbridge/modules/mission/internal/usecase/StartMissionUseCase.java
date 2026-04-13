@@ -21,7 +21,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
- * UseCase: Volunteer bắt đầu thực hiện mission.
+ * UseCase: Volunteer bắt đầu đến hub
  */
 @Slf4j
 @Component

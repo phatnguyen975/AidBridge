@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVolunteerDashboardBinding;
+import com.drc.aidbridge.domain.model.VolunteerMission;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.MainActivity;
 import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
@@ -24,6 +25,7 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
     private VolunteerTaskViewModel volunteerTaskViewModel;
     private boolean isMissionAccepted;
     private boolean isMissionIgnored;
+    private boolean hasPendingDispatch;
 
     @Override
     protected FragmentVolunteerDashboardBinding inflateBinding(LayoutInflater inflater, @Nullable ViewGroup container) {
@@ -72,17 +74,20 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
             isMissionIgnored = Boolean.TRUE.equals(isIgnored);
             renderMissionCardsState();
         });
+
+        volunteerTaskViewModel.getPendingMission().observe(getViewLifecycleOwner(), mission -> {
+            hasPendingDispatch = mission != null;
+            renderMissionCardsState();
+        });
     }
 
     private void renderMissionCardsState() {
-        boolean shouldShowEmergencyCard = !isMissionAccepted && !isMissionIgnored;
+        boolean shouldShowEmergencyCard = hasPendingDispatch && !isMissionAccepted && !isMissionIgnored;
         binding.cardEmergency.setVisibility(shouldShowEmergencyCard ? View.VISIBLE : View.GONE);
         binding.cardCurrentMission.setVisibility(isMissionAccepted ? View.VISIBLE : View.GONE);
     }
 
     private void setupClickListeners() {
-        String mockNotiType = "SUPPLY";
-
         binding.switchOnlineStatus.setOnCheckedChangeListener((buttonView, isChecked) -> {
             updateStatusUI(isChecked);
             showToast(getString(isChecked
@@ -93,8 +98,14 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
         binding.cardUserInfo.setOnClickListener(
                 v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_view_profile)));
 
-        binding.cardCurrentMission.setOnClickListener(
-                v -> navigateSafely(R.id.action_dashboard_to_current_sos_mission));
+        binding.cardCurrentMission.setOnClickListener(v -> {
+            String missionType = volunteerTaskViewModel.getCurrentMissionType().getValue();
+            if (VoluteerMissionAcceptanceFragment.isDeliveryMissionType(missionType)) {
+                navigateToDestinationSafely(R.id.volunteerDeliveryMissionFragment);
+                return;
+            }
+            navigateSafely(R.id.action_dashboard_to_current_sos_mission);
+        });
 
         // binding.cardCompleted.setOnClickListener(v ->
         // showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_open_completed_missions)));
@@ -104,8 +115,19 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
                 v -> showToast(getString(com.drc.aidbridge.R.string.volunteer_dashboard_toast_see_all_notifications)));
 
         binding.btnDetails.setOnClickListener(v -> {
+            VolunteerMission pendingMission = volunteerTaskViewModel.getPendingMission().getValue();
+            if (pendingMission == null) {
+                showToast(getString(R.string.volunteer_mission_acceptance_no_dispatch));
+                return;
+            }
+
             Bundle bundle = new Bundle();
-            bundle.putString("missionType", mockNotiType);
+            bundle.putString(VoluteerMissionAcceptanceFragment.ARG_MISSION_ID, pendingMission.getId());
+            bundle.putString(VoluteerMissionAcceptanceFragment.ARG_DISPATCH_ATTEMPT_ID,
+                    pendingMission.getDispatchAttemptId());
+            bundle.putString(VoluteerMissionAcceptanceFragment.ARG_MISSION_TYPE, pendingMission.getMissionType());
+            bundle.putString(VoluteerMissionAcceptanceFragment.ARG_EXPIRES_AT,
+                    pendingMission.getExpiresAt() != null ? pendingMission.getExpiresAt().toString() : null);
             navigateSafely(R.id.action_dashboard_to_sos_acceptance, bundle);
         });
 

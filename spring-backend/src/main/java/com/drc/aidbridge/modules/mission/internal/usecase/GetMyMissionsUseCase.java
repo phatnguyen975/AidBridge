@@ -1,5 +1,6 @@
 package com.drc.aidbridge.modules.mission.internal.usecase;
 
+import com.drc.aidbridge.modules.mission.internal.dispatch.DispatchPolicy;
 import com.drc.aidbridge.modules.mission.internal.entity.DispatchAttempt;
 import com.drc.aidbridge.modules.mission.internal.entity.Mission;
 import com.drc.aidbridge.modules.mission.internal.mapper.MissionMapper;
@@ -21,21 +22,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-/**
- * UseCase: Lấy danh sách missions của volunteer hiện tại.
- * Bao gồm: active, pending dispatch, history.
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class GetMyMissionsUseCase {
+
+    private static final List<MissionStatus> ACTIVE_STATUSES = Arrays.asList(
+            MissionStatus.ASSIGNED,
+            MissionStatus.PICKING_UP,
+            MissionStatus.PICKED_UP,
+            MissionStatus.IN_TRANSIT);
 
     private final MissionJpaRepository missionRepository;
     private final DispatchAttemptJpaRepository dispatchAttemptRepository;
@@ -43,41 +45,28 @@ public class GetMyMissionsUseCase {
     private final SosFacade sosFacade;
     private final MissionMapper missionMapper;
 
-    // Dispatch timeout: 5 phút
-    private static final Duration DISPATCH_TIMEOUT = Duration.ofMinutes(5);
-
-    // Status được coi là "active"
-    private static final List<MissionStatus> ACTIVE_STATUSES = Arrays.asList(
-            MissionStatus.ASSIGNED,
-            MissionStatus.PICKING_UP,
-            MissionStatus.PICKED_UP,
-            MissionStatus.IN_TRANSIT);
-
     public MyMissionsResponse execute(UUID volunteerId, boolean includeHistory, int historyPage, int historyLimit) {
         log.debug("Getting missions for volunteer {}", volunteerId);
 
-        // 1. Lấy active missions
         List<Mission> activeMissions = missionRepository.findByVolunteerIdAndStatusIn(volunteerId, ACTIVE_STATUSES);
         List<MissionResponse> activeResponses = activeMissions.stream()
                 .map(this::toMissionResponse)
                 .collect(Collectors.toList());
 
-        // 2. Lấy pending dispatch requests
         List<DispatchAttempt> pendingAttempts = dispatchAttemptRepository
                 .findByVolunteerIdAndResponseOrderByCreatedAtDesc(volunteerId, DispatchResponse.PENDING);
         List<MyMissionsResponse.PendingDispatch> pendingDispatches = pendingAttempts.stream()
                 .map(this::toPendingDispatch)
-                .filter(pd -> pd != null) // Lọc bỏ các dispatch đã hết hạn
+                .filter(pendingDispatch -> pendingDispatch != null)
                 .collect(Collectors.toList());
 
-        // 3. Lấy history nếu yêu cầu
         MyMissionsResponse.HistorySection history = null;
         if (includeHistory) {
             PageRequest pageRequest = PageRequest.of(historyPage - 1, historyLimit,
                     Sort.by(Sort.Direction.DESC, "updatedAt"));
-            Page<Mission> historyPage1 = missionRepository.findHistoryByVolunteerId(volunteerId, pageRequest);
+            Page<Mission> historyPageResult = missionRepository.findHistoryByVolunteerId(volunteerId, pageRequest);
 
-            List<MissionResponse> historyItems = historyPage1.getContent().stream()
+            List<MissionResponse> historyItems = historyPageResult.getContent().stream()
                     .map(this::toMissionResponse)
                     .collect(Collectors.toList());
 
@@ -86,10 +75,10 @@ public class GetMyMissionsUseCase {
                     .pagination(MyMissionsResponse.PaginationInfo.builder()
                             .page(historyPage)
                             .limit(historyLimit)
-                            .total(historyPage1.getTotalElements())
-                            .totalPages(historyPage1.getTotalPages())
-                            .hasNext(historyPage1.hasNext())
-                            .hasPrevious(historyPage1.hasPrevious())
+                            .total(historyPageResult.getTotalElements())
+                            .totalPages(historyPageResult.getTotalPages())
+                            .hasNext(historyPageResult.hasNext())
+                            .hasPrevious(historyPageResult.hasPrevious())
                             .build())
                     .build();
         }
@@ -108,9 +97,7 @@ public class GetMyMissionsUseCase {
     }
 
     private MyMissionsResponse.PendingDispatch toPendingDispatch(DispatchAttempt attempt) {
-        Instant expiresAt = attempt.getCreatedAt().plus(DISPATCH_TIMEOUT);
-
-        // Kiểm tra đã hết hạn chưa
+        Instant expiresAt = attempt.getCreatedAt().plus(DispatchPolicy.RESPONSE_TIMEOUT);
         if (Instant.now().isAfter(expiresAt)) {
             return null;
         }
@@ -120,12 +107,9 @@ public class GetMyMissionsUseCase {
             return null;
         }
 
-        MissionResponse missionResponse = toMissionResponse(mission);
-        DispatchAttemptResponse attemptResponse = toDispatchAttemptResponse(attempt);
-
         return MyMissionsResponse.PendingDispatch.builder()
-                .dispatchAttempt(attemptResponse)
-                .mission(missionResponse)
+                .dispatchAttempt(toDispatchAttemptResponse(attempt))
+                .mission(toMissionResponse(mission))
                 .expiresAt(expiresAt)
                 .build();
     }
@@ -145,8 +129,9 @@ public class GetMyMissionsUseCase {
     }
 
     private UserDTO resolveVolunteer(UUID volunteerId) {
-        if (volunteerId == null)
+        if (volunteerId == null) {
             return null;
+        }
         try {
             return userFacade.getUserById(volunteerId);
         } catch (Exception e) {
@@ -156,8 +141,9 @@ public class GetMyMissionsUseCase {
     }
 
     private SosDTO resolveSos(UUID sosRequestId) {
-        if (sosRequestId == null)
+        if (sosRequestId == null) {
             return null;
+        }
         return sosFacade.getSosRequestById(sosRequestId).orElse(null);
     }
 }

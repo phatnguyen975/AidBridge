@@ -1,5 +1,7 @@
 package com.drc.aidbridge.modules.notification.internal.service;
 
+import com.drc.aidbridge.modules.shared.enums.DispatchType;
+import com.drc.aidbridge.modules.shared.enums.MissionType;
 import com.google.firebase.messaging.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
 
@@ -41,6 +44,13 @@ public class FCMService {
         }
 
         try {
+            AndroidNotification.Builder androidNotificationBuilder = AndroidNotification.builder()
+                    .setChannelId(notification.getChannelId())
+                    .setSound(notification.getSound());
+            if (notification.getClickAction() != null && !notification.getClickAction().isBlank()) {
+                androidNotificationBuilder.setClickAction(notification.getClickAction());
+            }
+
             Message message = Message.builder()
                     .setToken(fcmToken)
                     .setNotification(Notification.builder()
@@ -50,10 +60,7 @@ public class FCMService {
                     .putAllData(notification.getData())
                     .setAndroidConfig(AndroidConfig.builder()
                             .setPriority(notification.getPriority().toFirebasePriority())
-                            .setNotification(AndroidNotification.builder()
-                                    .setChannelId(notification.getChannelId())
-                                    .setSound(notification.getSound())
-                                    .build())
+                            .setNotification(androidNotificationBuilder.build())
                             .build())
                     .setApnsConfig(ApnsConfig.builder()
                             .setAps(Aps.builder()
@@ -81,6 +88,40 @@ public class FCMService {
             log.error("Unexpected error sending FCM notification: {} to token: {}",
                     notification.getType(), fcmToken.substring(0, Math.min(10, fcmToken.length())) + "...", e);
         }
+    }
+
+    public MissionNotification createDispatchRequestNotification(UUID missionId,
+                                                                 UUID dispatchAttemptId,
+                                                                 Instant expiresAt,
+                                                                 MissionType missionType,
+                                                                 DispatchType dispatchType) {
+        String title = missionType == MissionType.RESCUE
+                ? "Emergency mission available"
+                : "Aid mission available";
+        String body = missionType == MissionType.RESCUE
+                ? "Tap to review the SOS mission and accept it."
+                : "Tap to review the aid mission and accept it.";
+
+        return MissionNotification.builder()
+                .type(NotificationType.DISPATCH_REQUEST)
+                .title(title)
+                .body(body)
+                .channelId(missionType == MissionType.RESCUE ? "emergency" : "updates")
+                .priority(AndroidPriority.HIGH)
+                .sound(missionType == MissionType.RESCUE ? "emergency.wav" : "default")
+                .clickAction("OPEN_DISPATCH_PREPARE")
+                .data(Map.of(
+                        "type", "DISPATCH_REQUEST",
+                        "title", title,
+                        "body", body,
+                        "mission_id", missionId.toString(),
+                        "dispatch_attempt_id", dispatchAttemptId.toString(),
+                        "mission_type", missionType.name(),
+                        "dispatch_type", dispatchType.name(),
+                        "expires_at", expiresAt.toString(),
+                        "channel_id", missionType == MissionType.RESCUE ? "emergency" : "updates",
+                        "click_action", "OPEN_DISPATCH_PREPARE"))
+                .build();
     }
 
     /**
@@ -183,6 +224,7 @@ public class FCMService {
         private String title;
         private String body;
         private String channelId;
+        private String clickAction;
         private AndroidPriority priority;
         private String sound;
         private Map<String, String> data;

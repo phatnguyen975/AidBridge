@@ -106,13 +106,15 @@ public class Mission {
 
     @Transient
     public BigDecimal getVictimLat() {
-        if (victimLocation == null) return null;
+        if (victimLocation == null)
+            return null;
         return BigDecimal.valueOf(victimLocation.getY());
     }
 
     @Transient
     public BigDecimal getVictimLng() {
-        if (victimLocation == null) return null;
+        if (victimLocation == null)
+            return null;
         return BigDecimal.valueOf(victimLocation.getX());
     }
 }

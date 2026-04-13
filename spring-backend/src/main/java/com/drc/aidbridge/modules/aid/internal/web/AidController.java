@@ -1,6 +1,8 @@
 package com.drc.aidbridge.modules.aid.internal.web;
+
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
+import com.drc.aidbridge.modules.shared.exception.BadRequestException;
 import com.drc.aidbridge.modules.aid.internal.usecase.*;
 import com.drc.aidbridge.modules.aid.internal.web.dto.*;
 import jakarta.validation.Valid;
@@ -31,7 +33,7 @@ public class AidController {
         AidRequestResponse response = createAidRequestUseCase.execute(userId, request);
         return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<AidRequestResponse>> getAidRequest(@PathVariable UUID id) {
         AidRequestResponse response = getAidRequestUseCase.execute(id);

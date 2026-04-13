@@ -23,9 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.UUID;
 
-/**
- * UseCase: Volunteer chấp nhận dispatch request.
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -45,56 +42,69 @@ public class AcceptMissionUseCase {
         Mission mission = missionRepository.findById(missionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Mission not found: " + missionId));
 
-        // Validate mission status
         if (mission.getStatus() != MissionStatus.PENDING && mission.getStatus() != MissionStatus.DISPATCHING) {
             throw new IllegalStateException(
                     "Mission is not in dispatchable state. Current status: " + mission.getStatus());
         }
 
-        // Check if mission already assigned to another volunteer
         if (mission.getVolunteerId() != null && !mission.getVolunteerId().equals(volunteerId)) {
             throw new IllegalStateException("Mission already assigned to another volunteer");
         }
 
-        // Kiểm tra volunteer không có mission active khác
         missionRepository.findActiveByVolunteerId(volunteerId).ifPresent(activeMission -> {
             throw new IllegalStateException("Volunteer already has an active mission: " + activeMission.getId());
         });
 
-        // Tìm và update dispatch attempt nếu có
-        if (request.getDispatchAttemptId() != null) {
-            DispatchAttempt attempt = dispatchAttemptRepository.findById(request.getDispatchAttemptId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Dispatch attempt not found"));
-
-            if (attempt.getResponse() != DispatchResponse.PENDING) {
-                throw new IllegalStateException("Dispatch attempt already responded");
-            }
-
+        DispatchAttempt attempt = resolveDispatchAttempt(missionId, volunteerId, mission.getStatus(), request);
+        if (attempt != null) {
             attempt.setResponse(DispatchResponse.ACCEPTED);
             attempt.setRespondedAt(Instant.now());
             dispatchAttemptRepository.save(attempt);
         }
 
-        // Update mission
         mission.setVolunteerId(volunteerId);
         mission.setStatus(MissionStatus.ASSIGNED);
         mission.setAcceptedAt(Instant.now());
 
         Mission saved = missionRepository.save(mission);
-        log.info("Mission {} assigned to volunteer {}", missionId, volunteerId);
-
-        // Invalidate cache
         missionCache.invalidateMissionCache(missionId);
 
-        // Build response
         UserDTO volunteer = resolveVolunteer(saved.getVolunteerId());
         SosDTO sos = resolveSos(saved.getSosRequestId());
         return missionMapper.toResponseWithDetails(saved, volunteer, sos);
     }
 
-    private UserDTO resolveVolunteer(UUID volunteerId) {
-        if (volunteerId == null)
+    private DispatchAttempt resolveDispatchAttempt(UUID missionId, UUID volunteerId, MissionStatus missionStatus,
+                                                   AcceptMissionRequest request) {
+        DispatchAttempt attempt = null;
+        if (request.getDispatchAttemptId() != null) {
+            attempt = dispatchAttemptRepository.findById(request.getDispatchAttemptId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Dispatch attempt not found"));
+        } else if (missionStatus == MissionStatus.DISPATCHING) {
+            attempt = dispatchAttemptRepository
+                    .findByMissionIdAndVolunteerIdAndResponse(missionId, volunteerId, DispatchResponse.PENDING)
+                    .orElseThrow(() -> new IllegalStateException("Pending dispatch attempt required to accept mission"));
+        }
+
+        if (attempt == null) {
             return null;
+        }
+
+        if (!attempt.getVolunteerId().equals(volunteerId)) {
+            throw new IllegalStateException("Dispatch attempt does not belong to this volunteer");
+        }
+
+        if (attempt.getResponse() != DispatchResponse.PENDING) {
+            throw new IllegalStateException("Dispatch attempt already responded");
+        }
+
+        return attempt;
+    }
+
+    private UserDTO resolveVolunteer(UUID volunteerId) {
+        if (volunteerId == null) {
+            return null;
+        }
         try {
             return userFacade.getUserById(volunteerId);
         } catch (Exception e) {
@@ -104,8 +114,9 @@ public class AcceptMissionUseCase {
     }
 
     private SosDTO resolveSos(UUID sosRequestId) {
-        if (sosRequestId == null)
+        if (sosRequestId == null) {
             return null;
+        }
         return sosFacade.getSosRequestById(sosRequestId).orElse(null);
     }
 }
