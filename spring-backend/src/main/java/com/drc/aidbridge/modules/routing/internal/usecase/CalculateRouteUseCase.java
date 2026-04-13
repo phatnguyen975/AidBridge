@@ -151,11 +151,13 @@ public class CalculateRouteUseCase {
 
         // Convert GraphHopper instructions to DTO format
         for (com.graphhopper.util.Instruction gh : instructionList) {
+            int turnType = gh.getSign();
             RoutingDTO.Instruction instruction = new RoutingDTO.Instruction(
-                    gh.getSign(),                   // turn type (0=start, 1=turn_right, etc.)
+                    turnType,                       // turn type (-98 to 8)
                     gh.getName() != null ? gh.getName() : "",  // street name
                     gh.getDistance(),               // distance in meters
-                    gh.getTime()                    // time in milliseconds
+                    gh.getTime(),                   // time in milliseconds
+                    RoutingDTO.Instruction.getTurnCommand(turnType)  // Vietnamese command
             );
             result.add(instruction);
         }
