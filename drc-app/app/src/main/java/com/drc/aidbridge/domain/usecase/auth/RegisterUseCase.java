@@ -13,7 +13,7 @@ import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import javax.inject.Inject;
 
 /**
- * RegisterUseCase — validates and executes user registration.
+ * RegisterUseCase - validates and executes user registration.
  */
 public class RegisterUseCase {
 
@@ -62,3 +62,4 @@ public class RegisterUseCase {
             ));
     }
 }
+

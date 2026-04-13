@@ -30,6 +30,7 @@
             app:iconPadding="0dp" />
 
         <TextView
+            android:id="@+id/tvSosHint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -74,7 +75,6 @@
                 android:id="@+id/etFullName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/victim_rescue_default_name"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_hint" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -97,7 +97,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:text="1"
+                    android:text="@string/victim_rescue_default_people_count"
                     android:textColor="@color/text_primary"
                     android:textColorHint="@color/text_hint" />
             </com.google.android.material.textfield.TextInputLayout>

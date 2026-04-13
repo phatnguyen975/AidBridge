@@ -68,7 +68,7 @@ public class AidMapper {
     public AidItemResponse toItemResponse(AidRequestItem item) {
         return AidItemResponse.builder()
                 .id(item.getId())
-                .aidRequestId(item.getAidRequest().getId())
+                .aidRequestId(item.getAidRequest() != null ? item.getAidRequest().getId() : null)
                 .itemCategoryId(item.getItemCategoryId())
                 .build();
     }

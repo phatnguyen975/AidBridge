@@ -11,7 +11,8 @@ import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import javax.inject.Inject;
 
 /**
- * VerifyResetOtpUseCase — verifies reset-password OTP with strict OTP format checks.
+ * VerifyResetOtpUseCase - verifies reset-password OTP with strict OTP format
+ * checks.
  */
 public class VerifyResetOtpUseCase {
 
@@ -20,7 +21,7 @@ public class VerifyResetOtpUseCase {
 
     @Inject
     public VerifyResetOtpUseCase(AuthRepository authRepository,
-                                 AuthInputValidator inputValidator) {
+            AuthInputValidator inputValidator) {
         this.authRepository = authRepository;
         this.inputValidator = inputValidator;
     }
@@ -35,6 +36,7 @@ public class VerifyResetOtpUseCase {
 
     public LiveData<NetworkResultWrapper<String>> execute(String email, String otpCode) {
         return authRepository.verifyResetOtp(
-                new OtpVerifyRequest(inputValidator.normalizeEmail(email), otpCode));
+                new OtpVerifyRequest(inputValidator.normalizeEmail(email), otpCode, "PASSWORD_RESET"));
     }
 }
+

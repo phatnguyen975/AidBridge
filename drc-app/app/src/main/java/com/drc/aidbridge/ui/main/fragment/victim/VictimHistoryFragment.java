@@ -1,103 +1,65 @@
 package com.drc.aidbridge.ui.main.fragment.victim;
 
-import android.os.Handler;
-import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.drc.aidbridge.R;
+import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.FragmentVictimHistoryBinding;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.adapter.victim.VictimHistoryAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.drc.aidbridge.ui.main.viewmodel.victim.VictimHistoryViewModel;
+import com.drc.aidbridge.utils.NetworkUtils;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBinding> {
 
+    private static final String DETAIL_SHEET_TAG = "VictimHistoryDetailBottomSheet";
+
+    private VictimHistoryViewModel viewModel;
     private VictimHistoryAdapter adapter;
     private int baseRecyclerBottomPadding;
 
-    private int currentPage = 1;
-    private String currentFilter = "1H";
+    private boolean isScreenLoading = true;
     private boolean isLoading = false;
     private boolean isLastPage = false;
+    private boolean isOfflineData = false;
+    private boolean isDetailLoading = false;
+    private boolean showRefreshSuccessNotice = false;
 
     @Override
-    protected FragmentVictimHistoryBinding inflateBinding(android.view.LayoutInflater inflater,
-                                                          android.view.ViewGroup container) {
+    protected FragmentVictimHistoryBinding inflateBinding(LayoutInflater inflater,
+                                                          ViewGroup container) {
         return FragmentVictimHistoryBinding.inflate(inflater, container, false);
     }
 
     @Override
     protected void setupViews() {
-        resetScreenState();
+        viewModel = new ViewModelProvider(this).get(VictimHistoryViewModel.class);
+
         setupToolbar();
         setupRecyclerView();
         setupFilterDropdown();
-        loadData();
-    }
+        setupSwipeRefresh();
 
-    private void resetScreenState() {
-        currentPage = 1;
-        currentFilter = "1H";
-        isLoading = false;
-        isLastPage = false;
+        binding.actTimeFilter.setText(getString(R.string.victim_history_filter_1h), false);
+        renderEmptyState(false);
+        isScreenLoading = true;
+        viewModel.loadInitial(isNetworkAvailable());
     }
 
     @Override
     protected void observeViewModel() {
-        /*
-         * TODO: API integration block.
-         *
-         * viewModel.getHistoryResult().observe(getViewLifecycleOwner(), result -> {
-         *     if (result == null) {
-         *         return;
-         *     }
-         *
-         *     if (result.isLoading()) {
-         *         isLoading = true;
-         *         binding.paginationProgress.setVisibility(View.VISIBLE);
-         *         return;
-         *     }
-         *
-         *     if (result.hasBeenHandled()) {
-         *         return;
-         *     }
-         *
-         *     if (result.isSuccess()) {
-         *         result.markAsHandled();
-         *         isLoading = false;
-         *         binding.paginationProgress.setVisibility(View.GONE);
-         *
-         *         HistoryPageResponse page = ((NetworkResultWrapper.Success<HistoryPageResponse>) result).data;
-         *         if (page == null || page.getItems() == null || page.getItems().isEmpty()) {
-         *             isLastPage = true;
-         *             return;
-         *         }
-         *
-         *         // Append data for pagination instead of replacing the entire list.
-         *         List<VictimHistoryAdapter.HistoryModel> mapped = mapper.map(page.getItems());
-         *         adapter.addItems(mapped);
-         *         isLastPage = !page.hasNextPage();
-         *         return;
-         *     }
-         *
-         *     if (result.isError()) {
-         *         result.markAsHandled();
-         *         isLoading = false;
-         *         binding.paginationProgress.setVisibility(View.GONE);
-         *         String message = ((NetworkResultWrapper.Error<HistoryPageResponse>) result).message;
-         *         showToast(message != null ? message : getString(R.string.error_generic));
-         *     }
-         * });
-         */
+        viewModel.getHistoryResult().observe(getViewLifecycleOwner(), this::handleHistoryResult);
+        viewModel.getHistoryDetailResult().observe(getViewLifecycleOwner(), this::handleHistoryDetailResult);
     }
 
     private void setupToolbar() {
@@ -106,8 +68,10 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
 
     private void setupRecyclerView() {
         adapter = new VictimHistoryAdapter(model -> {
-            VictimHistoryDetailBottomSheet bottomSheet = new VictimHistoryDetailBottomSheet();
-            bottomSheet.show(getParentFragmentManager(), "VictimHistoryDetailBottomSheet");
+            if (isDetailLoading) {
+                return;
+            }
+            viewModel.loadDetail(model);
         });
 
         binding.rvHistory.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -122,81 +86,158 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
                     return;
                 }
 
-                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (layoutManager == null) {
+                RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+                if (!(manager instanceof LinearLayoutManager)) {
                     return;
                 }
 
+                LinearLayoutManager layoutManager = (LinearLayoutManager) manager;
                 int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
                 int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
-                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
-                    currentPage++;
-                    loadData();
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                    && firstVisibleItemPosition >= 0) {
+                    isScreenLoading = false;
+                    viewModel.loadNextPage(isNetworkAvailable());
                 }
             }
         });
     }
 
     private void setupFilterDropdown() {
-        binding.actTimeFilter.setText(getString(R.string.victim_history_filter_1h), false);
-
         binding.actTimeFilter.setOnItemClickListener((parent, view, position, id) -> {
             adapter.clear();
-            currentPage = 1;
             isLastPage = false;
-            currentFilter = mapFilterCode(position);
-            loadData();
+            isOfflineData = false;
+            isScreenLoading = true;
+            showRefreshSuccessNotice = false;
+            renderEmptyState(false);
+
+            Object selectedItem = parent != null ? parent.getItemAtPosition(position) : null;
+            String selectedLabel = selectedItem != null ? selectedItem.toString() : "";
+            viewModel.applyTimeRange(mapFilterCode(selectedLabel, position), isNetworkAvailable());
         });
     }
 
-    private String mapFilterCode(int position) {
-        switch (position) {
-            case 1:
-                return "24H";
-            case 2:
-                return "7D";
-            case 3:
-                return "1M";
-            case 4:
-                return "ALL";
-            case 0:
-            default:
-                return "1H";
-        }
+    private void setupSwipeRefresh() {
+        binding.swipeRefreshHistory.setOnRefreshListener(() -> {
+            adapter.clear();
+            isLastPage = false;
+            isOfflineData = false;
+            isScreenLoading = true;
+            showRefreshSuccessNotice = true;
+            renderEmptyState(false);
+            viewModel.refresh(isNetworkAvailable());
+        });
     }
 
-    private void loadData() {
-        if (isLoading || isLastPage) {
+    private void handleHistoryResult(NetworkResultWrapper<VictimHistoryViewModel.HistoryUiPage> result) {
+        if (result == null) {
             return;
         }
 
-        // TODO(API): Remove mock delay and trigger ViewModel paged history request.
-        isLoading = true;
-        updatePaginationLoading(true);
+        if (result.isLoading()) {
+            isLoading = true;
+            updatePaginationLoading(true);
+            return;
+        }
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            List<VictimHistoryAdapter.HistoryModel> pageData = generateDummyData(currentPage, currentFilter);
-            if (pageData.isEmpty()) {
-                isLastPage = true;
-            } else {
-                adapter.addItems(pageData);
-                if (currentPage >= 4) {
-                    isLastPage = true;
-                }
-            }
+        if (result.hasBeenHandled()) {
+            return;
+        }
 
-            isLoading = false;
-            if (binding != null) {
-                updatePaginationLoading(false);
-            }
-        }, 500);
+        result.markAsHandled();
+        isLoading = false;
+        updatePaginationLoading(false);
+        binding.swipeRefreshHistory.setRefreshing(false);
+
+        if (result.isError()) {
+            showRefreshSuccessNotice = false;
+            String message = result.getMessage();
+            showTopSnackbar(
+                binding.getRoot(),
+                message != null && !message.trim().isEmpty()
+                    ? message
+                    : getString(R.string.victim_history_load_error),
+                true
+            );
+            renderEmptyState(isScreenLoading || adapter.getItemCount() == 0);
+            return;
+        }
+
+        VictimHistoryViewModel.HistoryUiPage uiPage = result.getData();
+        if (uiPage == null) {
+            showRefreshSuccessNotice = false;
+            renderEmptyState(isScreenLoading || adapter.getItemCount() == 0);
+            return;
+        }
+
+        if (!uiPage.isAppend()) {
+            adapter.clear();
+        }
+        if (!uiPage.getItems().isEmpty()) {
+            adapter.addItems(uiPage.getItems());
+        }
+
+        isLastPage = uiPage.isLastPage();
+        isOfflineData = uiPage.isOfflineData();
+
+        if (showRefreshSuccessNotice) {
+            showTopSnackbar(binding.getRoot(), getString(R.string.victim_history_refresh_success), false);
+            showRefreshSuccessNotice = false;
+        }
+
+        if (isOfflineData && !uiPage.isAppend()) {
+            showTopSnackbar(binding.getRoot(), getString(R.string.victim_history_offline_indicator), false);
+        }
+
+        renderEmptyState(adapter.getItemCount() == 0);
+    }
+
+    private void handleHistoryDetailResult(
+        NetworkResultWrapper<VictimHistoryViewModel.HistoryDetailUiModel> result
+    ) {
+        if (result == null) {
+            return;
+        }
+
+        if (result.isLoading()) {
+            isDetailLoading = true;
+            return;
+        }
+
+        if (result.hasBeenHandled()) {
+            return;
+        }
+
+        result.markAsHandled();
+        isDetailLoading = false;
+
+        if (result.isError()) {
+            String message = result.getMessage();
+            showTopSnackbar(
+                binding.getRoot(),
+                message != null && !message.trim().isEmpty()
+                    ? message.trim()
+                    : getString(R.string.victim_history_detail_load_error),
+                true
+            );
+            return;
+        }
+
+        VictimHistoryViewModel.HistoryDetailUiModel detail = result.getData();
+        if (detail == null) {
+            showTopSnackbar(binding.getRoot(), getString(R.string.victim_history_detail_empty_error), true);
+            return;
+        }
+
+        VictimHistoryDetailBottomSheet
+            .newInstance(detail)
+            .show(getParentFragmentManager(), DETAIL_SHEET_TAG);
     }
 
     private void updatePaginationLoading(boolean show) {
-        boolean hasLoadedItems = adapter != null && adapter.getItemCount() > 0;
-
         if (!show) {
             binding.initialLoadingProgress.setVisibility(View.GONE);
             binding.paginationProgress.setVisibility(View.GONE);
@@ -204,79 +245,67 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
             return;
         }
 
-        binding.initialLoadingProgress.setVisibility(hasLoadedItems ? View.GONE : View.VISIBLE);
-        binding.paginationProgress.setVisibility(hasLoadedItems ? View.VISIBLE : View.GONE);
-        setTemporaryBottomSpace(hasLoadedItems);
+        boolean showBottomLoading = !isScreenLoading;
+        binding.initialLoadingProgress.setVisibility(showBottomLoading ? View.GONE : View.VISIBLE);
+        binding.paginationProgress.setVisibility(showBottomLoading ? View.VISIBLE : View.GONE);
+        setTemporaryBottomSpace(showBottomLoading);
     }
 
     private void setTemporaryBottomSpace(boolean enabled) {
         int extraSpace = enabled ? getResources().getDimensionPixelSize(R.dimen.spacing_xxl) : 0;
         binding.rvHistory.setPaddingRelative(
-                binding.rvHistory.getPaddingStart(),
-                binding.rvHistory.getPaddingTop(),
-                binding.rvHistory.getPaddingEnd(),
-                baseRecyclerBottomPadding + extraSpace
+            binding.rvHistory.getPaddingStart(),
+            binding.rvHistory.getPaddingTop(),
+            binding.rvHistory.getPaddingEnd(),
+            baseRecyclerBottomPadding + extraSpace
         );
     }
 
-    private List<VictimHistoryAdapter.HistoryModel> generateDummyData(int page, String filter) {
-        // TODO(API): Remove mock list generation when backend pagination is integrated.
-        List<VictimHistoryAdapter.HistoryModel> list = new ArrayList<>();
+    private void renderEmptyState(boolean isEmpty) {
+        if (!isEmpty) {
+            binding.tvEmptyState.setVisibility(View.GONE);
+            return;
+        }
 
-        String statusPending = getString(R.string.victim_history_status_pending);
-        String statusProcessing = getString(R.string.victim_history_status_processing);
-        String statusCompleted = getString(R.string.victim_history_status_completed);
-
-        list.add(new VictimHistoryAdapter.HistoryModel(
-                "REQ-" + page + "-01",
-                getString(R.string.victim_history_title_sos_self),
-                statusPending,
-            VictimHistoryAdapter.HistoryModel.STATUS_PENDING,
-                getString(R.string.victim_history_dummy_date_1),
-                getString(R.string.victim_history_dummy_location_1, filter),
-                VictimHistoryAdapter.TYPE_SOS_SELF
+        binding.tvEmptyState.setText(getString(
+            isOfflineData
+                ? R.string.victim_history_empty_offline
+                : R.string.victim_history_empty
         ));
+        binding.tvEmptyState.setVisibility(View.VISIBLE);
+    }
 
-        list.add(new VictimHistoryAdapter.HistoryModel(
-                "REQ-" + page + "-02",
-                getString(R.string.victim_history_title_supply),
-                statusProcessing,
-            VictimHistoryAdapter.HistoryModel.STATUS_PROCESSING,
-                getString(R.string.victim_history_dummy_date_2),
-                getString(R.string.victim_history_dummy_location_2, filter),
-                VictimHistoryAdapter.TYPE_SUPPLY
-        ));
+    private String mapFilterCode(String selectedLabel, int fallbackPosition) {
+        int resolvedPosition = fallbackPosition;
+        String normalizedLabel = selectedLabel != null ? selectedLabel.trim() : "";
+        String[] options = getResources().getStringArray(R.array.victim_history_time_filters);
 
-        list.add(new VictimHistoryAdapter.HistoryModel(
-                "REQ-" + page + "-03",
-                getString(R.string.victim_history_title_sos_relative),
-                statusCompleted,
-            VictimHistoryAdapter.HistoryModel.STATUS_COMPLETED,
-                getString(R.string.victim_history_dummy_date_3),
-                getString(R.string.victim_history_dummy_location_3, filter),
-                VictimHistoryAdapter.TYPE_SOS_RELATIVE
-        ));
+        if (!normalizedLabel.isEmpty() && options != null && options.length > 0) {
+            for (int index = 0; index < options.length; index++) {
+                String option = options[index] != null ? options[index].trim() : "";
+                if (normalizedLabel.equalsIgnoreCase(option)) {
+                    resolvedPosition = index;
+                    break;
+                }
+            }
+        }
 
-        list.add(new VictimHistoryAdapter.HistoryModel(
-                "REQ-" + page + "-04",
-                getString(R.string.victim_history_title_supply),
-                statusPending,
-            VictimHistoryAdapter.HistoryModel.STATUS_PENDING,
-                getString(R.string.victim_history_dummy_date_4),
-                getString(R.string.victim_history_dummy_location_4, filter),
-                VictimHistoryAdapter.TYPE_SUPPLY
-        ));
+        switch (resolvedPosition) {
+            case 1:
+                return "24h";
+            case 2:
+                return "7d";
+            case 3:
+                return "1m";
+            case 4:
+                return "all";
+            case 0:
+            default:
+                return "1h";
+        }
+    }
 
-        list.add(new VictimHistoryAdapter.HistoryModel(
-                "REQ-" + page + "-05",
-                getString(R.string.victim_history_title_sos_self),
-                statusProcessing,
-            VictimHistoryAdapter.HistoryModel.STATUS_PROCESSING,
-                getString(R.string.victim_history_dummy_date_5),
-                getString(R.string.victim_history_dummy_location_5, filter),
-                VictimHistoryAdapter.TYPE_SOS_SELF
-        ));
-
-        return list;
+    private boolean isNetworkAvailable() {
+        return NetworkUtils.isConnected(requireContext());
     }
 }

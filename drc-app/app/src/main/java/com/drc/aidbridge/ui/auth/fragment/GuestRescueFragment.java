@@ -38,9 +38,8 @@ public class GuestRescueFragment extends BaseFragment<FragmentGuestRescueBinding
     }
 
     private void setupClickListeners() {
-        // TODO: Wire up Quick SOS flow with location permission
         binding.btnSos.setOnClickListener(v -> {
-            showToast("Tính năng SOS sẽ được tích hợp sau");
+            GuestSosBottomSheet.newInstance().show(getChildFragmentManager(), "guest_sos_sheet");
         });
 
         // Use the auth host controller (parent graph), not the nested guest-tabs controller.

@@ -5,6 +5,8 @@ import androidx.room.RoomDatabase;
 
 import com.drc.aidbridge.data.local.entity.AppSettingsEntity;
 import com.drc.aidbridge.data.local.dao.AppSettingsDao;
+import com.drc.aidbridge.data.local.dao.VictimHistoryDao;
+import com.drc.aidbridge.data.local.entity.VictimHistoryEntity;
 
 /**
  * AppDatabase — the single Room database instance.
@@ -16,12 +18,13 @@ import com.drc.aidbridge.data.local.dao.AppSettingsDao;
  * TODO: Add entity classes to the @Database annotation's entities array as they are created.
  */
 @Database(
-        entities = { AppSettingsEntity.class },
-        version = 1,
-        exportSchema = false
+    entities = { AppSettingsEntity.class, VictimHistoryEntity.class },
+    version = 1,
+    exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
 
-    // TODO: Add abstract DAO methods here as entities are added.
     public abstract AppSettingsDao appSettingsDao();
+
+    public abstract VictimHistoryDao victimHistoryDao();
 }

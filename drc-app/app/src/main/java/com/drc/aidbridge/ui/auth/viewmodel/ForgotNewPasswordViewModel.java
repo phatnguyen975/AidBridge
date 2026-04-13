@@ -15,7 +15,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
 /**
- * ForgotNewPasswordViewModel — Step 3 of the forgot-password flow.
+ * ForgotNewPasswordViewModel â€” Step 3 of the forgot-password flow.
  */
 @HiltViewModel
 public class ForgotNewPasswordViewModel extends BaseViewModel {
@@ -83,3 +83,4 @@ public class ForgotNewPasswordViewModel extends BaseViewModel {
         }
     }
 }
+

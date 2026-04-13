@@ -22,7 +22,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * LoginFragment — handles user input for email/password authentication.
+ * LoginFragment â€” handles user input for email/password authentication.
  */
 @AndroidEntryPoint
 public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
@@ -165,3 +165,4 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding> {
         navigateToOtp(user.getEmail());
     }
 }
+

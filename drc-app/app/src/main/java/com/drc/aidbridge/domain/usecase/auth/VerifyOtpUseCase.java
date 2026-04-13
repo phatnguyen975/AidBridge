@@ -12,7 +12,7 @@ import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import javax.inject.Inject;
 
 /**
- * VerifyOtpUseCase — validates OTP format and delegates to AuthRepository.
+ * VerifyOtpUseCase - validates OTP format and delegates to AuthRepository.
  */
 public class VerifyOtpUseCase {
 
@@ -31,6 +31,7 @@ public class VerifyOtpUseCase {
 
     public LiveData<NetworkResultWrapper<AuthResponse>> execute(String email, String otpCode) {
         return authRepository.verifyOtp(
-                new OtpVerifyRequest(inputValidator.normalizeEmail(email), otpCode));
+                new OtpVerifyRequest(inputValidator.normalizeEmail(email), otpCode, "EMAIL_VERIFY"));
     }
 }
+

@@ -3,6 +3,10 @@ package com.drc.aidbridge.di;
 import com.drc.aidbridge.data.remote.api.AuthApiService;
 import com.drc.aidbridge.data.remote.api.MissionApiService;
 import com.drc.aidbridge.data.remote.api.UserApiService;
+import com.drc.aidbridge.data.remote.api.volunteer.VolunteerApiService;
+import com.drc.aidbridge.data.remote.api.victim.HistoryApiService;
+import com.drc.aidbridge.data.remote.api.victim.SosApiService;
+import com.drc.aidbridge.data.remote.api.victim.SupplyApiService;
 
 import javax.inject.Singleton;
 
@@ -15,7 +19,8 @@ import retrofit2.Retrofit;
 /**
  * ApiModule — provides all API service interfaces.
  * 
- * Depends on Retrofit provided by NetworkModule to create implementations of API interfaces.
+ * Depends on Retrofit provided by NetworkModule to create implementations of
+ * API interfaces.
  */
 @Module
 @InstallIn(SingletonComponent.class)
@@ -36,7 +41,25 @@ public class ApiModule {
 
     @Provides
     @Singleton
-    public MissionApiService provideMissionApiService(Retrofit retrofit) {
-        return retrofit.create(MissionApiService.class);
+    public VolunteerApiService provideVolunteerApiService(Retrofit retrofit) {
+        return retrofit.create(VolunteerApiService.class);
+    }
+
+    @Provides
+    @Singleton
+    public SosApiService provideSosApiService(Retrofit retrofit) {
+        return retrofit.create(SosApiService.class);
+    }
+
+    @Provides
+    @Singleton
+    public SupplyApiService provideSupplyApiService(Retrofit retrofit) {
+        return retrofit.create(SupplyApiService.class);
+    }
+
+    @Provides
+    @Singleton
+    public HistoryApiService provideHistoryApiService(Retrofit retrofit) {
+        return retrofit.create(HistoryApiService.class);
     }
 }

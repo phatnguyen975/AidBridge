@@ -85,3 +85,4 @@ public class RegisterViewModel extends BaseViewModel {
         }
     }
 }
+

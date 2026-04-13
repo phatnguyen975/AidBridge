@@ -204,3 +204,4 @@ public class RegisterFragment extends BaseFragment<FragmentRegisterBinding> {
         return Math.round(dp * density);
     }
 }
+

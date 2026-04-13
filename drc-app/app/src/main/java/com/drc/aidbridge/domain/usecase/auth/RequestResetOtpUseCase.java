@@ -3,7 +3,7 @@ package com.drc.aidbridge.domain.usecase.auth;
 import androidx.lifecycle.LiveData;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
-import com.drc.aidbridge.data.remote.dto.request.ForgotPasswordRequest;
+import com.drc.aidbridge.data.remote.dto.request.RequestOtpRequest;
 import com.drc.aidbridge.domain.repository.AuthRepository;
 import com.drc.aidbridge.domain.usecase.validation.AuthInputValidator;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
@@ -20,7 +20,7 @@ public class RequestResetOtpUseCase {
 
     @Inject
     public RequestResetOtpUseCase(AuthRepository authRepository,
-                                  AuthInputValidator inputValidator) {
+            AuthInputValidator inputValidator) {
         this.authRepository = authRepository;
         this.inputValidator = inputValidator;
     }
@@ -31,6 +31,7 @@ public class RequestResetOtpUseCase {
 
     public LiveData<NetworkResultWrapper<String>> execute(String email) {
         return authRepository.forgotPassword(
-                new ForgotPasswordRequest(inputValidator.normalizeEmail(email)));
+                new RequestOtpRequest(inputValidator.normalizeEmail(email), null, "PASSWORD_RESET"));
     }
 }
+

@@ -24,12 +24,47 @@ public class CloudinaryService {
         validateImage(file);
 
         try {
+            return uploadImage(file.getBytes(), file.getContentType(), file.getOriginalFilename());
+        } catch (IOException ex) {
+            throw new CloudinaryOperationException("Failed to read uploaded image", ex);
+        }
+    }
+
+    public UploadedImage uploadImage(byte[] fileBytes, String contentType, String originalFilename) {
+        validateImage(fileBytes, contentType);
+
+        try {
             Map<?, ?> uploadResult = cloudinary.uploader().upload(
-                    file.getBytes(),
+                    fileBytes,
                     ObjectUtils.asMap(
                             "resource_type", IMAGE_RESOURCE_TYPE,
                             "use_filename", true,
                             "unique_filename", true,
+                            "filename_override", normalizeFileName(originalFilename),
+                            "overwrite", false));
+
+            return mapUploadedImage(uploadResult);
+        } catch (IOException ex) {
+            throw new CloudinaryOperationException("Failed to read uploaded image", ex);
+        } catch (RuntimeException ex) {
+            throw new CloudinaryOperationException("Failed to upload image to Cloudinary", ex);
+        }
+    }
+
+    public UploadedImage uploadImageFromUrl(String imageUrl, String originalFilename) {
+        if (!StringUtils.hasText(imageUrl)
+                || (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://"))) {
+            throw new IllegalArgumentException("Image URL must start with http:// or https://");
+        }
+
+        try {
+            Map<?, ?> uploadResult = cloudinary.uploader().upload(
+                    imageUrl,
+                    ObjectUtils.asMap(
+                            "resource_type", IMAGE_RESOURCE_TYPE,
+                            "use_filename", true,
+                            "unique_filename", true,
+                            "filename_override", normalizeFileName(originalFilename),
                             "overwrite", false));
 
             return mapUploadedImage(uploadResult);
@@ -50,6 +85,26 @@ public class CloudinaryService {
                 || !contentType.toLowerCase(Locale.ROOT).startsWith("image/")) {
             throw new IllegalArgumentException("Only image files are allowed");
         }
+    }
+
+    private void validateImage(byte[] fileBytes, String contentType) {
+        if (fileBytes == null || fileBytes.length == 0) {
+            throw new IllegalArgumentException("Image file must not be empty");
+        }
+
+        if (!StringUtils.hasText(contentType)
+                || !contentType.toLowerCase(Locale.ROOT).startsWith("image/")) {
+            throw new IllegalArgumentException("Only image files are allowed");
+        }
+    }
+
+    private String normalizeFileName(String originalFilename) {
+        if (!StringUtils.hasText(originalFilename)) {
+            return "image";
+        }
+
+        String fileName = originalFilename.trim();
+        return fileName.isEmpty() ? "image" : fileName;
     }
 
     private UploadedImage mapUploadedImage(Map<?, ?> uploadResult) {

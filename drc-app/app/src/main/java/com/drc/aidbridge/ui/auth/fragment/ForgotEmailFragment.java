@@ -15,7 +15,7 @@ import com.drc.aidbridge.ui.auth.viewmodel.ForgotEmailViewModel;
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * ForgotEmailFragment — Forgot Password: Step 1 — Enter Email.
+ * ForgotEmailFragment â€” Forgot Password: Step 1 â€” Enter Email.
  */
 @AndroidEntryPoint
 public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding> {
@@ -105,3 +105,4 @@ public class ForgotEmailFragment extends BaseFragment<FragmentForgotEmailBinding
         navigateToOtp(submittedEmail);
     }
 }
+

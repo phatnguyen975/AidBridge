@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
 /**
- * ForgotOtpViewModel — Step 2 of the forgot-password flow.
+ * ForgotOtpViewModel â€” Step 2 of the forgot-password flow.
  */
 @HiltViewModel
 public class ForgotOtpViewModel extends BaseViewModel {
@@ -36,40 +36,34 @@ public class ForgotOtpViewModel extends BaseViewModel {
     private final ResendOtpUseCase resendOtpUseCase;
     private final SavedStateHandle savedStateHandle;
 
-    private final MutableLiveData<Integer> countdown =
-            new MutableLiveData<>(Constants.OTP_COUNTDOWN_SEC);
-    private final MutableLiveData<ResendUiState> resendUiState =
-            new MutableLiveData<>(ResendUiState.TIMER_RUNNING);
+    private final MutableLiveData<Integer> countdown = new MutableLiveData<>(Constants.OTP_COUNTDOWN_SEC);
+    private final MutableLiveData<ResendUiState> resendUiState = new MutableLiveData<>(ResendUiState.TIMER_RUNNING);
 
     private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
     private final MutableLiveData<Integer> otpInlineErrorResId = new MutableLiveData<>();
     private final MutableLiveData<VerifyParams> verifyTrigger = new MutableLiveData<>();
     private final MutableLiveData<ResendParams> resendTrigger = new MutableLiveData<>();
 
-    private final MediatorLiveData<NetworkResultWrapper<String>> verifyResult =
-            new MediatorLiveData<>();
-    private final MediatorLiveData<NetworkResultWrapper<Boolean>> resendResult =
-            new MediatorLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<String>> verifyResult = new MediatorLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<Boolean>> resendResult = new MediatorLiveData<>();
 
     private CountDownTimer countDownTimer;
 
     @Inject
     public ForgotOtpViewModel(VerifyResetOtpUseCase verifyResetOtpUseCase,
-                              ResendOtpUseCase resendOtpUseCase,
-                              SavedStateHandle savedStateHandle) {
+            ResendOtpUseCase resendOtpUseCase,
+            SavedStateHandle savedStateHandle) {
         this.verifyResetOtpUseCase = verifyResetOtpUseCase;
         this.resendOtpUseCase = resendOtpUseCase;
         this.savedStateHandle = savedStateHandle;
 
         LiveData<NetworkResultWrapper<String>> verifySource = Transformations.switchMap(
-            verifyTrigger,
-            params -> this.verifyResetOtpUseCase.execute(params.email, params.otp)
-        );
+                verifyTrigger,
+                params -> this.verifyResetOtpUseCase.execute(params.email, params.otp));
 
         LiveData<NetworkResultWrapper<Boolean>> resendSource = Transformations.switchMap(
-            resendTrigger,
-            params -> this.resendOtpUseCase.execute(params.email)
-        );
+                resendTrigger,
+                params -> this.resendOtpUseCase.execute(params.email, "PASSWORD_RESET"));
 
         verifyResult.addSource(verifySource, verifyResult::setValue);
         resendResult.addSource(resendSource, result -> {
@@ -158,6 +152,7 @@ public class ForgotOtpViewModel extends BaseViewModel {
     private static class VerifyParams {
         final String email;
         final String otp;
+
         VerifyParams(String email, String otp) {
             this.email = email;
             this.otp = otp;
@@ -166,6 +161,7 @@ public class ForgotOtpViewModel extends BaseViewModel {
 
     private static class ResendParams {
         final String email;
+
         ResendParams(String email) {
             this.email = email;
         }
@@ -178,8 +174,7 @@ public class ForgotOtpViewModel extends BaseViewModel {
 
         countDownTimer = new CountDownTimer(
                 Constants.OTP_COUNTDOWN_SEC * 1000L,
-                1000L
-        ) {
+                1000L) {
             @Override
             public void onTick(long millisUntilFinished) {
                 countdown.postValue((int) (millisUntilFinished / 1000));
@@ -227,3 +222,4 @@ public class ForgotOtpViewModel extends BaseViewModel {
         cancelCountdown();
     }
 }
+

@@ -15,7 +15,7 @@ import com.drc.aidbridge.ui.auth.viewmodel.ForgotNewPasswordViewModel;
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * ForgotNewPasswordFragment — Forgot Password: Step 3 — Set New Password.
+ * ForgotNewPasswordFragment â€” Forgot Password: Step 3 â€” Set New Password.
  */
 @AndroidEntryPoint
 public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPasswordBinding> {
@@ -113,3 +113,4 @@ public class ForgotNewPasswordFragment extends BaseFragment<FragmentForgotNewPas
         }
     }
 }
+

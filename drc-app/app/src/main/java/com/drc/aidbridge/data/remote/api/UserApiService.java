@@ -19,7 +19,7 @@ public interface UserApiService {
     @PUT("user/profile")
     Call<BaseResponse<UserDto>> updateProfile(@Body UpdateProfileRequest request);
 
-    @PUT("user/password")
+    @POST("user/password/change")
     Call<BaseResponse<String>> changePassword(@Body ChangePasswordRequest request);
 
     @Multipart

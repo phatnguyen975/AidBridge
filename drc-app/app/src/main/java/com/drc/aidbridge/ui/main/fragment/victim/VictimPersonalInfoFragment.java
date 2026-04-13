@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -78,13 +77,6 @@ public class VictimPersonalInfoFragment extends BaseFragment<FragmentVictimPerso
         String newPassword = getRawText(binding.etNewPassword);
         String confirmPassword = getRawText(binding.etConfirmNewPassword);
 
-        if (!newPassword.equals(confirmPassword)) {
-            showTopSnackbar(binding.getRoot(),
-                getString(R.string.victim_personal_info_error_password_mismatch),
-                true);
-            return;
-        }
-
         viewModel.changePassword(currentPassword, newPassword, confirmPassword);
     }
 
@@ -93,7 +85,14 @@ public class VictimPersonalInfoFragment extends BaseFragment<FragmentVictimPerso
             return;
         }
 
-        showTopSnackbar(binding.getRoot(), validationResult.getErrorMessage(), true);
+        String message = validationResult.getErrorMessage();
+        showTopSnackbar(
+            binding.getRoot(),
+            message != null && !message.trim().isEmpty()
+                ? message
+                : getString(R.string.error_generic),
+            true
+        );
     }
 
     private void bindUserInfo(@Nullable User user) {
@@ -262,3 +261,4 @@ public class VictimPersonalInfoFragment extends BaseFragment<FragmentVictimPerso
         return trimmed.isEmpty() ? null : trimmed;
     }
 }
+

@@ -11,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.UUID;
 
 @RestController
@@ -122,6 +121,7 @@ public class UserController {
         AuthResponse response = verifyOtpUseCase.execute(request);
         return ResponseEntity.ok(ApiResponse.success("OTP verified successfully", response));
     }
+
 
     /**
      * POST /api/auth/password/reset - Reset password với OTP

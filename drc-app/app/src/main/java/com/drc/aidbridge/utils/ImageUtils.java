@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
@@ -40,6 +41,19 @@ public final class ImageUtils {
 
     public static File compressScenePhoto(@NonNull Context context, @NonNull Uri imageUri) throws IOException {
         return compressImage(context, imageUri, SCENE_MAX_WIDTH, SCENE_MAX_HEIGHT, SCENE_QUALITY);
+    }
+
+    public static String createScenePhotoDataUrl(@NonNull Context context, @NonNull Uri imageUri) throws IOException {
+        File compressedFile = compressScenePhoto(context, imageUri);
+        try {
+            byte[] imageBytes = java.nio.file.Files.readAllBytes(compressedFile.toPath());
+            String mimeType = resolveMimeType(compressedFile.getName());
+            String base64Payload = Base64.encodeToString(imageBytes, Base64.NO_WRAP);
+            return "data:" + mimeType + ";base64," + base64Payload;
+        } finally {
+            // Best effort cleanup for temporary compressed file.
+            compressedFile.delete();
+        }
     }
 
     public static MultipartBody.Part createAvatarMultipart(@NonNull File compressedFile) {

@@ -7,10 +7,10 @@ public class ResetPasswordRequest {
     @SerializedName("email")
     private final String email;
 
-    @SerializedName("otp")
+    @SerializedName("otp_code")
     private final String otp;
 
-    @SerializedName("newPassword")
+    @SerializedName("new_password")
     private final String newPassword;
 
     public ResetPasswordRequest(String email, String otp, String newPassword) {

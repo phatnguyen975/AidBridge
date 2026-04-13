@@ -5,6 +5,7 @@ import androidx.room.Room;
 
 import com.drc.aidbridge.data.local.AppDatabase;
 import com.drc.aidbridge.data.local.dao.AppSettingsDao;
+import com.drc.aidbridge.data.local.dao.VictimHistoryDao;
 import com.drc.aidbridge.utils.Constants;
 
 import javax.inject.Singleton;
@@ -41,5 +42,11 @@ public class DatabaseModule {
     @Singleton
     public AppSettingsDao provideAppSettingsDao(AppDatabase database) {
         return database.appSettingsDao();
+    }
+
+    @Provides
+    @Singleton
+    public VictimHistoryDao provideVictimHistoryDao(AppDatabase database) {
+        return database.victimHistoryDao();
     }
 }

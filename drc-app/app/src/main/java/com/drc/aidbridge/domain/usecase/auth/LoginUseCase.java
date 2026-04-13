@@ -12,7 +12,7 @@ import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import javax.inject.Inject;
 
 /**
- * LoginUseCase — validates and executes user login.
+ * LoginUseCase - validates and executes user login.
  */
 public class LoginUseCase {
 
@@ -55,3 +55,4 @@ public class LoginUseCase {
         return trimmed.isEmpty() ? null : trimmed;
     }
 }
+

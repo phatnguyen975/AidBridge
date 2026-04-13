@@ -14,6 +14,7 @@ if (localPropertiesFile.exists()) {
 }
 // API_BASE_URL is the base URL for the backend API; defaults to localhost for emulator testing
 def localBaseUrl = properties.getProperty("API_BASE_URL", "http://10.0.2.2:8080/api/")
+def mapsKey = properties.getProperty("MAPS_API_KEY", "")
 
 android {
     namespace 'com.drc.aidbridge'
@@ -33,6 +34,10 @@ android {
 
         // BASE_URL is injected into BuildConfig at compile time; used by Retrofit to configure API client
         buildConfigField "String", "BASE_URL", "\"${localBaseUrl}\""
+
+        // MAPS_API_KEY is injected into BuildConfig for use in MapFragment and other map-related classes
+        manifestPlaceholders = [mapsApiKey: mapsKey]
+        buildConfigField "String", "MAPS_API_KEY", "\"${mapsKey}\""
     }
 
     buildTypes {

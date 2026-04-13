@@ -7,12 +7,16 @@ public class OtpVerifyRequest {
     @SerializedName("email")
     private final String email;
 
-    @SerializedName("otp")
+    @SerializedName("otp_code")
     private final String otpCode;
 
-    public OtpVerifyRequest(String email, String otpCode) {
+    @SerializedName("otp_type")
+    private final String otpType;
+
+    public OtpVerifyRequest(String email, String otpCode, String otpType) {
         this.email = email;
         this.otpCode = otpCode;
+        this.otpType = otpType;
     }
 
     public String getEmail() {
@@ -21,5 +25,9 @@ public class OtpVerifyRequest {
 
     public String getOtpCode() {
         return otpCode;
+    }
+
+    public String getOtpType() {
+        return otpType;
     }
 }
