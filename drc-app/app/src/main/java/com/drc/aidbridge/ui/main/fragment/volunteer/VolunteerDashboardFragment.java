@@ -16,6 +16,7 @@ import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.MainActivity;
 import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerDashboardViewModel;
 import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
+import com.drc.aidbridge.domain.model.VolunteerMission;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -129,7 +130,8 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
     }
 
     private void renderMissionCardsState() {
-        boolean shouldShowEmergencyCard = hasPendingDispatch && !isMissionAccepted && !isMissionIgnored;
+        boolean hasPending = volunteerTaskViewModel != null && volunteerTaskViewModel.hasPendingDispatch();
+        boolean shouldShowEmergencyCard = hasPending && !isMissionAccepted && !isMissionIgnored;
         binding.cardEmergency.setVisibility(shouldShowEmergencyCard ? View.VISIBLE : View.GONE);
         binding.cardCurrentMission.setVisibility(isMissionAccepted ? View.VISIBLE : View.GONE);
     }
