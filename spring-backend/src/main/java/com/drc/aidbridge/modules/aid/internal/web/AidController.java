@@ -72,17 +72,7 @@ public class AidController {
         return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
     }
 
-        // Validate audio file
-        if (audioFile == null || audioFile.isEmpty()) {
-            throw new BadRequestException("Audio file is required and cannot be empty");
-        }
-
-        if (audioFile.getSize() == 0) {
-            throw new BadRequestException("Audio file cannot be empty");
-        }
-
-        // userId có thể dùng để xác thực quyền nếu cần (import sẵn ở trên)
-        String transcript = transcribeAidRequestVoiceUseCase.execute(audioFile);
-        return ResponseEntity.ok(ApiResponse.success("Voice transcription completed", transcript));
+    private UUID resolveUserId(Jwt jwt) {
+        return UUID.fromString(jwt.getSubject());
     }
 }
