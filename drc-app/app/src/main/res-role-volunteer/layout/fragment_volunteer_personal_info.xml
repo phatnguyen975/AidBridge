@@ -127,6 +127,7 @@
                             app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
 
                             <ImageView
+                                android:id="@+id/ivEditAvatar"
                                 android:layout_width="@dimen/volunteer_personal_info_avatar_edit_icon_size"
                                 android:layout_height="@dimen/volunteer_personal_info_avatar_edit_icon_size"
                                 android:layout_gravity="center"
