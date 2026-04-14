@@ -4,7 +4,9 @@ import com.drc.aidbridge.modules.shared.enums.DonationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -30,9 +32,10 @@ public class Donation {
     @Column(name = "qr_code_token", unique = true, length = 255)
     private String qrCodeToken;
 
-    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "status", nullable = false)
-    private DonationStatus status;
+    @Builder.Default
+    private DonationStatus status = DonationStatus.REGISTERED;
 
     @Column(name = "notes", columnDefinition = "text")
     private String notes;
