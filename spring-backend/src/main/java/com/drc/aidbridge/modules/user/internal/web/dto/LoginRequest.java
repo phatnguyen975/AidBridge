@@ -1,5 +1,6 @@
 package com.drc.aidbridge.modules.user.internal.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,8 +26,10 @@ public class LoginRequest {
 
     // Extended fields
     @JsonProperty("device_id")
+    @JsonAlias("deviceId")
     private String deviceId;
 
     @JsonProperty("fcm_token")
+    @JsonAlias("fcmToken")
     private String fcmToken;
 }

@@ -1,21 +1,29 @@
 package com.drc.aidbridge.ui.main;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.drc.aidbridge.R;
@@ -25,7 +33,11 @@ import com.drc.aidbridge.domain.enums.UserRole;
 import com.drc.aidbridge.domain.usecase.auth.LogoutUseCase;
 import com.drc.aidbridge.ui.auth.AuthActivity;
 import com.drc.aidbridge.ui.base.BaseActivity;
+import com.drc.aidbridge.ui.main.fragment.volunteer.VoluteerMissionAcceptanceFragment;
+import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
+import com.drc.aidbridge.utils.Constants;
 import com.drc.aidbridge.utils.TokenManager;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import javax.inject.Inject;
 
@@ -37,6 +49,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
+    private static final String TAG = "MainActivity_FCM";
     private static final long SOS_POPUP_ANIM_DURATION_MS = 180L;
 
     @Inject
@@ -47,10 +60,68 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     private NavController navController;
 
+    // Declare the launcher at the top of your Activity/Fragment:
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Log.d(TAG, "Notification permission granted.");
+                } else {
+                    Log.w(TAG, "Notification permission denied.");
+                    Toast.makeText(this, "Bạn cần cấp quyền thông báo để nhận cập nhật cứu trợ.", Toast.LENGTH_LONG).show();
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupNavigation();
+
+        askNotificationPermission();
+        fetchFcmToken();
+        handleLaunchIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleLaunchIntent(intent);
+    }
+
+    private void askNotificationPermission() {
+        // This is only necessary for API level >= 33 (Tiramisu)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "Notification permission already granted.");
+            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                // Show an explanation to the user *asynchronously*
+                Toast.makeText(this, "Ứng dụng cần quyền thông báo để gửi tin nhắn cứu trợ khẩn cấp.", Toast.LENGTH_LONG).show();
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            } else {
+                // Directly ask for the permission
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+    }
+
+    private void fetchFcmToken() {
+        FirebaseMessaging.getInstance().getToken()
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                    return;
+                }
+
+                // Get new FCM registration token
+                String token = task.getResult();
+
+                // Log it for the developer to use in Firebase Console
+                Log.d(TAG, "=============================================");
+                Log.d(TAG, "FCM TOKEN: " + token);
+                Log.d(TAG, "Use this token to test messages in Firebase Console.");
+                Log.d(TAG, "=============================================");
+            });
     }
 
     @Override
@@ -81,7 +152,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
             if (destinationId == R.id.victimSosFragment) {
                 showVictimSosPopupWindow();
-                // Keep the previously selected tab active after popup action.
                 return false;
             }
 
@@ -103,14 +173,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             }
         });
 
-        // Keep BottomNavigation checked state in sync when navigation happens from in-screen actions.
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (binding == null) {
                 return;
             }
 
-            // SOS tab id differs from SOS destination ids, so BottomNav cannot auto-highlight natively.
             int destinationId = destination.getId();
+            if (destinationId == R.id.volunteerSosAcceptanceFragment) {
+                if (binding.bottomNav.getMenu().findItem(R.id.volunteerMissionListFragment) != null
+                        && binding.bottomNav.getSelectedItemId() != R.id.volunteerMissionListFragment) {
+                    binding.bottomNav.getMenu().findItem(R.id.volunteerMissionListFragment).setChecked(true);
+                }
+                return;
+            }
+
             if (destinationId == R.id.victimSosSelfFragment
                     || destinationId == R.id.victimSosRelativeFragment) {
                 if (binding.bottomNav.getSelectedItemId() != R.id.victimSosFragment) {
@@ -127,6 +203,57 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         });
 
         binding.bottomNav.setSelectedItemId(navController.getGraph().getStartDestinationId());
+    }
+
+    private void handleLaunchIntent(Intent intent) {
+        if (intent == null || navController == null) {
+            return;
+        }
+
+        String notificationType = sanitize(intent.getStringExtra(Constants.EXTRA_NOTIFICATION_TYPE));
+        if (!Constants.NOTIFICATION_TYPE_DISPATCH_REQUEST.equals(notificationType)) {
+            return;
+        }
+
+        UserRole role = UserRole.fromStringSafe(tokenManager.getUserRole());
+        if (role != UserRole.VOLUNTEER) {
+            clearDispatchExtras(intent);
+            return;
+        }
+
+        String missionId = sanitize(intent.getStringExtra(Constants.EXTRA_MISSION_ID));
+        String dispatchAttemptId = sanitize(intent.getStringExtra(Constants.EXTRA_DISPATCH_ATTEMPT_ID));
+        String missionType = sanitize(intent.getStringExtra(Constants.EXTRA_MISSION_TYPE));
+        String expiresAt = sanitize(intent.getStringExtra(Constants.EXTRA_EXPIRES_AT));
+        if (missionId == null || dispatchAttemptId == null) {
+            clearDispatchExtras(intent);
+            return;
+        }
+
+        new ViewModelProvider(this)
+                .get(VolunteerTaskViewModel.class)
+                .openDispatchRequest(missionId, dispatchAttemptId, missionType, expiresAt);
+
+        if (binding.bottomNav.getMenu().findItem(R.id.volunteerMissionListFragment) != null) {
+            binding.bottomNav.getMenu().findItem(R.id.volunteerMissionListFragment).setChecked(true);
+        }
+
+        if (navController.getGraph().findNode(R.id.volunteerSosAcceptanceFragment) != null
+                && (navController.getCurrentDestination() == null
+                || navController.getCurrentDestination().getId() != R.id.volunteerSosAcceptanceFragment)) {
+            Bundle args = new Bundle();
+            args.putString(VoluteerMissionAcceptanceFragment.ARG_MISSION_ID, missionId);
+            args.putString(VoluteerMissionAcceptanceFragment.ARG_DISPATCH_ATTEMPT_ID, dispatchAttemptId);
+            args.putString(VoluteerMissionAcceptanceFragment.ARG_MISSION_TYPE, missionType);
+            args.putString(VoluteerMissionAcceptanceFragment.ARG_EXPIRES_AT, expiresAt);
+            navController.navigate(
+                    R.id.volunteerSosAcceptanceFragment,
+                    args,
+                    new NavOptions.Builder().setLaunchSingleTop(true).build()
+            );
+        }
+
+        clearDispatchExtras(intent);
     }
 
     private void showVictimSosPopupWindow() {
@@ -175,7 +302,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         int yOff = -(anchor.getHeight() + popupHeight + getResources().getDimensionPixelSize(R.dimen.spacing_sm));
         popupWindow.showAsDropDown(anchor, xOff, yOff);
 
-        // Subtle entrance animation to make the popup feel responsive and intentional.
         popupView.setAlpha(0f);
         popupView.setTranslationY(getResources().getDimension(R.dimen.spacing_sm));
         popupView.animate()
@@ -186,9 +312,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             .start();
     }
 
-    /**
-     * Highlights the selected SOS entry inside popup based on current destination.
-     */
     private void updateSosPopupButtonState(@NonNull LinearLayout btnSosSelf,
                                            @NonNull LinearLayout btnSosRelative,
                                            int currentDestId) {
@@ -225,7 +348,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         try {
             navController.navigate(destinationId);
         } catch (IllegalArgumentException | IllegalStateException ignored) {
-            // Ignore invalid or duplicate navigation requests caused by rapid taps.
         }
     }
 
@@ -299,5 +421,26 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void clearDispatchExtras(@NonNull Intent intent) {
+        intent.removeExtra(Constants.EXTRA_NOTIFICATION_TYPE);
+        intent.removeExtra(Constants.EXTRA_NOTIFICATION_TITLE);
+        intent.removeExtra(Constants.EXTRA_NOTIFICATION_BODY);
+        intent.removeExtra(Constants.EXTRA_MISSION_ID);
+        intent.removeExtra(Constants.EXTRA_DISPATCH_ATTEMPT_ID);
+        intent.removeExtra(Constants.EXTRA_MISSION_TYPE);
+        intent.removeExtra(Constants.EXTRA_DISPATCH_TYPE);
+        intent.removeExtra(Constants.EXTRA_EXPIRES_AT);
+        intent.removeExtra(Constants.EXTRA_CHANNEL_ID);
+        intent.removeExtra(Constants.EXTRA_CLICK_ACTION);
+    }
+
+    private String sanitize(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

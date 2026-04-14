@@ -61,6 +61,10 @@ public class Volunteer {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    @UpdateTimestamp
+    @Column(name = "last_active_at")
+    private Instant lastActiveAt;
+    
     /**
      * Creates a Point from latitude and longitude coordinates.
      * 

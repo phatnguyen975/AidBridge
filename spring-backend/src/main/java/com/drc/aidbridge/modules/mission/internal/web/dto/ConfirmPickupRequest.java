@@ -1,6 +1,5 @@
 package com.drc.aidbridge.modules.mission.internal.web.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class ConfirmPickupRequest {
-    private String qrCodeToken;
+    // Empty body - confirmation is done via mission ID in path
 }

@@ -76,57 +76,6 @@
             android:paddingBottom="@dimen/spacing_lg">
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardQrSection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_md"
-                android:layout_marginTop="@dimen/spacing_md"
-                android:layout_marginEnd="@dimen/spacing_md"
-                app:cardBackgroundColor="@color/volunteer_acceptance_mission_card_bg"
-                app:cardCornerRadius="@dimen/radius_lg"
-                app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
-                app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:padding="@dimen/spacing_md">
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardQrCodeInner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:cardBackgroundColor="@android:color/white"
-                        app:cardCornerRadius="@dimen/volunteer_supply_detail_qr_corner_radius"
-                        app:strokeColor="@color/volunteer_acceptance_decline_button_stroke"
-                        app:strokeWidth="@dimen/volunteer_mission_history_card_stroke_width">
-
-                        <ImageView
-                            android:id="@+id/ivQrCode"
-                            android:layout_width="@dimen/volunteer_supply_detail_qr_size"
-                            android:layout_height="@dimen/volunteer_supply_detail_qr_size"
-                            android:contentDescription="@string/volunteer_supply_detail_qr_content_desc"
-                            android:padding="@dimen/volunteer_supply_detail_qr_inner_padding"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/qr_code" />
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <TextView
-                        android:id="@+id/tvQrHint"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_sm"
-                        android:gravity="center"
-                        android:text="@string/volunteer_supply_detail_qr_hint"
-                        android:textColor="@color/volunteer_acceptance_text_secondary"
-                        android:textSize="@dimen/text_md"
-                        android:textStyle="italic" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardSupplyItems"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

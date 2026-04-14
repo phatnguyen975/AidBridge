@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 /**
- * Request DTO cho reject mission (volunteer từ chối dispatch).
+ * Request DTO cho reject mission
  */
 @Data
 @Builder
@@ -23,24 +23,21 @@ public class RejectMissionRequest {
      */
     private UUID dispatchAttemptId;
 
-    /**
-     * Lý do từ chối
-     */
     @NotBlank(message = "Reason is required")
     private String reason;
 
     /**
-     * Chi tiết lý do (nếu reason = OTHER)
+     * reason = OTHER
      */
     private String reasonDetail;
 
     /**
-     * Enum định nghĩa các lý do từ chối phổ biến
+     * Enum
      */
     public enum RejectReason {
-        BUSY, // Đang bận
-        TOO_FAR, // Quá xa
-        PERSONAL, // Lý do cá nhân
-        OTHER // Lý do khác
+        BUSY,
+        TOO_FAR,
+        PERSONAL,
+        OTHER
     }
 }

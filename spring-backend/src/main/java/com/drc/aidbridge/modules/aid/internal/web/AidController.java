@@ -1,13 +1,16 @@
 package com.drc.aidbridge.modules.aid.internal.web;
+
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
 import com.drc.aidbridge.modules.shared.exception.AuthenticationException;
+import org.springframework.security.core.Authentication;
+import com.drc.aidbridge.modules.shared.exception.BadRequestException;
 import com.drc.aidbridge.modules.aid.internal.usecase.*;
 import com.drc.aidbridge.modules.aid.internal.web.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,12 +40,12 @@ public class AidController {
     @PostMapping
     public ResponseEntity<ApiResponse<AidRequestResponse>> createAidRequest(
             @Valid @RequestBody CreateAidRequest request,
-            Authentication authentication) {
-        UUID userId = resolveAuthenticatedUserId(authentication);
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = resolveUserId(jwt);
         AidRequestResponse response = createAidRequestUseCase.execute(userId, request);
         return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<AidRequestResponse>> getAidRequest(@PathVariable UUID id) {
         AidRequestResponse response = getAidRequestUseCase.execute(id);
@@ -52,9 +55,9 @@ public class AidController {
     @PostMapping("/{id}/cancel")
     public ResponseEntity<ApiResponse<AidRequestResponse>> cancelAidRequest(
             @PathVariable UUID id,
-            Authentication authentication,
+            @AuthenticationPrincipal Jwt jwt,
             @RequestBody(required = false) CancelAidRequest request) {
-        UUID userId = resolveAuthenticatedUserId(authentication);
+        UUID userId = resolveUserId(jwt);
         if (request == null) {
             request = new CancelAidRequest();
         }
@@ -71,11 +74,18 @@ public class AidController {
     }
 
     @PostMapping(value = "/voice", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<String>> transcribeVoice(
-            @RequestPart("file") org.springframework.web.multipart.MultipartFile audioFile) {
+    public ResponseEntity<ApiResponse<AidRequestResponse>> transcribeVoice(
+            @RequestPart("file") org.springframework.web.multipart.MultipartFile audioFile,
+            @Valid @ModelAttribute CreateAidRequestVoiceInput request,
+            @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = resolveUserId(jwt);
+        System.out.println(System.getProperty("file.encoding"));
+        AidRequestResponse response = transcribeAidRequestVoiceUseCase.execute(userId, audioFile, request);
+        return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
+    }
 
-        String transcript = transcribeAidRequestVoiceUseCase.execute(audioFile);
-        return ResponseEntity.ok(ApiResponse.success("Voice transcription completed", transcript));
+    private UUID resolveUserId(Jwt jwt) {
+        return UUID.fromString(jwt.getSubject());
     }
 
     private UUID resolveAuthenticatedUserId(Authentication authentication) {

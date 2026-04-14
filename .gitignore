@@ -1,5 +1,18 @@
 .vscode/
 .idea/
+*.iml
+
+# Gradle / local caches
+.gradle/
+**/.gradle/
+drc-app/.gradle-home/
+drc-app/.gradle-home-noti/
+
+# local config
+local.properties
+
+# build outputs
+**/build/
 
 # Firebase Service Account (Security - never commit!)
 **/firebase-service-account*.json

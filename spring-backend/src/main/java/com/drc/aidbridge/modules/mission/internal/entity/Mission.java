@@ -40,9 +40,6 @@ public class Mission {
     @Column(name = "aid_request_id")
     private UUID aidRequestId;
 
-    @Column(name = "help_request_id")
-    private UUID helpRequestId;
-
     @Column(name = "volunteer_id")
     private UUID volunteerId;
 
@@ -109,13 +106,15 @@ public class Mission {
 
     @Transient
     public BigDecimal getVictimLat() {
-        if (victimLocation == null) return null;
+        if (victimLocation == null)
+            return null;
         return BigDecimal.valueOf(victimLocation.getY());
     }
 
     @Transient
     public BigDecimal getVictimLng() {
-        if (victimLocation == null) return null;
+        if (victimLocation == null)
+            return null;
         return BigDecimal.valueOf(victimLocation.getX());
     }
 }

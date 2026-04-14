@@ -47,7 +47,6 @@ public class CompleteMissionUseCase {
 
         String imageUrl = null;
         if (confirmationImage != null && !confirmationImage.isEmpty()) {
-            // TODO: Upload to cloud storage
             imageUrl = "/missions/" + missionId + "/confirmation.jpg";
         }
 

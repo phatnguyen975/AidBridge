@@ -1,5 +1,9 @@
 HELP.md
 .gradle
+
+# GraphHopper data (OSM map files + built graph cache)
+graph-data/
+data/
 build/
 .gradle-home/
 

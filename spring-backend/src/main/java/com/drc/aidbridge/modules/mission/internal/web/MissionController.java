@@ -3,6 +3,7 @@ package com.drc.aidbridge.modules.mission.internal.web;
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import com.drc.aidbridge.modules.shared.enums.MissionStatus;
 import com.drc.aidbridge.modules.shared.enums.MissionType;
+import com.drc.aidbridge.modules.shared.exception.BadRequestException;
 import com.drc.aidbridge.modules.mission.internal.usecase.*;
 import com.drc.aidbridge.modules.mission.internal.web.dto.*;
 import jakarta.validation.Valid;
@@ -76,6 +77,16 @@ public class MissionController {
             @PathVariable UUID id,
             @RequestPart(value = "confirmation_image", required = true) MultipartFile confirmationImage,
             @RequestPart(value = "notes", required = false) String notes) {
+
+        // Validate that the file is not empty
+        if (confirmationImage == null || confirmationImage.isEmpty()) {
+            throw new BadRequestException("Confirmation image is required and cannot be empty");
+        }
+
+        if (confirmationImage.getSize() == 0) {
+            throw new BadRequestException("Confirmation image cannot be empty");
+        }
+
         CompleteMissionRequest request = CompleteMissionRequest.builder().notes(notes).build();
         MissionResponse response = completeMissionUseCase.execute(id, confirmationImage, request);
         return ResponseEntity.ok(ApiResponse.success("Mission completed successfully", response));
@@ -96,7 +107,7 @@ public class MissionController {
     }
 
     /**
-     * Tạo mission mới (Staff/Admin only)
+     * Tạo mission mới
      */
     @PostMapping
     @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
