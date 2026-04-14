@@ -1,14 +1,19 @@
 package com.drc.aidbridge.ui.main.fragment.volunteer;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.drc.aidbridge.R;
+import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.databinding.FragmentVolunteerPersonalInfoBinding;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
@@ -21,6 +26,10 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class VolunteerPersonalInfoFragment extends BaseFragment<FragmentVolunteerPersonalInfoBinding> {
 
 	private VolunteerPersonalInfoViewModel volunteerPersonalInfoViewModel;
+	private String currentAvatarUrl;
+
+	private final ActivityResultLauncher<String> imagePickerLauncher = registerForActivityResult(
+			new ActivityResultContracts.GetContent(), this::handleAvatarImageSelected);
 
 	@Nullable
 	@Override
@@ -62,6 +71,10 @@ public class VolunteerPersonalInfoFragment extends BaseFragment<FragmentVoluntee
 					renderChangePasswordLoading(result != null && result.isLoading());
 					resultObserver(this::handleChangePasswordSuccess, this::showChangePasswordError).onChanged(result);
 				});
+
+		volunteerPersonalInfoViewModel.getUploadAvatarResult().observe(
+				getViewLifecycleOwner(),
+				this::handleUploadAvatarResult);
 	}
 
 	private void renderPersonalInfoFromUser(@Nullable User user) {
@@ -82,6 +95,9 @@ public class VolunteerPersonalInfoFragment extends BaseFragment<FragmentVoluntee
 		binding.etFullName.setText(fullName);
 		binding.etPhone.setText(phoneNumber);
 		binding.etEmail.setText(email);
+
+		currentAvatarUrl = trimToNull(user.getAvatarUrl());
+		renderAvatar(currentAvatarUrl);
 	}
 
 	private void renderValidationError(@Nullable ValidationResult validationResult) {
@@ -124,6 +140,7 @@ public class VolunteerPersonalInfoFragment extends BaseFragment<FragmentVoluntee
 
 	private void setupClickListeners() {
 		binding.btnBack.setOnClickListener(v -> popBackStackSafely());
+		binding.ivEditAvatar.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
 
 		binding.btnUpdateInfo.setOnClickListener(v -> {
 			clearInputFocusAndHideKeyboard();
@@ -169,5 +186,65 @@ public class VolunteerPersonalInfoFragment extends BaseFragment<FragmentVoluntee
 				isLoading,
 				R.string.volunteer_personal_info_btn_change_password);
 	}
-}
 
+	private void handleUploadAvatarResult(@Nullable NetworkResultWrapper<String> result) {
+		if (result == null) {
+			return;
+		}
+
+		binding.ivEditAvatar.setEnabled(!result.isLoading());
+		binding.ivEditAvatar.setAlpha(result.isLoading() ? 0.5f : 1f);
+
+		if (result.isLoading() || result.hasBeenHandled()) {
+			return;
+		}
+
+		result.markAsHandled();
+		if (result.isSuccess()) {
+			String avatarUrl = trimToNull(result.getData());
+			if (avatarUrl != null) {
+				currentAvatarUrl = avatarUrl;
+			}
+
+			renderAvatar(currentAvatarUrl);
+			showTopSnackbar(
+					binding.getRoot(),
+					getString(R.string.volunteer_personal_info_message_avatar_updated),
+					false);
+			return;
+		}
+
+		if (result.isError()) {
+			renderAvatar(currentAvatarUrl);
+			showTopSnackbar(binding.getRoot(), result.getMessage(), true);
+		}
+	}
+
+	private void handleAvatarImageSelected(@Nullable Uri selectedUri) {
+		if (selectedUri == null) {
+			return;
+		}
+
+		renderAvatar(selectedUri);
+		volunteerPersonalInfoViewModel.uploadAvatar(requireContext(), selectedUri);
+	}
+
+	private void renderAvatar(@Nullable Object avatarSource) {
+		Glide.with(this)
+				.load(avatarSource)
+				.placeholder(R.drawable.ic_avatar)
+				.error(R.drawable.ic_avatar)
+				.circleCrop()
+				.into(binding.ivAvatar);
+	}
+
+	@Nullable
+	private String trimToNull(@Nullable String value) {
+		if (value == null) {
+			return null;
+		}
+
+		String trimmed = value.trim();
+		return trimmed.isEmpty() ? null : trimmed;
+	}
+}

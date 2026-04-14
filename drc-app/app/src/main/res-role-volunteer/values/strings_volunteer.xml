@@ -175,6 +175,7 @@
     <string name="volunteer_personal_info_toast_change_password_success">Đổi mật khẩu thành công</string>
     <string name="volunteer_personal_info_toast_change_password_mismatch">Xác nhận mật khẩu không khớp</string>
     <string name="volunteer_personal_info_toast_change_password_empty">Vui lòng nhập đầy đủ mật khẩu mới và xác nhận</string>
+    <string name="volunteer_personal_info_message_avatar_updated">Cập nhật ảnh đại diện thành công</string>
 
     <!-- Volunteer SOS Acceptance -->
     <string name="volunteer_sos_acceptance_title">Nhiệm vụ mới</string>
