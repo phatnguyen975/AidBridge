@@ -56,6 +56,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/hubs").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/hubs/*/inventory/import").hasAnyRole("STAFF", "ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/hubs/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/donations").hasAnyRole("SPONSOR", "STAFF", "ADMIN")
                         .requestMatchers("/api/routing/**").permitAll() // GraphHopper routing endpoints
                         // Role-based endpoint authorization
                         // ADMIN - full system access
