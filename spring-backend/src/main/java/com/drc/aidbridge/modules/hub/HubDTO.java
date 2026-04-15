@@ -26,16 +26,16 @@ public class HubDTO {
     private Instant updatedAt;
     private LocationDTO location;
 
-    // Always expose inventory in JSON (at minimum as an empty array).
+    // Always expose grouped inventory in JSON (at minimum as an empty array).
     @JsonInclude(JsonInclude.Include.ALWAYS)
     @Builder.Default
-    private List<InventoryItemDTO> inventory = new ArrayList<>();
+    private List<ParentCategoryInventoryDTO> inventoryGroups = new ArrayList<>();
 
-    public List<InventoryItemDTO> getInventory() {
-        if (inventory == null) {
-            inventory = new ArrayList<>();
+    public List<ParentCategoryInventoryDTO> getInventoryGroups() {
+        if (inventoryGroups == null) {
+            inventoryGroups = new ArrayList<>();
         }
-        return inventory;
+        return inventoryGroups;
     }
 
     @Data
@@ -54,8 +54,20 @@ public class HubDTO {
     public static class InventoryItemDTO {
         private UUID itemCategoryId;
         private String itemCategoryName;
+        private String unit;
         private Integer currentQuantity;
         private Integer lowStockThreshold;
         private Instant lastRestockedAt;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ParentCategoryInventoryDTO {
+        private String parentCategoryName;
+
+        @Builder.Default
+        private List<InventoryItemDTO> items = new ArrayList<>();
     }
 }

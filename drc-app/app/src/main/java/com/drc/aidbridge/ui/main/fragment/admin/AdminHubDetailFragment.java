@@ -77,7 +77,7 @@ public class AdminHubDetailFragment extends BaseFragment<FragmentAdminHubDetailB
         }
 
         bindHubInfo(hub);
-        inventoryAdapter.submitList(hub.getInventory() != null ? hub.getInventory() : new ArrayList<>());
+        inventoryAdapter.submitList(hub.getInventoryGroups() != null ? hub.getInventoryGroups() : new ArrayList<>());
     }
 
     private void bindHubInfo(@NonNull Hub hub) {
@@ -89,15 +89,18 @@ public class AdminHubDetailFragment extends BaseFragment<FragmentAdminHubDetailB
         binding.textAdminHubDetailOperatingHours.setText(getString(
                 R.string.admin_hub_detail_operating_hours_format,
                 resolveOperatingHours(hub.getOperatingHours())));
+        binding.textAdminHubDetailManager.setText(getString(
+                R.string.admin_hub_detail_manager_format,
+                getString(R.string.admin_hub_detail_manager_mock_name)));
 
         applyStatus(hub.getStatus());
 
-        Glide.with(binding.imageAdminHubDetailThumbnail)
+        Glide.with(binding.imageAdminHubInfoThumbnail)
                 .load(hub.getImageUrl())
                 .placeholder(R.drawable.ic_hub_placeholder)
                 .error(R.drawable.ic_hub_placeholder)
                 .centerCrop()
-                .into(binding.imageAdminHubDetailThumbnail);
+                .into(binding.imageAdminHubInfoThumbnail);
 
         Hub.Location location = hub.getLocation();
         if (location != null) {

@@ -23,7 +23,7 @@ import java.util.Set;
 public class AdminHubDetailInventoryAdapter
         extends RecyclerView.Adapter<AdminHubDetailInventoryAdapter.InventoryCategoryViewHolder> {
 
-    private final List<Hub.InventoryItem> categories = new ArrayList<>();
+    private final List<Hub.InventoryGroup> categories = new ArrayList<>();
     private final Set<Integer> expandedPositions = new HashSet<>();
 
     @NonNull
@@ -36,7 +36,7 @@ public class AdminHubDetailInventoryAdapter
 
     @Override
     public void onBindViewHolder(@NonNull InventoryCategoryViewHolder holder, int position) {
-        Hub.InventoryItem category = categories.get(position);
+        Hub.InventoryGroup category = categories.get(position);
         boolean isExpanded = expandedPositions.contains(position);
         holder.bind(category, isExpanded);
 
@@ -55,7 +55,7 @@ public class AdminHubDetailInventoryAdapter
         return categories.size();
     }
 
-    public void submitList(@NonNull List<Hub.InventoryItem> data) {
+    public void submitList(@NonNull List<Hub.InventoryGroup> data) {
         categories.clear();
         categories.addAll(data);
         expandedPositions.clear();
@@ -71,18 +71,20 @@ public class AdminHubDetailInventoryAdapter
             this.binding = binding;
         }
 
-        void bind(@NonNull Hub.InventoryItem category, boolean expanded) {
-            String categoryName = safeText(category.getItemCategoryName());
-            int currentQuantity = safeNonNegative(category.getCurrentQuantity());
-            int lowStockThreshold = safeNonNegative(category.getLowStockThreshold());
+        void bind(@NonNull Hub.InventoryGroup category, boolean expanded) {
+            String categoryName = safeGroupName(category.getParentCategoryName());
+            List<Hub.InventoryItem> items = category.getItems() != null ? category.getItems() : new ArrayList<>();
+            int totalItems = items.size();
+            int lowStockItems = countLowStockItems(items);
 
             binding.imageCategoryIcon.setImageResource(resolveCategoryIcon(categoryName));
             binding.textCategoryName.setText(categoryName);
             binding.textCategoryThreshold.setText(binding.getRoot().getContext().getString(
-                    R.string.admin_hub_detail_threshold_format,
-                    String.valueOf(lowStockThreshold)));
+                    R.string.admin_hub_detail_inventory_group_summary,
+                    totalItems,
+                    lowStockItems));
 
-            if (currentQuantity >= lowStockThreshold) {
+            if (lowStockItems == 0) {
                 binding.textCategoryStatus.setText(R.string.admin_hub_detail_badge_ok);
                 binding.textCategoryStatus.setBackgroundResource(R.drawable.bg_admin_inventory_badge_ok);
                 binding.textCategoryStatus.setTextColor(
@@ -98,29 +100,76 @@ public class AdminHubDetailInventoryAdapter
             binding.layoutInventoryChildren.setVisibility(expanded ? View.VISIBLE : View.GONE);
             if (expanded) {
                 LayoutInflater inflater = LayoutInflater.from(binding.getRoot().getContext());
-                ItemAdminInventoryChildBinding childBinding = ItemAdminInventoryChildBinding.inflate(
-                        inflater,
-                        binding.layoutInventoryChildren,
-                        false);
-                childBinding.textInventoryItemName.setText(categoryName);
-                childBinding.textInventoryItemQuantity.setText(
-                        binding.getRoot().getContext().getString(
-                                R.string.admin_hub_detail_inventory_quantity_format,
-                                currentQuantity));
-                binding.layoutInventoryChildren.addView(childBinding.getRoot());
+                if (items.isEmpty()) {
+                    ItemAdminInventoryChildBinding emptyBinding = ItemAdminInventoryChildBinding.inflate(
+                            inflater,
+                            binding.layoutInventoryChildren,
+                            false);
+                    emptyBinding.textInventoryItemName.setText(R.string.admin_hub_detail_inventory_empty_row);
+                    emptyBinding.textInventoryItemQuantity.setText(R.string.admin_hub_detail_inventory_quantity_empty);
+                    binding.layoutInventoryChildren.addView(emptyBinding.getRoot());
+                    return;
+                }
+
+                for (Hub.InventoryItem item : items) {
+                    ItemAdminInventoryChildBinding childBinding = ItemAdminInventoryChildBinding.inflate(
+                            inflater,
+                            binding.layoutInventoryChildren,
+                            false);
+                    childBinding.textInventoryItemName
+                            .setText(safeItemName(item != null ? item.getItemCategoryName() : null));
+
+                    int quantity = safeNonNegative(item != null ? item.getCurrentQuantity() : null);
+                    String unit = safeUnit(item != null ? item.getUnit() : null);
+                    String quantityText = binding.getRoot().getContext().getString(
+                            R.string.admin_hub_item_quantity_format,
+                            quantity,
+                            unit);
+                    childBinding.textInventoryItemQuantity.setText(quantityText);
+                    binding.layoutInventoryChildren.addView(childBinding.getRoot());
+                }
             }
         }
 
         @NonNull
-        private String safeText(String value) {
+        private String safeGroupName(String value) {
+            if (value == null || value.trim().isEmpty()) {
+                return binding.getRoot().getContext()
+                        .getString(R.string.admin_hub_detail_inventory_group_name_fallback);
+            }
+            return value.trim();
+        }
+
+        @NonNull
+        private String safeItemName(String value) {
             if (value == null || value.trim().isEmpty()) {
                 return binding.getRoot().getContext().getString(R.string.admin_hub_detail_inventory_name_fallback);
             }
             return value.trim();
         }
 
+        @NonNull
+        private String safeUnit(String value) {
+            if (value == null || value.trim().isEmpty()) {
+                return binding.getRoot().getContext().getString(R.string.admin_hub_detail_inventory_unit_fallback);
+            }
+            return value.trim();
+        }
+
         private int safeNonNegative(Integer value) {
             return value == null ? 0 : Math.max(value, 0);
+        }
+
+        private int countLowStockItems(@NonNull List<Hub.InventoryItem> items) {
+            int lowStockCount = 0;
+            for (Hub.InventoryItem item : items) {
+                int currentQuantity = safeNonNegative(item != null ? item.getCurrentQuantity() : null);
+                int lowStockThreshold = safeNonNegative(item != null ? item.getLowStockThreshold() : null);
+                if (currentQuantity < lowStockThreshold) {
+                    lowStockCount++;
+                }
+            }
+            return lowStockCount;
         }
 
         private int resolveCategoryIcon(@NonNull String categoryName) {

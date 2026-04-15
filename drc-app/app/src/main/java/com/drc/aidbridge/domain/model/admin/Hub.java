@@ -19,7 +19,7 @@ public class Hub {
     private final String createdAt;
     private final String updatedAt;
     private final Location location;
-    private final List<InventoryItem> inventory;
+    private final List<InventoryGroup> inventoryGroups;
 
     public Hub(UUID id,
             String name,
@@ -40,7 +40,7 @@ public class Hub {
             String createdAt,
             String updatedAt,
             Location location,
-            List<InventoryItem> inventory) {
+            List<InventoryGroup> inventoryGroups) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -51,9 +51,9 @@ public class Hub {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.location = location;
-        this.inventory = inventory == null
+        this.inventoryGroups = inventoryGroups == null
                 ? Collections.emptyList()
-                : Collections.unmodifiableList(new ArrayList<>(inventory));
+                : Collections.unmodifiableList(new ArrayList<>(inventoryGroups));
     }
 
     public UUID getId() {
@@ -100,8 +100,8 @@ public class Hub {
         return location;
     }
 
-    public List<InventoryItem> getInventory() {
-        return inventory;
+    public List<InventoryGroup> getInventoryGroups() {
+        return inventoryGroups;
     }
 
     public boolean isActive() {
@@ -126,20 +126,43 @@ public class Hub {
         }
     }
 
+    public static class InventoryGroup {
+        private final String parentCategoryName;
+        private final List<InventoryItem> items;
+
+        public InventoryGroup(String parentCategoryName, List<InventoryItem> items) {
+            this.parentCategoryName = parentCategoryName;
+            this.items = items == null
+                    ? Collections.emptyList()
+                    : Collections.unmodifiableList(new ArrayList<>(items));
+        }
+
+        public String getParentCategoryName() {
+            return parentCategoryName;
+        }
+
+        public List<InventoryItem> getItems() {
+            return items;
+        }
+    }
+
     public static class InventoryItem {
         private final UUID itemCategoryId;
         private final String itemCategoryName;
+        private final String unit;
         private final Integer currentQuantity;
         private final Integer lowStockThreshold;
         private final String lastRestockedAt;
 
         public InventoryItem(UUID itemCategoryId,
                 String itemCategoryName,
+                String unit,
                 Integer currentQuantity,
                 Integer lowStockThreshold,
                 String lastRestockedAt) {
             this.itemCategoryId = itemCategoryId;
             this.itemCategoryName = itemCategoryName;
+            this.unit = unit;
             this.currentQuantity = currentQuantity;
             this.lowStockThreshold = lowStockThreshold;
             this.lastRestockedAt = lastRestockedAt;
@@ -151,6 +174,10 @@ public class Hub {
 
         public String getItemCategoryName() {
             return itemCategoryName;
+        }
+
+        public String getUnit() {
+            return unit;
         }
 
         public Integer getCurrentQuantity() {

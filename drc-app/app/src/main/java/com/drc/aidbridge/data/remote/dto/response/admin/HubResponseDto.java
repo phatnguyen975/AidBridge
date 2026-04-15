@@ -36,8 +36,8 @@ public class HubResponseDto {
     @SerializedName("location")
     private LocationDto location;
 
-    @SerializedName("inventory")
-    private List<InventoryItemDto> inventory;
+    @SerializedName(value = "inventory_groups", alternate = { "inventoryGroups" })
+    private List<InventoryGroupDto> inventoryGroups;
 
     public String getId() {
         return id;
@@ -79,8 +79,8 @@ public class HubResponseDto {
         return location;
     }
 
-    public List<InventoryItemDto> getInventory() {
-        return inventory;
+    public List<InventoryGroupDto> getInventoryGroups() {
+        return inventoryGroups;
     }
 
     public static class LocationDto {
@@ -99,12 +99,31 @@ public class HubResponseDto {
         }
     }
 
+    public static class InventoryGroupDto {
+        @SerializedName(value = "parent_category_name", alternate = { "parentCategoryName" })
+        private String parentCategoryName;
+
+        @SerializedName("items")
+        private List<InventoryItemDto> items;
+
+        public String getParentCategoryName() {
+            return parentCategoryName;
+        }
+
+        public List<InventoryItemDto> getItems() {
+            return items;
+        }
+    }
+
     public static class InventoryItemDto {
         @SerializedName(value = "item_category_id", alternate = { "itemCategoryId" })
         private String itemCategoryId;
 
         @SerializedName(value = "item_category_name", alternate = { "itemCategoryName" })
         private String itemCategoryName;
+
+        @SerializedName("unit")
+        private String unit;
 
         @SerializedName(value = "current_quantity", alternate = { "currentQuantity" })
         private Integer currentQuantity;
@@ -121,6 +140,10 @@ public class HubResponseDto {
 
         public String getItemCategoryName() {
             return itemCategoryName;
+        }
+
+        public String getUnit() {
+            return unit;
         }
 
         public Integer getCurrentQuantity() {

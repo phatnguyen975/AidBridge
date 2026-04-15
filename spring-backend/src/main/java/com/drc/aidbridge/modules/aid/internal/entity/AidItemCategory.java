@@ -21,6 +21,9 @@ public class AidItemCategory {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
+    @Column(name = "parent_id")
+    private UUID parentId;
+
     @Column(name = "unit", nullable = false, length = 50)
     private String unit;
 

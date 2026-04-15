@@ -56,7 +56,9 @@ class GetHubByIdUseCaseTest {
                 .build();
         AidItemCategory category = mock(AidItemCategory.class);
         when(category.getId()).thenReturn(categoryId);
-        when(category.getName()).thenReturn("Gao");
+        when(category.getName()).thenReturn("Mì tôm");
+        when(category.getUnit()).thenReturn("thùng");
+        when(category.getParentId()).thenReturn(null);
 
         when(hubRepository.findById(hubId)).thenReturn(Optional.of(hub));
         when(hubMapper.toDTO(hub)).thenReturn(dto);
@@ -66,12 +68,22 @@ class GetHubByIdUseCaseTest {
         HubDTO result = useCase.execute(hubId);
 
         assertNotNull(result);
-        assertNotNull(result.getInventory());
-        assertEquals(1, result.getInventory().size());
-        assertEquals(categoryId, result.getInventory().getFirst().getItemCategoryId());
-        assertEquals("Gao", result.getInventory().getFirst().getItemCategoryName());
-        assertEquals(25, result.getInventory().getFirst().getCurrentQuantity());
-        assertEquals(5, result.getInventory().getFirst().getLowStockThreshold());
+        assertNotNull(result.getInventoryGroups());
+        assertEquals(5, result.getInventoryGroups().size());
+
+        HubDTO.ParentCategoryInventoryDTO foodGroup = result.getInventoryGroups().stream()
+                .filter(group -> "Thực phẩm".equals(group.getParentCategoryName()))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(foodGroup);
+        assertNotNull(foodGroup.getItems());
+        assertEquals(1, foodGroup.getItems().size());
+        assertEquals(categoryId, foodGroup.getItems().getFirst().getItemCategoryId());
+        assertEquals("Mì tôm", foodGroup.getItems().getFirst().getItemCategoryName());
+        assertEquals("thùng", foodGroup.getItems().getFirst().getUnit());
+        assertEquals(25, foodGroup.getItems().getFirst().getCurrentQuantity());
+        assertEquals(5, foodGroup.getItems().getFirst().getLowStockThreshold());
     }
 
     @Test
@@ -98,7 +110,8 @@ class GetHubByIdUseCaseTest {
         HubDTO result = useCase.execute(hubId);
 
         assertNotNull(result);
-        assertNotNull(result.getInventory());
-        assertTrue(result.getInventory().isEmpty());
+        assertNotNull(result.getInventoryGroups());
+        assertEquals(5, result.getInventoryGroups().size());
+        assertTrue(result.getInventoryGroups().stream().allMatch(group -> group.getItems().isEmpty()));
     }
 }

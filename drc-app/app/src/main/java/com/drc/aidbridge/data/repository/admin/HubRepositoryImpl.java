@@ -202,20 +202,35 @@ public class HubRepositoryImpl extends BaseRepository implements HubRepository {
             location = new Hub.Location(locationDto.getLat(), locationDto.getLng());
         }
 
-        List<Hub.InventoryItem> inventoryItems = new ArrayList<>();
-        List<HubResponseDto.InventoryItemDto> inventoryDtos = dto.getInventory();
-        if (inventoryDtos != null) {
-            for (HubResponseDto.InventoryItemDto inventoryDto : inventoryDtos) {
-                if (inventoryDto == null) {
+        List<Hub.InventoryGroup> inventoryGroups = new ArrayList<>();
+        List<HubResponseDto.InventoryGroupDto> inventoryGroupDtos = dto.getInventoryGroups();
+        if (inventoryGroupDtos != null) {
+            for (HubResponseDto.InventoryGroupDto groupDto : inventoryGroupDtos) {
+                if (groupDto == null) {
                     continue;
                 }
 
-                inventoryItems.add(new Hub.InventoryItem(
-                        parseUuid(inventoryDto.getItemCategoryId()),
-                        safeText(inventoryDto.getItemCategoryName()),
-                        safeInteger(inventoryDto.getCurrentQuantity()),
-                        safeInteger(inventoryDto.getLowStockThreshold()),
-                        safeText(inventoryDto.getLastRestockedAt())));
+                List<Hub.InventoryItem> inventoryItems = new ArrayList<>();
+                List<HubResponseDto.InventoryItemDto> itemDtos = groupDto.getItems();
+                if (itemDtos != null) {
+                    for (HubResponseDto.InventoryItemDto itemDto : itemDtos) {
+                        if (itemDto == null) {
+                            continue;
+                        }
+
+                        inventoryItems.add(new Hub.InventoryItem(
+                                parseUuid(itemDto.getItemCategoryId()),
+                                safeText(itemDto.getItemCategoryName()),
+                                safeText(itemDto.getUnit()),
+                                safeInteger(itemDto.getCurrentQuantity()),
+                                safeInteger(itemDto.getLowStockThreshold()),
+                                safeText(itemDto.getLastRestockedAt())));
+                    }
+                }
+
+                inventoryGroups.add(new Hub.InventoryGroup(
+                        safeText(groupDto.getParentCategoryName()),
+                        inventoryItems));
             }
         }
 
@@ -230,7 +245,7 @@ public class HubRepositoryImpl extends BaseRepository implements HubRepository {
                 safeText(dto.getCreatedAt()),
                 safeText(dto.getUpdatedAt()),
                 location,
-                inventoryItems);
+                inventoryGroups);
     }
 
     private UUID parseUuid(String rawId) {
