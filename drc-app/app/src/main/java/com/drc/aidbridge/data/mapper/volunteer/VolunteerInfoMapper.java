@@ -91,10 +91,10 @@ public class VolunteerInfoMapper implements BaseMapper<VolunteerProfileDataDto, 
             return new VolunteerHistoryItem("", "", "", "");
         }
 
-        String missionId = dto.getMissionId() != null ? dto.getMissionId().trim() : "";
-        String type = dto.getType() != null ? dto.getType().trim() : "";
+        String missionId = "";
+        String type = dto.getMissionType() != null ? dto.getMissionType().trim() : "";
         String completedAt = dto.getCompletedAt() != null ? dto.getCompletedAt().trim() : "";
-        String location = dto.getLocation() != null ? dto.getLocation().trim() : "";
+        String location = dto.getAddress() != null ? dto.getAddress().trim() : "";
 
         return new VolunteerHistoryItem(missionId, type, completedAt, location);
     }
