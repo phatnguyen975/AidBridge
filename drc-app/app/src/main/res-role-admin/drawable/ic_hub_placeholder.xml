@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/bg_admin_hub_thumbnail" />
+    <item
+        android:width="@dimen/admin_hub_item_thumbnail_placeholder_icon_size"
+        android:height="@dimen/admin_hub_item_thumbnail_placeholder_icon_size"
+        android:gravity="center"
+        android:drawable="@drawable/ic_admin_hub" />
+</layer-list>

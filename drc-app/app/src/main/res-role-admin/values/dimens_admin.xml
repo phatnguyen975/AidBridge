@@ -51,6 +51,9 @@
     <dimen name="admin_hub_item_card_radius">16dp</dimen>
     <dimen name="admin_hub_item_card_stroke">1dp</dimen>
     <dimen name="admin_hub_item_padding">12dp</dimen>
+    <dimen name="admin_hub_item_thumbnail_size">100dp</dimen>
+    <dimen name="admin_hub_item_thumbnail_radius">12dp</dimen>
+    <dimen name="admin_hub_item_thumbnail_placeholder_icon_size">32dp</dimen>
     <dimen name="admin_hub_item_icon_box_size">42dp</dimen>
     <dimen name="admin_hub_item_icon_size">20dp</dimen>
     <dimen name="admin_hub_item_icon_box_radius">10dp</dimen>

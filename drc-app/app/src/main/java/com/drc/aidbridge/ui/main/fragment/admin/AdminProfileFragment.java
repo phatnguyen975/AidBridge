@@ -30,7 +30,7 @@ public class AdminProfileFragment extends BaseFragment<FragmentAdminProfileBindi
         viewModel = new ViewModelProvider(this).get(AdminProfileViewModel.class);
         binding.textAdminProfileTitle.setText(getString(R.string.admin_profile_title));
 
-        viewModel.loadMockProfile();
+        viewModel.loadCurrentUserInfo();
         setupClickListeners();
     }
 
@@ -42,7 +42,7 @@ public class AdminProfileFragment extends BaseFragment<FragmentAdminProfileBindi
         binding.layoutAdminSystemSettings
                 .setOnClickListener(v -> showToast(getString(R.string.admin_profile_toast_system_settings)));
         binding.buttonAdminLogout
-            .setOnClickListener(v -> requestLogout());
+                .setOnClickListener(v -> requestLogout());
     }
 
     @Override
