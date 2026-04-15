@@ -7,29 +7,20 @@ import com.google.gson.annotations.SerializedName;
 public class VolunteerHistoryItemDto {
 
     @Nullable
-    @SerializedName("missionId")
-    private String missionId;
-
-    @Nullable
-    @SerializedName("type")
-    private String type;
+    @SerializedName("missionType")
+    private String missionType;
 
     @Nullable
     @SerializedName("completedAt")
     private String completedAt;
 
     @Nullable
-    @SerializedName("location")
-    private String location;
+    @SerializedName("address")
+    private String address;
 
     @Nullable
-    public String getMissionId() {
-        return missionId;
-    }
-
-    @Nullable
-    public String getType() {
-        return type;
+    public String getMissionType() {
+        return missionType;
     }
 
     @Nullable
@@ -38,7 +29,7 @@ public class VolunteerHistoryItemDto {
     }
 
     @Nullable
-    public String getLocation() {
-        return location;
+    public String getAddress() {
+        return address;
     }
 }

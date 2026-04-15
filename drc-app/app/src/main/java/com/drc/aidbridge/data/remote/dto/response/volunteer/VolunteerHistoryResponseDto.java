@@ -4,8 +4,6 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 public class VolunteerHistoryResponseDto {
 
     @SerializedName("success")
@@ -17,7 +15,7 @@ public class VolunteerHistoryResponseDto {
 
     @Nullable
     @SerializedName("data")
-    private List<VolunteerHistoryItemDto> data;
+    private VolunteerHistoryDataDto data;
 
     public boolean isSuccess() {
         return success;
@@ -29,7 +27,7 @@ public class VolunteerHistoryResponseDto {
     }
 
     @Nullable
-    public List<VolunteerHistoryItemDto> getData() {
+    public VolunteerHistoryDataDto getData() {
         return data;
     }
 }
