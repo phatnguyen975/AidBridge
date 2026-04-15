@@ -1,5 +1,6 @@
 package com.drc.aidbridge.ui.main.fragment.admin;
 
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -86,7 +87,15 @@ public class AdminHubManagementFragment extends BaseFragment<FragmentAdminHubMan
     public void onViewHubDetails(@NonNull Hub hub) {
         String hubName = resolveHubName(hub);
         showToast(getString(R.string.admin_hub_mgmt_toast_open_details, hubName));
-        navigateToDestinationSafely(R.id.adminHubDetailFragment);
+
+        if (hub.getId() == null) {
+            showToast(getString(R.string.admin_hub_detail_error_invalid_hub_id));
+            return;
+        }
+
+        Bundle bundle = new Bundle();
+        bundle.putString(AdminHubDetailFragment.ARG_HUB_ID, hub.getId().toString());
+        navigateSafely(R.id.action_adminHubManagementFragment_to_adminHubDetailFragment, bundle);
     }
 
     @Override
@@ -108,7 +117,7 @@ public class AdminHubManagementFragment extends BaseFragment<FragmentAdminHubMan
         }
 
         String hubName = resolveHubName(updatedHub);
-        int statusRes = resolveStatusText(updatedHub.getStatus());
+        int statusRes = resolveStatusText(HubStatus.fromStringSafe(updatedHub.getStatus()));
         showToast(getString(R.string.admin_hub_mgmt_toast_status_changed, hubName, getString(statusRes)));
     }
 

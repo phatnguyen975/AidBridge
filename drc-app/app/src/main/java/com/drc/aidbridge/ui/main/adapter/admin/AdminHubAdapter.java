@@ -66,6 +66,8 @@ public class AdminHubAdapter extends RecyclerView.Adapter<AdminHubAdapter.AdminH
             binding.textHubAddress.setText(resolveText(hub.getAddress(), R.string.admin_hub_mgmt_address_fallback));
             binding.textHubOperatingHours.setText(resolveOperatingHoursText(hub.getOperatingHours()));
 
+            HubStatus status = HubStatus.fromStringSafe(hub.getStatus());
+
             Glide.with(binding.imageHubThumbnail)
                     .load(hub.getImageUrl())
                     .placeholder(R.drawable.ic_hub_placeholder)
@@ -73,9 +75,9 @@ public class AdminHubAdapter extends RecyclerView.Adapter<AdminHubAdapter.AdminH
                     .centerCrop()
                     .into(binding.imageHubThumbnail);
 
-            if (hub.getStatus() == HubStatus.ACTIVE) {
+            if (status == HubStatus.ACTIVE) {
                 applyActiveState();
-            } else if (hub.getStatus() == HubStatus.EMERGENCY) {
+            } else if (status == HubStatus.EMERGENCY) {
                 applyInactiveState();
                 binding.textHubStatus.setText(R.string.admin_hub_mgmt_status_emergency);
             } else {

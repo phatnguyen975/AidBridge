@@ -18,6 +18,9 @@ public interface HubApiService {
     @GET("hubs")
     Call<BaseResponse<List<HubResponseDto>>> getHubs();
 
+    @GET("hubs/{id}")
+    Call<BaseResponse<HubResponseDto>> getHubById(@Path("id") UUID hubId);
+
     @PATCH("hubs/{id}")
     Call<BaseResponse<HubResponseDto>> updateHubStatus(
             @Path("id") UUID hubId,

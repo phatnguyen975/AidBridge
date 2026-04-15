@@ -78,7 +78,15 @@
     <string name="admin_hub_detail_back">Quay lại Quản lý trạm</string>
     <string name="admin_hub_detail_hub_name">Hub Quận 1</string>
     <string name="admin_hub_detail_status_active">HOẠT ĐỘNG</string>
+    <string name="admin_hub_detail_status_inactive">TẠM DỪNG</string>
+    <string name="admin_hub_detail_status_emergency">KHẨN CẤP</string>
     <string name="admin_hub_detail_address">Địa chỉ: 12 Nguyễn Huệ, Quận 1, TP.HCM</string>
+    <string name="admin_hub_detail_address_format">Địa chỉ: %1$s</string>
+    <string name="admin_hub_detail_address_fallback">Địa chỉ chưa cập nhật</string>
+    <string name="admin_hub_detail_operating_hours">Giờ hoạt động: Chưa cập nhật</string>
+    <string name="admin_hub_detail_operating_hours_format">Giờ hoạt động: %1$s</string>
+    <string name="admin_hub_detail_operating_hours_empty">Chưa cập nhật</string>
+    <string name="admin_hub_detail_name_fallback">Trạm chưa có tên</string>
     <string name="admin_hub_detail_manager">Quản lý: Nguyễn Văn Điều phối</string>
     <string name="admin_hub_detail_map_desc">Bản đồ vị trí trạm trung chuyển</string>
     <string name="admin_hub_detail_button_add_inventory">Thêm / Cập nhật loại vật tư</string>
@@ -87,6 +95,10 @@
     <string name="admin_hub_detail_threshold_format">Tối thiểu: %1$s units</string>
     <string name="admin_hub_detail_badge_ok">ĐỦ</string>
     <string name="admin_hub_detail_badge_low">CẦN BỔ SUNG</string>
+    <string name="admin_hub_detail_inventory_quantity_format">%1$d đơn vị</string>
+    <string name="admin_hub_detail_inventory_name_fallback">Danh mục chưa cập nhật</string>
+    <string name="admin_hub_detail_error_invalid_hub_id">Không tìm thấy mã trạm hợp lệ.</string>
+    <string name="admin_hub_detail_error_generic">Không thể tải chi tiết trạm lúc này.</string>
     <string name="admin_hub_detail_stat_total_import">TỔNG NHẬP KHO</string>
     <string name="admin_hub_detail_stat_total_import_value">1.240 đơn vị</string>
     <string name="admin_hub_detail_stat_relief_runs">LƯỢT CỨU TRỢ</string>

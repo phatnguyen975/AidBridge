@@ -137,6 +137,55 @@ public class HubRepositoryImpl extends BaseRepository implements HubRepository {
         return result;
     }
 
+    @Override
+    public LiveData<NetworkResultWrapper<Hub>> getHubDetail(UUID hubId) {
+        MutableLiveData<NetworkResultWrapper<Hub>> result = new MutableLiveData<>();
+        result.postValue(NetworkResultWrapper.loading());
+
+        hubApiService.getHubById(hubId).enqueue(new Callback<BaseResponse<HubResponseDto>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<HubResponseDto>> call,
+                    Response<BaseResponse<HubResponseDto>> response) {
+                if (!response.isSuccessful()) {
+                    result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
+                    return;
+                }
+
+                BaseResponse<HubResponseDto> baseResponse = response.body();
+                if (baseResponse == null) {
+                    result.postValue(NetworkResultWrapper.error("Phản hồi chi tiết trạm không hợp lệ."));
+                    return;
+                }
+
+                if (!baseResponse.isSuccess()) {
+                    String apiMessage = baseResponse.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                            apiMessage != null && !apiMessage.trim().isEmpty()
+                                    ? apiMessage
+                                    : "Không thể tải chi tiết trạm."));
+                    return;
+                }
+
+                HubResponseDto data = baseResponse.getData();
+                Hub mappedHub = mapToDomain(data);
+                if (mappedHub == null) {
+                    result.postValue(NetworkResultWrapper.error("Dữ liệu chi tiết trạm không hợp lệ."));
+                    return;
+                }
+
+                result.postValue(NetworkResultWrapper.success(mappedHub));
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<HubResponseDto>> call, Throwable throwable) {
+                result.postValue(NetworkResultWrapper.error(
+                        "Không thể kết nối máy chủ: " + safeMessage(throwable)));
+            }
+        });
+
+        return result;
+    }
+
     private Hub mapToDomain(HubResponseDto dto) {
         if (dto == null) {
             return null;
@@ -147,13 +196,41 @@ public class HubRepositoryImpl extends BaseRepository implements HubRepository {
             return null;
         }
 
+        HubResponseDto.LocationDto locationDto = dto.getLocation();
+        Hub.Location location = null;
+        if (locationDto != null) {
+            location = new Hub.Location(locationDto.getLat(), locationDto.getLng());
+        }
+
+        List<Hub.InventoryItem> inventoryItems = new ArrayList<>();
+        List<HubResponseDto.InventoryItemDto> inventoryDtos = dto.getInventory();
+        if (inventoryDtos != null) {
+            for (HubResponseDto.InventoryItemDto inventoryDto : inventoryDtos) {
+                if (inventoryDto == null) {
+                    continue;
+                }
+
+                inventoryItems.add(new Hub.InventoryItem(
+                        parseUuid(inventoryDto.getItemCategoryId()),
+                        safeText(inventoryDto.getItemCategoryName()),
+                        safeInteger(inventoryDto.getCurrentQuantity()),
+                        safeInteger(inventoryDto.getLowStockThreshold()),
+                        safeText(inventoryDto.getLastRestockedAt())));
+            }
+        }
+
         return new Hub(
                 hubId,
                 safeText(dto.getName()),
                 safeText(dto.getAddress()),
+                safeText(dto.getPhoneNumber()),
                 safeText(dto.getImageUrl()),
+                safeText(dto.getStatus()),
                 safeText(dto.getOperatingHours()),
-                HubStatus.fromStringSafe(dto.getStatus()));
+                safeText(dto.getCreatedAt()),
+                safeText(dto.getUpdatedAt()),
+                location,
+                inventoryItems);
     }
 
     private UUID parseUuid(String rawId) {
@@ -170,5 +247,9 @@ public class HubRepositoryImpl extends BaseRepository implements HubRepository {
 
     private String safeText(String text) {
         return text == null ? "" : text.trim();
+    }
+
+    private int safeInteger(Integer value) {
+        return value == null ? 0 : Math.max(value, 0);
     }
 }

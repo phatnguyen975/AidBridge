@@ -92,7 +92,8 @@ public class AdminHubManagementViewModel extends BaseViewModel {
             return;
         }
 
-        HubStatus nextStatus = currentHub.getStatus() == HubStatus.ACTIVE
+        HubStatus currentStatus = HubStatus.fromStringSafe(currentHub.getStatus());
+        HubStatus nextStatus = currentStatus == HubStatus.ACTIVE
                 ? HubStatus.INACTIVE
                 : HubStatus.ACTIVE;
         toggleHubStatusTrigger.setValue(new ToggleHubStatusParams(hubId, nextStatus));
@@ -177,7 +178,7 @@ public class AdminHubManagementViewModel extends BaseViewModel {
 
         int activeCount = 0;
         for (Hub hub : hubs) {
-            if (hub != null && hub.getStatus() == HubStatus.ACTIVE) {
+            if (hub != null && HubStatus.fromStringSafe(hub.getStatus()) == HubStatus.ACTIVE) {
                 activeCount++;
             }
         }

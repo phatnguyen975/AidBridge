@@ -83,6 +83,14 @@
                         android:background="@drawable/bg_admin_detail_map_snippet">
 
                         <ImageView
+                            android:id="@+id/image_admin_hub_detail_thumbnail"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/admin_hub_mgmt_hub_thumbnail_desc"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_hub_placeholder" />
+
+                        <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -127,6 +135,15 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
                         android:text="@string/admin_hub_detail_address"
+                        android:textColor="@color/admin_text_secondary"
+                        android:textSize="@dimen/text_md" />
+
+                    <TextView
+                        android:id="@+id/text_admin_hub_detail_operating_hours"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                        android:text="@string/admin_hub_detail_operating_hours"
                         android:textColor="@color/admin_text_secondary"
                         android:textSize="@dimen/text_md" />
 

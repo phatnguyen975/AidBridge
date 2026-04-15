@@ -13,5 +13,7 @@ public interface HubRepository {
 
     LiveData<NetworkResultWrapper<List<Hub>>> listHubs();
 
+    LiveData<NetworkResultWrapper<Hub>> getHubDetail(UUID hubId);
+
     LiveData<NetworkResultWrapper<Hub>> updateHubStatus(UUID hubId, HubStatus status);
 }
