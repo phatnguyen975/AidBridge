@@ -68,8 +68,10 @@ public class CreateAidRequestUseCase {
         BigDecimal lat = saved.getLocation() != null ? BigDecimal.valueOf(saved.getLocation().getY()) : null;
         BigDecimal lng = saved.getLocation() != null ? BigDecimal.valueOf(saved.getLocation().getX()) : null;
 
+        System.out.println("Publishing AidRequestCreatedEvent for aid request " + saved.getId() + " with coordinates (" + lat + ", " + lng + ")");
         eventPublisher.publishEvent(new AidRequestCreatedEvent(saved.getId(), lat, lng));
 
+        System.out.println("Published AidRequestCreatedEvent for aid request " + saved.getId());
         return aidMapper.toResponse(saved, savedItems, null);
     }
 }
