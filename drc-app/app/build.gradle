@@ -146,6 +146,8 @@ dependencies {
     // ===========================
     // Google Maps SDK - renders interactive map; supports custom markers, polylines, and heatmap tiles
     implementation 'com.google.android.gms:play-services-maps:19.1.0'
+    // osmdroid - OpenStreetMap SDK for custom map rendering without Google Maps dependency at runtime
+    implementation 'org.osmdroid:osmdroid-android:6.1.20'
     // Fused Location Provider - battery-efficient GPS for live tracking and SOS coordinate capture
     implementation 'com.google.android.gms:play-services-location:21.2.0'
 
