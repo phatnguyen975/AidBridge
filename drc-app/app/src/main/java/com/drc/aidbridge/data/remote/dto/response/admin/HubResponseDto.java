@@ -13,6 +13,12 @@ public class HubResponseDto {
     @SerializedName("address")
     private String address;
 
+    @SerializedName(value = "image_url", alternate = { "imageUrl" })
+    private String imageUrl;
+
+    @SerializedName(value = "operating_hours", alternate = { "operatingHours" })
+    private String operatingHours;
+
     @SerializedName("status")
     private String status;
 
@@ -26,6 +32,14 @@ public class HubResponseDto {
 
     public String getAddress() {
         return address;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public String getOperatingHours() {
+        return operatingHours;
     }
 
     public String getStatus() {

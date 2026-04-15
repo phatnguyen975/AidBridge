@@ -9,6 +9,7 @@ import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.ItemAdminHubBinding;
 import com.drc.aidbridge.domain.enums.HubStatus;
@@ -63,11 +64,14 @@ public class AdminHubAdapter extends RecyclerView.Adapter<AdminHubAdapter.AdminH
         void bind(@NonNull Hub hub, @NonNull HubActionListener listener) {
             binding.textHubName.setText(resolveText(hub.getName(), R.string.admin_hub_mgmt_name_fallback));
             binding.textHubAddress.setText(resolveText(hub.getAddress(), R.string.admin_hub_mgmt_address_fallback));
+            binding.textHubOperatingHours.setText(resolveOperatingHoursText(hub.getOperatingHours()));
 
-            String inventoryText = binding.getRoot().getContext()
-                    .getString(R.string.admin_hub_mgmt_inventory_format,
-                            binding.getRoot().getContext().getString(R.string.admin_hub_mgmt_inventory_unknown));
-            binding.textHubInventory.setText(inventoryText);
+            Glide.with(binding.imageHubThumbnail)
+                    .load(hub.getImageUrl())
+                    .placeholder(R.drawable.ic_hub_placeholder)
+                    .error(R.drawable.ic_hub_placeholder)
+                    .centerCrop()
+                    .into(binding.imageHubThumbnail);
 
             if (hub.getStatus() == HubStatus.ACTIVE) {
                 applyActiveState();
@@ -110,6 +114,19 @@ public class AdminHubAdapter extends RecyclerView.Adapter<AdminHubAdapter.AdminH
                 return binding.getRoot().getContext().getString(fallbackRes);
             }
             return value.trim();
+        }
+
+        @NonNull
+        private String resolveOperatingHoursText(String operatingHours) {
+            String content = operatingHours;
+            if (content == null || content.trim().isEmpty()) {
+                content = binding.getRoot().getContext().getString(R.string.admin_hub_mgmt_operating_hours_empty);
+            } else {
+                content = content.trim();
+            }
+            return binding.getRoot().getContext().getString(
+                    R.string.admin_hub_mgmt_operating_hours_format,
+                    content);
         }
     }
 

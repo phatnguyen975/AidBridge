@@ -151,6 +151,8 @@ public class HubRepositoryImpl extends BaseRepository implements HubRepository {
                 hubId,
                 safeText(dto.getName()),
                 safeText(dto.getAddress()),
+                safeText(dto.getImageUrl()),
+                safeText(dto.getOperatingHours()),
                 HubStatus.fromStringSafe(dto.getStatus()));
     }
 

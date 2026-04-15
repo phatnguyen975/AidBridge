@@ -9,12 +9,16 @@ public class Hub {
     private final UUID id;
     private final String name;
     private final String address;
+    private final String imageUrl;
+    private final String operatingHours;
     private final HubStatus status;
 
-    public Hub(UUID id, String name, String address, HubStatus status) {
+    public Hub(UUID id, String name, String address, String imageUrl, String operatingHours, HubStatus status) {
         this.id = id;
         this.name = name;
         this.address = address;
+        this.imageUrl = imageUrl;
+        this.operatingHours = operatingHours;
         this.status = status;
     }
 
@@ -28,6 +32,14 @@ public class Hub {
 
     public String getAddress() {
         return address;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public String getOperatingHours() {
+        return operatingHours;
     }
 
     public HubStatus getStatus() {
