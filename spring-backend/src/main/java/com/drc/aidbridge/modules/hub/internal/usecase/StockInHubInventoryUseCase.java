@@ -1,21 +1,20 @@
 package com.drc.aidbridge.modules.hub.internal.usecase;
 
+import com.drc.aidbridge.modules.aid.internal.repository.AidItemCategoryJpaRepository;
 import com.drc.aidbridge.modules.hub.HubDTO;
-import com.drc.aidbridge.modules.hub.internal.entity.HubInventory;
 import com.drc.aidbridge.modules.hub.internal.entity.Hub;
+import com.drc.aidbridge.modules.hub.internal.entity.HubInventory;
 import com.drc.aidbridge.modules.hub.internal.mapper.HubMapper;
 import com.drc.aidbridge.modules.hub.internal.repository.HubInventoryRepository;
 import com.drc.aidbridge.modules.hub.internal.repository.HubRepository;
 import com.drc.aidbridge.modules.hub.internal.web.dto.HubInventoryElementRequest;
-import com.drc.aidbridge.modules.hub.internal.web.dto.CreateHubRequest;
-import com.drc.aidbridge.modules.aid.internal.repository.AidItemCategoryJpaRepository;
+import com.drc.aidbridge.modules.hub.internal.web.dto.StockInHubInventoryRequest;
 import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class CreateHubUseCase {
+public class StockInHubInventoryUseCase {
 
     private static final int DEFAULT_LOW_STOCK_THRESHOLD = 10;
 
@@ -33,24 +32,15 @@ public class CreateHubUseCase {
     private final HubMapper hubMapper;
 
     @Transactional
-    public HubDTO execute(CreateHubRequest request) {
+    public HubDTO execute(UUID hubId, StockInHubInventoryRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("request is null");
         }
-        Hub hub = hubMapper.toEntity(request);
-        Hub saved = hubRepository.save(hub);
-        upsertCreateInventories(saved.getId(), request.getElements());
-        return hubMapper.toDTO(saved);
-    }
 
-    private void upsertCreateInventories(UUID hubId, List<HubInventoryElementRequest> elements) {
-        if (elements == null || elements.isEmpty()) {
-            return;
-        }
+        Hub hub = hubRepository.findById(hubId)
+                .orElseThrow(() -> new ResourceNotFoundException("Hub not found: " + hubId));
 
-        Map<UUID, InventoryAggregate> aggregateMap = aggregateElements(elements);
-        List<HubInventory> records = new ArrayList<>();
-
+        Map<UUID, InventoryAggregate> aggregateMap = aggregateElements(request.getElements());
         for (Map.Entry<UUID, InventoryAggregate> entry : aggregateMap.entrySet()) {
             UUID itemCategoryId = entry.getKey();
             if (!aidItemCategoryJpaRepository.existsById(itemCategoryId)) {
@@ -58,21 +48,27 @@ public class CreateHubUseCase {
             }
 
             InventoryAggregate aggregate = entry.getValue();
-            records.add(HubInventory.builder()
-                    .hubId(hubId)
-                    .itemCategoryId(itemCategoryId)
-                    .currentQuantity(aggregate.quantity())
-                    .lowStockThreshold(aggregate.lowStockThreshold())
-                    .lastRestockedAt(aggregate.quantity() > 0 ? Instant.now() : null)
-                    .build());
+            HubInventory inventory = hubInventoryRepository.findByHubIdAndItemCategoryId(hubId, itemCategoryId)
+                    .orElseGet(() -> HubInventory.builder()
+                            .hubId(hubId)
+                            .itemCategoryId(itemCategoryId)
+                            .currentQuantity(0)
+                            .lowStockThreshold(DEFAULT_LOW_STOCK_THRESHOLD)
+                            .build());
+
+            inventory.setCurrentQuantity(inventory.getCurrentQuantity() + aggregate.quantity());
+            inventory.setLowStockThreshold(aggregate.lowStockThreshold());
+            if (aggregate.quantity() > 0) {
+                inventory.setLastRestockedAt(Instant.now());
+            }
+            hubInventoryRepository.save(inventory);
         }
 
-        hubInventoryRepository.saveAll(records);
+        return hubMapper.toDTO(hub);
     }
 
     private Map<UUID, InventoryAggregate> aggregateElements(List<HubInventoryElementRequest> elements) {
         Map<UUID, InventoryAggregate> aggregateMap = new LinkedHashMap<>();
-
         for (HubInventoryElementRequest element : elements) {
             UUID itemCategoryId = element.getItemCategoryId();
             InventoryAggregate current = aggregateMap.get(itemCategoryId);
@@ -91,7 +87,6 @@ public class CreateHubUseCase {
                 ));
             }
         }
-
         return aggregateMap;
     }
 
