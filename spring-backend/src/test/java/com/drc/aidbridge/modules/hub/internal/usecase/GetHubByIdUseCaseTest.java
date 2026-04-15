@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
@@ -81,5 +82,23 @@ class GetHubByIdUseCaseTest {
         HubDTO result = useCase.execute(hubId);
 
         assertNull(result);
+    }
+
+    @Test
+    void execute_ShouldReturnEmptyInventoryList_WhenHubHasNoInventoryRows() {
+        UUID hubId = UUID.randomUUID();
+
+        Hub hub = Hub.builder().id(hubId).name("Hub B").build();
+        HubDTO dto = HubDTO.builder().id(hubId).name("Hub B").build();
+
+        when(hubRepository.findById(hubId)).thenReturn(Optional.of(hub));
+        when(hubMapper.toDTO(hub)).thenReturn(dto);
+        when(hubInventoryRepository.findAllByHubId(hubId)).thenReturn(List.of());
+
+        HubDTO result = useCase.execute(hubId);
+
+        assertNotNull(result);
+        assertNotNull(result.getInventory());
+        assertTrue(result.getInventory().isEmpty());
     }
 }

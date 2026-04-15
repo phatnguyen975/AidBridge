@@ -1,10 +1,12 @@
 package com.drc.aidbridge.modules.hub;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.drc.aidbridge.modules.shared.enums.HubStatus;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +25,18 @@ public class HubDTO {
     private Instant createdAt;
     private Instant updatedAt;
     private LocationDTO location;
-    private List<InventoryItemDTO> inventory;
+
+    // Always expose inventory in JSON (at minimum as an empty array).
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    @Builder.Default
+    private List<InventoryItemDTO> inventory = new ArrayList<>();
+
+    public List<InventoryItemDTO> getInventory() {
+        if (inventory == null) {
+            inventory = new ArrayList<>();
+        }
+        return inventory;
+    }
 
     @Data
     @Builder

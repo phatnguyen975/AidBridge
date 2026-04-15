@@ -10,6 +10,7 @@ import com.drc.aidbridge.modules.hub.internal.repository.HubRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,22 +29,31 @@ public class GetHubByIdUseCase {
         return hubRepository.findById(id)
                 .map(hub -> {
                     HubDTO dto = hubMapper.toDTO(hub);
+                    if (dto == null) {
+                        return null;
+                    }
+                    dto.setInventory(new ArrayList<>());
+
                     List<HubInventory> inventories = hubInventoryRepository.findAllByHubId(hub.getId());
+                    if (inventories == null || inventories.isEmpty()) {
+                        return dto;
+                    }
 
                     Map<UUID, String> categoryNameById = new HashMap<>();
                     List<UUID> categoryIds = inventories.stream()
-                        .map(HubInventory::getItemCategoryId)
-                        .distinct()
-                        .toList();
+                            .map(HubInventory::getItemCategoryId)
+                            .filter(categoryId -> categoryId != null)
+                            .distinct()
+                            .toList();
                     List<AidItemCategory> categories = aidItemCategoryJpaRepository.findAllById(categoryIds);
                     for (AidItemCategory category : categories) {
-                    categoryNameById.put(category.getId(), category.getName());
+                        categoryNameById.put(category.getId(), category.getName());
                     }
 
                     List<HubDTO.InventoryItemDTO> inventoryItems = inventories.stream()
                             .map(inventory -> HubDTO.InventoryItemDTO.builder()
                                     .itemCategoryId(inventory.getItemCategoryId())
-                            .itemCategoryName(categoryNameById.get(inventory.getItemCategoryId()))
+                                    .itemCategoryName(categoryNameById.get(inventory.getItemCategoryId()))
                                     .currentQuantity(inventory.getCurrentQuantity())
                                     .lowStockThreshold(inventory.getLowStockThreshold())
                                     .lastRestockedAt(inventory.getLastRestockedAt())
