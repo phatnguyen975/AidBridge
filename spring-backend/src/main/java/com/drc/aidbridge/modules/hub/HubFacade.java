@@ -1,6 +1,7 @@
 package com.drc.aidbridge.modules.hub;
 
 import com.drc.aidbridge.modules.hub.internal.web.dto.CreateHubRequest;
+import com.drc.aidbridge.modules.hub.internal.web.dto.StockInHubInventoryRequest;
 import com.drc.aidbridge.modules.hub.internal.web.dto.UpdateHubRequest;
 import com.drc.aidbridge.modules.shared.enums.HubStatus;
 
@@ -12,4 +13,5 @@ public interface HubFacade {
     List<HubDTO> list(HubStatus status);
     HubDTO create(CreateHubRequest request);
     HubDTO update(UUID id, UpdateHubRequest request);
+    HubDTO stockIn(UUID id, StockInHubInventoryRequest request);
 }

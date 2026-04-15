@@ -19,6 +19,10 @@ public class VolunteerUserDto {
     private String email;
 
     @Nullable
+    @SerializedName(value = "avatarUrl", alternate = { "avatar_url", "avatar" })
+    private String avatarUrl;
+
+    @Nullable
     public String getName() {
         return name;
     }
@@ -31,5 +35,10 @@ public class VolunteerUserDto {
     @Nullable
     public String getEmail() {
         return email;
+    }
+
+    @Nullable
+    public String getAvatarUrl() {
+        return avatarUrl;
     }
 }

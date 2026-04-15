@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -22,6 +23,7 @@ public class HubDTO {
     private Instant createdAt;
     private Instant updatedAt;
     private LocationDTO location;
+    private List<InventoryItemDTO> inventory;
 
     @Data
     @Builder
@@ -30,5 +32,17 @@ public class HubDTO {
     public static class LocationDTO {
         private BigDecimal lat;
         private BigDecimal lng;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class InventoryItemDTO {
+        private UUID itemCategoryId;
+        private String itemCategoryName;
+        private Integer currentQuantity;
+        private Integer lowStockThreshold;
+        private Instant lastRestockedAt;
     }
 }

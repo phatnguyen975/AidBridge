@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVolunteerDashboardBinding;
 import com.drc.aidbridge.domain.model.volunteer.VolunteerDashboardInfo;
@@ -46,7 +47,14 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
         binding.switchOnlineStatus.setChecked(true);
 
         setupClickListeners();
-        volunteerDashboardViewModel.loadProfileDashboard();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (volunteerDashboardViewModel != null) {
+            volunteerDashboardViewModel.loadProfileDashboard();
+        }
     }
 
     @Override
@@ -103,6 +111,13 @@ public class VolunteerDashboardFragment extends BaseFragment<FragmentVolunteerDa
         } else {
             binding.tvUserName.setText(fullName.trim());
         }
+
+        Glide.with(this)
+                .load(profileInfo.getAvatarUrl())
+                .placeholder(R.drawable.ic_avatar)
+                .error(R.drawable.ic_avatar)
+                .circleCrop()
+                .into(binding.ivAvatar);
 
         binding.tvCompletedCount.setText(String.valueOf(profileInfo.getTotalCompletedTasks()));
         currentOnlineStatus = profileInfo.isOnline();

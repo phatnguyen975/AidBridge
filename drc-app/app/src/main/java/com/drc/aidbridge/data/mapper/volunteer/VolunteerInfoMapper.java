@@ -33,12 +33,15 @@ public class VolunteerInfoMapper implements BaseMapper<VolunteerProfileDataDto, 
 
     public VolunteerDashboardInfo mapToDashboardInfoDomain(@Nullable VolunteerProfileDataDto dto) {
         if (dto == null) {
-            return new VolunteerDashboardInfo("", false, 0);
+            return new VolunteerDashboardInfo("", false, 0, "");
         }
 
         VolunteerUserDto user = dto.getUser();
         String fullName = user != null && user.getName() != null
                 ? user.getName().trim()
+                : "";
+        String avatarUrl = user != null && user.getAvatarUrl() != null
+                ? user.getAvatarUrl().trim()
                 : "";
 
         VolunteerProfileDataDto.ProfileDto profile = dto.getProfile();
@@ -48,7 +51,8 @@ public class VolunteerInfoMapper implements BaseMapper<VolunteerProfileDataDto, 
         return new VolunteerDashboardInfo(
                 fullName,
                 isOnline,
-                Math.max(totalCompletedTasks, 0));
+                Math.max(totalCompletedTasks, 0),
+                avatarUrl);
     }
 
     public VolunteerPersonalInfo mapToPersonalInfoDomain(@Nullable VolunteerProfileDataDto dto) {
@@ -87,10 +91,10 @@ public class VolunteerInfoMapper implements BaseMapper<VolunteerProfileDataDto, 
             return new VolunteerHistoryItem("", "", "", "");
         }
 
-        String missionId = dto.getMissionId() != null ? dto.getMissionId().trim() : "";
-        String type = dto.getType() != null ? dto.getType().trim() : "";
+        String missionId = "";
+        String type = dto.getMissionType() != null ? dto.getMissionType().trim() : "";
         String completedAt = dto.getCompletedAt() != null ? dto.getCompletedAt().trim() : "";
-        String location = dto.getLocation() != null ? dto.getLocation().trim() : "";
+        String location = dto.getAddress() != null ? dto.getAddress().trim() : "";
 
         return new VolunteerHistoryItem(missionId, type, completedAt, location);
     }

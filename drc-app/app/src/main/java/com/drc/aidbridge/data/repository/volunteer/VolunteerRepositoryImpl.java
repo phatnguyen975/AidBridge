@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.api.volunteer.VolunteerApiService;
 import com.drc.aidbridge.data.remote.dto.request.volunteer.ToggleStatusRequest;
-import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerHistoryItemDto;
+import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerHistoryDataDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerHistoryResponseDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.ToggleStatusDataDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.ToggleStatusResponse;
@@ -21,9 +21,6 @@ import javax.inject.Singleton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Singleton
 public class VolunteerRepositoryImpl extends BaseRepository implements VolunteerRepository {
@@ -87,11 +84,11 @@ public class VolunteerRepositoryImpl extends BaseRepository implements Volunteer
     }
 
     @Override
-    public LiveData<NetworkResultWrapper<List<VolunteerHistoryItemDto>>> getMissionHistory() {
-        MutableLiveData<NetworkResultWrapper<List<VolunteerHistoryItemDto>>> result = new MutableLiveData<>();
+    public LiveData<NetworkResultWrapper<VolunteerHistoryDataDto>> getMissionHistory(int page, int limit) {
+        MutableLiveData<NetworkResultWrapper<VolunteerHistoryDataDto>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
-        volunteerApiService.getMissionHistory().enqueue(new Callback<VolunteerHistoryResponseDto>() {
+        volunteerApiService.getMissionHistory(page, limit).enqueue(new Callback<VolunteerHistoryResponseDto>() {
             @Override
             public void onResponse(Call<VolunteerHistoryResponseDto> call,
                     Response<VolunteerHistoryResponseDto> response) {
@@ -115,8 +112,17 @@ public class VolunteerRepositoryImpl extends BaseRepository implements Volunteer
                     return;
                 }
 
-                List<VolunteerHistoryItemDto> data = body.getData();
-                result.postValue(NetworkResultWrapper.success(data != null ? data : new ArrayList<>()));
+                VolunteerHistoryDataDto data = body.getData();
+                if (data == null) {
+                    String message = body.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                            message != null && !message.trim().isEmpty()
+                                    ? message
+                                    : "Dữ liệu lịch sử nhiệm vụ trống."));
+                    return;
+                }
+
+                result.postValue(NetworkResultWrapper.success(data));
             }
 
             @Override

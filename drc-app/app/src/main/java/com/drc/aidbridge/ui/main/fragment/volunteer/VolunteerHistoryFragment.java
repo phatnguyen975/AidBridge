@@ -18,8 +18,13 @@ import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerHistoryViewModel;
 import com.google.android.material.chip.Chip;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import javax.inject.Inject;
@@ -27,10 +32,8 @@ import javax.inject.Inject;
 @AndroidEntryPoint
 public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHistoryBinding> {
 
-    private int currentPage = 1;
-    private boolean isLoading = false;
-    private boolean isLastPage = false;
-    private String currentFilter = "";
+    private static final DateTimeFormatter HISTORY_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm",
+            Locale.getDefault());
 
     private static final String FILTER_ALL = "all";
     private static final String FILTER_RESCUE = "RESCUE";
@@ -52,10 +55,7 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
         onInitUI();
         setupToolbar();
         setupFilterActions();
-
-        // === API LOGIC (Uncomment when Backend is ready) ===
-        // volunteerHistoryViewModel.loadHistory();
-        // ===================================================
+        volunteerHistoryViewModel.loadHistory();
     }
 
     @Override
@@ -85,28 +85,15 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
         });
 
         volunteerHistoryViewModel.getFilteredHistoryList().observe(getViewLifecycleOwner(), historyItems -> {
-            // Mock mode: keep adapter data from loadData()/generateDummyData().
-            // List<VolunteerMissionHistoryAdapter.MissionHistoryModel> uiModels =
-            // mapToUiModels(historyItems);
-            // volunteerMissionHistoryAdapter.setMissionList(uiModels);
+            List<VolunteerMissionHistoryAdapter.MissionHistoryModel> uiModels = mapToUiModels(historyItems);
+            volunteerMissionHistoryAdapter.setMissionList(uiModels);
         });
     }
 
     private void onInitUI() {
         binding.rvHistory.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvHistory.setAdapter(volunteerMissionHistoryAdapter);
-
-        resetScreenState();
         setupRecyclerViewScrollListener();
-        currentFilter = getString(R.string.volunteer_history_filter_all);
-        loadData();
-    }
-
-    private void resetScreenState() {
-        currentPage = 1;
-        isLoading = false;
-        isLastPage = false;
-        currentFilter = getString(R.string.volunteer_history_filter_all);
     }
 
     private void setupRecyclerViewScrollListener() {
@@ -114,7 +101,7 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (dy <= 0 || isLoading || isLastPage) {
+                if (dy <= 0) {
                     return;
                 }
 
@@ -128,8 +115,7 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
                 int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
                 if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
-                    currentPage++;
-                    loadData();
+                    volunteerHistoryViewModel.loadNextPage();
                 }
             }
         });
@@ -146,111 +132,18 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
             }
 
             int selectedId = checkedIds.get(0);
-            Chip selectedChip = group.findViewById(selectedId);
-            String selectedText = selectedChip != null
-                    ? selectedChip.getText().toString()
-                    : getString(R.string.volunteer_history_filter_all);
-
-            volunteerMissionHistoryAdapter.clear();
-            currentPage = 1;
-            isLastPage = false;
-            currentFilter = selectedText;
-            loadData();
-
-            // === API LOGIC (Uncomment when Backend is ready) ===
             // if (selectedId == R.id.chipFilterRescue) {
             // volunteerHistoryViewModel.filterHistory(FILTER_RESCUE);
-            // } else if (selectedId == R.id.chipFilterDelivery) {
-            // volunteerHistoryViewModel.filterHistory(FILTER_DELIVERY);
-            // } else {
-            // volunteerHistoryViewModel.filterHistory(FILTER_ALL);
             // }
-            // ===================================================
+
+            if (selectedId == R.id.chipFilterRescue) {
+                volunteerHistoryViewModel.filterHistory(FILTER_RESCUE);
+            } else if (selectedId == R.id.chipFilterDelivery) {
+                volunteerHistoryViewModel.filterHistory(FILTER_DELIVERY);
+            } else {
+                volunteerHistoryViewModel.filterHistory(FILTER_ALL);
+            }
         });
-    }
-
-    private void loadData() {
-        if (isLoading || isLastPage) {
-            return;
-        }
-
-        isLoading = true;
-        binding.paginationProgress.setVisibility(View.VISIBLE);
-
-        List<VolunteerMissionHistoryAdapter.MissionHistoryModel> pageData = generateDummyData(currentPage,
-                currentFilter);
-        if (pageData.isEmpty()) {
-            isLastPage = true;
-        } else {
-            volunteerMissionHistoryAdapter.addItems(pageData);
-            if (currentPage >= 4) {
-                isLastPage = true;
-            }
-        }
-
-        isLoading = false;
-        binding.paginationProgress.setVisibility(View.GONE);
-    }
-
-    private List<VolunteerMissionHistoryAdapter.MissionHistoryModel> generateDummyData(int page,
-            @NonNull String filter) {
-        List<VolunteerMissionHistoryAdapter.MissionHistoryModel> allItems = new ArrayList<>();
-
-        String typeRescue = getString(R.string.volunteer_mission_type_rescue);
-        String typeDelivery = getString(R.string.volunteer_mission_type_delivery);
-
-        allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
-                typeRescue,
-                getString(R.string.volunteer_mission_dummy_location_1),
-                getString(R.string.volunteer_mission_dummy_time_1, page),
-                "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be"));
-
-        allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
-                typeDelivery,
-                getString(R.string.volunteer_mission_dummy_location_2),
-                getString(R.string.volunteer_mission_dummy_time_2, page),
-                "https://images.unsplash.com/photo-1469474968028-56623f02e42e"));
-
-        allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
-                typeRescue,
-                getString(R.string.volunteer_mission_dummy_location_3),
-                getString(R.string.volunteer_mission_dummy_time_3, page),
-                "https://images.unsplash.com/photo-1506744038136-46273834b3fb"));
-
-        allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
-                typeDelivery,
-                getString(R.string.volunteer_mission_dummy_location_4),
-                getString(R.string.volunteer_mission_dummy_time_4, page),
-                "https://images.unsplash.com/photo-1509099836639-18ba1795216d"));
-
-        allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
-                typeRescue,
-                getString(R.string.volunteer_mission_dummy_location_5),
-                getString(R.string.volunteer_mission_dummy_time_5, page),
-                "https://images.unsplash.com/photo-1618477202872-4984f4bf49ea"));
-
-        allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
-                typeDelivery,
-                getString(R.string.volunteer_mission_dummy_location_6),
-                getString(R.string.volunteer_mission_dummy_time_6, page),
-                "https://images.unsplash.com/photo-1446776877081-d282a0f896e2"));
-
-        if (filter.equalsIgnoreCase(getString(R.string.volunteer_history_filter_all))) {
-            return allItems;
-        }
-
-        List<VolunteerMissionHistoryAdapter.MissionHistoryModel> filteredItems = new ArrayList<>();
-        for (VolunteerMissionHistoryAdapter.MissionHistoryModel item : allItems) {
-            if (filter.equalsIgnoreCase(getString(R.string.volunteer_history_filter_rescue))
-                    && item.getType().equalsIgnoreCase(typeRescue)) {
-                filteredItems.add(item);
-            } else if (filter.equalsIgnoreCase(getString(R.string.volunteer_history_filter_delivery))
-                    && item.getType().equalsIgnoreCase(typeDelivery)) {
-                filteredItems.add(item);
-            }
-        }
-
-        return filteredItems;
     }
 
     private List<VolunteerMissionHistoryAdapter.MissionHistoryModel> mapToUiModels(
@@ -264,15 +157,44 @@ public class VolunteerHistoryFragment extends BaseFragment<FragmentVolunteerHist
         for (VolunteerHistoryItem item : historyItems) {
             String type = item.getType() != null ? item.getType() : "";
             String location = item.getLocation() != null ? item.getLocation() : "";
-            String completedAt = item.getCompletedAt() != null ? item.getCompletedAt() : "";
+            String completedAt = formatCompletedAt(item.getCompletedAt());
 
             allItems.add(new VolunteerMissionHistoryAdapter.MissionHistoryModel(
                     type,
                     location,
                     completedAt,
-                    "https://images.unsplash.com/photo-1469474968028-56623f02e42e"));
+                    "https://img.cand.com.vn/resize/800x800/NewFiles/Images/2024/09/09/di_doi_nguoi_va_tai_san_ra_khoi_-1725881783067.JPG"));
         }
 
         return allItems;
+    }
+
+    private String formatCompletedAt(@Nullable String rawCompletedAt) {
+        if (rawCompletedAt == null || rawCompletedAt.trim().isEmpty()) {
+            return "";
+        }
+
+        String normalized = rawCompletedAt.trim();
+        try {
+            // ISO-8601 from backend (e.g. 2026-04-15T10:12:34Z)
+            Instant instant = Instant.parse(normalized);
+            return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).format(HISTORY_TIME_FORMATTER);
+        } catch (Exception ignored) {
+            // Continue to epoch parsing fallback.
+        }
+
+        try {
+            // Support epoch seconds / milliseconds payloads.
+            long epoch = Long.parseLong(normalized);
+            if (normalized.length() <= 10) {
+                epoch = epoch * 1000L;
+            }
+            Instant instant = Instant.ofEpochMilli(epoch);
+            return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).format(HISTORY_TIME_FORMATTER);
+        } catch (Exception ignored) {
+            // Last resort: keep original text to avoid blank data.
+        }
+
+        return normalized;
     }
 }

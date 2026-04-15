@@ -3,7 +3,6 @@ package com.drc.aidbridge.modules.donation.internal.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -24,7 +23,10 @@ public class DonationItem {
     @Column(name = "donation_id", nullable = false)
     private UUID donationId;
 
-    @Column(name = "item_category_id", nullable = false)
+    @Column(name = "item_name", nullable = false, length = 255)
+    private String itemName;
+
+    @Column(name = "item_category_id")
     private UUID itemCategoryId;
 
     @Column(name = "quantity", nullable = false)
@@ -45,8 +47,4 @@ public class DonationItem {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
 }

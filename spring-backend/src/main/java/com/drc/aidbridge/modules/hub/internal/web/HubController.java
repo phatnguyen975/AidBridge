@@ -4,6 +4,7 @@ import com.drc.aidbridge.modules.hub.HubDTO;
 import com.drc.aidbridge.modules.hub.HubFacade;
 import com.drc.aidbridge.modules.hub.internal.usecase.GetHubByIdUseCase;
 import com.drc.aidbridge.modules.hub.internal.web.dto.CreateHubRequest;
+import com.drc.aidbridge.modules.hub.internal.web.dto.StockInHubInventoryRequest;
 import com.drc.aidbridge.modules.hub.internal.web.dto.UpdateHubRequest;
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import com.drc.aidbridge.modules.shared.enums.HubStatus;
@@ -48,5 +49,12 @@ public class HubController {
                                                           @Valid @RequestBody UpdateHubRequest request) {
         HubDTO dto = hubFacade.update(id, request);
         return ResponseEntity.ok(ApiResponse.success("Hub updated", dto));
+    }
+
+    @PostMapping("/{id}/inventory/import")
+    public ResponseEntity<ApiResponse<HubDTO>> stockInHubInventory(@PathVariable UUID id,
+                                                                    @Valid @RequestBody StockInHubInventoryRequest request) {
+        HubDTO dto = hubFacade.stockIn(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Hub inventory restocked", dto));
     }
 }

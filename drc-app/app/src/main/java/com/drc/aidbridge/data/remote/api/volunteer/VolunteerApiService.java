@@ -9,11 +9,14 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface VolunteerApiService {
 
-    @GET("volunteers/history")
-    Call<VolunteerHistoryResponseDto> getMissionHistory();
+    @GET("volunteers/missions/history")
+    Call<VolunteerHistoryResponseDto> getMissionHistory(
+            @Query("page") int page,
+            @Query("limit") int limit);
 
     @GET("volunteers/profile")
     Call<VolunteerProfileResponse> getVolunteerProfile();
