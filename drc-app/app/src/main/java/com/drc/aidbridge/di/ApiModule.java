@@ -75,7 +75,8 @@ public class ApiModule {
     @Singleton
     public HubApiService provideHubApiService(Retrofit retrofit) {
         return retrofit.create(HubApiService.class);
-     
+    }
+
     @Provides
     @Singleton
     public RoutingApiService provideRoutingApiService(Retrofit retrofit) {
