@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:padding="@dimen/spacing_md">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvRouteOptionsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/volunteer_map_route_options"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_lg"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rgStrategy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm">
+
+            <RadioButton
+                android:id="@+id/rbStrategyUrgent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/volunteer_map_strategy_urgent" />
+
+            <RadioButton
+                android:id="@+id/rbStrategySafe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/volunteer_map_strategy_safe" />
+
+            <RadioButton
+                android:id="@+id/rbStrategyHeavyAid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/volunteer_map_strategy_heavy_aid" />
+
+            <RadioButton
+                android:id="@+id/rbStrategyCommunity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/volunteer_map_strategy_community" />
+
+            <RadioButton
+                android:id="@+id/rbStrategyOffroad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/volunteer_map_strategy_offroad" />
+        </RadioGroup>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchAvoidDangerous"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:text="@string/volunteer_map_avoid_dangerous" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnApplyOptions"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:text="@string/volunteer_map_apply_options"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

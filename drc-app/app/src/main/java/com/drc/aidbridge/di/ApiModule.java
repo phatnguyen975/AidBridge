@@ -2,6 +2,7 @@ package com.drc.aidbridge.di;
 
 import com.drc.aidbridge.data.remote.api.AuthApiService;
 import com.drc.aidbridge.data.remote.api.MissionApiService;
+import com.drc.aidbridge.data.remote.api.RoutingApiService;
 import com.drc.aidbridge.data.remote.api.UserApiService;
 import com.drc.aidbridge.data.remote.api.volunteer.VolunteerApiService;
 import com.drc.aidbridge.data.remote.api.victim.HistoryApiService;
@@ -67,5 +68,11 @@ public class ApiModule {
     @Singleton
     public HistoryApiService provideHistoryApiService(Retrofit retrofit) {
         return retrofit.create(HistoryApiService.class);
+    }
+
+    @Provides
+    @Singleton
+    public RoutingApiService provideRoutingApiService(Retrofit retrofit) {
+        return retrofit.create(RoutingApiService.class);
     }
 }
