@@ -38,8 +38,14 @@
     <string name="admin_hub_mgmt_summary_active_hubs_value">9</string>
     <string name="admin_hub_mgmt_hub_icon_desc">Biểu tượng trạm trung chuyển</string>
     <string name="admin_hub_mgmt_status_active">ACTIVE</string>
+    <string name="admin_hub_mgmt_status_inactive">INACTIVE</string>
     <string name="admin_hub_mgmt_status_suspended">SUSPENDED</string>
+    <string name="admin_hub_mgmt_status_emergency">EMERGENCY</string>
     <string name="admin_hub_mgmt_inventory_format">Tồn kho: %1$s</string>
+    <string name="admin_hub_mgmt_inventory_unknown">Chưa cập nhật</string>
+    <string name="admin_hub_mgmt_name_fallback">Trạm chưa có tên</string>
+    <string name="admin_hub_mgmt_address_fallback">Địa chỉ chưa cập nhật</string>
+    <string name="admin_hub_mgmt_error_generic">Không thể tải dữ liệu trạm lúc này</string>
     <string name="admin_hub_mgmt_btn_edit">Chỉnh sửa</string>
     <string name="admin_hub_mgmt_btn_details">Xem chi tiết</string>
     <string name="admin_hub_mgmt_btn_deactivate">Vô hiệu hóa</string>
