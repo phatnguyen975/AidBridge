@@ -287,6 +287,7 @@
     <string name="volunteer_map_call">Gọi điện thoại</string>
     <string name="volunteer_map_call_content_desc">Gọi nhanh nạn nhân</string>
     <string name="volunteer_map_reopen_control_panel_desc">Mở lại bảng điều khiển bản đồ</string>
+    <string name="volunteer_map_recenter_current_location_desc">Đưa bản đồ về vị trí hiện tại</string>
     <string name="volunteer_map_victim_unknown">Nạn nhân SOS</string>
     <string name="volunteer_map_emergency_default">Ưu tiên cao: đang chờ xác minh y tế</string>
     <string name="volunteer_map_end_address_loading_short">Đang cập nhật điểm đến...</string>

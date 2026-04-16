@@ -8,7 +8,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +18,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.drc.aidbridge.BuildConfig;
@@ -86,6 +88,10 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
     private static final double INSTRUCTION_UPDATE_LOCATION_THRESHOLD_METERS = 10d;
     private static final int INSTRUCTION_ROUTE_POINT_WINDOW = 140;
     private static final double INSTRUCTION_ROUTE_FULL_SCAN_THRESHOLD_METERS = 120d;
+    private static final double NAVIGATION_FOLLOW_ZOOM = 19d;
+    private static final long CAMERA_FOLLOW_INTERVAL_MS = 1000L;
+    private static final float TOP_OVERVIEW_COLLAPSED_MAX_RATIO = 0.52f;
+    private static final float TOP_OVERVIEW_HALF_EXPANDED_RATIO = 0.62f;
 
     private static final String STRATEGY_URGENT = "urgent_response";
     private static final String STRATEGY_SAFE = "disaster_safe";
@@ -133,7 +139,6 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
     private boolean avoidDangerousZones;
     private boolean isNavigationActive;
     private boolean isManualStartPoint;
-    private boolean awaitDevStartPin = true;
     private boolean isNetworkDropSimulated;
     private boolean isTopOverviewExpanded = false;
     private boolean isMapScreenActive;
@@ -145,13 +150,21 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
     private int avatarTapCount;
     private long lastMarkerUpdateAtMs;
     private static final long MARKER_UPDATE_THROTTLE_MS = 300L;
+    private long lastCameraFollowAtMs;
     private boolean isMapBaseInitialized;  // Track if map base is setup
     private boolean isMapResumeScheduled;
+    private boolean isCameraFollowEnabled;
     private boolean hasCenteredOnInitialGps;
     private boolean pendingNavigationAfterRouteCalculation;
     private boolean isTopOverviewAutoHiddenForRoute;
     private int defaultTopOverviewPeekHeightPx;
     private int minTopOverviewPeekHeightPx;
+    private int currentTopOverviewCollapsedPeekHeightPx;
+    private int topOverviewBaseBottomMarginPx;
+    private int topOverviewBaseFabBottomMarginPx;
+    private int topOverviewBaseRecenterFabBottomMarginPx;
+    private int topOverviewSystemTopInsetPx;
+    private int topOverviewSystemBottomInsetPx;
     @Nullable
     private BottomSheetBehavior<View> topOverviewBottomSheetBehavior;
     private int cachedInstructionIndex = -1;
@@ -406,7 +419,6 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
         avoidDangerousZones = volunteerMapViewModel.isAvoidDangerousZones();
         isNavigationActive = volunteerMapViewModel.isNavigationActive();
         isManualStartPoint = volunteerMapViewModel.isManualStartPoint();
-        awaitDevStartPin = volunteerMapViewModel.isAwaitDevStartPin();
         isNetworkDropSimulated = volunteerMapViewModel.isNetworkDropSimulated();
         isTopOverviewExpanded = volunteerMapViewModel.isTopOverviewExpanded();
 
@@ -465,40 +477,20 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
         controller.setZoom(14.2);
         controller.setCenter(resolveInitialCenterPoint());
 
-        if (BuildConfig.DEBUG) {
-            GestureDetector gestureDetector = new GestureDetector(
-                    requireContext(),
-                    new GestureDetector.SimpleOnGestureListener() {
-                        @Override
-                        public void onLongPress(@NonNull MotionEvent event) {
-                            handleDebugLongPress(event);
-                        }
-                    }
-            );
+        mapView.setOnTouchListener((v, event) -> {
+            int actionMasked = event.getActionMasked();
+            if (actionMasked == MotionEvent.ACTION_MOVE || actionMasked == MotionEvent.ACTION_POINTER_DOWN) {
+                disableCameraFollowOnManualMapInteraction();
+            }
 
-            mapView.setOnTouchListener((v, event) -> {
-                gestureDetector.onTouchEvent(event);
-                // Handle tap for point selection
-                if (event.getAction() == MotionEvent.ACTION_UP && pointSelectionMode != PointSelectionMode.NONE) {
-                    handleMapTap(event);
-                }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    ensureControlPanelAvailable();
-                }
-                return false;
-            });
-        } else {
-            // Non-debug mode: add simple tap listener for point selection
-            mapView.setOnTouchListener((v, event) -> {
-                if (event.getAction() == MotionEvent.ACTION_UP && pointSelectionMode != PointSelectionMode.NONE) {
-                    handleMapTap(event);
-                }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    ensureControlPanelAvailable();
-                }
-                return false;
-            });
-        }
+            if (event.getAction() == MotionEvent.ACTION_UP && pointSelectionMode != PointSelectionMode.NONE) {
+                handleMapTap(event);
+            }
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                ensureControlPanelAvailable();
+            }
+            return false;
+        });
 
         isMapBaseInitialized = true;
         // NOTE: Polyline + markers loading is deferred to onResume() lazy loading phase
@@ -514,6 +506,7 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
         binding.btnStartNavigation.setOnClickListener(v -> handleStartNavigationClick());
         binding.btnCallVictim.setOnClickListener(v -> openQuickDial());
         binding.fabOpenControlPanel.setOnClickListener(v -> openTopOverviewPanelFromFab());
+        binding.fabRecenterCurrentLocation.setOnClickListener(v -> recenterMapToCurrentLocation());
         
         // Point selection buttons
         binding.btnSetStartPoint.setOnClickListener(v -> showStartPointModeMenu());
@@ -612,10 +605,32 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
                     getResources().getDimensionPixelSize(R.dimen.volunteer_map_sheet_peek_height);
             minTopOverviewPeekHeightPx =
                 getResources().getDimensionPixelSize(R.dimen.volunteer_map_sheet_collapsed_min_height);
+            currentTopOverviewCollapsedPeekHeightPx = defaultTopOverviewPeekHeightPx;
+
+            ViewGroup.LayoutParams cardParams = binding.cardTopOverview.getLayoutParams();
+            if (cardParams instanceof ViewGroup.MarginLayoutParams) {
+                topOverviewBaseBottomMarginPx =
+                        ((ViewGroup.MarginLayoutParams) cardParams).bottomMargin;
+            }
+
+            ViewGroup.LayoutParams fabParams = binding.fabOpenControlPanel.getLayoutParams();
+            if (fabParams instanceof ViewGroup.MarginLayoutParams) {
+                topOverviewBaseFabBottomMarginPx =
+                        ((ViewGroup.MarginLayoutParams) fabParams).bottomMargin;
+            }
+
+            ViewGroup.LayoutParams recenterFabParams = binding.fabRecenterCurrentLocation.getLayoutParams();
+            if (recenterFabParams instanceof ViewGroup.MarginLayoutParams) {
+                topOverviewBaseRecenterFabBottomMarginPx =
+                        ((ViewGroup.MarginLayoutParams) recenterFabParams).bottomMargin;
+            }
+
             topOverviewBottomSheetBehavior.setHideable(false);
             topOverviewBottomSheetBehavior.setSkipCollapsed(false);
             topOverviewBottomSheetBehavior.setDraggable(true);
-            topOverviewBottomSheetBehavior.setPeekHeight(defaultTopOverviewPeekHeightPx, false);
+            topOverviewBottomSheetBehavior.setFitToContents(false);
+            topOverviewBottomSheetBehavior.setHalfExpandedRatio(TOP_OVERVIEW_HALF_EXPANDED_RATIO);
+            topOverviewBottomSheetBehavior.setPeekHeight(currentTopOverviewCollapsedPeekHeightPx, false);
             topOverviewBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
                 @Override
                 public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -640,10 +655,13 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
                 }
             });
 
+            installTopOverviewInsetsHandling();
+
             binding.cardTopOverview.post(() -> {
                 if (topOverviewBottomSheetBehavior == null) {
                     return;
                 }
+                applyResponsiveTopOverviewLayout();
                 topOverviewBottomSheetBehavior.setState(
                         isTopOverviewExpanded
                                 ? BottomSheetBehavior.STATE_EXPANDED
@@ -663,7 +681,8 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
 
         isTopOverviewAutoHiddenForRoute = false;
         if (topOverviewBottomSheetBehavior != null) {
-            topOverviewBottomSheetBehavior.setPeekHeight(defaultTopOverviewPeekHeightPx, true);
+            applyResponsiveTopOverviewLayout();
+            topOverviewBottomSheetBehavior.setPeekHeight(currentTopOverviewCollapsedPeekHeightPx, true);
         }
         binding.cardTopOverview.setVisibility(View.VISIBLE);
         isTopOverviewExpanded = true;
@@ -677,8 +696,14 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
             return;
         }
 
-        binding.fabOpenControlPanel.setVisibility(View.VISIBLE);
-        binding.fabOpenControlPanel.bringToFront();
+        boolean isSimulationRunning =
+                volunteerMapViewModel != null && volunteerMapViewModel.isSimulationRunning();
+        boolean shouldShowFab = !isNavigationActive && !isSimulationRunning;
+
+        binding.fabOpenControlPanel.setVisibility(shouldShowFab ? View.VISIBLE : View.GONE);
+        if (shouldShowFab) {
+            binding.fabOpenControlPanel.bringToFront();
+        }
     }
 
     private void ensureControlPanelAvailable() {
@@ -696,6 +721,21 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
         }
 
         updateOpenControlFabVisibility();
+    }
+
+    private void recenterMapToCurrentLocation() {
+        GeoPoint targetPoint = currentPoint;
+        if (targetPoint == null) {
+            showRouteError(getString(R.string.volunteer_map_missing_location));
+            return;
+        }
+
+        if (isNavigationActive || (volunteerMapViewModel != null && volunteerMapViewModel.isSimulationRunning())) {
+            isCameraFollowEnabled = true;
+            lastCameraFollowAtMs = System.currentTimeMillis();
+        }
+
+        focusCameraOnPoint(targetPoint);
     }
 
     private void hideTopOverviewPanelForRouteFocus() {
@@ -742,11 +782,17 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
 
     private void setupNavigationControls() {
         binding.btnCancelMission.setOnClickListener(v -> {
+            if (volunteerMapViewModel.isSimulationRunning()) {
+                volunteerMapViewModel.stopSimulation();
+            }
             exitNavigationMode();
             showToast(getString(R.string.volunteer_map_mission_cancelled));
         });
 
         binding.btnArrivedMission.setOnClickListener(v -> {
+            if (volunteerMapViewModel.isSimulationRunning()) {
+                volunteerMapViewModel.stopSimulation();
+            }
             showToast(getString(R.string.volunteer_map_arrived_success));
             exitNavigationMode();
         });
@@ -928,6 +974,7 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
             return;
         }
 
+        maybeFollowCurrentLocation();
         updateMapMarkersThrottled();
         updateHudInstructions();
     }
@@ -1360,6 +1407,10 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
             binding.cardNavigationHud.setVisibility(View.VISIBLE);
             binding.layoutNavigationActions.setVisibility(View.VISIBLE);
             updateHudInstructions();
+            GeoPoint startFocusPoint = resolveStartFocusPoint();
+            if (startFocusPoint != null) {
+                focusCameraOnPoint(startFocusPoint);
+            }
             updateOpenControlFabVisibility();
         } catch (Exception e) {
             // Ignore UI errors
@@ -1369,6 +1420,8 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
     private void exitNavigationMode() {
         isNavigationActive = false;
         volunteerMapViewModel.setNavigationActive(false);
+        isCameraFollowEnabled = false;
+        lastCameraFollowAtMs = 0L;
         
         if (binding == null) {
             return;
@@ -1412,33 +1465,100 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
             binding.btnToggleTopPanel.setRotation(isTopOverviewExpanded ? 0f : 180f);
 
             if (topOverviewBottomSheetBehavior != null) {
-                if (isTopOverviewExpanded) {
-                    topOverviewBottomSheetBehavior.setPeekHeight(defaultTopOverviewPeekHeightPx, true);
-                    if (topOverviewBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-                        topOverviewBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    }
-                } else {
-                    binding.cardTopOverview.post(() -> {
-                        if (binding == null || topOverviewBottomSheetBehavior == null) {
-                            return;
-                        }
+                applyResponsiveTopOverviewLayout();
+                topOverviewBottomSheetBehavior.setPeekHeight(currentTopOverviewCollapsedPeekHeightPx, true);
 
-                        int measuredHeight = binding.cardTopOverview.getHeight();
-                        int collapsedHeight = Math.max(measuredHeight, minTopOverviewPeekHeightPx);
-                        if (collapsedHeight > 0) {
-                            topOverviewBottomSheetBehavior.setPeekHeight(collapsedHeight, true);
-                        }
-
-                        if (topOverviewBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
-                            topOverviewBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        }
-                    });
+                int targetState = isTopOverviewExpanded
+                        ? BottomSheetBehavior.STATE_EXPANDED
+                        : BottomSheetBehavior.STATE_COLLAPSED;
+                if (topOverviewBottomSheetBehavior.getState() != targetState) {
+                    topOverviewBottomSheetBehavior.setState(targetState);
                 }
             }
             updateOpenControlFabVisibility();
         } catch (Exception e) {
             // Ignore UI errors
         }
+    }
+
+    private void installTopOverviewInsetsHandling() {
+        if (binding == null) {
+            return;
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (view, insets) -> {
+            Insets systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            topOverviewSystemTopInsetPx = systemBarsInsets.top;
+            topOverviewSystemBottomInsetPx = systemBarsInsets.bottom;
+            applyResponsiveTopOverviewLayout();
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(binding.getRoot());
+    }
+
+    private void applyResponsiveTopOverviewLayout() {
+        if (binding == null || topOverviewBottomSheetBehavior == null) {
+            return;
+        }
+
+        ViewGroup.LayoutParams cardParams = binding.cardTopOverview.getLayoutParams();
+        if (cardParams instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) cardParams;
+            int targetBottomMargin = topOverviewBaseBottomMarginPx + topOverviewSystemBottomInsetPx;
+            if (marginParams.bottomMargin != targetBottomMargin) {
+                marginParams.bottomMargin = targetBottomMargin;
+                binding.cardTopOverview.setLayoutParams(marginParams);
+            }
+        }
+
+        ViewGroup.LayoutParams fabParams = binding.fabOpenControlPanel.getLayoutParams();
+        if (fabParams instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) fabParams;
+            int targetFabBottomMargin = topOverviewBaseFabBottomMarginPx + topOverviewSystemBottomInsetPx;
+            if (marginParams.bottomMargin != targetFabBottomMargin) {
+                marginParams.bottomMargin = targetFabBottomMargin;
+                binding.fabOpenControlPanel.setLayoutParams(marginParams);
+            }
+        }
+
+        ViewGroup.LayoutParams recenterFabParams = binding.fabRecenterCurrentLocation.getLayoutParams();
+        if (recenterFabParams instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) recenterFabParams;
+            int targetFabBottomMargin =
+                    topOverviewBaseRecenterFabBottomMarginPx + topOverviewSystemBottomInsetPx;
+            if (marginParams.bottomMargin != targetFabBottomMargin) {
+                marginParams.bottomMargin = targetFabBottomMargin;
+                binding.fabRecenterCurrentLocation.setLayoutParams(marginParams);
+            }
+        }
+
+        View parentView = (View) binding.cardTopOverview.getParent();
+        if (parentView == null) {
+            return;
+        }
+
+        int parentHeight = parentView.getHeight();
+        if (parentHeight <= 0) {
+            return;
+        }
+
+        int availableSheetHeight = Math.max(
+                minTopOverviewPeekHeightPx,
+                parentHeight - topOverviewSystemTopInsetPx - topOverviewSystemBottomInsetPx
+        );
+
+        int suggestedCollapsedPeek = (int) (availableSheetHeight * TOP_OVERVIEW_COLLAPSED_MAX_RATIO);
+        currentTopOverviewCollapsedPeekHeightPx = Math.min(
+                defaultTopOverviewPeekHeightPx,
+                Math.max(minTopOverviewPeekHeightPx, suggestedCollapsedPeek)
+        );
+
+        int safeTopSpacing = getResources().getDimensionPixelSize(R.dimen.spacing_md);
+        int expandedOffset = topOverviewSystemTopInsetPx + safeTopSpacing;
+        int maxExpandedOffset = Math.max(0, availableSheetHeight - minTopOverviewPeekHeightPx);
+
+        topOverviewBottomSheetBehavior.setExpandedOffset(Math.min(expandedOffset, maxExpandedOffset));
+        topOverviewBottomSheetBehavior.setPeekHeight(currentTopOverviewCollapsedPeekHeightPx, false);
     }
 
     private void updateHudInstructions() {
@@ -2027,35 +2147,6 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
         mapView.invalidate();
     }
 
-    private void handleDebugLongPress(@NonNull MotionEvent event) {
-        GeoPoint point = (GeoPoint) mapView.getProjection().fromPixels((int) event.getX(), (int) event.getY());
-        if (point == null) {
-            return;
-        }
-
-        if (awaitDevStartPin) {
-            startPoint = point;
-            currentPoint = point;
-            isManualStartPoint = true;
-            volunteerMapViewModel.setManualStartPoint(true);
-            volunteerMapViewModel.setStartPoint(point);
-            volunteerMapViewModel.setCurrentPoint(point);
-            clearCurrentRoutePathState();
-            reverseGeocodeAsync(startPoint, true);
-            showToast(getString(R.string.volunteer_map_dev_pin_start));
-        } else {
-            endPoint = point;
-            volunteerMapViewModel.setEndPoint(point);
-            clearCurrentRoutePathState();
-            reverseGeocodeAsync(endPoint, false);
-            showToast(getString(R.string.volunteer_map_dev_pin_end));
-        }
-
-        awaitDevStartPin = !awaitDevStartPin;
-        volunteerMapViewModel.setAwaitDevStartPin(awaitDevStartPin);
-        updateMapMarkers();
-    }
-
     private void handleMapTap(@NonNull MotionEvent event) {
         if (mapView == null || pointSelectionMode == PointSelectionMode.NONE) {
             return;
@@ -2110,6 +2201,10 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
             enterNavigationMode();
         }
         volunteerMapViewModel.startSimulationFromCurrentRoute();
+        GeoPoint startFocusPoint = resolveStartFocusPoint();
+        if (startFocusPoint != null) {
+            focusCameraOnPoint(startFocusPoint);
+        }
     }
 
     private void applySimulatedPoint(@NonNull GeoPoint point) {
@@ -2120,18 +2215,24 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
             return;
         }
 
+        maybeFollowCurrentLocation();
         updateMapMarkersThrottled();
         updateHudInstructions();
     }
 
     private void updateSimulationButtonState(@Nullable Boolean isRunning) {
         boolean running = isRunning != null && isRunning;
+        if (!running && !isNavigationActive) {
+            isCameraFollowEnabled = false;
+            lastCameraFollowAtMs = 0L;
+        }
         if (!BuildConfig.DEBUG || binding == null) {
             return;
         }
         binding.btnDevSimulate.setText(running
                 ? R.string.volunteer_map_dev_simulate_stop
                 : R.string.volunteer_map_dev_simulate);
+        updateOpenControlFabVisibility();
     }
 
     private void reverseGeocodeAsync(@NonNull GeoPoint point, boolean forStart) {
@@ -2407,5 +2508,61 @@ public class VolunteerMapFragment extends BaseFragment<FragmentMapVolunteerBindi
                 && lat <= ROUTING_MAX_LAT
                 && lon >= ROUTING_MIN_LON
                 && lon <= ROUTING_MAX_LON;
+    }
+
+    private void disableCameraFollowOnManualMapInteraction() {
+        if (!isCameraFollowEnabled) {
+            return;
+        }
+
+        isCameraFollowEnabled = false;
+        lastCameraFollowAtMs = 0L;
+    }
+
+    private void maybeFollowCurrentLocation() {
+        if (!isCameraFollowEnabled || mapView == null || currentPoint == null) {
+            return;
+        }
+
+        boolean isSimulationRunning =
+                volunteerMapViewModel != null && volunteerMapViewModel.isSimulationRunning();
+        if (!isNavigationActive && !isSimulationRunning) {
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        if (lastCameraFollowAtMs > 0L && now - lastCameraFollowAtMs < CAMERA_FOLLOW_INTERVAL_MS) {
+            return;
+        }
+
+        lastCameraFollowAtMs = now;
+        focusCameraOnPoint(currentPoint);
+    }
+
+    private void focusCameraOnPoint(@NonNull GeoPoint targetPoint) {
+        if (mapView == null) {
+            return;
+        }
+
+        try {
+            mapView.getController().setZoom(NAVIGATION_FOLLOW_ZOOM);
+            mapView.getController().animateTo(targetPoint);
+        } catch (Exception e) {
+            // Ignore camera follow errors
+        }
+    }
+
+    @Nullable
+    private GeoPoint resolveStartFocusPoint() {
+        if (isWithinRoutingBounds(startPoint)) {
+            return startPoint;
+        }
+        if (!routePoints.isEmpty()) {
+            return routePoints.get(0);
+        }
+        if (isWithinRoutingBounds(currentPoint)) {
+            return currentPoint;
+        }
+        return null;
     }
 }
