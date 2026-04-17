@@ -4,6 +4,7 @@ import com.drc.aidbridge.modules.donation.DonationDTO;
 import com.drc.aidbridge.modules.donation.DonationFacade;
 import com.drc.aidbridge.modules.donation.internal.usecase.GetDonationByIdUseCase;
 import com.drc.aidbridge.modules.donation.internal.web.dto.CreateDonationRequest;
+import com.drc.aidbridge.modules.donation.internal.web.dto.UpdateDonationStatusRequest;
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
 import com.drc.aidbridge.modules.shared.enums.DonationStatus;
@@ -49,5 +50,13 @@ public class DonationController {
             @RequestParam(defaultValue = "20") int limit) {
         PaginatedResponseDto<DonationDTO> response = donationFacade.list(status, hubId, page, limit);
         return ResponseEntity.ok(ApiResponse.success("Donations retrieved successfully", response));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ApiResponse<DonationDTO>> updateDonationStatus(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateDonationStatusRequest request) {
+        DonationDTO dto = donationFacade.updateStatus(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Donation status updated successfully", dto));
     }
 }

@@ -5,7 +5,9 @@ import com.drc.aidbridge.modules.donation.DonationFacade;
 import com.drc.aidbridge.modules.donation.internal.usecase.CreateDonationUseCase;
 import com.drc.aidbridge.modules.donation.internal.usecase.GetDonationByIdUseCase;
 import com.drc.aidbridge.modules.donation.internal.usecase.ListDonationsUseCase;
+import com.drc.aidbridge.modules.donation.internal.usecase.UpdateDonationStatusUseCase;
 import com.drc.aidbridge.modules.donation.internal.web.dto.CreateDonationRequest;
+import com.drc.aidbridge.modules.donation.internal.web.dto.UpdateDonationStatusRequest;
 import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
 import com.drc.aidbridge.modules.shared.enums.DonationStatus;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ public class DonationFacadeImpl implements DonationFacade {
     private final CreateDonationUseCase createDonationUseCase;
     private final GetDonationByIdUseCase getDonationByIdUseCase;
     private final ListDonationsUseCase listDonationsUseCase;
+    private final UpdateDonationStatusUseCase updateDonationStatusUseCase;
 
     @Override
     public DonationDTO getById(UUID id) {
@@ -34,5 +37,10 @@ public class DonationFacadeImpl implements DonationFacade {
     @Override
     public PaginatedResponseDto<DonationDTO> list(DonationStatus status, UUID hubId, int page, int limit) {
         return listDonationsUseCase.execute(status, hubId, page, limit);
+    }
+
+    @Override
+    public DonationDTO updateStatus(UUID id, UpdateDonationStatusRequest request) {
+        return updateDonationStatusUseCase.execute(id, request);
     }
 }
