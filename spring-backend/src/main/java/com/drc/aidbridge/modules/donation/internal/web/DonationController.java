@@ -5,6 +5,8 @@ import com.drc.aidbridge.modules.donation.DonationFacade;
 import com.drc.aidbridge.modules.donation.internal.usecase.GetDonationByIdUseCase;
 import com.drc.aidbridge.modules.donation.internal.web.dto.CreateDonationRequest;
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
+import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
+import com.drc.aidbridge.modules.shared.enums.DonationStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,5 +39,15 @@ public class DonationController {
         DonationDTO dto = getDonationByIdUseCase.execute(id);
         if (dto == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(ApiResponse.success("Donation retrieved successfully", dto));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<PaginatedResponseDto<DonationDTO>>> listDonations(
+            @RequestParam(required = false) DonationStatus status,
+            @RequestParam(name = "hub_id", required = false) UUID hubId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int limit) {
+        PaginatedResponseDto<DonationDTO> response = donationFacade.list(status, hubId, page, limit);
+        return ResponseEntity.ok(ApiResponse.success("Donations retrieved successfully", response));
     }
 }

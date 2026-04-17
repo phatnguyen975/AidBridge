@@ -4,7 +4,10 @@ import com.drc.aidbridge.modules.donation.DonationDTO;
 import com.drc.aidbridge.modules.donation.DonationFacade;
 import com.drc.aidbridge.modules.donation.internal.usecase.CreateDonationUseCase;
 import com.drc.aidbridge.modules.donation.internal.usecase.GetDonationByIdUseCase;
+import com.drc.aidbridge.modules.donation.internal.usecase.ListDonationsUseCase;
 import com.drc.aidbridge.modules.donation.internal.web.dto.CreateDonationRequest;
+import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
+import com.drc.aidbridge.modules.shared.enums.DonationStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,7 @@ public class DonationFacadeImpl implements DonationFacade {
 
     private final CreateDonationUseCase createDonationUseCase;
     private final GetDonationByIdUseCase getDonationByIdUseCase;
+    private final ListDonationsUseCase listDonationsUseCase;
 
     @Override
     public DonationDTO getById(UUID id) {
@@ -25,5 +29,10 @@ public class DonationFacadeImpl implements DonationFacade {
     @Override
     public DonationDTO create(UUID sponsorId, CreateDonationRequest request) {
         return createDonationUseCase.execute(sponsorId, request);
+    }
+
+    @Override
+    public PaginatedResponseDto<DonationDTO> list(DonationStatus status, UUID hubId, int page, int limit) {
+        return listDonationsUseCase.execute(status, hubId, page, limit);
     }
 }
