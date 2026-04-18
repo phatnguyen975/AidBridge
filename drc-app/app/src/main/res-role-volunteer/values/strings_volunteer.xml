@@ -30,6 +30,9 @@
     <string name="volunteer_dashboard_toast_view_mission_detail">Xem chi tiết nhiệm vụ cứu hộ</string>
     <string name="volunteer_dashboard_toast_logout">Xử lý đăng xuất</string>
     <string name="volunteer_dashboard_toast_personal_info_todo">Tính năng Thông tin cá nhân đang được phát triển</string>
+    <string name="volunteer_dashboard_location_permission_required">Can quyen vi tri de bat che do san sang</string>
+    <string name="volunteer_dashboard_location_disabled">Hay bat GPS de cap nhat vi tri khi san sang</string>
+    <string name="volunteer_dashboard_location_unavailable">Chua lay duoc vi tri hien tai. Vui long thu lai.</string>
 
     <!-- Volunteer Mission History Item -->
     <string name="volunteer_mission_history_category_emergency">Cứu hộ khẩn cấp</string>

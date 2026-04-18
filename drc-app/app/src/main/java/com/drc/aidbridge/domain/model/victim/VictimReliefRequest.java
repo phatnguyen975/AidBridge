@@ -12,6 +12,7 @@ public class VictimReliefRequest {
     private final int eldersCount;
     private final int childrenCount;
     private final String note;
+    private final String urgencyLevel;
     private final List<VictimRequestedItem> requestedItems;
 
     public VictimReliefRequest(Double latitude,
@@ -21,6 +22,7 @@ public class VictimReliefRequest {
                                int eldersCount,
                                int childrenCount,
                                String note,
+                               String urgencyLevel,
                                List<VictimRequestedItem> requestedItems) {
         this.latitude = latitude;
         this.longitude = longitude;
@@ -29,6 +31,7 @@ public class VictimReliefRequest {
         this.eldersCount = Math.max(0, eldersCount);
         this.childrenCount = Math.max(0, childrenCount);
         this.note = note != null ? note.trim() : "";
+        this.urgencyLevel = urgencyLevel != null ? urgencyLevel.trim() : "";
         this.requestedItems = requestedItems != null ? requestedItems : Collections.emptyList();
     }
 
@@ -58,6 +61,10 @@ public class VictimReliefRequest {
 
     public String getNote() {
         return note;
+    }
+
+    public String getUrgencyLevel() {
+        return urgencyLevel;
     }
 
     public List<VictimRequestedItem> getRequestedItems() {

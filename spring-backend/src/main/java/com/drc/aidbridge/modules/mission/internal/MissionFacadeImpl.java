@@ -89,4 +89,28 @@ public class MissionFacadeImpl implements MissionFacade {
 
         return missionMapper.toDTO(saved);
     }
+
+    @Override
+    public void updateVictimLocationForSos(UUID sosRequestId, BigDecimal lat, BigDecimal lng) {
+        if (sosRequestId == null || lat == null || lng == null) {
+            return;
+        }
+
+        missionRepository.findBySosRequestId(sosRequestId).ifPresent(mission -> {
+            mission.setVictimLocation(Mission.createPoint(lat, lng));
+            missionRepository.save(mission);
+        });
+    }
+
+    @Override
+    public void updateVictimLocationForAidRequest(UUID aidRequestId, BigDecimal lat, BigDecimal lng) {
+        if (aidRequestId == null || lat == null || lng == null) {
+            return;
+        }
+
+        missionRepository.findByAidRequestId(aidRequestId).ifPresent(mission -> {
+            mission.setVictimLocation(Mission.createPoint(lat, lng));
+            missionRepository.save(mission);
+        });
+    }
 }

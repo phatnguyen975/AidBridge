@@ -1,6 +1,7 @@
 package com.drc.aidbridge.modules.sos.internal.usecase;
 
 import com.drc.aidbridge.modules.shared.enums.SosStatus;
+import com.drc.aidbridge.modules.shared.enums.UrgencyLevel;
 import com.drc.aidbridge.modules.sos.SosRequestCreatedEvent;
 import com.drc.aidbridge.modules.sos.internal.entity.SosRequest;
 import com.drc.aidbridge.modules.sos.internal.mapper.SosMapper;
@@ -24,33 +25,58 @@ public class CreateGuestSosRequestUseCase {
 
     @Transactional
     public SosRequestResponse execute(CreateGuestSosRequest createDto) {
-        String finalImageUrl = sosSceneImageService.resolveImageUrl(createDto.getImageUrl());
+        boolean quickSos = isQuickSos(createDto);
+        UrgencyLevel urgencyLevel = resolveUrgencyLevel(createDto, quickSos);
+        String finalImageUrl = quickSos ? null : sosSceneImageService.resolveImageUrl(createDto.getImageUrl());
 
-        if (createDto.getUrgencyLevel() == null) {
-            throw new IllegalArgumentException("urgency_level is required");
-        }
-
-        // Create guest SOS request
         SosRequest sosRequest = SosRequest.builder()
-                .requesterId(null)
-                .location(SosRequest.createPoint(createDto.getLat(), createDto.getLng()))
-                .address(createDto.getAddress())
-                .description(createDto.getDescription())
-                .peopleCount(createDto.getPeopleCount() != null ? createDto.getPeopleCount() : 1)
-                .urgencyLevel(createDto.getUrgencyLevel())
+            .requesterId(null)
+            .location(SosRequest.createPoint(createDto.getLat(), createDto.getLng()))
+            .address(trimToNull(createDto.getAddress()))
+            .description(quickSos ? null : trimToNull(createDto.getDescription()))
+            .peopleCount(quickSos ? 1 : (createDto.getPeopleCount() != null ? createDto.getPeopleCount() : 1))
+            .urgencyLevel(urgencyLevel)
             .imageUrl(finalImageUrl)
-                .status(SosStatus.PENDING)
-                .build();
+            .status(SosStatus.PENDING)
+            .build();
 
         SosRequest savedSos = sosRequestRepository.save(sosRequest);
 
-        // Publish event so mission module can create rescue mission
         eventPublisher.publishEvent(new SosRequestCreatedEvent(
-                savedSos.getId(),
-                savedSos.getLat(),
-                savedSos.getLng()
+            savedSos.getId(),
+            savedSos.getLat(),
+            savedSos.getLng()
         ));
 
         return sosMapper.toResponse(savedSos, null);
+    }
+
+    private boolean isQuickSos(CreateGuestSosRequest request) {
+        return isBlank(request.getDescription())
+            && isBlank(request.getImageUrl())
+            && (request.getPeopleCount() == null || request.getPeopleCount() <= 1);
+    }
+
+    private UrgencyLevel resolveUrgencyLevel(CreateGuestSosRequest request, boolean quickSos) {
+        if (request.getUrgencyLevel() != null) {
+            return request.getUrgencyLevel();
+        }
+        if (quickSos) {
+            return UrgencyLevel.CRITICAL;
+        }
+        throw new IllegalArgumentException("urgency_level is required");
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
+    }
+
+    private String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

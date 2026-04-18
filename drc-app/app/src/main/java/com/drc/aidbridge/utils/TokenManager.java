@@ -124,6 +124,47 @@ public class TokenManager {
         return prefs.getString(Constants.KEY_USER_ADDRESS, null);
     }
 
+    public void saveLastKnownLocation(double latitude, double longitude, long updatedAtMillis) {
+        prefs.edit()
+            .putString(Constants.KEY_LAST_LOCATION_LAT, Double.toString(latitude))
+            .putString(Constants.KEY_LAST_LOCATION_LNG, Double.toString(longitude))
+            .putLong(Constants.KEY_LAST_LOCATION_UPDATED_AT, Math.max(0L, updatedAtMillis))
+            .apply();
+    }
+
+    @Nullable
+    public Double getLastKnownLatitude() {
+        return parseNullableDouble(prefs.getString(Constants.KEY_LAST_LOCATION_LAT, null));
+    }
+
+    @Nullable
+    public Double getLastKnownLongitude() {
+        return parseNullableDouble(prefs.getString(Constants.KEY_LAST_LOCATION_LNG, null));
+    }
+
+    public long getLastKnownLocationUpdatedAt() {
+        return prefs.getLong(Constants.KEY_LAST_LOCATION_UPDATED_AT, 0L);
+    }
+
+    public void saveActiveSosTrackingId(@Nullable String sosId) {
+        SharedPreferences.Editor editor = prefs.edit();
+        if (sosId == null || sosId.isBlank()) {
+            editor.remove(Constants.KEY_ACTIVE_SOS_TRACKING_ID);
+        } else {
+            editor.putString(Constants.KEY_ACTIVE_SOS_TRACKING_ID, sosId);
+        }
+        editor.apply();
+    }
+
+    @Nullable
+    public String getActiveSosTrackingId() {
+        return prefs.getString(Constants.KEY_ACTIVE_SOS_TRACKING_ID, null);
+    }
+
+    public void clearActiveSosTrackingId() {
+        prefs.edit().remove(Constants.KEY_ACTIVE_SOS_TRACKING_ID).apply();
+    }
+
     /** Updates editable user fields after successful profile API calls. */
     public void updateUserInfo(String userName,
                                String phone,
@@ -218,6 +259,19 @@ public class TokenManager {
         } catch (Exception e) {
             e.printStackTrace();
             return true;
+        }
+    }
+
+    @Nullable
+    private Double parseNullableDouble(@Nullable String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+
+        try {
+            return Double.parseDouble(value.trim());
+        } catch (NumberFormatException ignored) {
+            return null;
         }
     }
 }
