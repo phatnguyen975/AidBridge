@@ -28,6 +28,7 @@
     <!-- Donate Form -->
     <string name="sponsor_donate_title">ĐĂNG KÝ ĐÓNG GÓP</string>
     <string name="sponsor_donate_category_label">Loại vật phẩm</string>
+    <string name="sponsor_donate_item_name_label">Tên vật phẩm</string>
     <string name="sponsor_donate_quantity_label">Số lượng</string>
     <string name="sponsor_donate_unit_label">Đơn vị tính</string>
     <string name="sponsor_donate_description_label">Mô tả chi tiết</string>
@@ -46,11 +47,15 @@
 
     <string name="sponsor_donate_image_real_label">Ảnh thực tế</string>
     <string name="sponsor_donate_placeholder_category">Chọn loại vật phẩm</string>
+    <string name="sponsor_donate_placeholder_item_name">VD: Mì gói Hảo Hảo</string>
     <string name="sponsor_donate_placeholder_quantity">VD: 100</string>
     <string name="sponsor_donate_placeholder_unit">VD: Thùng</string>
     <string name="sponsor_donate_placeholder_description">Ghi chú về tình trạng, hạn sử dụng...</string>
     <string name="sponsor_donate_placeholder_expected_time">Chọn ngày giờ dự kiến</string>
     <string name="sponsor_donate_upload_subtext">PNG, JPG tối đa 5MB</string>
+    <string name="sponsor_donate_open_gallery">Mở Gallery</string>
+    <string name="sponsor_donate_open_date_picker">Mở DatePicker</string>
+    <string name="sponsor_donate_submit_success_default">Gửi đăng ký đóng góp thành công.</string>
 
     <!-- Sponsor Hub Selection & QR Flow -->
     <string name="sponsor_hub_selection_title">Chọn trạm tập kết</string>
@@ -69,6 +74,10 @@
     <string name="sponsor_hub_distance_1">Cách bạn 2.5 km</string>
     <string name="sponsor_hub_distance_2">Cách bạn 4.1 km</string>
     <string name="sponsor_hub_distance_3">Cách bạn 5.8 km</string>
+    <string name="sponsor_hub_loading">Đang tải danh sách trạm, vui lòng thử lại sau ít giây.</string>
+    <string name="sponsor_hub_empty">Hiện chưa có trạm tiếp nhận khả dụng.</string>
+    <string name="sponsor_hub_unknown_name">Trạm chưa đặt tên</string>
+    <string name="sponsor_hub_unknown_address">Chưa có địa chỉ</string>
 
     <string name="sponsor_qr_mock_donation_code">#DON-99281</string>
     <string name="sponsor_qr_mock_item_type">Thực phẩm</string>

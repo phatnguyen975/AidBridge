@@ -85,6 +85,29 @@
                     android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/sponsor_donate_double_field_gap"
+                android:text="@string/sponsor_donate_item_name_label"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/sponsor_dashboard_stat_label_text_size"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:id="@+id/tilItemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/sponsor_donate_field_margin_bottom">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etItemName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/sponsor_donate_placeholder_item_name" />
+            </com.google.android.material.textfield.TextInputLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
