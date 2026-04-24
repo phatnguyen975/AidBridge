@@ -76,20 +76,23 @@ public class SponsorHubSuggestionAdapter extends RecyclerView.Adapter<SponsorHub
     @NonNull
     public HubSuggestionItem getSelectedItem() {
         if (items.isEmpty()) {
-            return new HubSuggestionItem("", "", false);
+            return new HubSuggestionItem("", "", "", false);
         }
         int safePosition = Math.max(0, Math.min(selectedPosition, items.size() - 1));
         return items.get(safePosition);
     }
 
     public static class HubSuggestionItem {
+        public final String hubId;
         public final String hubName;
         public final String distanceText;
         public final boolean showUrgency;
 
-        public HubSuggestionItem(@NonNull String hubName,
+        public HubSuggestionItem(@NonNull String hubId,
+                                 @NonNull String hubName,
                                  @NonNull String distanceText,
                                  boolean showUrgency) {
+            this.hubId = hubId;
             this.hubName = hubName;
             this.distanceText = distanceText;
             this.showUrgency = showUrgency;

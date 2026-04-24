@@ -5,6 +5,7 @@ import com.drc.aidbridge.data.repository.MissionRepositoryImpl;
 import com.drc.aidbridge.data.repository.RoutingRepositoryImpl;
 import com.drc.aidbridge.data.repository.UserRepositoryImpl;
 import com.drc.aidbridge.data.repository.admin.HubRepositoryImpl;
+import com.drc.aidbridge.data.repository.sponsor.SponsorDonationRepositoryImpl;
 import com.drc.aidbridge.data.repository.victim.VictimHistoryRepositoryImpl;
 import com.drc.aidbridge.data.repository.victim.VictimSosRepositoryImpl;
 import com.drc.aidbridge.data.repository.victim.VictimSupplyRepositoryImpl;
@@ -14,6 +15,7 @@ import com.drc.aidbridge.domain.repository.MissionRepository;
 import com.drc.aidbridge.domain.repository.RoutingRepository;
 import com.drc.aidbridge.domain.repository.UserRepository;
 import com.drc.aidbridge.domain.repository.admin.HubRepository;
+import com.drc.aidbridge.domain.repository.sponsor.SponsorDonationRepository;
 import com.drc.aidbridge.domain.repository.volunteer.VolunteerRepository;
 import com.drc.aidbridge.domain.repository.victim.VictimHistoryRepository;
 import com.drc.aidbridge.domain.repository.victim.VictimSosRepository;
@@ -77,4 +79,8 @@ public abstract class RepositoryModule {
     @Binds
     @Singleton
     public abstract HubRepository bindHubRepository(HubRepositoryImpl impl);
+
+    @Binds
+    @Singleton
+    public abstract SponsorDonationRepository bindSponsorDonationRepository(SponsorDonationRepositoryImpl impl);
 }
