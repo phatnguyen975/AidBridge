@@ -37,6 +37,24 @@ public class UploadSosUseCase {
         return victimSosInputValidator.validateRelativeSos(relativeName, relativeAddress, severity);
     }
 
+    public LiveData<NetworkResultWrapper<String>> uploadQuickSos(double latitude,
+                                                                 double longitude,
+                                                                 Double accuracy,
+                                                                 long triggeredAtMillis,
+                                                                 long locationCapturedAtMillis,
+                                                                 String clientRequestId,
+                                                                 String deviceInfo) {
+        return victimSosRepository.uploadQuickSelfSos(
+            latitude,
+            longitude,
+            accuracy,
+            triggeredAtMillis,
+            locationCapturedAtMillis,
+            clientRequestId,
+            deviceInfo
+        );
+    }
+
     public LiveData<NetworkResultWrapper<String>> uploadSelfSos(String fullName,
                                                                  int peopleCount,
                                                                  String severity,

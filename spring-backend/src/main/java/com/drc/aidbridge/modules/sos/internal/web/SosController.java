@@ -1,11 +1,13 @@
 package com.drc.aidbridge.modules.sos.internal.web;
 
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
+import com.drc.aidbridge.modules.shared.dto.UpdateRequestLocationRequest;
 import com.drc.aidbridge.modules.shared.exception.AuthenticationException;
 import com.drc.aidbridge.modules.sos.internal.usecase.CreateGuestSosRequestUseCase;
 import com.drc.aidbridge.modules.sos.internal.usecase.CreateSosRequestUseCase;
 import com.drc.aidbridge.modules.sos.internal.usecase.GetSosRequestUseCase;
 import com.drc.aidbridge.modules.sos.internal.usecase.ListSosRequestsUseCase;
+import com.drc.aidbridge.modules.sos.internal.usecase.UpdateSosLocationUseCase;
 import com.drc.aidbridge.modules.sos.internal.web.dto.CreateGuestSosRequest;
 import com.drc.aidbridge.modules.sos.internal.web.dto.CreateSosRequest;
 import com.drc.aidbridge.modules.sos.internal.web.dto.SosRequestResponse;
@@ -28,6 +30,7 @@ public class SosController {
     private final CreateGuestSosRequestUseCase createGuestSosRequestUseCase;
     private final GetSosRequestUseCase getSosRequestUseCase;
     private final ListSosRequestsUseCase listSosRequestsUseCase;
+    private final UpdateSosLocationUseCase updateSosLocationUseCase;
 
     @PostMapping
     public ResponseEntity<ApiResponse<SosRequestResponse>> createSosRequest(
@@ -57,6 +60,15 @@ public class SosController {
     public ResponseEntity<ApiResponse<List<SosRequestResponse>>> listSosRequests() {
         List<SosRequestResponse> response = listSosRequestsUseCase.execute();
         return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PostMapping("/{id}/location")
+    public ResponseEntity<ApiResponse<Void>> updateSosLocation(@PathVariable UUID id,
+                                                               @Valid @RequestBody UpdateRequestLocationRequest request,
+                                                               Authentication authentication) {
+        UUID userId = resolveAuthenticatedUserId(authentication);
+        updateSosLocationUseCase.execute(userId, id, request);
+        return ResponseEntity.ok(ApiResponse.success("SOS location updated", null));
     }
 
     private UUID resolveAuthenticatedUserId(Authentication authentication) {

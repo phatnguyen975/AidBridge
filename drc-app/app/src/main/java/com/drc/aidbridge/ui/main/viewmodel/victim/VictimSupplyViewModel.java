@@ -27,6 +27,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class VictimSupplyViewModel extends BaseViewModel {
 
+    private static final String DEFAULT_URGENCY_LEVEL = "MEDIUM";
+
     private final ExecutorService workerExecutor = Executors.newSingleThreadExecutor();
     private final GetSupplyCategoriesUseCase getSupplyCategoriesUseCase;
     private final SubmitReliefRequestUseCase submitReliefRequestUseCase;
@@ -92,6 +94,7 @@ public class VictimSupplyViewModel extends BaseViewModel {
                 Math.max(0, elders),
                 Math.max(0, children),
                 note != null ? note.trim() : "",
+                DEFAULT_URGENCY_LEVEL,
                 requestedItems
             );
 

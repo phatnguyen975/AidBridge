@@ -27,6 +27,9 @@ public class ReliefRequest {
     @SerializedName("notes")
     private final String notes;
 
+    @SerializedName("urgencyLevel")
+    private final String urgencyLevel;
+
     @SerializedName("items")
     private final List<RequestedItemRequest> items;
 
@@ -37,6 +40,7 @@ public class ReliefRequest {
                          int elderlyCount,
                          int childrenCount,
                          String notes,
+                         String urgencyLevel,
                          List<RequestedItemRequest> items) {
         this.lat = lat;
         this.lng = lng;
@@ -45,6 +49,7 @@ public class ReliefRequest {
         this.elderlyCount = elderlyCount;
         this.childrenCount = childrenCount;
         this.notes = notes;
+        this.urgencyLevel = urgencyLevel;
         this.items = items;
     }
 
@@ -74,6 +79,10 @@ public class ReliefRequest {
 
     public String getNotes() {
         return notes;
+    }
+
+    public String getUrgencyLevel() {
+        return urgencyLevel;
     }
 
     public List<RequestedItemRequest> getItems() {

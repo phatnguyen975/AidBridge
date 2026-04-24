@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.time.Instant;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -44,4 +46,30 @@ public class CreateSosRequest {
     @JsonProperty("image_url")
     @JsonAlias("imageUrl")
     private String imageUrl;
+
+    @JsonProperty("quick_sos")
+    @JsonAlias("quickSos")
+    private Boolean quickSos;
+
+    @JsonProperty("triggered_at")
+    @JsonAlias("triggeredAt")
+    private Instant triggeredAt;
+
+    @JsonProperty("location_captured_at")
+    @JsonAlias("locationCapturedAt")
+    private Instant locationCapturedAt;
+
+    @DecimalMin("0.0")
+    @JsonProperty("accuracy")
+    private Double accuracy;
+
+    @Size(max = 100)
+    @JsonProperty("client_request_id")
+    @JsonAlias("clientRequestId")
+    private String clientRequestId;
+
+    @Size(max = 500)
+    @JsonProperty("device_info")
+    @JsonAlias("deviceInfo")
+    private String deviceInfo;
 }

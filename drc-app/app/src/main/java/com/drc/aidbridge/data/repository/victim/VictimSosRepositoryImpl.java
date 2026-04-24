@@ -12,6 +12,7 @@ import com.drc.aidbridge.data.repository.BaseRepository;
 import com.drc.aidbridge.domain.repository.victim.VictimSosRepository;
 import com.drc.aidbridge.utils.TokenManager;
 
+import java.time.Instant;
 import java.text.Normalizer;
 import java.util.Locale;
 
@@ -33,6 +34,70 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
                                    TokenManager tokenManager) {
         this.sosApiService = sosApiService;
         this.tokenManager = tokenManager;
+    }
+
+    @Override
+    public LiveData<NetworkResultWrapper<String>> uploadQuickSelfSos(double latitude,
+                                                                     double longitude,
+                                                                     Double accuracy,
+                                                                     long triggeredAtMillis,
+                                                                     long locationCapturedAtMillis,
+                                                                     String clientRequestId,
+                                                                     String deviceInfo) {
+        MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
+        result.postValue(NetworkResultWrapper.loading());
+
+        CreateSosRequest request = CreateSosRequest.createQuickSos(
+            latitude,
+            longitude,
+            accuracy,
+            toIsoInstant(triggeredAtMillis),
+            toIsoInstant(locationCapturedAtMillis),
+            safeTrim(clientRequestId),
+            safeTrim(deviceInfo)
+        );
+
+        sosApiService.createSosRequest(request).enqueue(new Callback<BaseResponse<SosRequestResponse>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<SosRequestResponse>> call,
+                                   Response<BaseResponse<SosRequestResponse>> response) {
+                if (!response.isSuccessful()) {
+                    result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
+                    return;
+                }
+
+                BaseResponse<SosRequestResponse> baseResponse = response.body();
+                if (baseResponse == null) {
+                    result.postValue(NetworkResultWrapper.error("Phản hồi gửi SOS không hợp lệ."));
+                    return;
+                }
+
+                if (!baseResponse.isSuccess()) {
+                    result.postValue(NetworkResultWrapper.error(
+                        firstNonBlank(baseResponse.getMessage(), "Gửi SOS thất bại.")
+                    ));
+                    return;
+                }
+
+                SosRequestResponse responseData = baseResponse.getData();
+                String sosId = responseData != null ? safeTrim(responseData.getId()) : "";
+                if (sosId.isEmpty()) {
+                    result.postValue(NetworkResultWrapper.error(
+                        "Phản hồi SOS thiếu mã yêu cầu để theo dõi vị trí."
+                    ));
+                    return;
+                }
+
+                result.postValue(NetworkResultWrapper.success(sosId));
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<SosRequestResponse>> call, Throwable t) {
+                result.postValue(NetworkResultWrapper.error("Gửi SOS thất bại: " + safeMessage(t)));
+            }
+        });
+
+        return result;
     }
 
     @Override
@@ -232,5 +297,10 @@ public class VictimSosRepositoryImpl extends BaseRepository implements VictimSos
             }
         }
         return "";
+    }
+
+    private String toIsoInstant(long timestampMillis) {
+        long safeTimestampMillis = timestampMillis > 0L ? timestampMillis : System.currentTimeMillis();
+        return Instant.ofEpochMilli(safeTimestampMillis).toString();
     }
 }
