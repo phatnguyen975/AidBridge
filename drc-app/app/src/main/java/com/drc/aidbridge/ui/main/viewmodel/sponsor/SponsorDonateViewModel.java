@@ -6,9 +6,12 @@ import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.model.admin.Hub;
+import com.drc.aidbridge.domain.model.sponsor.SponsorDonationItem;
 import com.drc.aidbridge.domain.model.sponsor.SponsorDonationRequest;
+import com.drc.aidbridge.domain.model.victim.VictimSupplyCategory;
 import com.drc.aidbridge.domain.usecase.admin.ListHubsUseCase;
 import com.drc.aidbridge.domain.usecase.sponsor.SubmitSponsorDonationUseCase;
+import com.drc.aidbridge.domain.usecase.victim.GetSupplyCategoriesUseCase;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
@@ -24,19 +27,27 @@ public class SponsorDonateViewModel extends BaseViewModel {
     private final SubmitSponsorDonationUseCase submitSponsorDonationUseCase;
     private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
     private final MutableLiveData<Long> loadHubsTrigger = new MutableLiveData<>();
+    private final MutableLiveData<Long> loadCategoriesTrigger = new MutableLiveData<>();
     private final MutableLiveData<SponsorDonationRequest> submitTrigger = new MutableLiveData<>();
 
     private final LiveData<NetworkResultWrapper<List<Hub>>> hubsResult;
+    private final LiveData<NetworkResultWrapper<List<VictimSupplyCategory>>> categoriesResult;
     private final LiveData<NetworkResultWrapper<String>> submitResult;
 
     @Inject
     public SponsorDonateViewModel(SubmitSponsorDonationUseCase submitSponsorDonationUseCase,
-                                  ListHubsUseCase listHubsUseCase) {
+                                  ListHubsUseCase listHubsUseCase,
+                                  GetSupplyCategoriesUseCase getSupplyCategoriesUseCase) {
         this.submitSponsorDonationUseCase = submitSponsorDonationUseCase;
 
         this.hubsResult = Transformations.switchMap(
             loadHubsTrigger,
             ignored -> listHubsUseCase.execute()
+        );
+
+        this.categoriesResult = Transformations.switchMap(
+            loadCategoriesTrigger,
+            ignored -> getSupplyCategoriesUseCase.execute()
         );
 
         this.submitResult = Transformations.switchMap(
@@ -53,6 +64,10 @@ public class SponsorDonateViewModel extends BaseViewModel {
         return hubsResult;
     }
 
+    public LiveData<NetworkResultWrapper<List<VictimSupplyCategory>>> getCategoriesResult() {
+        return categoriesResult;
+    }
+
     public LiveData<NetworkResultWrapper<String>> getSubmitResult() {
         return submitResult;
     }
@@ -61,24 +76,18 @@ public class SponsorDonateViewModel extends BaseViewModel {
         loadHubsTrigger.setValue(System.currentTimeMillis());
     }
 
+    public void loadParentCategories() {
+        loadCategoriesTrigger.setValue(System.currentTimeMillis());
+    }
+
     public void submitDonation(String hubId,
-                               String category,
-                               String itemName,
-                               String quantityRaw,
-                               String unit,
-                               String description,
-                               String expectedTime) {
-        int quantity = parseQuantity(quantityRaw);
+                               String notes,
+                               List<SponsorDonationItem> items) {
 
         SponsorDonationRequest request = new SponsorDonationRequest(
             safeText(hubId),
-            safeText(category),
-            safeText(itemName),
-            quantity,
-            safeText(unit),
-            safeText(description),
-            safeText(expectedTime),
-            null
+            safeText(notes),
+            items
         );
 
         ValidationResult validation = submitSponsorDonationUseCase.validate(request);
@@ -89,18 +98,6 @@ public class SponsorDonateViewModel extends BaseViewModel {
 
         validationError.setValue(ValidationResult.valid());
         submitTrigger.setValue(request);
-    }
-
-    private int parseQuantity(String quantityRaw) {
-        if (quantityRaw == null || quantityRaw.trim().isEmpty()) {
-            return 0;
-        }
-
-        try {
-            return Integer.parseInt(quantityRaw.trim());
-        } catch (NumberFormatException exception) {
-            return 0;
-        }
     }
 
     private String safeText(String value) {

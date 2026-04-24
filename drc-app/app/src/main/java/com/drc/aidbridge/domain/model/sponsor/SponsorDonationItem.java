@@ -1,37 +1,22 @@
-package com.drc.aidbridge.data.remote.dto.request.sponsor;
+package com.drc.aidbridge.domain.model.sponsor;
 
-import com.google.gson.annotations.SerializedName;
+public class SponsorDonationItem {
 
-public class CreateDonationItemRequest {
-
-    @SerializedName("itemName")
     private final String itemName;
-
-    @SerializedName("itemCategoryId")
     private final String itemCategoryId;
-
-    @SerializedName(value = "quantity")
     private final int quantity;
-
-    @SerializedName(value = "unit")
     private final String unit;
-
-    @SerializedName(value = "description")
     private final String description;
-
-    @SerializedName("expiryDate")
     private final String expiryDate;
-
-    @SerializedName("imageUrl")
     private final String imageUrl;
 
-    public CreateDonationItemRequest(String itemName,
-                                     String itemCategoryId,
-                                     int quantity,
-                                     String unit,
-                                     String description,
-                                     String expiryDate,
-                                     String imageUrl) {
+    public SponsorDonationItem(String itemName,
+                               String itemCategoryId,
+                               int quantity,
+                               String unit,
+                               String description,
+                               String expiryDate,
+                               String imageUrl) {
         this.itemName = itemName;
         this.itemCategoryId = itemCategoryId;
         this.quantity = quantity;
