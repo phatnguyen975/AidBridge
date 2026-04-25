@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Component
@@ -48,6 +49,7 @@ public class CreateDonationUseCase {
         Donation donation = donationRepository.save(Donation.builder()
                 .sponsorId(sponsorId)
                 .hubId(request.getHubId())
+            .qrCodeToken(generateUniqueQrCodeToken())
                 .status(DonationStatus.REGISTERED)
                 .notes(request.getNotes())
                 .build());
@@ -78,5 +80,15 @@ public class CreateDonationUseCase {
                 .expiryDate(itemRequest.getExpiryDate())
                 .imageUrl(itemRequest.getImageUrl())
                 .build();
+    }
+
+    private String generateUniqueQrCodeToken() {
+        for (int attempt = 0; attempt < 5; attempt++) {
+            String token = "DON-" + UUID.randomUUID().toString().replace("-", "").toUpperCase(Locale.ROOT);
+            if (!donationRepository.existsByQrCodeToken(token)) {
+                return token;
+            }
+        }
+        throw new IllegalStateException("Unable to generate unique donation QR token");
     }
 }

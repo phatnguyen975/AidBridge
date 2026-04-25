@@ -4,6 +4,7 @@ import com.drc.aidbridge.modules.donation.DonationDTO;
 import com.drc.aidbridge.modules.donation.DonationFacade;
 import com.drc.aidbridge.modules.donation.internal.usecase.GetDonationByIdUseCase;
 import com.drc.aidbridge.modules.donation.internal.web.dto.CreateDonationRequest;
+import com.drc.aidbridge.modules.donation.internal.web.dto.DonationQrResponse;
 import com.drc.aidbridge.modules.donation.internal.web.dto.UpdateDonationStatusRequest;
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
@@ -40,6 +41,12 @@ public class DonationController {
         DonationDTO dto = getDonationByIdUseCase.execute(id);
         if (dto == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(ApiResponse.success("Donation retrieved successfully", dto));
+    }
+
+    @GetMapping("/{id}/qr")
+    public ResponseEntity<ApiResponse<DonationQrResponse>> getDonationQr(@PathVariable UUID id) {
+        DonationQrResponse response = donationFacade.getQrById(id);
+        return ResponseEntity.ok(ApiResponse.success("Donation QR retrieved successfully", response));
     }
 
     @GetMapping

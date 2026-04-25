@@ -18,4 +18,6 @@ public interface DonationRepository extends JpaRepository<Donation, UUID> {
 
 	Page<Donation> findByStatusAndHubId(DonationStatus status, UUID hubId, Pageable pageable);
 
+	boolean existsByQrCodeToken(String qrCodeToken);
+
 }
