@@ -37,9 +37,6 @@ public class Donation {
     @Builder.Default
     private DonationStatus status = DonationStatus.REGISTERED;
 
-    @Column(name = "notes", columnDefinition = "text")
-    private String notes;
-
     @Column(name = "received_at")
     private Instant receivedAt;
 
@@ -53,4 +50,7 @@ public class Donation {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    @Column(name = "donation_code", unique = true, length = 20)
+    private String donationCode;
 }

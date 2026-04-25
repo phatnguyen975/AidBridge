@@ -69,12 +69,8 @@ class CreateDonationUseCaseTest {
 
         CreateDonationRequest request = CreateDonationRequest.builder()
                 .hubId(hubId)
-                .notes("Batch A")
                 .items(List.of(CreateDonationItemRequest.builder()
-                        .itemName("Blanket")
                         .itemCategoryId(categoryId)
-                        .quantity(10)
-                        .unit("pcs")
                         .build()))
                 .build();
 
@@ -83,16 +79,12 @@ class CreateDonationUseCaseTest {
                 .sponsorId(sponsorId)
                 .hubId(hubId)
                 .status(DonationStatus.REGISTERED)
-                .notes("Batch A")
                 .build();
 
         DonationItem savedItem = DonationItem.builder()
                 .id(UUID.randomUUID())
                 .donationId(donationId)
-                .itemName("Blanket")
                 .itemCategoryId(categoryId)
-                .quantity(10)
-                .unit("pcs")
                 .build();
 
         DonationDTO donationDTO = DonationDTO.builder()
@@ -105,15 +97,13 @@ class CreateDonationUseCaseTest {
 
         DonationDTO.DonationItemDTO itemDTO = DonationDTO.DonationItemDTO.builder()
                 .id(savedItem.getId())
-                .itemName("Blanket")
                 .itemCategoryId(categoryId)
-                .quantity(10)
                 .build();
 
         when(userJpaRepository.existsById(sponsorId)).thenReturn(true);
         when(hubRepository.existsById(hubId)).thenReturn(true);
         when(aidItemCategoryJpaRepository.existsById(categoryId)).thenReturn(true);
-                when(donationRepository.existsByQrCodeToken(anyString())).thenReturn(false);
+        when(donationRepository.existsByQrCodeToken(anyString())).thenReturn(false);
         when(donationRepository.save(any(Donation.class))).thenReturn(savedDonation);
         when(donationItemRepository.saveAll(anyList())).thenReturn(List.of(savedItem));
         when(donationMapper.toDTO(savedDonation)).thenReturn(donationDTO);
@@ -121,16 +111,16 @@ class CreateDonationUseCaseTest {
 
         DonationDTO result = useCase.execute(sponsorId, request);
 
-                ArgumentCaptor<Donation> donationCaptor = ArgumentCaptor.forClass(Donation.class);
-                verify(donationRepository).save(donationCaptor.capture());
-                String generatedToken = donationCaptor.getValue().getQrCodeToken();
+        ArgumentCaptor<Donation> donationCaptor = ArgumentCaptor.forClass(Donation.class);
+        verify(donationRepository).save(donationCaptor.capture());
+        String generatedToken = donationCaptor.getValue().getQrCodeToken();
 
         assertEquals(donationId, result.getId());
         assertEquals(DonationStatus.REGISTERED, result.getStatus());
         assertEquals(1, result.getItems().size());
-        assertEquals("Blanket", result.getItems().getFirst().getItemName());
-                assertNotNull(generatedToken);
-                assertFalse(generatedToken.isBlank());
+        assertEquals(categoryId, result.getItems().getFirst().getItemCategoryId());
+        assertNotNull(generatedToken);
+        assertFalse(generatedToken.isBlank());
     }
 
     @Test
@@ -141,8 +131,7 @@ class CreateDonationUseCaseTest {
         CreateDonationRequest request = CreateDonationRequest.builder()
                 .hubId(hubId)
                 .items(List.of(CreateDonationItemRequest.builder()
-                        .itemName("Rice")
-                        .quantity(1)
+                        .itemCategoryId(UUID.randomUUID())
                         .build()))
                 .build();
 

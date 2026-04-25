@@ -17,8 +17,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 
 @Component
@@ -49,14 +51,19 @@ public class CreateDonationUseCase {
         Donation donation = donationRepository.save(Donation.builder()
                 .sponsorId(sponsorId)
                 .hubId(request.getHubId())
-            .qrCodeToken(generateUniqueQrCodeToken())
+                .qrCodeToken(generateUniqueQrCodeToken())
+                .donationCode(generateDonationCode())   
                 .status(DonationStatus.REGISTERED)
-                .notes(request.getNotes())
                 .build());
 
-        List<DonationItem> items = request.getItems().stream()
-                .map(itemRequest -> toEntity(donation.getId(), itemRequest))
+        Set<UUID> selectedCategoryIds = request.getItems().stream()
+            .map(CreateDonationItemRequest::getItemCategoryId)
+            .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
+
+        List<DonationItem> items = selectedCategoryIds.stream()
+            .map(categoryId -> toEntity(donation.getId(), categoryId))
                 .toList();
+
         List<DonationItem> savedItems = donationItemRepository.saveAll(items);
 
         DonationDTO dto = donationMapper.toDTO(donation);
@@ -64,21 +71,14 @@ public class CreateDonationUseCase {
         return dto;
     }
 
-    private DonationItem toEntity(UUID donationId, CreateDonationItemRequest itemRequest) {
-        UUID itemCategoryId = itemRequest.getItemCategoryId();
+    private DonationItem toEntity(UUID donationId, UUID itemCategoryId) {
         if (itemCategoryId != null && !aidItemCategoryJpaRepository.existsById(itemCategoryId)) {
             throw new ResourceNotFoundException("Item category not found: " + itemCategoryId);
         }
 
         return DonationItem.builder()
                 .donationId(donationId)
-                .itemName(itemRequest.getItemName())
                 .itemCategoryId(itemCategoryId)
-                .quantity(itemRequest.getQuantity())
-                .unit(itemRequest.getUnit())
-                .description(itemRequest.getDescription())
-                .expiryDate(itemRequest.getExpiryDate())
-                .imageUrl(itemRequest.getImageUrl())
                 .build();
     }
 
@@ -91,4 +91,10 @@ public class CreateDonationUseCase {
         }
         throw new IllegalStateException("Unable to generate unique donation QR token");
     }
+
+    private String generateDonationCode() {
+    String timePart = String.valueOf(System.currentTimeMillis()).substring(7);
+    String randomPart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
+    return "DON-" + timePart + "-" + randomPart;
+}
 }

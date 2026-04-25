@@ -37,24 +37,15 @@ public class SponsorDonationItemAdapter extends RecyclerView.Adapter<SponsorDona
     @Override
     public void onBindViewHolder(@NonNull DonationItemViewHolder holder, int position) {
         SponsorDonationItem item = items.get(position);
-        holder.binding.tvItemName.setText(item.getItemName());
+        String displayName = safeText(item.getDisplayName());
+        holder.binding.tvItemName.setText(displayName.isEmpty() ? safeText(item.getItemCategoryId()) : displayName);
 
         String categoryId = safeText(item.getItemCategoryId());
-        String expiryDate = safeText(item.getExpiryDate());
-        String quantityAndUnit = item.getQuantity() + " " + safeText(item.getUnit());
-
-        String meta = holder.binding.getRoot().getContext().getString(
-            R.string.sponsor_donate_item_meta_template,
-            quantityAndUnit,
-            categoryId.isEmpty()
+        String meta = categoryId.isEmpty()
                 ? holder.binding.getRoot().getContext().getString(R.string.sponsor_donate_item_category_none)
-                : categoryId,
-            expiryDate.isEmpty()
-                ? holder.binding.getRoot().getContext().getString(R.string.sponsor_donate_item_expiry_none)
-                : expiryDate
-        );
+                : categoryId;
         holder.binding.tvItemMeta.setText(meta);
-        holder.binding.tvItemDescription.setText(safeText(item.getDescription()));
+        holder.binding.tvItemDescription.setText("");
 
         holder.binding.btnRemoveItem.setOnClickListener(v -> {
             int adapterPosition = holder.getBindingAdapterPosition();

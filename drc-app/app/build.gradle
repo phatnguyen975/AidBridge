@@ -164,6 +164,8 @@ dependencies {
     implementation 'androidx.camera:camera-lifecycle:1.4.1'
     // CameraX View - provides PreviewView widget for embedding camera preview in XML layouts
     implementation 'androidx.camera:camera-view:1.4.1'
+    // ZXing Core - generates QR bitmap from server-provided donation token
+    implementation 'com.google.zxing:core:3.5.3'
 
     // ===========================
     // Local Database (Room)

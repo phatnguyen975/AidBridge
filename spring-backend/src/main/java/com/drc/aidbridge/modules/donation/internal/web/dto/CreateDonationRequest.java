@@ -20,8 +20,6 @@ public class CreateDonationRequest {
     @NotNull(message = "hubId is required")
     private UUID hubId;
 
-    private String notes;
-
     @NotEmpty(message = "items is required")
     @Valid
     private List<CreateDonationItemRequest> items;

@@ -8,6 +8,7 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.model.admin.Hub;
 import com.drc.aidbridge.domain.model.sponsor.SponsorDonationItem;
 import com.drc.aidbridge.domain.model.sponsor.SponsorDonationRequest;
+import com.drc.aidbridge.domain.model.sponsor.SponsorDonationSubmissionResult;
 import com.drc.aidbridge.domain.model.victim.VictimSupplyCategory;
 import com.drc.aidbridge.domain.usecase.admin.ListHubsUseCase;
 import com.drc.aidbridge.domain.usecase.sponsor.SubmitSponsorDonationUseCase;
@@ -32,7 +33,7 @@ public class SponsorDonateViewModel extends BaseViewModel {
 
     private final LiveData<NetworkResultWrapper<List<Hub>>> hubsResult;
     private final LiveData<NetworkResultWrapper<List<VictimSupplyCategory>>> categoriesResult;
-    private final LiveData<NetworkResultWrapper<String>> submitResult;
+    private final LiveData<NetworkResultWrapper<SponsorDonationSubmissionResult>> submitResult;
 
     @Inject
     public SponsorDonateViewModel(SubmitSponsorDonationUseCase submitSponsorDonationUseCase,
@@ -68,7 +69,7 @@ public class SponsorDonateViewModel extends BaseViewModel {
         return categoriesResult;
     }
 
-    public LiveData<NetworkResultWrapper<String>> getSubmitResult() {
+    public LiveData<NetworkResultWrapper<SponsorDonationSubmissionResult>> getSubmitResult() {
         return submitResult;
     }
 
@@ -81,12 +82,10 @@ public class SponsorDonateViewModel extends BaseViewModel {
     }
 
     public void submitDonation(String hubId,
-                               String notes,
                                List<SponsorDonationItem> items) {
 
         SponsorDonationRequest request = new SponsorDonationRequest(
             safeText(hubId),
-            safeText(notes),
             items
         );
 

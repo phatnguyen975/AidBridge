@@ -4,8 +4,9 @@ import androidx.lifecycle.LiveData;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.model.sponsor.SponsorDonationRequest;
+import com.drc.aidbridge.domain.model.sponsor.SponsorDonationSubmissionResult;
 
 public interface SponsorDonationRepository {
 
-    LiveData<NetworkResultWrapper<String>> submitDonation(SponsorDonationRequest request);
+    LiveData<NetworkResultWrapper<SponsorDonationSubmissionResult>> submitDonation(SponsorDonationRequest request);
 }

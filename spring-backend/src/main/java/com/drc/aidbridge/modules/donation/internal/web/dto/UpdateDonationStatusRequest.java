@@ -15,6 +15,4 @@ public class UpdateDonationStatusRequest {
 
     @NotNull(message = "status is required")
     private DonationStatus status;
-
-    private String notes;
 }

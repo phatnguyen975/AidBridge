@@ -13,5 +13,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class DonationQrResponse {
     private UUID donationId;
+    private String donationCode;
     private String qrCodeToken;
 }

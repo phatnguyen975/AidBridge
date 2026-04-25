@@ -21,6 +21,7 @@ public class GetDonationQrUseCase {
 
         return DonationQrResponse.builder()
                 .donationId(donation.getId())
+                .donationCode(donation.getDonationCode())
                 .qrCodeToken(donation.getQrCodeToken())
                 .build();
     }

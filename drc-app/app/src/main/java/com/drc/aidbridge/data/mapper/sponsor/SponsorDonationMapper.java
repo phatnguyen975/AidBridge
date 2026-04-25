@@ -24,12 +24,11 @@ public class SponsorDonationMapper {
 
     public CreateDonationRequest mapToApiRequest(@Nullable SponsorDonationRequest domainModel) {
         if (domainModel == null) {
-            return new CreateDonationRequest("", "", Collections.emptyList());
+            return new CreateDonationRequest("", Collections.emptyList());
         }
 
         return new CreateDonationRequest(
             safeText(domainModel.getHubId()),
-            safeText(domainModel.getNotes()),
             mapItems(domainModel.getItems())
         );
     }
@@ -46,15 +45,11 @@ public class SponsorDonationMapper {
                 continue;
             }
 
-            mapped.add(new CreateDonationItemRequest(
-                safeText(item.getItemName()),
-                trimToNull(item.getItemCategoryId()),
-                Math.max(0, item.getQuantity()),
-                safeText(item.getUnit()),
-                safeText(item.getDescription()),
-                trimToNull(item.getExpiryDate()),
-                trimToNull(item.getImageUrl())
-            ));
+            String categoryId = trimToNull(item.getItemCategoryId());
+            if (categoryId == null) {
+                continue;
+            }
+            mapped.add(new CreateDonationItemRequest(categoryId));
         }
 
         return mapped;

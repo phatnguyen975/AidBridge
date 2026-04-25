@@ -74,6 +74,8 @@
     <string name="sponsor_donate_open_gallery">Mở Gallery</string>
     <string name="sponsor_donate_open_date_picker">Mở DatePicker</string>
     <string name="sponsor_donate_submit_success_default">Gửi đăng ký đóng góp thành công.</string>
+    <string name="sponsor_donate_checkbox_guide">Chọn các loại vật phẩm bạn sẽ quyên góp. Có thể chọn nhiều mục cùng lúc.</string>
+    <string name="sponsor_donate_selected_count_value">%1$d loại</string>
 
     <!-- Sponsor Hub Selection & QR Flow -->
     <string name="sponsor_hub_selection_title">Chọn trạm tập kết</string>
@@ -97,9 +99,10 @@
     <string name="sponsor_hub_unknown_name">Trạm chưa đặt tên</string>
     <string name="sponsor_hub_unknown_address">Chưa có địa chỉ</string>
 
-    <string name="sponsor_qr_mock_donation_code">#DON-99281</string>
-    <string name="sponsor_qr_mock_item_type">Thực phẩm</string>
-    <string name="sponsor_qr_mock_quantity">50 Thùng</string>
+    <string name="sponsor_qr_missing_value">--</string>
+    <string name="sponsor_qr_missing_token">Không tìm thấy mã QR cho donation này.</string>
+    <string name="sponsor_qr_generate_failed">Không thể tạo ảnh QR. Vui lòng thử lại.</string>
+    <string name="sponsor_qr_save_success">Đã lưu mã QR</string>
 
     <string name="sponsor_hub_icon_desc">Biểu tượng trạm tập kết</string>
     <string name="sponsor_hub_pin_icon_desc">Biểu tượng khoảng cách</string>
