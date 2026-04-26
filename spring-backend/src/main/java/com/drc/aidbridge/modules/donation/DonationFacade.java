@@ -13,5 +13,6 @@ public interface DonationFacade {
     DonationQrResponse getQrById(UUID id);
     DonationDTO create(UUID sponsorId, CreateDonationRequest request);
     PaginatedResponseDto<DonationDTO> list(DonationStatus status, UUID hubId, int page, int limit);
+    PaginatedResponseDto<DonationDTO> listBySponsor(UUID sponsorId, DonationStatus status, int page, int limit);
     DonationDTO updateStatus(UUID id, UpdateDonationStatusRequest request);
 }

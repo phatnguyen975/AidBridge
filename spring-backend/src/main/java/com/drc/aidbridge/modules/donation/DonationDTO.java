@@ -34,6 +34,7 @@ public class DonationDTO {
     public static class DonationItemDTO {
         private UUID id;
         private UUID itemCategoryId;
+        private String itemCategoryName;
         private Instant createdAt;
     }
 }

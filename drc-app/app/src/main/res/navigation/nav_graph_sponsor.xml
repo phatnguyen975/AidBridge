@@ -57,5 +57,10 @@
     <fragment
         android:id="@+id/sponsorHistoryFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.sponsor.SponsorHistoryFragment"
-        android:label="SponsorHistoryFragment" />
+        android:label="SponsorHistoryFragment">
+
+        <action
+            android:id="@+id/action_sponsor_history_to_qr"
+            app:destination="@id/sponsorQrCodeFragment" />
+        </fragment>
 </navigation>

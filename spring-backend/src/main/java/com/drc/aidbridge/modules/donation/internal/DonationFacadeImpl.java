@@ -48,6 +48,11 @@ public class DonationFacadeImpl implements DonationFacade {
     }
 
     @Override
+    public PaginatedResponseDto<DonationDTO> listBySponsor(UUID sponsorId, DonationStatus status, int page, int limit) {
+        return listDonationsUseCase.executeBySponsor(sponsorId, status, page, limit);
+    }
+
+    @Override
     public DonationDTO updateStatus(UUID id, UpdateDonationStatusRequest request) {
         return updateDonationStatusUseCase.execute(id, request);
     }

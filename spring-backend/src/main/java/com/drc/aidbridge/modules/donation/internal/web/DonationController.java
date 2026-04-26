@@ -59,6 +59,17 @@ public class DonationController {
         return ResponseEntity.ok(ApiResponse.success("Donations retrieved successfully", response));
     }
 
+    @GetMapping("/history")
+    public ResponseEntity<ApiResponse<PaginatedResponseDto<DonationDTO>>> getMyDonationHistory(
+            Authentication authentication,
+            @RequestParam(required = false) DonationStatus status,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int limit) {
+        UUID sponsorId = UUID.fromString(authentication.getName());
+        PaginatedResponseDto<DonationDTO> response = donationFacade.listBySponsor(sponsorId, status, page, limit);
+        return ResponseEntity.ok(ApiResponse.success("Donation history retrieved successfully", response));
+    }
+
     @PatchMapping("/{id}/status")
     public ResponseEntity<ApiResponse<DonationDTO>> updateDonationStatus(
             @PathVariable UUID id,
