@@ -103,6 +103,7 @@
     <string name="sponsor_qr_missing_token">Không tìm thấy mã QR cho donation này.</string>
     <string name="sponsor_qr_generate_failed">Không thể tạo ảnh QR. Vui lòng thử lại.</string>
     <string name="sponsor_qr_save_success">Đã lưu mã QR</string>
+    <string name="sponsor_qr_save_failed">Không thể lưu mã QR. Vui lòng thử lại.</string>
 
     <string name="sponsor_hub_icon_desc">Biểu tượng trạm tập kết</string>
     <string name="sponsor_hub_pin_icon_desc">Biểu tượng khoảng cách</string>
