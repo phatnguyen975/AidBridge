@@ -1,5 +1,6 @@
 package com.drc.aidbridge.ui.main.viewmodel.volunteer;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -73,6 +74,12 @@ public class VolunteerDashboardViewModel extends BaseViewModel {
     }
 
     public void toggleStatus(boolean isOnline) {
-        toggleTrigger.setValue(new ToggleStatusRequest(isOnline, null, null));
+        toggleStatus(isOnline, null, null);
+    }
+
+    public void toggleStatus(boolean isOnline,
+                             @Nullable Double currentLat,
+                             @Nullable Double currentLng) {
+        toggleTrigger.setValue(new ToggleStatusRequest(isOnline, currentLat, currentLng));
     }
 }

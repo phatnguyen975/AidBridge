@@ -38,6 +38,12 @@ public class HubController {
         return ResponseEntity.ok(ApiResponse.success("Hub retrieved successfully", dto));
     }
 
+    @GetMapping("/near")
+    public ResponseEntity<ApiResponse<List<HubDTO>>> listNearLocation(@RequestParam(required = false) HubStatus status, @RequestParam double lat, @RequestParam double lon, @RequestParam double radius) {
+        List<HubDTO> list = hubFacade.listNearLocation(status, lat, lon, radius);
+        return ResponseEntity.ok(ApiResponse.success("Hubs retrieved successfully", list));
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponse<HubDTO>> createHub(@Valid @RequestBody CreateHubRequest request) {
         HubDTO dto = hubFacade.create(request);

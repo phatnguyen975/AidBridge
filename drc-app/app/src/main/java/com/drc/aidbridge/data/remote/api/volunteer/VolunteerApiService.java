@@ -1,5 +1,6 @@
 package com.drc.aidbridge.data.remote.api.volunteer;
 
+import com.drc.aidbridge.data.remote.dto.request.volunteer.PingVolunteerHeartbeatRequest;
 import com.drc.aidbridge.data.remote.dto.request.volunteer.ToggleStatusRequest;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.ToggleStatusResponse;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerHistoryResponseDto;
@@ -23,4 +24,7 @@ public interface VolunteerApiService {
 
     @POST("volunteers/status")
     Call<ToggleStatusResponse> toggleVolunteerStatus(@Body ToggleStatusRequest request);
+
+    @POST("volunteers/ping")
+    Call<VolunteerProfileResponse> pingVolunteerHeartbeat(@Body PingVolunteerHeartbeatRequest request);
 }

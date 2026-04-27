@@ -2,6 +2,7 @@ package com.drc.aidbridge.data.remote.api.victim;
 
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 import com.drc.aidbridge.data.remote.dto.request.victim.ReliefRequest;
+import com.drc.aidbridge.data.remote.dto.request.victim.UpdateRequestLocationRequest;
 import com.drc.aidbridge.data.remote.dto.response.victim.SupplyCategoryResponse;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface SupplyApiService {
 
@@ -18,4 +20,8 @@ public interface SupplyApiService {
 
     @POST("aid-requests")
     Call<BaseResponse<Object>> submitReliefRequest(@Body ReliefRequest request);
+
+    @POST("aid-requests/{id}/location")
+    Call<BaseResponse<Object>> updateAidRequestLocation(@Path("id") String aidRequestId,
+                                                        @Body UpdateRequestLocationRequest request);
 }

@@ -2,6 +2,7 @@ package com.drc.aidbridge.modules.aid.internal.web;
 
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
+import com.drc.aidbridge.modules.shared.dto.UpdateRequestLocationRequest;
 import com.drc.aidbridge.modules.shared.exception.AuthenticationException;
 import org.springframework.security.core.Authentication;
 import com.drc.aidbridge.modules.shared.exception.BadRequestException;
@@ -27,6 +28,7 @@ public class AidController {
     private final CancelAidRequestUseCase cancelAidRequestUseCase;
     private final ListAidRequestsUseCase listAidRequestsUseCase;
     private final TranscribeAidRequestVoiceUseCase transcribeAidRequestVoiceUseCase;
+    private final UpdateAidRequestLocationUseCase updateAidRequestLocationUseCase;
 
     /**
      * Returns 2-level aid item categories for victim supply request form.
@@ -82,6 +84,16 @@ public class AidController {
         System.out.println(System.getProperty("file.encoding"));
         AidRequestResponse response = transcribeAidRequestVoiceUseCase.execute(userId, audioFile, request);
         return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
+    }
+
+    @PostMapping("/{id}/location")
+    public ResponseEntity<ApiResponse<Void>> updateAidRequestLocation(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateRequestLocationRequest request,
+            Authentication authentication) {
+        UUID userId = resolveAuthenticatedUserId(authentication);
+        updateAidRequestLocationUseCase.execute(userId, id, request);
+        return ResponseEntity.ok(ApiResponse.success("Aid request location updated", null));
     }
 
     private UUID resolveUserId(Jwt jwt) {

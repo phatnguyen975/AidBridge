@@ -30,6 +30,7 @@ import com.drc.aidbridge.databinding.ItemSupplyCategoryBinding;
 import com.drc.aidbridge.domain.model.victim.VictimSupplyCategory;
 import com.drc.aidbridge.domain.model.victim.VictimSupplyItem;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
+import com.drc.aidbridge.service.UserLocationManager;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.victim.VictimSupplyViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -45,10 +46,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTabBinding> {
+
+    @Inject
+    UserLocationManager userLocationManager;
 
     private VictimSupplyViewModel viewModel;
 
@@ -83,7 +89,11 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
 
         renderCategoriesLoading(true);
         viewModel.loadCategories();
-        fetchCurrentLocation(false);
+        syncCurrentLocationFromCache();
+        userLocationManager.refreshOnce();
+        if (userLocationManager.hasLocationPermission()) {
+            fetchCurrentLocation(false);
+        }
     }
 
     @Override
@@ -528,6 +538,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
             return;
         }
 
+        syncCurrentLocationFromCache();
         if (currentLatitude != null && currentLongitude != null) {
             submitToViewModel(input, currentLatitude, currentLongitude);
             return;
@@ -559,6 +570,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
             new ActivityResultContracts.RequestMultiplePermissions(),
             result -> {
                 if (isLocationPermissionGranted()) {
+                    userLocationManager.startForegroundTracking();
                     fetchCurrentLocation(pendingSubmitInput != null);
                     return;
                 }
@@ -601,6 +613,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
                     if (location != null) {
                         currentLatitude = location.getLatitude();
                         currentLongitude = location.getLongitude();
+                        userLocationManager.updateLocation(currentLatitude, currentLongitude);
 
                         if (trySubmitAfterFetch && pendingSubmitInput != null) {
                             submitToViewModel(pendingSubmitInput, currentLatitude, currentLongitude);
@@ -630,6 +643,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
                     if (location != null) {
                         currentLatitude = location.getLatitude();
                         currentLongitude = location.getLongitude();
+                        userLocationManager.updateLocation(currentLatitude, currentLongitude);
 
                         if (trySubmitAfterFetch && pendingSubmitInput != null) {
                             submitToViewModel(pendingSubmitInput, currentLatitude, currentLongitude);
@@ -681,6 +695,22 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
             || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    private void syncCurrentLocationFromCache() {
+        if (!userLocationManager.hasLocationPermission()) {
+            return;
+        }
+
+        UserLocationManager.LocationSnapshot snapshot = userLocationManager.getFreshLocation(
+            UserLocationManager.DEFAULT_FRESH_LOCATION_MAX_AGE_MS
+        );
+        if (snapshot == null) {
+            return;
+        }
+
+        currentLatitude = snapshot.getLatitude();
+        currentLongitude = snapshot.getLongitude();
     }
 
     private int parseInt(String value) {

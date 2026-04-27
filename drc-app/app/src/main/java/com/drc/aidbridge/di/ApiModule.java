@@ -4,6 +4,8 @@ import com.drc.aidbridge.data.remote.api.AuthApiService;
 import com.drc.aidbridge.data.remote.api.MissionApiService;
 import com.drc.aidbridge.data.remote.api.RoutingApiService;
 import com.drc.aidbridge.data.remote.api.UserApiService;
+import com.drc.aidbridge.data.remote.api.admin.HubApiService;
+import com.drc.aidbridge.data.remote.api.sponsor.SponsorDonationApiService;
 import com.drc.aidbridge.data.remote.api.volunteer.VolunteerApiService;
 import com.drc.aidbridge.data.remote.api.victim.HistoryApiService;
 import com.drc.aidbridge.data.remote.api.victim.SosApiService;
@@ -72,7 +74,19 @@ public class ApiModule {
 
     @Provides
     @Singleton
+    public HubApiService provideHubApiService(Retrofit retrofit) {
+        return retrofit.create(HubApiService.class);
+    }
+
+    @Provides
+    @Singleton
     public RoutingApiService provideRoutingApiService(Retrofit retrofit) {
         return retrofit.create(RoutingApiService.class);
+    }
+
+    @Provides
+    @Singleton
+    public SponsorDonationApiService provideSponsorDonationApiService(Retrofit retrofit) {
+        return retrofit.create(SponsorDonationApiService.class);
     }
 }

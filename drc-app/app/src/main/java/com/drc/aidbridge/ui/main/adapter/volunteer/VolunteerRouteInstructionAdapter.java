@@ -69,14 +69,14 @@ public class VolunteerRouteInstructionAdapter
 
             String streetName = item != null && item.getName() != null ? item.getName().trim() : "";
             String road = streetName.isEmpty()
-                    ? context.getString(R.string.volunteer_map_instruction_unnamed_road)
+                    ? context.getString(R.string.base_map_instruction_unnamed_road)
                     : streetName;
 
             double distanceMeters = item != null && item.getDistance() != null ? item.getDistance() : 0d;
             long seconds = item != null && item.getTime() != null ? Math.max(item.getTime() / 1000L, 0L) : 0L;
 
             String meta = context.getString(
-                    R.string.volunteer_map_instruction_meta,
+                    R.string.base_map_instruction_meta,
                     formatDistance(context, distanceMeters),
                     formatDuration(context, seconds),
                     road
@@ -87,30 +87,30 @@ public class VolunteerRouteInstructionAdapter
         private String buildCommandWithRoad(Context context, RoutingResponseDto.InstructionDto item) {
             String command = item != null && item.getCommand() != null && !item.getCommand().trim().isEmpty()
                     ? item.getCommand().trim()
-                    : context.getString(R.string.volunteer_map_instruction_continue);
+                    : context.getString(R.string.base_map_instruction_continue);
 
             String road = item != null && item.getName() != null ? item.getName().trim() : "";
             if (road.isEmpty()) {
                 return command;
             }
 
-            return context.getString(R.string.volunteer_map_instruction_with_road, command, road);
+            return context.getString(R.string.base_map_instruction_with_road, command, road);
         }
 
         private String formatDistance(Context context, double meters) {
             if (meters >= 1000d) {
-                return context.getString(R.string.volunteer_map_distance_km, meters / 1000d);
+                return context.getString(R.string.base_map_distance_km, meters / 1000d);
             }
-            return context.getString(R.string.volunteer_map_distance_m, Math.round(meters));
+            return context.getString(R.string.base_map_distance_m, Math.round(meters));
         }
 
         private String formatDuration(Context context, long seconds) {
             long minutes = seconds / 60L;
             long remainSeconds = seconds % 60L;
             if (minutes > 0L) {
-                return context.getString(R.string.volunteer_map_duration_min_sec, minutes, remainSeconds);
+                return context.getString(R.string.base_map_duration_min_sec, minutes, remainSeconds);
             }
-            return context.getString(R.string.volunteer_map_duration_seconds, remainSeconds);
+            return context.getString(R.string.base_map_duration_seconds, remainSeconds);
         }
     }
 }

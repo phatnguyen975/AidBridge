@@ -4,6 +4,7 @@ import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -42,15 +43,28 @@ public class SponsorHistoryAdapter extends RecyclerView.Adapter<SponsorHistoryAd
         HistoryItem item = items.get(position);
 
         holder.binding.tvDate.setText(item.date);
+        
+        // Donation Code as Header
+        if (item.donationCode != null && !item.donationCode.trim().isEmpty()) {
+            holder.binding.tvDonationCode.setText(item.donationCode);
+            holder.binding.tvDonationCode.setVisibility(View.VISIBLE);
+        } else {
+            holder.binding.tvDonationCode.setVisibility(View.GONE);
+        }
+
+        // Item Summary / Category
         holder.binding.tvCategory.setText(item.category);
+        
+        // Quantity
         holder.binding.tvQuantity.setText(holder.binding.getRoot().getContext().getString(
                 R.string.sponsor_history_quantity_prefix
         ) + " " + item.quantity);
+        
         holder.binding.tvHub.setText(item.hubName);
         holder.binding.tvStatus.setText(item.status);
         holder.binding.ivThumbnail.setImageResource(item.thumbnailResId);
 
-        int statusColor = resolveStatusColor(holder, item.status);
+        int statusColor = resolveStatusColor(holder, item.statusKey);
         int surfaceColor = ContextCompat.getColor(holder.binding.getRoot().getContext(), R.color.bg_surface_elevated);
         int softStatusColor = ColorUtils.blendARGB(statusColor, surfaceColor, 0.85f);
 
@@ -94,18 +108,15 @@ public class SponsorHistoryAdapter extends RecyclerView.Adapter<SponsorHistoryAd
         notifyItemRangeInserted(startPosition, newItems.size());
     }
 
-    private int resolveStatusColor(@NonNull HistoryViewHolder holder, @NonNull String status) {
-        if (status.equals(holder.binding.getRoot().getContext().getString(R.string.sponsor_history_status_pending))) {
+    private int resolveStatusColor(@NonNull HistoryViewHolder holder, @NonNull String statusKey) {
+        if ("REGISTERED".equalsIgnoreCase(statusKey)) {
             return ContextCompat.getColor(holder.binding.getRoot().getContext(), R.color.warning_orange);
         }
-        if (status.equals(holder.binding.getRoot().getContext().getString(R.string.sponsor_history_status_stocked))) {
-            return ContextCompat.getColor(holder.binding.getRoot().getContext(), R.color.hub_blue);
-        }
-        if (status.equals(holder.binding.getRoot().getContext().getString(R.string.sponsor_history_status_shipping))) {
-            return ContextCompat.getColor(holder.binding.getRoot().getContext(), R.color.warning_orange);
-        }
-        if (status.equals(holder.binding.getRoot().getContext().getString(R.string.sponsor_history_status_arrived))) {
+        if ("RECEIVED".equalsIgnoreCase(statusKey)) {
             return ContextCompat.getColor(holder.binding.getRoot().getContext(), R.color.safe_green);
+        }
+        if ("OUTDATED".equalsIgnoreCase(statusKey)) {
+            return ContextCompat.getColor(holder.binding.getRoot().getContext(), R.color.sos_red);
         }
         return ContextCompat.getColor(holder.binding.getRoot().getContext(), R.color.text_secondary);
     }
@@ -120,7 +131,11 @@ public class SponsorHistoryAdapter extends RecyclerView.Adapter<SponsorHistoryAd
         public final String category;
         public final String quantity;
         public final String hubName;
+        public final String statusKey;
         public final String status;
+        public final String itemSummary;
+        public final String donationCode;
+        public final String qrCodeToken;
         public final int thumbnailResId;
 
         public HistoryItem(@NonNull String id,
@@ -128,14 +143,22 @@ public class SponsorHistoryAdapter extends RecyclerView.Adapter<SponsorHistoryAd
                            @NonNull String category,
                            @NonNull String quantity,
                            @NonNull String hubName,
+                           @NonNull String statusKey,
                            @NonNull String status,
+                           @NonNull String itemSummary,
+                           @NonNull String donationCode,
+                           @NonNull String qrCodeToken,
                            int thumbnailResId) {
             this.id = id;
             this.date = date;
             this.category = category;
             this.quantity = quantity;
             this.hubName = hubName;
+            this.statusKey = statusKey;
             this.status = status;
+            this.itemSummary = itemSummary;
+            this.donationCode = donationCode;
+            this.qrCodeToken = qrCodeToken;
             this.thumbnailResId = thumbnailResId;
         }
     }

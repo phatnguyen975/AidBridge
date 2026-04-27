@@ -2,12 +2,15 @@ package com.drc.aidbridge.ui.main.viewmodel.victim;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
+import com.drc.aidbridge.BuildConfig;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.domain.usecase.user.GetCachedUserUseCase;
@@ -18,6 +21,8 @@ import com.drc.aidbridge.utils.ImageUtils;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,15 +42,18 @@ public class VictimSosViewModel extends BaseViewModel {
     private final ExecutorService imageProcessingExecutor = Executors.newSingleThreadExecutor();
 
     private final MutableLiveData<Long> loadCachedUserTrigger = new MutableLiveData<>();
+    private final MutableLiveData<QuickSosPayload> quickSosTrigger = new MutableLiveData<>();
     private final MutableLiveData<SelfSosPayload> selfSosTrigger = new MutableLiveData<>();
     private final MutableLiveData<RelativeSosPayload> relativeSosTrigger = new MutableLiveData<>();
 
     private final LiveData<NetworkResultWrapper<User>> cachedUserSource;
+    private final LiveData<NetworkResultWrapper<String>> quickSosSource;
     private final LiveData<NetworkResultWrapper<String>> selfSosSource;
     private final LiveData<NetworkResultWrapper<String>> relativeSosSource;
 
     private final MediatorLiveData<NetworkResultWrapper<User>> cachedUserResult = new MediatorLiveData<>();
     private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<String>> submitQuickSosResult = new MediatorLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<String>> submitSelfSosResult = new MediatorLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<String>> submitRelativeSosResult = new MediatorLiveData<>();
 
@@ -58,6 +66,18 @@ public class VictimSosViewModel extends BaseViewModel {
         cachedUserSource = Transformations.switchMap(
             loadCachedUserTrigger,
             ignored -> this.getCachedUserUseCase.execute()
+        );
+
+        quickSosSource = Transformations.switchMap(quickSosTrigger, payload ->
+            this.uploadSosUseCase.uploadQuickSos(
+                payload.latitude,
+                payload.longitude,
+                payload.accuracy,
+                payload.triggeredAtMillis,
+                payload.locationCapturedAtMillis,
+                payload.clientRequestId,
+                payload.deviceInfo
+            )
         );
 
         selfSosSource = Transformations.switchMap(selfSosTrigger, payload ->
@@ -83,10 +103,10 @@ public class VictimSosViewModel extends BaseViewModel {
             )
         );
 
-        submitSelfSosResult.addSource(selfSosSource, submitSelfSosResult::postValue);
-
-        submitRelativeSosResult.addSource(relativeSosSource, submitRelativeSosResult::postValue);
         cachedUserResult.addSource(cachedUserSource, cachedUserResult::postValue);
+        submitQuickSosResult.addSource(quickSosSource, submitQuickSosResult::postValue);
+        submitSelfSosResult.addSource(selfSosSource, submitSelfSosResult::postValue);
+        submitRelativeSosResult.addSource(relativeSosSource, submitRelativeSosResult::postValue);
     }
 
     public LiveData<NetworkResultWrapper<User>> getCachedUserResult() {
@@ -95,6 +115,10 @@ public class VictimSosViewModel extends BaseViewModel {
 
     public void loadCachedUser() {
         loadCachedUserTrigger.setValue(System.currentTimeMillis());
+    }
+
+    public LiveData<NetworkResultWrapper<String>> getSubmitQuickSosResult() {
+        return submitQuickSosResult;
     }
 
     public LiveData<NetworkResultWrapper<String>> getSubmitSelfSosResult() {
@@ -107,6 +131,32 @@ public class VictimSosViewModel extends BaseViewModel {
 
     public LiveData<ValidationResult> getValidationError() {
         return validationError;
+    }
+
+    public void submitQuickSelfSos(double latitude,
+                                   double longitude,
+                                   @Nullable Double accuracy,
+                                   long locationCapturedAtMillis) {
+        if (!isCoordinateValid(latitude, longitude)) {
+            validationError.postValue(ValidationResult.invalid(
+                ValidationResult.Field.NONE,
+                "Không thể gửi SOS vì chưa xác định được vị trí hợp lệ."
+            ));
+            return;
+        }
+
+        validationError.postValue(ValidationResult.valid());
+        submitQuickSosResult.postValue(NetworkResultWrapper.loading());
+
+        quickSosTrigger.postValue(new QuickSosPayload(
+            latitude,
+            longitude,
+            accuracy,
+            System.currentTimeMillis(),
+            locationCapturedAtMillis > 0L ? locationCapturedAtMillis : System.currentTimeMillis(),
+            UUID.randomUUID().toString(),
+            buildDeviceInfo()
+        ));
     }
 
     public void submitSelfSos(Context context,
@@ -222,10 +272,62 @@ public class VictimSosViewModel extends BaseViewModel {
         return message.trim();
     }
 
+    private boolean isCoordinateValid(double latitude, double longitude) {
+        return latitude >= -90.0d
+            && latitude <= 90.0d
+            && longitude >= -180.0d
+            && longitude <= 180.0d;
+    }
+
+    private String buildDeviceInfo() {
+        return String.format(
+            Locale.US,
+            "%s %s (sdk=%d, app=%s)",
+            safeDevicePart(Build.MANUFACTURER),
+            safeDevicePart(Build.MODEL),
+            Build.VERSION.SDK_INT,
+            BuildConfig.VERSION_NAME
+        );
+    }
+
+    private String safeDevicePart(@Nullable String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return "unknown";
+        }
+        return value.trim();
+    }
+
     @Override
     protected void onCleared() {
         imageProcessingExecutor.shutdownNow();
         super.onCleared();
+    }
+
+    private static final class QuickSosPayload {
+        final double latitude;
+        final double longitude;
+        @Nullable
+        final Double accuracy;
+        final long triggeredAtMillis;
+        final long locationCapturedAtMillis;
+        final String clientRequestId;
+        final String deviceInfo;
+
+        QuickSosPayload(double latitude,
+                        double longitude,
+                        @Nullable Double accuracy,
+                        long triggeredAtMillis,
+                        long locationCapturedAtMillis,
+                        String clientRequestId,
+                        String deviceInfo) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.accuracy = accuracy;
+            this.triggeredAtMillis = triggeredAtMillis;
+            this.locationCapturedAtMillis = locationCapturedAtMillis;
+            this.clientRequestId = clientRequestId;
+            this.deviceInfo = deviceInfo;
+        }
     }
 
     private static final class SelfSosPayload {

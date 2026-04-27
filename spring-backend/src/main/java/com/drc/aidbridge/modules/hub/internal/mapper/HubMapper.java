@@ -38,6 +38,36 @@ public class HubMapper {
                 .build();
     }
 
+    public HubDTO toDTO(com.drc.aidbridge.modules.hub.internal.repository.projection.HubSearchResultProjection projection) {
+        if (projection == null) return null;
+
+        HubDTO.LocationDTO location = HubDTO.LocationDTO.builder()
+                .lat(projection.getLatitude() != null ? BigDecimal.valueOf(projection.getLatitude()) : null)
+                .lng(projection.getLongitude() != null ? BigDecimal.valueOf(projection.getLongitude()) : null)
+                .build();
+
+        HubStatus status = null;
+        try {
+            if (projection.getStatus() != null) {
+                status = HubStatus.valueOf(projection.getStatus());
+            }
+        } catch (IllegalArgumentException ignored) {}
+
+        return HubDTO.builder()
+                .id(projection.getId())
+                .name(projection.getName())
+                .address(projection.getAddress())
+                .phoneNumber(projection.getPhoneNumber())
+                .imageUrl(projection.getImageUrl())
+                .status(status)
+                .operatingHours(projection.getOperatingHours())
+                .createdAt(projection.getCreatedAt())
+                .updatedAt(projection.getUpdatedAt())
+                .location(location)
+                .distanceInMeters(projection.getDistanceInMeters())
+                .build();
+    }
+
     public Hub toEntity(CreateHubRequest request) {
         if (request == null) {
             return null;

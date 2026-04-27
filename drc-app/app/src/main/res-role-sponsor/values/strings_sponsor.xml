@@ -28,9 +28,14 @@
     <!-- Donate Form -->
     <string name="sponsor_donate_title">ĐĂNG KÝ ĐÓNG GÓP</string>
     <string name="sponsor_donate_category_label">Loại vật phẩm</string>
+    <string name="sponsor_donate_item_name_label">Tên vật phẩm</string>
+    <string name="sponsor_donate_item_category_id_label">Mã danh mục vật phẩm (UUID)</string>
     <string name="sponsor_donate_quantity_label">Số lượng</string>
     <string name="sponsor_donate_unit_label">Đơn vị tính</string>
     <string name="sponsor_donate_description_label">Mô tả chi tiết</string>
+    <string name="sponsor_donate_expiry_date_label">Hạn sử dụng</string>
+    <string name="sponsor_donate_notes_label">Ghi chú donation</string>
+    <string name="sponsor_donate_added_items_label">Danh sách vật phẩm đã thêm</string>
     <string name="sponsor_donate_upload_label">Tải ảnh lên hoặc chụp mới</string>
     <string name="sponsor_donate_upload_hint">Giúp nhân viên trạm dễ dàng xác nhận</string>
     <string name="sponsor_donate_expected_time_label">Thời gian giao hàng</string>
@@ -46,11 +51,31 @@
 
     <string name="sponsor_donate_image_real_label">Ảnh thực tế</string>
     <string name="sponsor_donate_placeholder_category">Chọn loại vật phẩm</string>
+    <string name="sponsor_donate_placeholder_item_name">VD: Mì gói Hảo Hảo</string>
+    <string name="sponsor_donate_placeholder_item_category_id">VD: 963475f1-d441-4657-b3cb-75e07cb750a3 (để trống nếu không có)</string>
     <string name="sponsor_donate_placeholder_quantity">VD: 100</string>
     <string name="sponsor_donate_placeholder_unit">VD: Thùng</string>
     <string name="sponsor_donate_placeholder_description">Ghi chú về tình trạng, hạn sử dụng...</string>
-    <string name="sponsor_donate_placeholder_expected_time">Chọn ngày giờ dự kiến</string>
+    <string name="sponsor_donate_placeholder_expiry_date">yyyy-MM-dd, ví dụ 2027-12-31</string>
+    <string name="sponsor_donate_placeholder_notes">VD: First donation batch from sponsor</string>
     <string name="sponsor_donate_upload_subtext">PNG, JPG tối đa 5MB</string>
+    <string name="sponsor_donate_add_item">THÊM VẬT PHẨM</string>
+    <string name="sponsor_donate_save_item">LƯU VẬT PHẨM</string>
+    <string name="sponsor_donate_remove_item">Xóa vật phẩm</string>
+    <string name="sponsor_donate_item_meta_template">Số lượng: %1$s | itemCategoryId: %2$s | expiryDate: %3$s</string>
+    <string name="sponsor_donate_item_category_none">null</string>
+    <string name="sponsor_donate_item_expiry_none">null</string>
+    <string name="sponsor_donate_item_added_success">Đã thêm vật phẩm vào danh sách.</string>
+    <string name="sponsor_donate_item_removed_success">Đã xóa vật phẩm khỏi danh sách.</string>
+    <string name="sponsor_category_loading">Đang tải danh mục vật phẩm, vui lòng thử lại.</string>
+    <string name="sponsor_donate_item_name_required">Vui lòng nhập tên vật phẩm trước khi thêm.</string>
+    <string name="sponsor_donate_quantity_required">Số lượng vật phẩm phải lớn hơn 0.</string>
+    <string name="sponsor_donate_unit_required">Vui lòng nhập đơn vị tính trước khi thêm.</string>
+    <string name="sponsor_donate_open_gallery">Mở Gallery</string>
+    <string name="sponsor_donate_open_date_picker">Mở DatePicker</string>
+    <string name="sponsor_donate_submit_success_default">Gửi đăng ký đóng góp thành công.</string>
+    <string name="sponsor_donate_checkbox_guide">Chọn các loại vật phẩm bạn sẽ quyên góp. Có thể chọn nhiều mục cùng lúc.</string>
+    <string name="sponsor_donate_selected_count_value">%1$d loại</string>
 
     <!-- Sponsor Hub Selection & QR Flow -->
     <string name="sponsor_hub_selection_title">Chọn trạm tập kết</string>
@@ -69,10 +94,16 @@
     <string name="sponsor_hub_distance_1">Cách bạn 2.5 km</string>
     <string name="sponsor_hub_distance_2">Cách bạn 4.1 km</string>
     <string name="sponsor_hub_distance_3">Cách bạn 5.8 km</string>
+    <string name="sponsor_hub_loading">Đang tải danh sách trạm, vui lòng thử lại sau ít giây.</string>
+    <string name="sponsor_hub_empty">Hiện chưa có trạm tiếp nhận khả dụng.</string>
+    <string name="sponsor_hub_unknown_name">Trạm chưa đặt tên</string>
+    <string name="sponsor_hub_unknown_address">Chưa có địa chỉ</string>
 
-    <string name="sponsor_qr_mock_donation_code">#DON-99281</string>
-    <string name="sponsor_qr_mock_item_type">Thực phẩm</string>
-    <string name="sponsor_qr_mock_quantity">50 Thùng</string>
+    <string name="sponsor_qr_missing_value">--</string>
+    <string name="sponsor_qr_missing_token">Không tìm thấy mã QR cho donation này.</string>
+    <string name="sponsor_qr_generate_failed">Không thể tạo ảnh QR. Vui lòng thử lại.</string>
+    <string name="sponsor_qr_save_success">Đã lưu mã QR</string>
+    <string name="sponsor_qr_save_failed">Không thể lưu mã QR. Vui lòng thử lại.</string>
 
     <string name="sponsor_hub_icon_desc">Biểu tượng trạm tập kết</string>
     <string name="sponsor_hub_pin_icon_desc">Biểu tượng khoảng cách</string>
@@ -107,11 +138,13 @@
     <!-- Sponsor History -->
     <string name="sponsor_history_title">LỊCH SỬ ĐÓNG GÓP</string>
     <string name="sponsor_history_tab_all">Tất cả</string>
-    <string name="sponsor_history_status_pending">Đang chờ</string>
-    <string name="sponsor_history_status_stocked">Đã nhập kho</string>
-    <string name="sponsor_history_status_shipping">Đang vận chuyển</string>
-    <string name="sponsor_history_status_arrived">Đã đến nơi</string>
+    <string name="sponsor_history_status_registered">Đã tạo</string>
+    <string name="sponsor_history_status_received">Đã nhận hàng</string>
+    <string name="sponsor_history_status_outdated">Đã quá hạn</string>
     <string name="sponsor_history_quantity_prefix">Số lượng:</string>
+    <string name="sponsor_history_item_count_value">%1$d loại</string>
+    <string name="sponsor_history_hub_short_value">Hub %1$s</string>
+    <string name="sponsor_history_empty">Chưa có lịch sử đóng góp.</string>
     <string name="sponsor_history_thumbnail_desc">Ảnh vật phẩm đóng góp</string>
     <string name="sponsor_history_hub_icon_desc">Biểu tượng trạm nhận</string>
 </resources>

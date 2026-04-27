@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:padding="20dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tìm Kiếm Trạm Trực"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#333333" />
+
+    <RadioGroup
+        android:id="@+id/rgLocationSource"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rbCurrentLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vị trí hiện tại của bạn (GPS)"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/rbStartPoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:text="Vị trí bắt đầu lộ trình" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/tvRadiusLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Bán kính tìm kiếm: 1.0 km"
+        android:textStyle="bold"
+        android:textColor="#1976D2" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/sliderRadius"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:thumbColor="#1976D2"
+        app:trackColorActive="#1976D2"
+        app:trackColorInactive="#E0E0E0"
+        android:valueFrom="0.5"
+        android:valueTo="10.0"
+        android:value="1.0"
+        android:stepSize="0.5" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSearchHubs"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="24dp"
+        android:text="BẮT ĐẦU TÌM HUBS"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        app:cornerRadius="12dp"
+        android:backgroundTint="#2196F3"
+        app:icon="@android:drawable/ic_menu_search"
+        app:iconGravity="textStart" />
+        
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1.5dp"
+        android:background="#EEEEEE"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp" />
+        
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chưa có dữ liệu"
+        android:gravity="center"
+        android:textColor="#888888"
+        android:layout_marginTop="32dp"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/progressHubSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"
+        android:visibility="gone"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvHubs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:listitem="@layout/item_hub_search_result"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp"/>
+</LinearLayout>

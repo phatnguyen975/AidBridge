@@ -35,6 +35,10 @@ public final class Constants {
     public static final String KEY_USER_ADDRESS = "user_address";
     public static final String KEY_USER_VERIFIED = "user_verified";
     public static final String KEY_FCM_TOKEN = "fcm_token";
+    public static final String KEY_LAST_LOCATION_LAT = "last_location_lat";
+    public static final String KEY_LAST_LOCATION_LNG = "last_location_lng";
+    public static final String KEY_LAST_LOCATION_UPDATED_AT = "last_location_updated_at";
+    public static final String KEY_ACTIVE_SOS_TRACKING_ID = "active_sos_tracking_id";
 
     // === Dispatch Notifications ===
     public static final String NOTIFICATION_TYPE_DISPATCH_REQUEST = "DISPATCH_REQUEST";
@@ -62,8 +66,7 @@ public final class Constants {
     // === Auth Validation ===
     public static final Pattern EMAIL_PATTERN = Pattern.compile(
             "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
-    public static final Pattern PASSWORD_PATTERN = Pattern.compile(
-            "^[A-Za-z0-9]{6,}$");
+    public static final Pattern PASSWORD_PATTERN = Pattern.compile("^.{6,}$");
     public static final Pattern PHONE_PATTERN = Pattern.compile(
             "^\\d{10}$");
     public static final Pattern OTP_PATTERN = Pattern.compile(

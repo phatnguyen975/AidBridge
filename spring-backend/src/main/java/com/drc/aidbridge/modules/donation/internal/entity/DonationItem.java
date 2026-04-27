@@ -5,7 +5,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -23,26 +22,8 @@ public class DonationItem {
     @Column(name = "donation_id", nullable = false)
     private UUID donationId;
 
-    @Column(name = "item_name", nullable = false, length = 255)
-    private String itemName;
-
     @Column(name = "item_category_id")
     private UUID itemCategoryId;
-
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
-
-    @Column(name = "unit", length = 100)
-    private String unit;
-
-    @Column(name = "description", columnDefinition = "text")
-    private String description;
-
-    @Column(name = "expiry_date")
-    private LocalDate expiryDate;
-
-    @Column(name = "image_url", length = 500)
-    private String imageUrl;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

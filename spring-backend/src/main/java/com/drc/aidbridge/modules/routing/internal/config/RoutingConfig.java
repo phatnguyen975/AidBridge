@@ -6,7 +6,6 @@ import com.graphhopper.config.LMProfile;
 import com.graphhopper.config.Profile;
 import com.graphhopper.jackson.Jackson;
 import com.graphhopper.util.CustomModel;
-import com.graphhopper.util.GHUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -27,8 +26,8 @@ import java.util.Map;
 /**
  * GraphHopper initialization for the routing module.
  *
- * <p>Uses GraphHopper 11 typed profile API and a minimal custom model so bootRun works with
- * graphhopper-core 11.0.</p>
+ * <p>Uses GraphHopper 8 typed profile API and a minimal custom model so bootRun works with
+ * graphhopper-core 8.0.</p>
  */
 @Slf4j
 @Configuration
@@ -41,7 +40,7 @@ public class RoutingConfig {
         Path osmPath = resolveOsmPath(properties, resourceLoader);
 
         log.info("OSM file ready: {} ({} MB)", osmPath.toAbsolutePath(), Files.size(osmPath) / (1024 * 1024));
-        log.info("Initializing GraphHopper engine (GH 11.x)...");
+        log.info("Initializing GraphHopper engine (GH 8.x)...");
         log.info("  OSM file    : {}", osmPath.toAbsolutePath());
         log.info("  Graph cache : {}", Path.of(properties.getGraphDir()).toAbsolutePath());
         log.info("  Data access : {}", properties.getDataAccess());
@@ -58,8 +57,14 @@ public class RoutingConfig {
         List<Profile> profiles = new ArrayList<>();
         List<LMProfile> lmProfiles = new ArrayList<>();
         
-        CustomModel defaultModel = GHUtility.loadCustomModelFromJar("car.json");
-        log.info("Loaded default car model from JAR");
+        CustomModel defaultModel;
+        try {
+            defaultModel = loadCustomModelFromClasspath("com/graphhopper/custom_models/car.json", resourceLoader);
+            log.info("Loaded default car model from GraphHopper JAR");
+        } catch (Exception e) {
+            log.warn("Failed to load default car model from GraphHopper JAR ({}), using empty CustomModel", e.getMessage());
+            defaultModel = new CustomModel();
+        }
         
         for (Map.Entry<String, String> entry : properties.getProfiles().entrySet()) {
             String profileName = entry.getKey(); // e.g., "fastest", "safest"
@@ -138,6 +143,7 @@ public class RoutingConfig {
         try (InputStream is = resource.getInputStream()) {
             log.debug("Loading custom model from {}", resourcePath);
             var mapper = Jackson.newObjectMapper();
+            mapper.enable(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_COMMENTS);
             CustomModel model = mapper.readValue(is, CustomModel.class);
             log.debug("Successfully deserialized custom model: {}", resourcePath);
             return model;

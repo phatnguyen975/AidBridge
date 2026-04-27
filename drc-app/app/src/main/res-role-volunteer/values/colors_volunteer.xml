@@ -26,20 +26,7 @@
     <color name="volunteer_current_mission_note_stroke">#FACC15</color>
 
     <!-- Volunteer Map Colors -->
-    <color name="volunteer_map_panel_bg">#D90A2748</color>
-    <color name="volunteer_map_panel_stroke">#4D7DB4E8</color>
-    <color name="volunteer_map_map_overlay">#22020D1D</color>
-    <color name="volunteer_map_field_bg">#1F4C78</color>
-    <color name="volunteer_map_progress_track">#1E507C</color>
-    <color name="volunteer_map_instruction_panel_bg">#E6102E52</color>
-    <color name="volunteer_map_instruction_card_bg">#12385E</color>
-    <color name="volunteer_map_instruction_card_stroke">#2B74AE</color>
+    <color name="volunteer_map_instruction_card_bg">#1A2D45</color>
+    <color name="volunteer_map_instruction_card_stroke">#2A3C52</color>
     <color name="volunteer_map_instruction_order_bg">#2F86E8</color>
-    <color name="volunteer_map_switch_thumb">#2F86E8</color>
-    <color name="volunteer_map_switch_track">#6E9BC7</color>
-    <color name="volunteer_map_polygon_fill">#55EF4444</color>
-    <color name="volunteer_map_polygon_stroke">#F87171</color>
-    <color name="volunteer_map_hud_bg">#EF0A1C35</color>
-    <color name="volunteer_map_route_casing">#0B2A4A</color>
-    <color name="volunteer_map_route_core">#43B2FF</color>
 </resources>

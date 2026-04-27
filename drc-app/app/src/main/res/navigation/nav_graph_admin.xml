@@ -23,12 +23,25 @@
     <fragment
         android:id="@+id/adminHubManagementFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminHubManagementFragment"
-        android:label="@string/admin_hub_mgmt_title" />
+        android:label="@string/admin_hub_mgmt_title">
+
+        <action
+            android:id="@+id/action_adminHubManagementFragment_to_adminHubDetailFragment"
+            app:destination="@id/adminHubDetailFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/adminHubDetailFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminHubDetailFragment"
-        android:label="@string/admin_hub_detail_hub_name" />
+        android:label="@string/admin_hub_detail_hub_name">
+
+        <argument
+            android:name="hubId"
+            app:argType="string"
+            app:nullable="true" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/adminAddSupplyTypeFragment"

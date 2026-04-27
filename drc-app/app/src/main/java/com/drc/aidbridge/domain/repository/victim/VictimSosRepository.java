@@ -6,6 +6,14 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 
 public interface VictimSosRepository {
 
+    LiveData<NetworkResultWrapper<String>> uploadQuickSelfSos(double latitude,
+                                                              double longitude,
+                                                              Double accuracy,
+                                                              long triggeredAtMillis,
+                                                              long locationCapturedAtMillis,
+                                                              String clientRequestId,
+                                                              String deviceInfo);
+
     LiveData<NetworkResultWrapper<String>> uploadSelfSos(String fullName,
                                                          int peopleCount,
                                                          String severity,

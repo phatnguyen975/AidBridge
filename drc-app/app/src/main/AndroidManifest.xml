@@ -9,6 +9,8 @@
     <!-- Location -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
 
     <!-- Notifications -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -62,6 +64,11 @@
             android:name=".ui.main.MainActivity"
             android:exported="false"
             android:theme="@style/Theme.AidBridge" />
+
+        <service
+            android:name=".service.EmergencyTrackingService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
 
         <service
             android:name=".service.MyFirebaseMessagingService"

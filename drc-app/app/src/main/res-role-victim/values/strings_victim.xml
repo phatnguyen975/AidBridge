@@ -110,15 +110,15 @@
         <item>Nhẹ</item>
     </string-array>
     <string name="victim_rescue_sos_button">!\nSOS</string>
-    <string name="victim_rescue_sos_hint">Nhấn để gửi tín hiệu khẩn cấp</string>
-    <string name="victim_rescue_info_title">Thông tin cứu hộ</string>
+    <string name="victim_rescue_sos_hint">Nhấn để gửi SOS ngay, không cần điền thêm</string>
+    <string name="victim_rescue_info_title">Thông tin bổ sung (không bắt buộc)</string>
     <string name="victim_rescue_full_name_hint">Họ và tên</string>
     <string name="victim_rescue_default_name">Nguyễn Văn A</string>
     <string name="victim_rescue_people_count_hint">Số người</string>
     <string name="victim_rescue_default_people_count">1</string>
     <string name="victim_rescue_severity_hint">Tình trạng</string>
     <string name="victim_rescue_health_detail_hint">Chi tiết sức khỏe</string>
-    <string name="victim_rescue_images_title">Hình ảnh hiện trường</string>
+    <string name="victim_rescue_images_title">Ảnh hiện trường (bổ sung sau)</string>
     <string name="victim_rescue_upload_label">Tải ảnh lên hoặc chụp mới</string>
     <string name="victim_rescue_upload_icon_desc">Biểu tượng tải ảnh hiện trường</string>
     <string name="victim_rescue_image_desc">Ảnh hiện trường</string>

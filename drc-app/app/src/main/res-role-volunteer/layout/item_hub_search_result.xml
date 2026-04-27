@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/white"
+    app:strokeWidth="1dp"
+    app:strokeColor="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_map_pin"
+                app:tint="#1E88E5" 
+                tools:ignore="UseAppTint" />
+
+            <TextView
+                android:id="@+id/tvHubName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                tools:text="Hub Quận 1"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvHubDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1.2 km"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#43A047" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvHubAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            tools:text="123 Nguyễn Huệ, Quận 1, TP.HCM"
+            android:textSize="14sp"
+            android:textColor="#666666" />
+            
+        <TextView
+            android:id="@+id/tvHubOperatingHours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            tools:text="Giờ HĐ: 08:00 - 20:00"
+            android:textSize="12sp"
+            android:textColor="#999999" />
+            
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
