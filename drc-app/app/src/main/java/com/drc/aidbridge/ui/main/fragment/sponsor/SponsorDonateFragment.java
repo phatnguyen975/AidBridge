@@ -127,7 +127,7 @@ public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBin
                 if (categories != null) {
                     parentCategories.addAll(categories);
                 }
-                renderLeafCategoryCheckboxes(parentCategories);
+                renderRootCategoryCheckboxes(parentCategories);
                 return;
             }
 
@@ -219,7 +219,7 @@ public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBin
         );
     }
 
-    private void renderLeafCategoryCheckboxes(@NonNull List<VictimSupplyCategory> categories) {
+    private void renderRootCategoryCheckboxes(@NonNull List<VictimSupplyCategory> categories) {
         binding.llCategoryCheckboxContainer.removeAllViews();
 
         if (categories.isEmpty()) {

@@ -1,10 +1,13 @@
 package com.drc.aidbridge.modules.donation.internal.usecase;
 
 import com.drc.aidbridge.modules.donation.DonationDTO;
+import com.drc.aidbridge.modules.donation.DonationHistorySummaryDTO;
 import com.drc.aidbridge.modules.donation.internal.entity.Donation;
 import com.drc.aidbridge.modules.donation.internal.mapper.DonationMapper;
 import com.drc.aidbridge.modules.donation.internal.repository.DonationItemRepository;
 import com.drc.aidbridge.modules.donation.internal.repository.DonationRepository;
+import com.drc.aidbridge.modules.hub.internal.entity.Hub;
+import com.drc.aidbridge.modules.hub.internal.repository.HubRepository;
 import com.drc.aidbridge.modules.shared.dto.PaginatedResponseDto;
 import com.drc.aidbridge.modules.shared.dto.PaginationDto;
 import com.drc.aidbridge.modules.shared.enums.DonationStatus;
@@ -15,7 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Component
@@ -26,6 +32,7 @@ public class ListDonationsUseCase {
 
     private final DonationRepository donationRepository;
     private final DonationItemRepository donationItemRepository;
+    private final HubRepository hubRepository;
     private final DonationMapper donationMapper;
 
     public PaginatedResponseDto<DonationDTO> execute(DonationStatus status, UUID hubId, int page, int limit) {
@@ -53,7 +60,7 @@ public class ListDonationsUseCase {
                 .build();
     }
 
-    public PaginatedResponseDto<DonationDTO> executeBySponsor(UUID sponsorId, DonationStatus status, int page, int limit) {
+    public PaginatedResponseDto<DonationHistorySummaryDTO> executeBySponsor(UUID sponsorId, DonationStatus status, int page, int limit) {
         if (sponsorId == null) {
             throw new IllegalArgumentException("sponsorId is required");
         }
@@ -63,8 +70,17 @@ public class ListDonationsUseCase {
         Pageable pageable = PageRequest.of(page - 1, safeLimit, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         Page<Donation> donationPage = findPageBySponsor(sponsorId, status, pageable);
-        List<DonationDTO> items = donationPage.getContent().stream()
-                .map(this::toDonationDTOWithItems)
+        List<Donation> donations = donationPage.getContent();
+        Map<UUID, DonationItemRepository.DonationHistoryAggregateProjection> aggregateByDonationId =
+            loadHistoryAggregates(donations);
+        Map<UUID, String> hubNameById = loadHubNames(donations);
+
+        List<DonationHistorySummaryDTO> items = donations.stream()
+            .map(donation -> toHistorySummaryDTO(
+                donation,
+                aggregateByDonationId.get(donation.getId()),
+                hubNameById.get(donation.getHubId())
+            ))
                 .toList();
 
         PaginationDto pagination = PaginationDto.builder()
@@ -75,10 +91,90 @@ public class ListDonationsUseCase {
                 .hasNext(donationPage.hasNext())
                 .build();
 
-        return PaginatedResponseDto.<DonationDTO>builder()
+        return PaginatedResponseDto.<DonationHistorySummaryDTO>builder()
                 .items(items)
                 .pagination(pagination)
                 .build();
+    }
+
+    private DonationHistorySummaryDTO toHistorySummaryDTO(
+            Donation donation,
+            DonationItemRepository.DonationHistoryAggregateProjection aggregate,
+            String hubName
+    ) {
+        long totalQuantity = aggregate != null && aggregate.getTotalQuantity() != null
+                ? aggregate.getTotalQuantity()
+                : 0L;
+
+        int safeTotalQuantity = totalQuantity > Integer.MAX_VALUE
+                ? Integer.MAX_VALUE
+                : (int) Math.max(totalQuantity, 0L);
+
+        return DonationHistorySummaryDTO.builder()
+                .id(donation.getId())
+                .donationCode(donation.getDonationCode())
+                .hubName(hubName != null ? hubName.trim() : "")
+                .itemSummary(aggregate != null && aggregate.getItemSummary() != null ? aggregate.getItemSummary() : "")
+                .totalQuantity(safeTotalQuantity)
+                .status(donation.getStatus())
+                .createdAt(donation.getCreatedAt())
+                .qrCodeToken(donation.getQrCodeToken())
+                .build();
+    }
+
+    private Map<UUID, DonationItemRepository.DonationHistoryAggregateProjection> loadHistoryAggregates(List<Donation> donations) {
+        if (donations == null || donations.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<UUID> donationIds = donations.stream()
+                .map(Donation::getId)
+                .filter(id -> id != null)
+                .toList();
+
+        if (donationIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<DonationItemRepository.DonationHistoryAggregateProjection> aggregates =
+                donationItemRepository.findHistoryAggregatesByDonationIds(donationIds);
+
+        Map<UUID, DonationItemRepository.DonationHistoryAggregateProjection> result = new HashMap<>();
+        for (DonationItemRepository.DonationHistoryAggregateProjection aggregate : aggregates) {
+            if (aggregate == null || aggregate.getDonationId() == null) {
+                continue;
+            }
+            result.put(aggregate.getDonationId(), aggregate);
+        }
+
+        return result;
+    }
+
+    private Map<UUID, String> loadHubNames(List<Donation> donations) {
+        if (donations == null || donations.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<UUID> hubIds = donations.stream()
+                .map(Donation::getHubId)
+                .filter(id -> id != null)
+                .distinct()
+                .toList();
+
+        if (hubIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<UUID, String> result = new HashMap<>();
+        List<Hub> hubs = hubRepository.findAllById(hubIds);
+        for (Hub hub : hubs) {
+            if (hub == null || hub.getId() == null) {
+                continue;
+            }
+            result.put(hub.getId(), hub.getName());
+        }
+
+        return result;
     }
 
     private DonationDTO toDonationDTOWithItems(Donation donation) {

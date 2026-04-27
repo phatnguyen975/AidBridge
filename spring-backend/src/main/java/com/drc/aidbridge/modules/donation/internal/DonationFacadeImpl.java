@@ -2,6 +2,7 @@ package com.drc.aidbridge.modules.donation.internal;
 
 import com.drc.aidbridge.modules.donation.DonationDTO;
 import com.drc.aidbridge.modules.donation.DonationFacade;
+import com.drc.aidbridge.modules.donation.DonationHistorySummaryDTO;
 import com.drc.aidbridge.modules.donation.internal.usecase.CreateDonationUseCase;
 import com.drc.aidbridge.modules.donation.internal.usecase.GetDonationByIdUseCase;
 import com.drc.aidbridge.modules.donation.internal.usecase.GetDonationQrUseCase;
@@ -48,7 +49,7 @@ public class DonationFacadeImpl implements DonationFacade {
     }
 
     @Override
-    public PaginatedResponseDto<DonationDTO> listBySponsor(UUID sponsorId, DonationStatus status, int page, int limit) {
+    public PaginatedResponseDto<DonationHistorySummaryDTO> listBySponsor(UUID sponsorId, DonationStatus status, int page, int limit) {
         return listDonationsUseCase.executeBySponsor(sponsorId, status, page, limit);
     }
 

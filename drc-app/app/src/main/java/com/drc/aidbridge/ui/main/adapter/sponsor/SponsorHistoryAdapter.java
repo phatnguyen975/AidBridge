@@ -4,6 +4,7 @@ import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -42,10 +43,23 @@ public class SponsorHistoryAdapter extends RecyclerView.Adapter<SponsorHistoryAd
         HistoryItem item = items.get(position);
 
         holder.binding.tvDate.setText(item.date);
+        
+        // Donation Code as Header
+        if (item.donationCode != null && !item.donationCode.trim().isEmpty()) {
+            holder.binding.tvDonationCode.setText(item.donationCode);
+            holder.binding.tvDonationCode.setVisibility(View.VISIBLE);
+        } else {
+            holder.binding.tvDonationCode.setVisibility(View.GONE);
+        }
+
+        // Item Summary / Category
         holder.binding.tvCategory.setText(item.category);
+        
+        // Quantity
         holder.binding.tvQuantity.setText(holder.binding.getRoot().getContext().getString(
                 R.string.sponsor_history_quantity_prefix
         ) + " " + item.quantity);
+        
         holder.binding.tvHub.setText(item.hubName);
         holder.binding.tvStatus.setText(item.status);
         holder.binding.ivThumbnail.setImageResource(item.thumbnailResId);

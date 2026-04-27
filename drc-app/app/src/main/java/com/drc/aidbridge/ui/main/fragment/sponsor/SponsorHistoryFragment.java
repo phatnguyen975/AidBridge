@@ -188,11 +188,26 @@ public class SponsorHistoryFragment extends BaseFragment<FragmentSponsorHistoryB
             return;
         }
 
+        String donationCode = safeText(item.donationCode);
+        if (donationCode.isEmpty()) {
+            donationCode = getString(R.string.sponsor_qr_missing_value);
+        }
+
+        String itemSummary = safeText(item.itemSummary);
+        if (itemSummary.isEmpty()) {
+            itemSummary = getString(R.string.sponsor_qr_missing_value);
+        }
+
+        String quantityText = safeText(item.quantity);
+        if (quantityText.isEmpty()) {
+            quantityText = getString(R.string.sponsor_qr_missing_value);
+        }
+
         Bundle args = new Bundle();
-        args.putString(SponsorQrCodeFragment.ARG_DONATION_CODE, item.donationCode);
+        args.putString(SponsorQrCodeFragment.ARG_DONATION_CODE, donationCode);
         args.putString(SponsorQrCodeFragment.ARG_QR_CODE_TOKEN, item.qrCodeToken);
-        args.putString(SponsorQrCodeFragment.ARG_ITEM_NAME, item.itemSummary);
-        args.putString(SponsorQrCodeFragment.ARG_QUANTITY_TEXT, item.quantity);
+        args.putString(SponsorQrCodeFragment.ARG_ITEM_NAME, itemSummary);
+        args.putString(SponsorQrCodeFragment.ARG_QUANTITY_TEXT, quantityText);
         navigateSafely(R.id.action_sponsor_history_to_qr, args);
     }
 
@@ -231,9 +246,9 @@ public class SponsorHistoryFragment extends BaseFragment<FragmentSponsorHistoryB
                     ? getString(R.string.sponsor_history_item_count_value, itemCount)
                     : getString(R.string.sponsor_qr_missing_value);
 
-            String hubId = safeText(item.getHubId());
-            String hubText = !hubId.isEmpty()
-                    ? getString(R.string.sponsor_history_hub_short_value, shortenHubId(hubId))
+            String hubRawText = safeText(item.getHubId());
+            String hubText = !hubRawText.isEmpty()
+                    ? hubRawText
                     : getString(R.string.sponsor_hub_unknown_name);
 
             String statusKey = item.getStatus().name();
@@ -242,13 +257,13 @@ public class SponsorHistoryFragment extends BaseFragment<FragmentSponsorHistoryB
             mapped.add(new SponsorHistoryAdapter.HistoryItem(
                     safeText(item.getId()),
                     dateText,
-                    displayDonationCode,
+                    displayItemSummary,
                     quantityText,
                     hubText,
                     statusKey,
                     statusLabel,
                     displayItemSummary,
-                    donationCode,
+                    displayDonationCode,
                     safeText(item.getQrCodeToken()),
                     R.mipmap.ic_launcher
             ));
@@ -306,14 +321,6 @@ public class SponsorHistoryFragment extends BaseFragment<FragmentSponsorHistoryB
         } catch (DateTimeParseException exception) {
             return safeIsoDateTime;
         }
-    }
-
-    @NonNull
-    private String shortenHubId(@NonNull String hubId) {
-        if (hubId.length() <= 8) {
-            return hubId;
-        }
-        return hubId.substring(0, 8);
     }
 
     @NonNull

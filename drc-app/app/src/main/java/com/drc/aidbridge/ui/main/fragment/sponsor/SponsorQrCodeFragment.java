@@ -70,9 +70,10 @@ public class SponsorQrCodeFragment extends BaseFragment<FragmentSponsorQrCodeBin
         String itemName = safeText(args != null ? args.getString(ARG_ITEM_NAME) : null);
         String quantityText = safeText(args != null ? args.getString(ARG_QUANTITY_TEXT) : null);
 
-        binding.tvDonationCodeValue.setText(!donationCode.isEmpty() ? donationCode : getString(R.string.sponsor_qr_missing_value));
-        binding.tvItemTypeValue.setText(!itemName.isEmpty() ? itemName : getString(R.string.sponsor_qr_missing_value));
-        binding.tvQuantityValue.setText(!quantityText.isEmpty() ? quantityText : getString(R.string.sponsor_qr_missing_value));
+        String missingValue = getString(R.string.sponsor_qr_missing_value);
+        binding.tvDonationCodeValue.setText(resolveDisplayValue(donationCode, missingValue));
+        binding.tvItemTypeValue.setText(resolveDisplayValue(itemName, missingValue));
+        binding.tvQuantityValue.setText(resolveDisplayValue(quantityText, missingValue));
 
         renderQrCode(qrToken, finalQrSize);
 
@@ -171,5 +172,13 @@ public class SponsorQrCodeFragment extends BaseFragment<FragmentSponsorQrCodeBin
 
     private String safeText(String value) {
         return value != null ? value.trim() : "";
+    }
+
+    private String resolveDisplayValue(String value, String fallback) {
+        String safeValue = safeText(value);
+        if (safeValue.isEmpty() || "null".equalsIgnoreCase(safeValue)) {
+            return fallback;
+        }
+        return safeValue;
     }
 }

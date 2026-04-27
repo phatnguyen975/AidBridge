@@ -239,8 +239,22 @@ public class SponsorDonationRepositoryImpl extends BaseRepository implements Spo
                 continue;
             }
 
-            int itemCount = apiItem.getItems() != null ? apiItem.getItems().size() : 0;
-            String itemSummary = buildItemSummary(apiItem.getItems());
+            int itemCount = 0;
+            if (apiItem.getTotalQuantity() != null && apiItem.getTotalQuantity() > 0) {
+                itemCount = apiItem.getTotalQuantity();
+            } else if (apiItem.getItems() != null) {
+                itemCount = apiItem.getItems().size();
+            }
+
+            String itemSummary = safeText(apiItem.getItemSummary());
+            if (itemSummary.isEmpty()) {
+                itemSummary = buildItemSummary(apiItem.getItems());
+            }
+
+            String hubDisplay = safeText(apiItem.getHubName());
+            if (hubDisplay.isEmpty()) {
+                hubDisplay = safeText(apiItem.getHubId());
+            }
 
             mapped.add(new SponsorDonationHistoryItem(
                     safeText(apiItem.getId()),
@@ -248,7 +262,7 @@ public class SponsorDonationRepositoryImpl extends BaseRepository implements Spo
                     safeText(apiItem.getQrCodeToken()),
                     status,
                     safeText(apiItem.getCreatedAt()),
-                    safeText(apiItem.getHubId()),
+                    hubDisplay,
                     itemCount,
                     itemSummary
             ));

@@ -17,6 +17,10 @@ public class SponsorDonationHistoryItemResponse {
     private String hubId;
 
     @Nullable
+    @SerializedName(value = "hub_name", alternate = {"hubName"})
+    private String hubName;
+
+    @Nullable
     @SerializedName(value = "qr_code_token", alternate = {"qrCodeToken"})
     private String qrCodeToken;
 
@@ -33,6 +37,14 @@ public class SponsorDonationHistoryItemResponse {
     private String createdAt;
 
     @Nullable
+    @SerializedName(value = "item_summary", alternate = {"itemSummary"})
+    private String itemSummary;
+
+    @Nullable
+    @SerializedName(value = "total_quantity", alternate = {"totalQuantity"})
+    private Integer totalQuantity;
+
+    @Nullable
     @SerializedName("items")
     private List<SponsorDonationHistorySelectedItemResponse> items;
 
@@ -44,6 +56,11 @@ public class SponsorDonationHistoryItemResponse {
     @Nullable
     public String getHubId() {
         return hubId;
+    }
+
+    @Nullable
+    public String getHubName() {
+        return hubName;
     }
 
     @Nullable
@@ -64,6 +81,16 @@ public class SponsorDonationHistoryItemResponse {
     @Nullable
     public String getCreatedAt() {
         return createdAt;
+    }
+
+    @Nullable
+    public String getItemSummary() {
+        return itemSummary;
+    }
+
+    @Nullable
+    public Integer getTotalQuantity() {
+        return totalQuantity;
     }
 
     @Nullable

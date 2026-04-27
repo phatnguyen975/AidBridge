@@ -2,6 +2,7 @@ package com.drc.aidbridge.modules.donation.internal.web;
 
 import com.drc.aidbridge.modules.donation.DonationDTO;
 import com.drc.aidbridge.modules.donation.DonationFacade;
+import com.drc.aidbridge.modules.donation.DonationHistorySummaryDTO;
 import com.drc.aidbridge.modules.donation.internal.usecase.GetDonationByIdUseCase;
 import com.drc.aidbridge.modules.donation.internal.web.dto.CreateDonationRequest;
 import com.drc.aidbridge.modules.donation.internal.web.dto.DonationQrResponse;
@@ -60,13 +61,13 @@ public class DonationController {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<ApiResponse<PaginatedResponseDto<DonationDTO>>> getMyDonationHistory(
+    public ResponseEntity<ApiResponse<PaginatedResponseDto<DonationHistorySummaryDTO>>> getMyDonationHistory(
             Authentication authentication,
             @RequestParam(required = false) DonationStatus status,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int limit) {
         UUID sponsorId = UUID.fromString(authentication.getName());
-        PaginatedResponseDto<DonationDTO> response = donationFacade.listBySponsor(sponsorId, status, page, limit);
+        PaginatedResponseDto<DonationHistorySummaryDTO> response = donationFacade.listBySponsor(sponsorId, status, page, limit);
         return ResponseEntity.ok(ApiResponse.success("Donation history retrieved successfully", response));
     }
 
