@@ -74,6 +74,8 @@
     <string name="sponsor_donate_open_gallery">Mở Gallery</string>
     <string name="sponsor_donate_open_date_picker">Mở DatePicker</string>
     <string name="sponsor_donate_submit_success_default">Gửi đăng ký đóng góp thành công.</string>
+    <string name="sponsor_donate_checkbox_guide">Chọn các loại vật phẩm bạn sẽ quyên góp. Có thể chọn nhiều mục cùng lúc.</string>
+    <string name="sponsor_donate_selected_count_value">%1$d loại</string>
 
     <!-- Sponsor Hub Selection & QR Flow -->
     <string name="sponsor_hub_selection_title">Chọn trạm tập kết</string>
@@ -97,9 +99,11 @@
     <string name="sponsor_hub_unknown_name">Trạm chưa đặt tên</string>
     <string name="sponsor_hub_unknown_address">Chưa có địa chỉ</string>
 
-    <string name="sponsor_qr_mock_donation_code">#DON-99281</string>
-    <string name="sponsor_qr_mock_item_type">Thực phẩm</string>
-    <string name="sponsor_qr_mock_quantity">50 Thùng</string>
+    <string name="sponsor_qr_missing_value">--</string>
+    <string name="sponsor_qr_missing_token">Không tìm thấy mã QR cho donation này.</string>
+    <string name="sponsor_qr_generate_failed">Không thể tạo ảnh QR. Vui lòng thử lại.</string>
+    <string name="sponsor_qr_save_success">Đã lưu mã QR</string>
+    <string name="sponsor_qr_save_failed">Không thể lưu mã QR. Vui lòng thử lại.</string>
 
     <string name="sponsor_hub_icon_desc">Biểu tượng trạm tập kết</string>
     <string name="sponsor_hub_pin_icon_desc">Biểu tượng khoảng cách</string>
@@ -134,11 +138,13 @@
     <!-- Sponsor History -->
     <string name="sponsor_history_title">LỊCH SỬ ĐÓNG GÓP</string>
     <string name="sponsor_history_tab_all">Tất cả</string>
-    <string name="sponsor_history_status_pending">Đang chờ</string>
-    <string name="sponsor_history_status_stocked">Đã nhập kho</string>
-    <string name="sponsor_history_status_shipping">Đang vận chuyển</string>
-    <string name="sponsor_history_status_arrived">Đã đến nơi</string>
+    <string name="sponsor_history_status_registered">Đã tạo</string>
+    <string name="sponsor_history_status_received">Đã nhận hàng</string>
+    <string name="sponsor_history_status_outdated">Đã quá hạn</string>
     <string name="sponsor_history_quantity_prefix">Số lượng:</string>
+    <string name="sponsor_history_item_count_value">%1$d loại</string>
+    <string name="sponsor_history_hub_short_value">Hub %1$s</string>
+    <string name="sponsor_history_empty">Chưa có lịch sử đóng góp.</string>
     <string name="sponsor_history_thumbnail_desc">Ảnh vật phẩm đóng góp</string>
     <string name="sponsor_history_hub_icon_desc">Biểu tượng trạm nhận</string>
 </resources>

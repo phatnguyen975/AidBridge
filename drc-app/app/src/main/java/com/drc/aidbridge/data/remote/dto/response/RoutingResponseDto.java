@@ -11,6 +11,9 @@ import java.util.List;
  */
 public class RoutingResponseDto {
 
+    public static final String ROUTE_SOURCE_ONLINE = "online";
+    public static final String ROUTE_SOURCE_OFFLINE = "offline";
+
     @SerializedName("distance")
     private Double distance;
 
@@ -27,6 +30,27 @@ public class RoutingResponseDto {
     @Nullable
     @SerializedName("instructions")
     private List<InstructionDto> instructions;
+
+    @Nullable
+    @SerializedName("routeSource")
+    private String routeSource;
+
+    public RoutingResponseDto() {
+    }
+
+    public RoutingResponseDto(@Nullable Double distance,
+                              @Nullable Long duration,
+                              @Nullable String polyline,
+                              @Nullable Long timestamp,
+                              @Nullable List<InstructionDto> instructions,
+                              @Nullable String routeSource) {
+        this.distance = distance;
+        this.duration = duration;
+        this.polyline = polyline;
+        this.timestamp = timestamp;
+        this.instructions = instructions;
+        this.routeSource = routeSource;
+    }
 
     @Nullable
     public Double getDistance() {
@@ -53,6 +77,15 @@ public class RoutingResponseDto {
         return instructions;
     }
 
+    @Nullable
+    public String getRouteSource() {
+        return routeSource;
+    }
+
+    public void setRouteSource(@Nullable String routeSource) {
+        this.routeSource = routeSource;
+    }
+
     public static class InstructionDto {
 
         @SerializedName("turnType")
@@ -71,6 +104,21 @@ public class RoutingResponseDto {
         @Nullable
         @SerializedName("command")
         private String command;
+
+        public InstructionDto() {
+        }
+
+        public InstructionDto(@Nullable Integer turnType,
+                              @Nullable String name,
+                              @Nullable Double distance,
+                              @Nullable Long time,
+                              @Nullable String command) {
+            this.turnType = turnType;
+            this.name = name;
+            this.distance = distance;
+            this.time = time;
+            this.command = command;
+        }
 
         @Nullable
         public Integer getTurnType() {

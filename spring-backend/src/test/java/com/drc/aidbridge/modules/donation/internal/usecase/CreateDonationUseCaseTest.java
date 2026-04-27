@@ -15,15 +15,20 @@ import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.user.internal.repository.UserJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class CreateDonationUseCaseTest {
@@ -64,12 +69,8 @@ class CreateDonationUseCaseTest {
 
         CreateDonationRequest request = CreateDonationRequest.builder()
                 .hubId(hubId)
-                .notes("Batch A")
                 .items(List.of(CreateDonationItemRequest.builder()
-                        .itemName("Blanket")
                         .itemCategoryId(categoryId)
-                        .quantity(10)
-                        .unit("pcs")
                         .build()))
                 .build();
 
@@ -78,35 +79,31 @@ class CreateDonationUseCaseTest {
                 .sponsorId(sponsorId)
                 .hubId(hubId)
                 .status(DonationStatus.REGISTERED)
-                .notes("Batch A")
                 .build();
 
         DonationItem savedItem = DonationItem.builder()
                 .id(UUID.randomUUID())
                 .donationId(donationId)
-                .itemName("Blanket")
                 .itemCategoryId(categoryId)
-                .quantity(10)
-                .unit("pcs")
                 .build();
 
         DonationDTO donationDTO = DonationDTO.builder()
                 .id(donationId)
                 .sponsorId(sponsorId)
                 .hubId(hubId)
+                .qrCodeToken("DON-TEST-QR")
                 .status(DonationStatus.REGISTERED)
                 .build();
 
         DonationDTO.DonationItemDTO itemDTO = DonationDTO.DonationItemDTO.builder()
                 .id(savedItem.getId())
-                .itemName("Blanket")
                 .itemCategoryId(categoryId)
-                .quantity(10)
                 .build();
 
         when(userJpaRepository.existsById(sponsorId)).thenReturn(true);
         when(hubRepository.existsById(hubId)).thenReturn(true);
         when(aidItemCategoryJpaRepository.existsById(categoryId)).thenReturn(true);
+        when(donationRepository.existsByQrCodeToken(anyString())).thenReturn(false);
         when(donationRepository.save(any(Donation.class))).thenReturn(savedDonation);
         when(donationItemRepository.saveAll(anyList())).thenReturn(List.of(savedItem));
         when(donationMapper.toDTO(savedDonation)).thenReturn(donationDTO);
@@ -114,10 +111,16 @@ class CreateDonationUseCaseTest {
 
         DonationDTO result = useCase.execute(sponsorId, request);
 
+        ArgumentCaptor<Donation> donationCaptor = ArgumentCaptor.forClass(Donation.class);
+        verify(donationRepository).save(donationCaptor.capture());
+        String generatedToken = donationCaptor.getValue().getQrCodeToken();
+
         assertEquals(donationId, result.getId());
         assertEquals(DonationStatus.REGISTERED, result.getStatus());
         assertEquals(1, result.getItems().size());
-        assertEquals("Blanket", result.getItems().getFirst().getItemName());
+        assertEquals(categoryId, result.getItems().getFirst().getItemCategoryId());
+        assertNotNull(generatedToken);
+        assertFalse(generatedToken.isBlank());
     }
 
     @Test
@@ -128,8 +131,7 @@ class CreateDonationUseCaseTest {
         CreateDonationRequest request = CreateDonationRequest.builder()
                 .hubId(hubId)
                 .items(List.of(CreateDonationItemRequest.builder()
-                        .itemName("Rice")
-                        .quantity(1)
+                        .itemCategoryId(UUID.randomUUID())
                         .build()))
                 .build();
 

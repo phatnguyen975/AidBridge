@@ -14,4 +14,5 @@ public interface HubFacade {
     HubDTO create(CreateHubRequest request);
     HubDTO update(UUID id, UpdateHubRequest request);
     HubDTO stockIn(UUID id, StockInHubInventoryRequest request);
+    List<HubDTO> listNearLocation(HubStatus status, double lat, double lon, double radius);
 }

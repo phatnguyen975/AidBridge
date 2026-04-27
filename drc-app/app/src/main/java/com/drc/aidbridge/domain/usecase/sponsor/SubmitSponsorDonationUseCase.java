@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.model.sponsor.SponsorDonationRequest;
+import com.drc.aidbridge.domain.model.sponsor.SponsorDonationSubmissionResult;
 import com.drc.aidbridge.domain.repository.sponsor.SponsorDonationRepository;
 import com.drc.aidbridge.domain.usecase.validation.SponsorDonationInputValidator;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
@@ -26,7 +27,7 @@ public class SubmitSponsorDonationUseCase {
         return sponsorDonationInputValidator.validateDonationRequest(request);
     }
 
-    public LiveData<NetworkResultWrapper<String>> execute(SponsorDonationRequest request) {
+    public LiveData<NetworkResultWrapper<SponsorDonationSubmissionResult>> execute(SponsorDonationRequest request) {
         return sponsorDonationRepository.submitDonation(request);
     }
 }

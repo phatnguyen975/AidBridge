@@ -1,30 +1,34 @@
 package com.drc.aidbridge.ui.main.fragment.sponsor;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.domain.model.admin.Hub;
 import com.drc.aidbridge.domain.model.sponsor.SponsorDonationItem;
+import com.drc.aidbridge.domain.model.sponsor.SponsorDonationSubmissionResult;
 import com.drc.aidbridge.domain.model.victim.VictimSupplyCategory;
 import com.drc.aidbridge.databinding.FragmentSponsorDonateBinding;
-import com.drc.aidbridge.ui.main.adapter.sponsor.SponsorDonationItemAdapter;
 import com.drc.aidbridge.ui.main.adapter.sponsor.SponsorHubSuggestionAdapter;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.sponsor.SponsorDonateViewModel;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -32,10 +36,9 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBinding> {
 
     private SponsorDonateViewModel viewModel;
-    private SponsorDonationItemAdapter donationItemAdapter;
     private final List<Hub> availableHubs = new ArrayList<>();
-    private final List<SponsorDonationItem> draftItems = new ArrayList<>();
     private final List<VictimSupplyCategory> parentCategories = new ArrayList<>();
+    private final Map<String, String> selectedLeafCategoryMap = new LinkedHashMap<>();
     private boolean isHubsLoading;
     private boolean isCategoriesLoading;
 
@@ -49,29 +52,16 @@ public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBin
     protected void setupViews() {
         viewModel = new ViewModelProvider(this).get(SponsorDonateViewModel.class);
 
+        viewModel = new ViewModelProvider(this).get(SponsorDonateViewModel.class);
+
         binding.ivBack.setOnClickListener(v -> popBackStackSafely());
 
-        setupDonationItemsList();
         viewModel.loadAvailableHubs();
         viewModel.loadParentCategories();
         setupHubSelectionResultListener();
 
-        binding.cardImageUpload.setOnClickListener(v -> {
-            showToast(getString(R.string.sponsor_donate_open_gallery));
-            simulateImageUploadPreview();
-        });
-
-        binding.btnAddDonationItem.setOnClickListener(v -> {
-            if (binding.llItemFormContainer.getVisibility() != View.VISIBLE) {
-                binding.llItemFormContainer.setVisibility(View.VISIBLE);
-                binding.btnAddDonationItem.setText(R.string.sponsor_donate_save_item);
-                return;
-            }
-
-            addCurrentDraftItem();
-        });
-
         binding.btnSubmitDonate.setOnClickListener(v -> {
+            clearInputFocusAndHideKeyboard();
             clearInputFocusAndHideKeyboard();
             openSponsorHubSelectionBottomSheet();
         });
@@ -142,7 +132,7 @@ public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBin
                 if (categories != null) {
                     parentCategories.addAll(categories);
                 }
-                bindParentCategoriesDropdown(parentCategories);
+                renderRootCategoryCheckboxes(parentCategories);
                 return;
             }
 
@@ -163,7 +153,6 @@ public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBin
 
     @Override
     protected void onLoadingStateChanged(boolean isLoading) {
-        binding.btnAddDonationItem.setEnabled(!isLoading);
         binding.btnSubmitDonate.setEnabled(!isLoading);
         binding.btnSubmitDonate.setText(isLoading ? R.string.btn_loading : R.string.sponsor_donate_submit);
     }
@@ -190,25 +179,31 @@ public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBin
         }
     }
 
-    private void handleSubmitDonationSuccess(@Nullable String message) {
-        String safeMessage = message != null && !message.trim().isEmpty()
-            ? message
+    private void handleSubmitDonationSuccess(@Nullable SponsorDonationSubmissionResult data) {
+        String safeMessage = data != null && data.getMessage() != null && !data.getMessage().trim().isEmpty()
+            ? data.getMessage().trim()
             : getString(R.string.sponsor_donate_submit_success_default);
+
         showTopSnackbar(binding.getRoot(), safeMessage, false);
-        navigateToDestinationSafely(R.id.sponsorQrCodeFragment);
+
+        if (data == null) {
+            navigateToDestinationSafely(R.id.sponsorQrCodeFragment);
+            return;
+        }
+
+        String itemName = buildSelectedItemSummary();
+        String quantityText = getString(R.string.sponsor_donate_selected_count_value, selectedLeafCategoryMap.size());
+
+        Bundle args = new Bundle();
+        args.putString(SponsorQrCodeFragment.ARG_DONATION_CODE, data.getDonationCode());
+        args.putString(SponsorQrCodeFragment.ARG_QR_CODE_TOKEN, data.getQrCodeToken());
+        args.putString(SponsorQrCodeFragment.ARG_ITEM_NAME, itemName);
+        args.putString(SponsorQrCodeFragment.ARG_QUANTITY_TEXT, quantityText);
+        navigateSafely(R.id.action_sponsor_donate_to_qr, args);
     }
 
     private void showSubmitError(@NonNull String message) {
         showTopSnackbar(binding.getRoot(), message, true);
-    }
-
-    @NonNull
-    private String getTextSafely(@Nullable EditText editText) {
-        if (editText == null || editText.getText() == null) {
-            return "";
-        }
-
-        return editText.getText().toString().trim();
     }
 
     private void setupHubSelectionResultListener() {
@@ -223,135 +218,86 @@ public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBin
                 String selectedHubId = result.getString(SponsorHubSelectionBottomSheet.RESULT_HUB_ID, "");
                 viewModel.submitDonation(
                     selectedHubId,
-                    getTextSafely(binding.etDonationNotes),
-                    new ArrayList<>(draftItems)
+                    buildSelectedDonationItems()
                 );
             }
         );
     }
 
-    private void setupDonationItemsList() {
-        donationItemAdapter = new SponsorDonationItemAdapter(position -> {
-            if (position < 0 || position >= draftItems.size()) {
-                return;
-            }
+    private void renderRootCategoryCheckboxes(@NonNull List<VictimSupplyCategory> categories) {
+        binding.llCategoryCheckboxContainer.removeAllViews();
 
-            draftItems.remove(position);
-            donationItemAdapter.submitItems(new ArrayList<>(draftItems));
-            showTopSnackbar(binding.getRoot(), getString(R.string.sponsor_donate_item_removed_success), false);
-        });
-
-        binding.rvDonationItems.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.rvDonationItems.setAdapter(donationItemAdapter);
-        donationItemAdapter.submitItems(new ArrayList<>(draftItems));
-    }
-
-    private void addCurrentDraftItem() {
-        if (isCategoriesLoading) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.sponsor_category_loading), true);
+        if (categories.isEmpty()) {
+            TextView emptyView = new TextView(requireContext());
+            emptyView.setText(getString(R.string.sponsor_hub_empty));
+            emptyView.setTextColor(requireContext().getColor(R.color.text_secondary));
+            binding.llCategoryCheckboxContainer.addView(emptyView);
             return;
         }
 
-        String itemName = getTextSafely(binding.etItemName);
-        String categoryId = resolveSelectedParentCategoryId(getTextSafely(binding.tvParentCategoryDropdown));
-        int quantity = parseQuantity(getTextSafely(binding.etQuantity));
-        String unit = getTextSafely(binding.etUnit);
-        String description = getTextSafely(binding.etDescription);
-        String expiryDate = getTextSafely(binding.etExpiryDate);
-
-        if (itemName.isEmpty()) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.sponsor_donate_item_name_required), true);
-            return;
-        }
-
-        if (quantity <= 0) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.sponsor_donate_quantity_required), true);
-            return;
-        }
-
-        if (unit.isEmpty()) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.sponsor_donate_unit_required), true);
-            return;
-        }
-
-        SponsorDonationItem item = new SponsorDonationItem(
-            itemName,
-            categoryId,
-            quantity,
-            unit,
-            description,
-            expiryDate,
-            null
-        );
-
-        draftItems.add(item);
-        donationItemAdapter.submitItems(new ArrayList<>(draftItems));
-        clearItemInputFields();
-        binding.llItemFormContainer.setVisibility(View.GONE);
-        binding.btnAddDonationItem.setText(R.string.sponsor_donate_add_item);
-        showTopSnackbar(binding.getRoot(), getString(R.string.sponsor_donate_item_added_success), false);
-    }
-
-    private int parseQuantity(String raw) {
-        if (raw == null || raw.trim().isEmpty()) {
-            return 0;
-        }
-
-        try {
-            return Integer.parseInt(raw.trim());
-        } catch (NumberFormatException exception) {
-            return 0;
-        }
-    }
-
-    private void clearItemInputFields() {
-        binding.etItemName.setText("");
-        binding.tvParentCategoryDropdown.setText("", false);
-        binding.etQuantity.setText("");
-        binding.etUnit.setText("");
-        binding.etDescription.setText("");
-        binding.etExpiryDate.setText("");
-    }
-
-    private void bindParentCategoriesDropdown(@NonNull List<VictimSupplyCategory> categories) {
-        List<String> names = new ArrayList<>();
         for (VictimSupplyCategory category : categories) {
             if (category == null) {
                 continue;
             }
-            String name = safeText(category.getName());
-            if (!name.isEmpty()) {
-                names.add(name);
-            }
-        }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-            requireContext(),
-            R.layout.item_sponsor_dropdown_option,
-            names
-        );
-        adapter.setDropDownViewResource(R.layout.item_sponsor_dropdown_option);
-        binding.tvParentCategoryDropdown.setAdapter(adapter);
-    }
-
-    @Nullable
-    private String resolveSelectedParentCategoryId(@NonNull String selectedName) {
-        if (selectedName.trim().isEmpty()) {
-            return null;
-        }
-
-        for (VictimSupplyCategory category : parentCategories) {
-            if (category == null) {
+            String categoryId = safeText(category.getId());
+            String categoryName = safeText(category.getName());
+            if (categoryId.isEmpty() || categoryName.isEmpty()) {
                 continue;
             }
 
-            if (selectedName.equalsIgnoreCase(safeText(category.getName()))) {
-                String id = safeText(category.getId());
-                return id.isEmpty() ? null : id;
-            }
+            CheckBox checkBox = new CheckBox(requireContext());
+            checkBox.setText(categoryName);
+            checkBox.setChecked(selectedLeafCategoryMap.containsKey(categoryId));
+
+            LinearLayout.LayoutParams checkBoxLayoutParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            checkBoxLayoutParams.topMargin = getResources().getDimensionPixelSize(R.dimen.spacing_xs);
+            checkBox.setLayoutParams(checkBoxLayoutParams);
+
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    selectedLeafCategoryMap.put(categoryId, categoryName);
+                } else {
+                    selectedLeafCategoryMap.remove(categoryId);
+                }
+            });
+
+            binding.llCategoryCheckboxContainer.addView(checkBox);
+        }
+    }
+
+    @NonNull
+    private List<SponsorDonationItem> buildSelectedDonationItems() {
+        List<SponsorDonationItem> items = new ArrayList<>();
+        for (Map.Entry<String, String> entry : selectedLeafCategoryMap.entrySet()) {
+            items.add(new SponsorDonationItem(entry.getKey(), entry.getValue()));
+        }
+        return items;
+    }
+
+    @NonNull
+    private String buildSelectedItemSummary() {
+        if (selectedLeafCategoryMap.isEmpty()) {
+            return getString(R.string.sponsor_qr_missing_value);
         }
 
-        return null;
+        StringBuilder builder = new StringBuilder();
+        int index = 0;
+        for (String value : selectedLeafCategoryMap.values()) {
+            if (index > 0) {
+                builder.append(", ");
+            }
+            builder.append(value);
+            if (builder.length() > 120) {
+                builder.append("...");
+                break;
+            }
+            index++;
+        }
+        return builder.toString();
     }
 
     @NonNull
@@ -389,33 +335,5 @@ public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBin
     @NonNull
     private String safeText(@Nullable String text) {
         return text != null ? text.trim() : "";
-    }
-
-    private void simulateImageUploadPreview() {
-        // TODO: Replace this mock method with actual photo-taking result handler
-        binding.llImagePreviewContainer.setVisibility(View.VISIBLE);
-
-        if (binding.llImagePreviewContainer.getChildCount() > 0) {
-            return;
-        }
-
-        for (int i = 0; i < 2; i++) {
-            @NonNull View previewView = LayoutInflater.from(requireContext())
-                    .inflate(R.layout.item_sponsor_donate_image_preview, binding.llImagePreviewContainer, false);
-
-            ImageView thumbnailView = previewView.findViewById(R.id.iv_thumbnail);
-            ImageButton closeButton = previewView.findViewById(R.id.iv_close);
-
-            thumbnailView.setImageResource(R.mipmap.ic_launcher);
-
-            closeButton.setOnClickListener(v -> {
-                binding.llImagePreviewContainer.removeView(previewView);
-                if (binding.llImagePreviewContainer.getChildCount() == 0) {
-                    binding.llImagePreviewContainer.setVisibility(View.GONE);
-                }
-            });
-
-            binding.llImagePreviewContainer.addView(previewView);
-        }
     }
 }

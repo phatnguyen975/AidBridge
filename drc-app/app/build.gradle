@@ -64,6 +64,7 @@ android {
             res.srcDirs = [
                     'src/main/res',
                     'src/main/res-core',
+                    'src/main/res-map',
                     'src/main/res-auth',
                     'src/main/res-guest',
                     'src/main/res-role-victim',
@@ -148,6 +149,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:19.1.0'
     // osmdroid - OpenStreetMap SDK for custom map rendering without Google Maps dependency at runtime
     implementation 'org.osmdroid:osmdroid-android:6.1.20'
+    // GraphHopper Core 11.0 - keeps runtime compatible with graph-data imported by v11 toolchain
+    implementation 'com.graphhopper:graphhopper-core:11.0'
     // Fused Location Provider - battery-efficient GPS for live tracking and SOS coordinate capture
     implementation 'com.google.android.gms:play-services-location:21.2.0'
 
@@ -164,6 +167,8 @@ dependencies {
     implementation 'androidx.camera:camera-lifecycle:1.4.1'
     // CameraX View - provides PreviewView widget for embedding camera preview in XML layouts
     implementation 'androidx.camera:camera-view:1.4.1'
+    // ZXing Core - generates QR bitmap from server-provided donation token
+    implementation 'com.google.zxing:core:3.5.3'
 
     // ===========================
     // Local Database (Room)

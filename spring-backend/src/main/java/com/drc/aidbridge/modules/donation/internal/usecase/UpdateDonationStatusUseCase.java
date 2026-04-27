@@ -31,9 +31,6 @@ public class UpdateDonationStatusUseCase {
                 .orElseThrow(() -> new ResourceNotFoundException("Donation not found: " + id));
 
         donation.setStatus(request.getStatus());
-        if (request.getNotes() != null) {
-            donation.setNotes(request.getNotes());
-        }
 
         Donation savedDonation = donationRepository.save(donation);
         DonationDTO dto = donationMapper.toDTO(savedDonation);

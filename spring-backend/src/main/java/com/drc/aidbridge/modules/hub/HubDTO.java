@@ -1,11 +1,13 @@
 package com.drc.aidbridge.modules.hub;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.drc.aidbridge.modules.shared.enums.HubStatus;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -37,6 +39,8 @@ public class HubDTO {
         }
         return inventoryGroups;
     }
+    private List<InventoryItemDTO> inventory;
+    private Double distanceInMeters;
 
     @Data
     @Builder
@@ -70,4 +74,5 @@ public class HubDTO {
         @Builder.Default
         private List<InventoryItemDTO> items = new ArrayList<>();
     }
+
 }

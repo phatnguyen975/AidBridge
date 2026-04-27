@@ -19,17 +19,10 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
 import retrofit2.Retrofit;
 
-/**
- * ApiModule — provides all API service interfaces.
- * 
- * Depends on Retrofit provided by NetworkModule to create implementations of
- * API interfaces.
- */
 @Module
 @InstallIn(SingletonComponent.class)
 public class ApiModule {
 
-    /** Provides the Auth API service (public endpoints: login, register, OTP). */
     @Provides
     @Singleton
     public AuthApiService provideAuthApiService(Retrofit retrofit) {
@@ -72,10 +65,18 @@ public class ApiModule {
         return retrofit.create(HistoryApiService.class);
     }
 
+    // Admin HubApiService
     @Provides
     @Singleton
-    public HubApiService provideHubApiService(Retrofit retrofit) {
+    public HubApiService provideAdminHubApiService(Retrofit retrofit) {
         return retrofit.create(HubApiService.class);
+    }
+
+    // Default HubApiService
+    @Provides
+    @Singleton
+    public com.drc.aidbridge.data.remote.api.hub.HubApiService provideDefaultHubApiService(Retrofit retrofit) {
+        return retrofit.create(com.drc.aidbridge.data.remote.api.hub.HubApiService.class);
     }
 
     @Provides

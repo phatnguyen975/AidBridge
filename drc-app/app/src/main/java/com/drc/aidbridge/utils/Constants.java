@@ -66,8 +66,7 @@ public final class Constants {
     // === Auth Validation ===
     public static final Pattern EMAIL_PATTERN = Pattern.compile(
             "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
-    public static final Pattern PASSWORD_PATTERN = Pattern.compile(
-            "^[A-Za-z0-9]{6,}$");
+    public static final Pattern PASSWORD_PATTERN = Pattern.compile("^.{6,}$");
     public static final Pattern PHONE_PATTERN = Pattern.compile(
             "^\\d{10}$");
     public static final Pattern OTP_PATTERN = Pattern.compile(

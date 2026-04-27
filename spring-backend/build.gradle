@@ -128,7 +128,7 @@ dependencies {
     // GraphHopper Routing Engine (Embedded)
     // ===========================
     // Offline routing engine — reads OSM data, builds graph, calculates routes
-    // reader-osm is bundled inside graphhopper-core since v8+
+    // reader-osm is bundled inside graphhopper-core since v11
     implementation 'com.graphhopper:graphhopper-core:11.0'
 
     // ===========================

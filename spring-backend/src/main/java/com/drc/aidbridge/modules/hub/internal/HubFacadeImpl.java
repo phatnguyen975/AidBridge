@@ -7,6 +7,7 @@ import com.drc.aidbridge.modules.hub.internal.usecase.GetHubByIdUseCase;
 import com.drc.aidbridge.modules.hub.internal.usecase.ListHubsUseCase;
 import com.drc.aidbridge.modules.hub.internal.usecase.StockInHubInventoryUseCase;
 import com.drc.aidbridge.modules.hub.internal.usecase.UpdateHubUseCase;
+import com.drc.aidbridge.modules.hub.internal.usecase.ListHubNearLocationUseCase;
 import com.drc.aidbridge.modules.hub.internal.web.dto.CreateHubRequest;
 import com.drc.aidbridge.modules.hub.internal.web.dto.StockInHubInventoryRequest;
 import com.drc.aidbridge.modules.hub.internal.web.dto.UpdateHubRequest;
@@ -25,6 +26,7 @@ public class HubFacadeImpl implements HubFacade {
     private final GetHubByIdUseCase getHubByIdUseCase;
     private final CreateHubUseCase createHubUseCase;
     private final UpdateHubUseCase updateHubUseCase;
+    private final ListHubNearLocationUseCase listHubNearLocationUseCase;
     private final StockInHubInventoryUseCase stockInHubInventoryUseCase;
 
     @Override
@@ -50,5 +52,10 @@ public class HubFacadeImpl implements HubFacade {
     @Override
     public HubDTO stockIn(UUID id, StockInHubInventoryRequest request) {
         return stockInHubInventoryUseCase.execute(id, request);
+    }
+
+    @Override 
+    public List<HubDTO> listNearLocation(HubStatus status, double lat, double lon, double radius) {
+        return listHubNearLocationUseCase.execute(status, lat, lon, radius);
     }
 }
