@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.domain.model.admin.Hub;
@@ -50,6 +52,8 @@ public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBin
     protected void setupViews() {
         viewModel = new ViewModelProvider(this).get(SponsorDonateViewModel.class);
 
+        viewModel = new ViewModelProvider(this).get(SponsorDonateViewModel.class);
+
         binding.ivBack.setOnClickListener(v -> popBackStackSafely());
 
         viewModel.loadAvailableHubs();
@@ -57,6 +61,7 @@ public class SponsorDonateFragment extends BaseFragment<FragmentSponsorDonateBin
         setupHubSelectionResultListener();
 
         binding.btnSubmitDonate.setOnClickListener(v -> {
+            clearInputFocusAndHideKeyboard();
             clearInputFocusAndHideKeyboard();
             openSponsorHubSelectionBottomSheet();
         });
