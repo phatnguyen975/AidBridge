@@ -2,10 +2,12 @@ package com.drc.aidbridge.ui.main.fragment.victim;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -20,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.drc.aidbridge.BuildConfig;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVictimRescueTabBinding;
+import com.drc.aidbridge.domain.model.QuickSosSubmissionResult;
 import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.service.EmergencyTrackingService;
@@ -27,6 +30,7 @@ import com.drc.aidbridge.service.UserLocationManager;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.adapter.victim.VictimImageAdapter;
 import com.drc.aidbridge.ui.main.viewmodel.victim.VictimSosViewModel;
+import com.drc.aidbridge.utils.NetworkMonitor;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
@@ -45,9 +49,13 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class VictimRescueTabFragment extends BaseFragment<FragmentVictimRescueTabBinding> {
 
     private static final int MAX_SCENE_IMAGES = 5;
+    private static final String SMS_TAG = "AidBridgeSmsFallback";
 
     @Inject
     UserLocationManager userLocationManager;
+
+    @Inject
+    NetworkMonitor networkMonitor;
 
     private VictimSosViewModel viewModel;
     private VictimImageAdapter imageAdapter;
@@ -58,11 +66,13 @@ public class VictimRescueTabFragment extends BaseFragment<FragmentVictimRescueTa
     private ActivityResultLauncher<String[]> locationPermissionLauncher;
     private ActivityResultLauncher<String> cameraPermissionLauncher;
     private ActivityResultLauncher<String> galleryPermissionLauncher;
+    private ActivityResultLauncher<String> sendSmsPermissionLauncher;
     private ActivityResultLauncher<Uri> takePictureLauncher;
     private ActivityResultLauncher<String> pickImagesLauncher;
 
     private Uri pendingCameraImageUri;
     private boolean pendingQuickSos;
+    private boolean pendingQuickSosAfterSmsPermission;
 
     private Double currentLatitude;
     private Double currentLongitude;
@@ -178,6 +188,16 @@ public class VictimRescueTabFragment extends BaseFragment<FragmentVictimRescueTa
             return;
         }
 
+        if (shouldRequestSendSmsPermissionBeforeSubmit()) {
+            pendingQuickSosAfterSmsPermission = true;
+            sendSmsPermissionLauncher.launch(Manifest.permission.SEND_SMS);
+            return;
+        }
+
+        submitQuickSosWithCurrentLocation();
+    }
+
+    private void submitQuickSosWithCurrentLocation() {
         viewModel.submitQuickSelfSos(
             currentLatitude,
             currentLongitude,
@@ -186,21 +206,29 @@ public class VictimRescueTabFragment extends BaseFragment<FragmentVictimRescueTa
         );
     }
 
-    private void handleSubmitSuccess(@Nullable String sosId) {
+    private void handleSubmitSuccess(@Nullable QuickSosSubmissionResult submissionResult) {
         pendingQuickSos = false;
-        if (sosId == null || sosId.trim().isEmpty()) {
+        pendingQuickSosAfterSmsPermission = false;
+        if (submissionResult == null) {
             handleSubmitError(getString(R.string.victim_rescue_submit_error));
             return;
         }
 
-        EmergencyTrackingService.startTracking(requireContext(), sosId.trim());
-        String successMessage = getString(R.string.victim_rescue_submit_success);
-        showTopSnackbar(binding.getRoot(), successMessage, false);
+        if (submissionResult.isOnlineCreated()) {
+            EmergencyTrackingService.startTracking(requireContext(), submissionResult.getServerSosId().trim());
+            showTopSnackbar(binding.getRoot(), getString(R.string.victim_rescue_submit_success), false);
+        } else {
+            showTopSnackbar(binding.getRoot(), submissionResult.getMessage(), false);
+            if (submissionResult.shouldOpenSmsApp()) {
+                openSmsAppFallback(submissionResult);
+            }
+        }
         clearRescueFormAfterSubmit();
     }
 
     private void handleSubmitError(String message) {
         pendingQuickSos = false;
+        pendingQuickSosAfterSmsPermission = false;
         String errorMessage = (message != null && !message.trim().isEmpty())
             ? message
             : getString(R.string.victim_rescue_submit_error);
@@ -383,6 +411,20 @@ public class VictimRescueTabFragment extends BaseFragment<FragmentVictimRescueTa
             }
         );
 
+        sendSmsPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            isGranted -> {
+                boolean shouldSubmit = pendingQuickSosAfterSmsPermission;
+                pendingQuickSosAfterSmsPermission = false;
+                if (!Boolean.TRUE.equals(isGranted)) {
+                    Log.w(SMS_TAG, "SMS_PERMISSION_DENIED");
+                }
+                if (shouldSubmit && isAdded()) {
+                    submitQuickSosWithCurrentLocation();
+                }
+            }
+        );
+
         takePictureLauncher = registerForActivityResult(
             new ActivityResultContracts.TakePicture(),
             this::handleTakenPhoto
@@ -489,12 +531,7 @@ public class VictimRescueTabFragment extends BaseFragment<FragmentVictimRescueTa
         }
 
         pendingQuickSos = false;
-        viewModel.submitQuickSelfSos(
-            currentLatitude,
-            currentLongitude,
-            currentAccuracy,
-            currentCapturedAtMillis != null ? currentCapturedAtMillis : System.currentTimeMillis()
-        );
+        submitQuickSos();
     }
 
     private boolean isLocationPermissionGranted() {
@@ -529,6 +566,41 @@ public class VictimRescueTabFragment extends BaseFragment<FragmentVictimRescueTa
         currentLongitude = snapshot.getLongitude();
         currentAccuracy = snapshot.getAccuracy();
         currentCapturedAtMillis = snapshot.getCapturedAtMillis();
+    }
+
+    private boolean shouldRequestSendSmsPermissionBeforeSubmit() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return false;
+        }
+        if (networkMonitor.hasInternet()) {
+            return false;
+        }
+        if (!requireContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY_MESSAGING)) {
+            Log.w(SMS_TAG, "SMS_DEVICE_NOT_SUPPORTED");
+            return false;
+        }
+        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.SEND_SMS)
+            != PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void openSmsAppFallback(@Nullable QuickSosSubmissionResult submissionResult) {
+        if (submissionResult == null
+            || submissionResult.getGatewayPhoneNumber() == null
+            || submissionResult.getGatewayPhoneNumber().trim().isEmpty()
+            || submissionResult.getSmsBody() == null
+            || submissionResult.getSmsBody().trim().isEmpty()) {
+            return;
+        }
+
+        try {
+            Intent intent = new Intent(
+                Intent.ACTION_SENDTO,
+                Uri.parse("smsto:" + Uri.encode(submissionResult.getGatewayPhoneNumber().trim()))
+            );
+            intent.putExtra("sms_body", submissionResult.getSmsBody());
+            startActivity(intent);
+        } catch (Exception ignored) {
+        }
     }
 
     @Nullable

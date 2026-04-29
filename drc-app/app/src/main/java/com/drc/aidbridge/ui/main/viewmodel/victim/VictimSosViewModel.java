@@ -12,6 +12,7 @@ import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.BuildConfig;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
+import com.drc.aidbridge.domain.model.QuickSosSubmissionResult;
 import com.drc.aidbridge.domain.model.User;
 import com.drc.aidbridge.domain.usecase.user.GetCachedUserUseCase;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
@@ -47,13 +48,13 @@ public class VictimSosViewModel extends BaseViewModel {
     private final MutableLiveData<RelativeSosPayload> relativeSosTrigger = new MutableLiveData<>();
 
     private final LiveData<NetworkResultWrapper<User>> cachedUserSource;
-    private final LiveData<NetworkResultWrapper<String>> quickSosSource;
+    private final LiveData<NetworkResultWrapper<QuickSosSubmissionResult>> quickSosSource;
     private final LiveData<NetworkResultWrapper<String>> selfSosSource;
     private final LiveData<NetworkResultWrapper<String>> relativeSosSource;
 
     private final MediatorLiveData<NetworkResultWrapper<User>> cachedUserResult = new MediatorLiveData<>();
     private final MutableLiveData<ValidationResult> validationError = new MutableLiveData<>();
-    private final MediatorLiveData<NetworkResultWrapper<String>> submitQuickSosResult = new MediatorLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<QuickSosSubmissionResult>> submitQuickSosResult = new MediatorLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<String>> submitSelfSosResult = new MediatorLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<String>> submitRelativeSosResult = new MediatorLiveData<>();
 
@@ -117,7 +118,7 @@ public class VictimSosViewModel extends BaseViewModel {
         loadCachedUserTrigger.setValue(System.currentTimeMillis());
     }
 
-    public LiveData<NetworkResultWrapper<String>> getSubmitQuickSosResult() {
+    public LiveData<NetworkResultWrapper<QuickSosSubmissionResult>> getSubmitQuickSosResult() {
         return submitQuickSosResult;
     }
 

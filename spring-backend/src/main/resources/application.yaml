@@ -23,6 +23,11 @@ app:
       community_delivery: routing-profiles/car-community_delivery.json
       offroad_terrain: routing-profiles/car-offroad_terrain.json
 
+aidbridge:
+  gateway:
+    sms:
+      token: ${AIDBRIDGE_SMS_GATEWAY_TOKEN:dev-gateway-token}
+
 jwt:
   access-token:
     expiration-ms: 900000 # 15 minutes

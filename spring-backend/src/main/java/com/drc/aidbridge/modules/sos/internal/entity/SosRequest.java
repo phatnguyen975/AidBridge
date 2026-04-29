@@ -48,6 +48,26 @@ public class SosRequest {
     private SosStatus status;
     @Column(name = "image_url", length = 500)
     private String imageUrl;
+    @Column(name = "client_request_id", length = 100, unique = true)
+    private String clientRequestId;
+    @Column(name = "source", length = 30)
+    private String source;
+    @Column(name = "quick_sos")
+    private Boolean quickSos;
+    @Column(name = "accuracy")
+    private Double accuracy;
+    @Column(name = "triggered_at")
+    private Instant triggeredAt;
+    @Column(name = "location_captured_at")
+    private Instant locationCapturedAt;
+    @Column(name = "device_info", length = 500)
+    private String deviceInfo;
+    @Column(name = "sender_phone", length = 50)
+    private String senderPhone;
+    @Column(name = "raw_message", columnDefinition = "text")
+    private String rawMessage;
+    @Column(name = "received_at_gateway_millis")
+    private Long receivedAtGatewayMillis;
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

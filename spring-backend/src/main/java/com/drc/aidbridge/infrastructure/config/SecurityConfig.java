@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll() // WebSocket handshake
                         // Permit for springdoc OpenAPI
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/sms-ingest/sos").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sos-requests").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sos-requests").permitAll()
                         .requestMatchers("/api/sos-requests/**").permitAll() // Allow public access to SOS request endpoints

@@ -297,6 +297,16 @@ CREATE TABLE public.sos_requests (
     description text,
     people_count integer NOT NULL DEFAULT 1 CHECK (people_count > 0),
     image_url character varying,
+    client_request_id character varying(100),
+    source character varying(30),
+    quick_sos boolean,
+    accuracy double precision,
+    triggered_at timestamp with time zone,
+    location_captured_at timestamp with time zone,
+    device_info character varying(500),
+    sender_phone character varying(50),
+    raw_message text,
+    received_at_gateway_millis bigint,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     updated_at timestamp with time zone NOT NULL DEFAULT now(),
     urgency_level character varying NOT NULL CHECK (
@@ -306,6 +316,7 @@ CREATE TABLE public.sos_requests (
     ),
     location USER - DEFINED NOT NULL,
     CONSTRAINT sos_requests_pkey PRIMARY KEY (id),
+    CONSTRAINT sos_requests_client_request_id_key UNIQUE (client_request_id),
     CONSTRAINT sos_requests_requester_id_fkey FOREIGN KEY (requester_id) REFERENCES public.users(id)
 );
 CREATE TABLE public.spatial_ref_sys (

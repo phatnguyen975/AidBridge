@@ -4,9 +4,13 @@ import androidx.room.Database;
 import androidx.room.RoomDatabase;
 
 import com.drc.aidbridge.data.local.dao.AppSettingsDao;
+import com.drc.aidbridge.data.local.dao.GatewayPendingSmsDao;
+import com.drc.aidbridge.data.local.dao.LocalQuickSosDao;
 import com.drc.aidbridge.data.local.dao.PendingSosLocationUpdateDao;
 import com.drc.aidbridge.data.local.dao.VictimHistoryDao;
 import com.drc.aidbridge.data.local.entity.AppSettingsEntity;
+import com.drc.aidbridge.data.local.entity.GatewayPendingSmsEntity;
+import com.drc.aidbridge.data.local.entity.LocalQuickSosEntity;
 import com.drc.aidbridge.data.local.entity.PendingSosLocationUpdateEntity;
 import com.drc.aidbridge.data.local.entity.VictimHistoryEntity;
 
@@ -22,9 +26,11 @@ import com.drc.aidbridge.data.local.entity.VictimHistoryEntity;
     entities = {
         AppSettingsEntity.class,
         VictimHistoryEntity.class,
-        PendingSosLocationUpdateEntity.class
+        PendingSosLocationUpdateEntity.class,
+        LocalQuickSosEntity.class,
+        GatewayPendingSmsEntity.class
     },
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -34,4 +40,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract VictimHistoryDao victimHistoryDao();
 
     public abstract PendingSosLocationUpdateDao pendingSosLocationUpdateDao();
+
+    public abstract LocalQuickSosDao localQuickSosDao();
+
+    public abstract GatewayPendingSmsDao gatewayPendingSmsDao();
 }

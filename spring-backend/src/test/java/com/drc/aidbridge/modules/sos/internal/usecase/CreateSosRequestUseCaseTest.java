@@ -16,12 +16,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class CreateSosRequestUseCaseTest {
@@ -70,6 +73,40 @@ class CreateSosRequestUseCaseTest {
             }
             return request;
         });
+    }
+
+    @Test
+    void execute_ShouldReturnExistingWithoutSavingOrPublishing_WhenClientRequestIdExists() {
+        UUID existingId = UUID.randomUUID();
+        SosRequest existing = SosRequest.builder()
+                .id(existingId)
+                .location(SosRequest.createPoint(10.123, 106.456))
+                .status(SosStatus.PENDING)
+                .urgencyLevel(UrgencyLevel.CRITICAL)
+                .peopleCount(1)
+                .clientRequestId("CLIENT-1")
+                .build();
+        when(sosJpaRepository.findByClientRequestId("CLIENT-1")).thenReturn(Optional.of(existing));
+        when(sosMapper.toResponse(existing, null)).thenReturn(SosRequestResponse.builder()
+                .id(existingId)
+                .clientRequestId("CLIENT-1")
+                .build());
+
+        CreateSosRequest request = CreateSosRequest.builder()
+                .lat(10.123)
+                .lng(106.456)
+                .peopleCount(1)
+                .urgencyLevel(UrgencyLevel.CRITICAL)
+                .quickSos(true)
+                .clientRequestId("CLIENT-1")
+                .build();
+
+        SosRequestResponse response = createSosRequestUseCase.execute(UUID.randomUUID(), request);
+
+        assertEquals(existingId, response.getId());
+        verify(sosJpaRepository, never()).save(any(SosRequest.class));
+        verify(eventPublisher, never()).publishEvent(any());
+        verify(userFacade, never()).getUserById(any());
     }
 
     @Test
