@@ -12,13 +12,13 @@
     <string name="admin_action_manage_hubs">Quản lý trạm</string>
 
     <string name="admin_stat_total_hubs">TỔNG SỐ TRẠM</string>
-    <string name="admin_stat_total_hubs_value">12</string>
+    <string name="admin_stat_total_hubs_value">0</string>
     <string name="admin_stat_volunteers">TÌNH NGUYỆN VIÊN</string>
-    <string name="admin_stat_volunteers_value">1.2K</string>
+    <string name="admin_stat_volunteers_value">0</string>
     <string name="admin_stat_today_missions">NHIỆM VỤ HÔM NAY</string>
-    <string name="admin_stat_today_missions_value">156</string>
+    <string name="admin_stat_today_missions_value">0</string>
     <string name="admin_stat_distributed_items">VẬT PHẨM PHÂN PHỐI</string>
-    <string name="admin_stat_distributed_items_value">45K unit</string>
+    <string name="admin_stat_distributed_items_value">0</string>
 
     <string name="admin_chart_title">Số lượng hàng theo loại</string>
     <string name="admin_chart_label_medical">Y TẾ</string>
