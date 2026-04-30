@@ -3,7 +3,8 @@ package com.drc.aidbridge.modules.mission;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 public interface MissionFacade {
 
     MissionDTO getMissionById(UUID missionId);
@@ -25,5 +26,21 @@ public interface MissionFacade {
 
     void updateVictimLocationForAidRequest(UUID aidRequestId, BigDecimal lat, BigDecimal lng);
 
-    
+    Optional<DispatchAttemptDTO> getLatestDispatchAttempt(UUID volunteerId);
+
+    Optional<DispatchAttemptDTO> getDispatchAttempt(UUID dispatchAttemptId);
+
+    Optional<DispatchAttemptDTO> cancelDispatchAttempt(UUID dispatchAttemptId);
+
+    Optional<DispatchAttemptDTO> acceptDispatchAttempt(UUID volunteerId, UUID dispatchAttemptId);
+
+    Page<MissionHistoryDTO> findHistoryByVolunteerId(UUID volunteerId,  Pageable pageable);
+
+    Page<MissionHistoryFullDTO> findFullHistoryByVolunteerId(UUID volunteerId, Pageable pageable);
+
+    Optional<MissionHistoryFullDTO> getCurrentMissionByVolunteerId(UUID volunteerId);
+
+    MissionDTO completeMission(UUID missionId, String notes);
+
+    MissionDTO cancelMission(UUID missionId, String reason);
 }

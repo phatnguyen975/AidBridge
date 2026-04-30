@@ -35,6 +35,7 @@ public class VolunteerCurrentSosMissionFragment extends BaseFragment<FragmentVol
         volunteerTaskViewModel = new ViewModelProvider(requireActivity()).get(VolunteerTaskViewModel.class);
         syncBottomNavigationSelection();
         mockVictimData();
+        volunteerTaskViewModel.fetchCurrentMission();
         setupClickListeners();
     }
 
@@ -52,7 +53,30 @@ public class VolunteerCurrentSosMissionFragment extends BaseFragment<FragmentVol
 
     @Override
     protected void observeViewModel() {
-        // TODO: Observe ViewModel state when API is integrated.
+        volunteerTaskViewModel.getCurrentMissionResult().observe(getViewLifecycleOwner(), result -> {
+            if (result != null && result.isSuccess()) {
+                com.drc.aidbridge.data.remote.dto.response.volunteer.MissionHistoryFullItemDto data = result.getData();
+                if (data != null) {
+                    if (data.getVictimLat() != null && data.getVictimLng() != null) {
+                        binding.tvVictimLocation.setText(String.format("Tọa độ: %.6f, %.6f", data.getVictimLat(), data.getVictimLng()));
+                    } else if (data.getSosRequestDetail() != null && data.getSosRequestDetail().getLat() != null) {
+                        binding.tvVictimLocation.setText(String.format("Tọa độ: %.6f, %.6f", data.getSosRequestDetail().getLat(), data.getSosRequestDetail().getLng()));
+                    } else {
+                        binding.tvVictimLocation.setText("Tọa độ: N/A");
+                    }
+
+                    if (data.getRadiusKm() != null) {
+                        binding.tvRadiusKm.setText(String.format("Bán kính cứu trợ: %.2f km", data.getRadiusKm()));
+                    } else {
+                        binding.tvRadiusKm.setText("Bán kính cứu trợ: N/A");
+                    }
+
+                    if (data.getAddress() != null) {
+                        binding.tvVictimAddress.setText(data.getAddress());
+                    }
+                }
+            }
+        });
     }
 
     private void setupClickListeners() {

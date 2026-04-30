@@ -6,7 +6,6 @@ import com.drc.aidbridge.modules.mission.internal.repository.DispatchAttemptJpaR
 import com.drc.aidbridge.modules.mission.internal.repository.MissionJpaRepository;
 import com.drc.aidbridge.modules.mission.internal.web.dto.RejectMissionRequest;
 import com.drc.aidbridge.modules.shared.enums.DispatchResponse;
-import com.drc.aidbridge.modules.shared.enums.MissionStatus;
 import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

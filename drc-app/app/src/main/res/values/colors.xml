@@ -18,6 +18,7 @@
     <!-- Status colors -->
     <color name="sos_red">#EF4444</color>
     <color name="safe_green">#34D399</color>
+    <color name = "safe_gray">#a8a8a8</color>
     <color name="warning_orange">#F59E0B</color>
     <color name="hub_blue">#288DFA</color>
 

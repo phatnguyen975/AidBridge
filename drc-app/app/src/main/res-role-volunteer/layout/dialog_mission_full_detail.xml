@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#3182CE"
+    android:padding="@dimen/spacing_md">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvDetailTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chi tiết Nhiệm vụ"
+            android:textSize="@dimen/text_xl"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_marginBottom="@dimen/spacing_md"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="#2B6CB0"
+            app:cardCornerRadius="@dimen/radius_md"
+            app:strokeColor="#63B3ED"
+            app:strokeWidth="1dp"
+            android:layout_marginBottom="@dimen/spacing_md">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_md">
+
+                <TextView
+                    android:id="@+id/tvDetailType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Loại: RESCUE"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_md"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:id="@+id/tvDetailStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Trạng thái: ASSIGNED"
+                    android:textSize="@dimen/text_sm"
+                    android:textColor="#E2E8F0"/>
+
+                <TextView
+                    android:id="@+id/tvDetailAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:text="Địa chỉ: --"
+                    android:textSize="@dimen/text_sm"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:id="@+id/tvDetailRadius"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Bán kính điều phối: --"
+                    android:textSize="@dimen/text_xs"
+                    android:textColor="#E2E8F0"/>
+
+                <TextView
+                    android:id="@+id/tvDetailDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Mô tả: --"
+                    android:textSize="@dimen/text_xs"
+                    android:textColor="#E2E8F0"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:layout_marginBottom="@dimen/spacing_sm"
+                    android:background="#63B3ED"/>
+
+                <TextView
+                    android:id="@+id/tvDetailAcceptedAt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thời gian nhận: --"
+                    android:textSize="@dimen/text_xs"
+                    android:textColor="#E2E8F0"/>
+
+                <TextView
+                    android:id="@+id/tvDetailPickedUpAt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Thời gian lấy hàng: --"
+                    android:textSize="@dimen/text_xs"
+                    android:textColor="#E2E8F0"/>
+
+                <TextView
+                    android:id="@+id/tvDetailCompletedAt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Thời gian hoàn thành: --"
+                    android:textSize="@dimen/text_xs"
+                    android:textColor="#E2E8F0"/>
+
+                <TextView
+                    android:id="@+id/tvDetailCancelledAt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Thời gian hủy: --"
+                    android:textSize="@dimen/text_xs"
+                    android:textColor="#E2E8F0"/>
+
+                <TextView
+                    android:id="@+id/tvDetailCancelReason"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Lý do hủy: --"
+                    android:textSize="@dimen/text_xs"
+                    android:textColor="#E2E8F0"/>
+
+                <TextView
+                    android:id="@+id/tvDetailPriority"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Điểm ưu tiên: --"
+                    android:textSize="@dimen/text_xs"
+                    android:textColor="#E2E8F0"/>
+
+                <TextView
+                    android:id="@+id/tvDetailComment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:text="Ghi chú: --"
+                    android:textSize="@dimen/text_sm"
+                    android:textColor="@color/white"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardRequestDetailBlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="#2B6CB0"
+            app:cardCornerRadius="@dimen/radius_md"
+            app:strokeColor="#63B3ED"
+            app:strokeWidth="1dp"
+            android:layout_marginBottom="@dimen/spacing_md"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_md">
+
+                <TextView
+                    android:id="@+id/tvRequestDetailHeader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chi tiết Yêu cầu"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_md"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:id="@+id/tvRequestDetailDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Mô tả yêu cầu: --"
+                    android:textSize="@dimen/text_sm"
+                    android:textColor="#E2E8F0"/>
+
+                <TextView
+                    android:id="@+id/tvRequestDetailUrgency"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Mức độ khẩn cấp: --"
+                    android:textSize="@dimen/text_sm"
+                    android:textColor="#E2E8F0"/>
+
+                <TextView
+                    android:id="@+id/tvRequestDetailPeopleCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Số lượng người: --"
+                    android:textSize="@dimen/text_sm"
+                    android:textColor="#E2E8F0"/>
+
+                <TextView
+                    android:id="@+id/tvRequestDetailItems"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="Nhóm người: --"
+                    android:textSize="@dimen/text_sm"
+                    android:textColor="#E2E8F0"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <ImageView
+            android:id="@+id/ivDetailPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            android:layout_marginBottom="@dimen/spacing_md"/>
+
+        <Button
+            android:id="@+id/btnDetailClose"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Đóng"/>
+    </LinearLayout>
+</ScrollView>

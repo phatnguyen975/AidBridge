@@ -37,6 +37,9 @@ public class Volunteer {
     @Column(name = "current_location", columnDefinition = "GEOGRAPHY(POINT,4326)")
     private Point currentLocation;
 
+    @Column(name = "h3_index", length = 15)
+    private String h3Index;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type")
     private VehicleType vehicleType;

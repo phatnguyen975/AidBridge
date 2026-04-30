@@ -1,29 +1,40 @@
 package com.drc.aidbridge.ui.map.fragment;
 
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
+import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.drc.aidbridge.databinding.FragmentGuestMapBinding;
-import com.drc.aidbridge.ui.base.BaseFragment;
+import com.drc.aidbridge.ui.map.base.BaseMapFragment;
+import com.drc.aidbridge.ui.main.viewmodel.guest.GuestMapViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class GuestMapFragment extends BaseFragment<FragmentGuestMapBinding> {
+public class GuestMapFragment extends BaseMapFragment<GuestMapViewModel> {
 
-	@Nullable
-	@Override
-	protected FragmentGuestMapBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
-		return FragmentGuestMapBinding.inflate(inflater, container, false);
-	}
+    private GuestMapViewModel guestMapViewModel;
 
-	@Override
-	protected void setupViews() {
-	}
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        guestMapViewModel = new ViewModelProvider(this).get(GuestMapViewModel.class);
+    }
 
-	@Override
-	protected void observeViewModel() {
-	}
+    @Override
+    protected GuestMapViewModel getViewModel() {
+        if (guestMapViewModel == null) {
+            guestMapViewModel = new ViewModelProvider(this).get(GuestMapViewModel.class);
+        }
+        return guestMapViewModel;
+    }
+
+    @Override
+    protected int getContentLayout() {
+        return 0;
+    }
+
+    @Override
+    protected void setupRoleSpecificUI() {
+    }
 }

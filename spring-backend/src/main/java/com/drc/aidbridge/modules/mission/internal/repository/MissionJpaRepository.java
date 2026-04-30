@@ -3,7 +3,8 @@ package com.drc.aidbridge.modules.mission.internal.repository;
 import com.drc.aidbridge.modules.shared.enums.MissionStatus;
 import com.drc.aidbridge.modules.shared.enums.MissionType;
 import com.drc.aidbridge.modules.mission.internal.entity.Mission;
-import org.locationtech.jts.geom.Point;
+import com.drc.aidbridge.modules.mission.internal.repository.projection.MissionHistoryProjection;
+import com.drc.aidbridge.modules.mission.internal.repository.projection.MissionHistoryFullProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -173,6 +174,62 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
                         nativeQuery = true)
         Page<MissionHistoryProjection> findHistoryProjectionByVolunteerId(@Param("volunteerId") UUID volunteerId,
                         Pageable pageable);
+
+
+        @Query(value = "SELECT " +
+                "m.*, " +
+                "ST_Y(CAST(m.victim_location AS geometry)) AS \"victimLat\", " +
+                "ST_X(CAST(m.victim_location AS geometry)) AS \"victimLng\", " +
+                "CAST(m.mission_type AS text) AS \"missionType\", " +
+                "m.completed_at AS \"completedAt\", " +
+                "da.radius_km AS \"radiusKm\", " +
+                "CASE " +
+                "WHEN m.mission_type = 'RESCUE' THEN s.address " +
+                "WHEN m.mission_type = 'DELIVERY' THEN a.address " +
+                "ELSE NULL END AS \"address\", " +
+                "CASE " +
+                "WHEN m.mission_type = 'RESCUE' THEN s.description " +
+                "WHEN m.mission_type = 'DELIVERY' THEN a.description " +
+                "ELSE NULL END AS \"description\" " +
+                "FROM missions m " +
+                "LEFT JOIN sos_requests s ON s.id = m.sos_request_id " +
+                "LEFT JOIN aid_requests a ON a.id = m.aid_request_id " +
+                "LEFT JOIN dispatch_attempts da ON da.mission_id = m.id " +
+                "AND da.volunteer_id = m.volunteer_id " +
+                "AND da.response = 'ACCEPTED' " +
+                "WHERE m.volunteer_id = :volunteerId " +
+                "ORDER BY m.created_at DESC", 
+                countQuery = "SELECT COUNT(*) FROM missions m WHERE m.volunteer_id = :volunteerId",
+                nativeQuery = true)
+        Page<MissionHistoryFullProjection> findFullHistoryByVolunteerId(@Param("volunteerId") UUID volunteerId, Pageable pageable);
+
+
+        @Query(value = "SELECT " +
+                "m.*, " +
+                "ST_Y(CAST(m.victim_location AS geometry)) AS \"victimLat\", " +
+                "ST_X(CAST(m.victim_location AS geometry)) AS \"victimLng\", " +
+                "CAST(m.mission_type AS text) AS \"missionType\", " +
+                "m.completed_at AS \"completedAt\", " +
+                "da.radius_km AS \"radiusKm\", " +
+                "CASE " +
+                "WHEN m.mission_type = 'RESCUE' THEN s.address " +
+                "WHEN m.mission_type = 'DELIVERY' THEN a.address " +
+                "ELSE NULL END AS \"address\", " +
+                "CASE " +
+                "WHEN m.mission_type = 'RESCUE' THEN s.description " +
+                "WHEN m.mission_type = 'DELIVERY' THEN a.description " +
+                "ELSE NULL END AS \"description\" " +
+                "FROM missions m " +
+                "LEFT JOIN sos_requests s ON s.id = m.sos_request_id " +
+                "LEFT JOIN aid_requests a ON a.id = m.aid_request_id " +
+                "LEFT JOIN dispatch_attempts da ON da.mission_id = m.id " +
+                "AND da.volunteer_id = m.volunteer_id " +
+                "AND da.response = 'ACCEPTED' " +
+                "WHERE m.volunteer_id = :volunteerId " +
+                "AND m.status IN ('ASSIGNED', 'PICKING_UP', 'PICKED_UP', 'IN_TRANSIT') " +
+                "ORDER BY m.created_at DESC LIMIT 1",
+                nativeQuery = true)
+        Optional<MissionHistoryFullProjection> findCurrentFullMissionByVolunteerId(@Param("volunteerId") UUID volunteerId);
 
         /**
          * Statistics: Đếm missions trong khoảng thời gian
