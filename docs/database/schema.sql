@@ -52,6 +52,8 @@ CREATE TYPE badge_level AS ENUM ('BRONZE', 'SILVER', 'GOLD', 'PLATINUM');
 -- Table order and constraints may not be valid for execution.
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
 CREATE TABLE public.aid_request_items (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
     aid_request_id uuid NOT NULL,
@@ -119,12 +121,7 @@ CREATE TABLE public.dispatch_attempts (
 CREATE TABLE public.donation_items (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
     donation_id uuid NOT NULL,
-    item_category_id uuid NOT NULL,
-    quantity integer NOT NULL CHECK (quantity > 0),
-    unit character varying,
-    description text,
-    expiry_date date,
-    image_url character varying,
+    item_category_id uuid,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     CONSTRAINT donation_items_pkey PRIMARY KEY (id),
     CONSTRAINT donation_items_donation_id_fkey FOREIGN KEY (donation_id) REFERENCES public.donations(id),
@@ -136,11 +133,11 @@ CREATE TABLE public.donations (
     hub_id uuid NOT NULL,
     qr_code_token character varying UNIQUE,
     status USER - DEFINED NOT NULL DEFAULT 'REGISTERED'::donation_status,
-    notes text,
     received_at timestamp with time zone,
     received_by uuid,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     updated_at timestamp with time zone NOT NULL DEFAULT now(),
+    donation_code character varying UNIQUE,
     CONSTRAINT donations_pkey PRIMARY KEY (id),
     CONSTRAINT donations_sponsor_id_fkey FOREIGN KEY (sponsor_id) REFERENCES public.users(id),
     CONSTRAINT donations_hub_id_fkey FOREIGN KEY (hub_id) REFERENCES public.hubs(id),
@@ -291,22 +288,11 @@ CREATE TABLE public.shelters (
 CREATE TABLE public.sos_requests (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
     requester_id uuid,
-    urgency USER - DEFINED NOT NULL DEFAULT 'MEDIUM'::urgency_level,
     status USER - DEFINED NOT NULL DEFAULT 'PENDING'::sos_status,
     address character varying,
     description text,
     people_count integer NOT NULL DEFAULT 1 CHECK (people_count > 0),
     image_url character varying,
-    client_request_id character varying(100),
-    source character varying(30),
-    quick_sos boolean,
-    accuracy double precision,
-    triggered_at timestamp with time zone,
-    location_captured_at timestamp with time zone,
-    device_info character varying(500),
-    sender_phone character varying(50),
-    raw_message text,
-    received_at_gateway_millis bigint,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     updated_at timestamp with time zone NOT NULL DEFAULT now(),
     urgency_level character varying NOT NULL CHECK (
@@ -315,8 +301,17 @@ CREATE TABLE public.sos_requests (
         )
     ),
     location USER - DEFINED NOT NULL,
+    client_request_id character varying,
+    source character varying,
+    quick_sos boolean,
+    accuracy double precision,
+    triggered_at timestamp with time zone,
+    location_captured_at timestamp with time zone,
+    device_info character varying,
+    sender_phone character varying,
+    raw_message text,
+    received_at_gateway_millis bigint,
     CONSTRAINT sos_requests_pkey PRIMARY KEY (id),
-    CONSTRAINT sos_requests_client_request_id_key UNIQUE (client_request_id),
     CONSTRAINT sos_requests_requester_id_fkey FOREIGN KEY (requester_id) REFERENCES public.users(id)
 );
 CREATE TABLE public.spatial_ref_sys (
@@ -341,15 +336,6 @@ CREATE TABLE public.sponsor_profiles (
     updated_at timestamp with time zone NOT NULL DEFAULT now(),
     CONSTRAINT sponsor_profiles_pkey PRIMARY KEY (id),
     CONSTRAINT sponsor_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
-);
-CREATE TABLE public.staff (
-    id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    user_id uuid NOT NULL UNIQUE,
-    start_date date NOT NULL DEFAULT CURRENT_DATE,
-    created_at timestamp with time zone NOT NULL DEFAULT now(),
-    updated_at timestamp with time zone NOT NULL DEFAULT now(),
-    CONSTRAINT staff_pkey PRIMARY KEY (id),
-    CONSTRAINT staff_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
 );
 CREATE TABLE public.system_config (
     id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -392,6 +378,7 @@ CREATE TABLE public.volunteer_profiles (
         )
     ),
     current_location USER - DEFINED,
+    h3_index character varying,
     CONSTRAINT volunteer_profiles_pkey PRIMARY KEY (id),
     CONSTRAINT volunteer_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
 );
@@ -402,8 +389,6 @@ $$ language 'plpgsql';
 -- Apply trigger to all tables with updated_at
 CREATE TRIGGER update_users_updated_at BEFORE
 UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_staff_updated_at BEFORE
-UPDATE ON staff FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_volunteer_profiles_updated_at BEFORE
 UPDATE ON volunteer_profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_sponsor_profiles_updated_at BEFORE
@@ -436,7 +421,6 @@ UPDATE ON missions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 COMMENT ON TABLE users IS 'Người dùng hệ thống: VICTIM, VOLUNTEER, SPONSOR, STAFF, ADMIN';
 COMMENT ON TABLE refresh_tokens IS 'JWT refresh tokens cho authentication';
 COMMENT ON TABLE otp IS 'OTP codes cho xác thực người dùng';
-COMMENT ON TABLE staff IS 'Thông tin nhân viên (STAFF role)';
 COMMENT ON TABLE volunteer_profiles IS 'Profile tình nguyện viên với vị trí real-time';
 COMMENT ON TABLE sponsor_profiles IS 'Profile nhà tài trợ/quyên góp';
 COMMENT ON TABLE hubs IS 'Trung tâm cứu trợ - điểm phân phối';

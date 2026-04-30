@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/admin_screen_background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_admin_add_staff_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/admin_screen_padding"
+        android:layout_marginTop="@dimen/admin_screen_padding"
+        android:layout_marginEnd="@dimen/admin_screen_padding"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/button_admin_add_staff_back"
+            android:layout_width="@dimen/admin_hub_mgmt_header_back_size"
+            android:layout_height="@dimen/admin_hub_mgmt_header_back_size"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/admin_staff_back"
+            android:padding="@dimen/admin_stat_value_spacing"
+            android:src="@drawable/ic_admin_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/admin_text_primary" />
+
+        <TextView
+            android:id="@+id/text_admin_add_staff_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/admin_add_staff_title"
+            android:textColor="@color/admin_text_primary"
+            android:textSize="@dimen/admin_screen_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_admin_add_staff"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/admin_section_spacing"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/admin_screen_padding"
+        android:paddingEnd="@dimen/admin_screen_padding"
+        android:paddingBottom="@dimen/admin_screen_padding"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_admin_add_staff_header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_staff_full_name"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/admin_add_staff_full_name"
+                app:boxBackgroundColor="@color/admin_search_bg"
+                app:boxStrokeColor="@color/admin_search_border"
+                app:hintTextColor="@color/admin_search_hint">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_staff_full_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:maxLines="1"
+                    android:textColor="@color/admin_search_text"
+                    android:textColorHint="@color/admin_search_hint" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_staff_email"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                android:hint="@string/admin_add_staff_email"
+                app:boxBackgroundColor="@color/admin_search_bg"
+                app:boxStrokeColor="@color/admin_search_border"
+                app:hintTextColor="@color/admin_search_hint">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_staff_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:textColor="@color/admin_search_text"
+                    android:textColorHint="@color/admin_search_hint" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_staff_phone"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                android:hint="@string/admin_add_staff_phone"
+                app:boxBackgroundColor="@color/admin_search_bg"
+                app:boxStrokeColor="@color/admin_search_border"
+                app:hintTextColor="@color/admin_search_hint">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_staff_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:maxLines="1"
+                    android:textColor="@color/admin_search_text"
+                    android:textColorHint="@color/admin_search_hint" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_staff_password"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                android:hint="@string/admin_add_staff_password"
+                app:boxBackgroundColor="@color/admin_search_bg"
+                app:boxStrokeColor="@color/admin_search_border"
+                app:endIconMode="password_toggle"
+                app:hintTextColor="@color/admin_search_hint">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_staff_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:textColor="@color/admin_search_text"
+                    android:textColorHint="@color/admin_search_hint" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_staff_confirm_password"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                android:hint="@string/admin_add_staff_confirm_password"
+                app:boxBackgroundColor="@color/admin_search_bg"
+                app:boxStrokeColor="@color/admin_search_border"
+                app:endIconMode="password_toggle"
+                app:hintTextColor="@color/admin_search_hint">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_staff_confirm_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:textColor="@color/admin_search_text"
+                    android:textColorHint="@color/admin_search_hint" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/text_admin_add_staff_hub_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                android:text="@string/admin_add_staff_hub"
+                android:textColor="@color/admin_text_secondary"
+                android:textSize="@dimen/admin_profile_label_text_size" />
+
+            <Spinner
+                android:id="@+id/spinner_staff_hub"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/admin_hub_detail_button_height"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                android:background="@drawable/bg_admin_inventory_row"
+                android:paddingStart="@dimen/admin_hub_item_spacing_medium"
+                android:paddingEnd="@dimen/admin_hub_item_spacing_medium" />
+
+            <TextView
+                android:id="@+id/text_admin_add_staff_hub_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+                android:textColor="@color/admin_button_danger_bg"
+                android:textSize="@dimen/admin_stat_label_text_size"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_create_staff"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/admin_hub_detail_button_height"
+                android:layout_marginTop="@dimen/admin_section_spacing"
+                android:text="@string/admin_add_staff_submit"
+                android:textAllCaps="false"
+                android:textColor="@color/admin_action_button_text"
+                android:textSize="@dimen/admin_action_button_text_size"
+                app:backgroundTint="@color/admin_action_button_primary_bg"
+                app:cornerRadius="@dimen/admin_action_button_radius" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
