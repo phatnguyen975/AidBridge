@@ -27,6 +27,12 @@ public class AidItemCategory {
     @Column(name = "unit", nullable = false, length = 50)
     private String unit;
 
+    @Column(name = "icon_url")
+    private String iconUrl;
+
     @Column(name = "is_leaf", nullable = false)
     private boolean isLeaf;
+
+    @Column(name = "sort_order")
+    private Integer sortOrder;
 }

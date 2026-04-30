@@ -69,6 +69,16 @@
                 android:ellipsize="end"
                 android:textColor="@color/text_secondary"
                 android:textSize="@dimen/staff_inventory_item_category_text_size" />
+
+            <TextView
+                android:id="@+id/tv_threshold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/staff_inventory_item_category_margin_top"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/text_hint"
+                android:textSize="@dimen/staff_inventory_item_category_text_size" />
         </LinearLayout>
 
         <LinearLayout

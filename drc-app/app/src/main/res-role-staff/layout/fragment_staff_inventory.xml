@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/staff_inventory_title"
-                android:textAllCaps="true"
+                android:textAllCaps="false"
                 android:textColor="@color/text_primary"
                 android:textSize="@dimen/staff_inventory_header_title_text_size"
                 android:textStyle="bold"
@@ -47,12 +47,23 @@
             app:dividerColor="@color/border_default"
             app:dividerThickness="@dimen/staff_profile_divider_thickness" />
 
+        <TextView
+            android:id="@+id/tv_hub_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/staff_inventory_screen_padding"
+            android:layout_marginTop="@dimen/staff_inventory_search_top_margin"
+            android:layout_marginEnd="@dimen/staff_inventory_screen_padding"
+            android:text="@string/staff_inventory_hub_unknown"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/staff_inventory_refresh_text_size" />
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/staff_inventory_screen_padding"
-            android:layout_marginTop="@dimen/staff_inventory_search_top_margin"
+            android:layout_marginTop="@dimen/staff_inventory_filter_top_margin"
             android:layout_marginEnd="@dimen/staff_inventory_screen_padding"
             app:boxBackgroundMode="outline"
             app:boxBackgroundColor="@color/bg_surface_elevated"
@@ -111,17 +122,6 @@
                     app:chipStrokeWidth="@dimen/staff_inventory_chip_stroke_width" />
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_food"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:text="@string/staff_inventory_chip_food"
-                    android:textColor="@color/staff_chip_text_selector"
-                    app:chipBackgroundColor="@color/staff_chip_bg_selector"
-                    app:chipStrokeColor="@color/staff_chip_stroke_selector"
-                    app:chipStrokeWidth="@dimen/staff_inventory_chip_stroke_width" />
-
-                <com.google.android.material.chip.Chip
                     android:id="@+id/chip_water"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -133,11 +133,44 @@
                     app:chipStrokeWidth="@dimen/staff_inventory_chip_stroke_width" />
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_medical"
+                    android:id="@+id/chip_necessities"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:text="@string/staff_inventory_chip_medical"
+                    android:text="@string/staff_inventory_chip_necessities"
+                    android:textColor="@color/staff_chip_text_selector"
+                    app:chipBackgroundColor="@color/staff_chip_bg_selector"
+                    app:chipStrokeColor="@color/staff_chip_stroke_selector"
+                    app:chipStrokeWidth="@dimen/staff_inventory_chip_stroke_width" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_clothing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:text="@string/staff_inventory_chip_clothing"
+                    android:textColor="@color/staff_chip_text_selector"
+                    app:chipBackgroundColor="@color/staff_chip_bg_selector"
+                    app:chipStrokeColor="@color/staff_chip_stroke_selector"
+                    app:chipStrokeWidth="@dimen/staff_inventory_chip_stroke_width" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_medicine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:text="@string/staff_inventory_chip_medicine"
+                    android:textColor="@color/staff_chip_text_selector"
+                    app:chipBackgroundColor="@color/staff_chip_bg_selector"
+                    app:chipStrokeColor="@color/staff_chip_stroke_selector"
+                    app:chipStrokeWidth="@dimen/staff_inventory_chip_stroke_width" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_food"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:text="@string/staff_inventory_chip_food"
                     android:textColor="@color/staff_chip_text_selector"
                     app:chipBackgroundColor="@color/staff_chip_bg_selector"
                     app:chipStrokeColor="@color/staff_chip_stroke_selector"
@@ -217,6 +250,54 @@
                 android:layout_gravity="center_horizontal|bottom"
                 android:layout_marginBottom="@dimen/staff_inventory_pagination_margin_bottom"
                 android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/layout_empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/staff_inventory_screen_padding"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_empty_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/staff_inventory_empty"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/staff_inventory_item_name_text_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_error_state"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/staff_inventory_screen_padding"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_error_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/staff_inventory_error_generic"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/staff_inventory_item_name_text_size" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_retry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/staff_inventory_search_top_margin"
+                    android:backgroundTint="@color/color_primary"
+                    android:text="@string/staff_inventory_retry"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_primary" />
+            </LinearLayout>
         </FrameLayout>
     </LinearLayout>
 

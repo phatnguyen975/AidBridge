@@ -13,5 +13,6 @@ public interface HubStaffRepository extends JpaRepository<HubStaff, UUID> {
     List<HubStaff> findByHubIdAndUnassignedAtIsNull(UUID hubId);
     Optional<HubStaff> findByHubIdAndUserIdAndUnassignedAtIsNull(UUID hubId, UUID userId);
     Optional<HubStaff> findByUserIdAndUnassignedAtIsNull(UUID userId);
+    Optional<HubStaff> findFirstByUserIdAndIsAvailableTrueAndUnassignedAtIsNullOrderByAssignedAtDesc(UUID userId);
     List<HubStaff> findByUserIdInAndUnassignedAtIsNull(List<UUID> userIds);
 }
