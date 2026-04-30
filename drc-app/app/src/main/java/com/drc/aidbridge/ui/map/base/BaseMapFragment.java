@@ -369,7 +369,7 @@ public abstract class BaseMapFragment<VM extends BaseMapViewModel> extends BaseF
         applyRestoredUiState();
         ensureCurrentLocation();
         
-        hubSearchInteractionHelper.setup(this, binding, this::onHubSelected);
+        hubSearchInteractionHelper.setup(this, binding, getViewModel(), this::onHubSelected);
         setupRoleSpecificUI();
     }
 
@@ -808,13 +808,7 @@ public abstract class BaseMapFragment<VM extends BaseMapViewModel> extends BaseF
     }
 
     protected void setupNavigationControls() {
-        binding.btnCancelMission.setOnClickListener(v -> {
-            if (getViewModel().isSimulationRunning()) {
-                getViewModel().stopSimulation();
-            }
-            exitNavigationMode();
-            showToast(getString(R.string.base_map_mission_cancelled));
-        });
+
 
         binding.btnArrivedMission.setOnClickListener(v -> {
             if (getViewModel().isSimulationRunning()) {
@@ -1618,7 +1612,7 @@ public abstract class BaseMapFragment<VM extends BaseMapViewModel> extends BaseF
     }
 
     protected void setupHubSearchDrawer() {
-        hubSearchInteractionHelper.setup(this, binding, this::onHubSelected);
+        hubSearchInteractionHelper.setup(this, binding, getViewModel(), this::onHubSelected);
     }
 
     protected void onHubSelected(HubDto hub) {

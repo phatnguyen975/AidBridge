@@ -15,7 +15,7 @@
     <color name="base_map_polygon_fill">#55EF4444</color>
     <color name="base_map_polygon_stroke">#F87171</color>
     <color name="base_map_hud_bg">#EF0A1C35</color>
-    <color name="base_map_route_casing">#0B2A4A</color>
+    <color name="base_map_route_casing">#85F2A0</color>
     <color name="base_map_route_core">#43B2FF</color>
     <color name="base_acceptance_bg">#061C35</color>
 </resources>

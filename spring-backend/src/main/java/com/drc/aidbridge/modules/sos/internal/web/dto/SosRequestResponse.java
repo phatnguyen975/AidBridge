@@ -24,6 +24,12 @@ public class SosRequestResponse {
     private UrgencyLevel urgencyLevel;
     private SosStatus status;
     private String imageUrl;
+    private String clientRequestId;
+    private String source;
+    private Boolean quickSos;
+    private Double accuracy;
+    private Instant triggeredAt;
+    private Instant locationCapturedAt;
     private Instant createdAt;
     private Instant updatedAt;
     private UUID missionId;

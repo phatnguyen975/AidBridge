@@ -35,12 +35,8 @@ public class AdminProfileFragment extends BaseFragment<FragmentAdminProfileBindi
     }
 
     private void setupClickListeners() {
-        binding.layoutAdminChangeInfo
-                .setOnClickListener(v -> showToast(getString(R.string.admin_profile_toast_change_info)));
-        binding.layoutAdminManageRoles
-                .setOnClickListener(v -> showToast(getString(R.string.admin_profile_toast_manage_roles)));
-        binding.layoutAdminSystemSettings
-                .setOnClickListener(v -> showToast(getString(R.string.admin_profile_toast_system_settings)));
+        binding.buttonAdminManageStaff
+                .setOnClickListener(v -> navigateToDestinationSafely(R.id.adminStaffManagementFragment));
         binding.buttonAdminLogout
                 .setOnClickListener(v -> requestLogout());
     }

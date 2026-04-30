@@ -5,43 +5,33 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
+import com.drc.aidbridge.domain.model.admin.AdminDashboardSummary;
+import com.drc.aidbridge.domain.usecase.admin.GetAdminDashboardSummaryUseCase;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
-/**
- * ViewModel for Admin Dashboard screen.
- * Currently UI-only and reserved for future backend/use case integration.
- */
 @HiltViewModel
 public class AdminDashboardViewModel extends BaseViewModel {
 
-    private final MutableLiveData<String> inventoryTrigger = new MutableLiveData<>();
-    private final LiveData<NetworkResultWrapper<float[]>> inventoryData;
+    private final MutableLiveData<String> summaryTrigger = new MutableLiveData<>();
+    private final LiveData<NetworkResultWrapper<AdminDashboardSummary>> dashboardSummary;
 
     @Inject
-    public AdminDashboardViewModel() {
-        this.inventoryData = Transformations.switchMap(inventoryTrigger, trigger -> {
-            MutableLiveData<NetworkResultWrapper<float[]>> mockResult = new MutableLiveData<>();
-            /*
-             * TODO: Tích hợp Repository thực tế để lấy dữ liệu tồn kho theo thời gian thực.
-             */
-            mockResult.setValue(NetworkResultWrapper.success(new float[] { 1200f, 850f, 430f, 1300f }));
-            return mockResult;
-        });
-
-        /*
-         * TODO: Tích hợp API Backend và UseCase để xử lý logic dữ liệu tại đây
-         */
+    public AdminDashboardViewModel(GetAdminDashboardSummaryUseCase getAdminDashboardSummaryUseCase) {
+        this.dashboardSummary = Transformations.switchMap(
+                summaryTrigger,
+                trigger -> getAdminDashboardSummaryUseCase.execute()
+        );
     }
 
-    public LiveData<NetworkResultWrapper<float[]>> getInventoryData() {
-        return inventoryData;
+    public LiveData<NetworkResultWrapper<AdminDashboardSummary>> getDashboardSummary() {
+        return dashboardSummary;
     }
 
-    public void loadInventoryData() {
-        inventoryTrigger.setValue(String.valueOf(System.currentTimeMillis()));
+    public void loadDashboardSummary() {
+        summaryTrigger.setValue(String.valueOf(System.currentTimeMillis()));
     }
 }

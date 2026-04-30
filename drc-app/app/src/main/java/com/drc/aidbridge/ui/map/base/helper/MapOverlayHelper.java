@@ -1,6 +1,8 @@
 package com.drc.aidbridge.ui.map.base.helper;
 
 import android.content.Context;
+import android.graphics.CornerPathEffect;
+import android.graphics.Paint;
 import android.location.Location;
 
 import androidx.annotation.ColorRes;
@@ -24,10 +26,7 @@ public class MapOverlayHelper {
 
     @Nullable
     private MapView mapView;
-    @Nullable
-    private Polyline routePolylineCasing;
-    @Nullable
-    private Polyline routePolyline;
+    private final List<Polyline> routeOverlays = new ArrayList<>();
     private final List<Polygon> dangerousZoneOverlays = new ArrayList<>();
 
     public void attach(@NonNull MapView mapView) {
@@ -42,18 +41,14 @@ public class MapOverlayHelper {
 
     public void clearRouteOverlays() {
         if (mapView == null) {
+            routeOverlays.clear();
             return;
         }
 
-        if (routePolylineCasing != null) {
-            mapView.getOverlays().remove(routePolylineCasing);
-            routePolylineCasing = null;
+        for (Polyline polyline : routeOverlays) {
+            mapView.getOverlays().remove(polyline);
         }
-
-        if (routePolyline != null) {
-            mapView.getOverlays().remove(routePolyline);
-            routePolyline = null;
-        }
+        routeOverlays.clear();
     }
 
     public void drawRouteOverlays(@NonNull Context context,
@@ -69,23 +64,56 @@ public class MapOverlayHelper {
 
         clearRouteOverlays();
 
-        routePolylineCasing = new Polyline();
-        routePolylineCasing.setPoints(points);
-        routePolylineCasing.setColor(ContextCompat.getColor(context, casingColorRes));
-        routePolylineCasing.setWidth(context.getResources().getDimension(casingWidthRes));
-        routePolylineCasing.getOutlinePaint().setAntiAlias(true);
-        mapView.getOverlays().add(routePolylineCasing);
+        float baseCasingWidth = context.getResources().getDimension(casingWidthRes);
+        int casingColor = ContextCompat.getColor(context, casingColorRes);
+        int coreColor = ContextCompat.getColor(context, coreColorRes);
 
-        routePolyline = new Polyline();
-        routePolyline.setPoints(points);
-        routePolyline.setColor(ContextCompat.getColor(context, coreColorRes));
-        routePolyline.setWidth(context.getResources().getDimension(coreWidthRes));
-        routePolyline.getOutlinePaint().setAntiAlias(true);
-        mapView.getOverlays().add(routePolyline);
+        // 1. Outer Glow
+        Polyline outerGlow = new Polyline();
+        outerGlow.setPoints(points);
+        outerGlow.setColor((casingColor & 0x00FFFFFF) | 0x20000000);
+        outerGlow.setWidth(baseCasingWidth * 1.5f);
+        configurePolylinePaint(outerGlow.getOutlinePaint());
+        mapView.getOverlays().add(outerGlow);
+        routeOverlays.add(outerGlow);
+
+        // 2. Inner Glow
+        Polyline innerGlow = new Polyline();
+        innerGlow.setPoints(points);
+        innerGlow.setColor((casingColor & 0x00FFFFFF) | 0x50000000);
+        innerGlow.setWidth(baseCasingWidth * 1.f);
+        configurePolylinePaint(innerGlow.getOutlinePaint());
+        mapView.getOverlays().add(innerGlow);
+        routeOverlays.add(innerGlow);
+
+        // 3. Casing
+        Polyline casing = new Polyline();
+        casing.setPoints(points);
+        casing.setColor(casingColor);
+        casing.setWidth(baseCasingWidth);
+        configurePolylinePaint(casing.getOutlinePaint());
+        mapView.getOverlays().add(casing);
+        routeOverlays.add(casing);
+
+        // 4. Core
+        Polyline core = new Polyline();
+        core.setPoints(points);
+        core.setColor(coreColor);
+        core.setWidth(context.getResources().getDimension(coreWidthRes));
+        configurePolylinePaint(core.getOutlinePaint());
+        mapView.getOverlays().add(core);
+        routeOverlays.add(core);
 
         BoundingBox bounds = BoundingBox.fromGeoPointsSafe(points);
         mapView.zoomToBoundingBox(bounds, true, context.getResources().getDimensionPixelSize(fitPaddingRes));
         mapView.invalidate();
+    }
+
+    private void configurePolylinePaint(@NonNull Paint paint) {
+        paint.setAntiAlias(true);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setPathEffect(new CornerPathEffect(30f));
     }
 
     public void renderDangerousZoneOverlays(@NonNull Context context,

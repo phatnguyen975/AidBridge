@@ -29,7 +29,7 @@ import retrofit2.Response;
 @Singleton
 public class VolunteerHeartbeatManager {
 
-    private static final long HEARTBEAT_INTERVAL_MS = 45_000L;
+    private static final long HEARTBEAT_INTERVAL_MS = 60_000L;
 
     private final Context appContext;
     private final VolunteerApiService volunteerApiService;

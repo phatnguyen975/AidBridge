@@ -9,6 +9,7 @@ import com.drc.aidbridge.modules.staff.internal.web.dto.CreateStaffRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -42,6 +43,7 @@ public class StaffController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<StaffDTO>> createStaff(@Valid @RequestBody CreateStaffRequest request) {
         StaffDTO dto = createStaffUseCase.execute(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Staff created successfully", dto));

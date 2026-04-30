@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll() // WebSocket handshake
                         // Permit for springdoc OpenAPI
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/sms-ingest/sos").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sos-requests").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sos-requests").permitAll()
                         .requestMatchers("/api/sos-requests/**").permitAll() // Allow public access to SOS request endpoints
@@ -69,6 +70,7 @@ public class SecurityConfig {
                         // STAFF - hub management, can do most admin tasks
                         .requestMatchers("/api/staff/**").hasAnyRole("STAFF", "ADMIN")
 
+                        .requestMatchers("/api/volunteers/nearby").permitAll()
                         // VOLUNTEER - mission handling
                         .requestMatchers("/api/volunteers/**").hasAnyRole("VOLUNTEER", "STAFF", "ADMIN")
 

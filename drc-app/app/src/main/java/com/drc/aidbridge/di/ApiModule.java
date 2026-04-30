@@ -4,6 +4,9 @@ import com.drc.aidbridge.data.remote.api.AuthApiService;
 import com.drc.aidbridge.data.remote.api.MissionApiService;
 import com.drc.aidbridge.data.remote.api.RoutingApiService;
 import com.drc.aidbridge.data.remote.api.UserApiService;
+import com.drc.aidbridge.data.remote.api.admin.AdminDashboardApiService;
+import com.drc.aidbridge.data.remote.api.admin.AdminStaffApiService;
+import com.drc.aidbridge.data.remote.api.gateway.SmsIngestApiService;
 import com.drc.aidbridge.data.remote.api.admin.HubApiService;
 import com.drc.aidbridge.data.remote.api.sponsor.SponsorDonationApiService;
 import com.drc.aidbridge.data.remote.api.volunteer.VolunteerApiService;
@@ -55,6 +58,12 @@ public class ApiModule {
 
     @Provides
     @Singleton
+    public SmsIngestApiService provideSmsIngestApiService(Retrofit retrofit) {
+        return retrofit.create(SmsIngestApiService.class);
+    }
+
+    @Provides
+    @Singleton
     public SupplyApiService provideSupplyApiService(Retrofit retrofit) {
         return retrofit.create(SupplyApiService.class);
     }
@@ -70,6 +79,18 @@ public class ApiModule {
     @Singleton
     public HubApiService provideAdminHubApiService(Retrofit retrofit) {
         return retrofit.create(HubApiService.class);
+    }
+
+    @Provides
+    @Singleton
+    public AdminDashboardApiService provideAdminDashboardApiService(Retrofit retrofit) {
+        return retrofit.create(AdminDashboardApiService.class);
+    }
+
+    @Provides
+    @Singleton
+    public AdminStaffApiService provideAdminStaffApiService(Retrofit retrofit) {
+        return retrofit.create(AdminStaffApiService.class);
     }
 
     // Default HubApiService

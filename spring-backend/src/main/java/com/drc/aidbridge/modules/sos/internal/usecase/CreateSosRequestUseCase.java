@@ -38,8 +38,17 @@ public class CreateSosRequestUseCase {
 
     @Transactional
     public SosRequestResponse execute(UUID requesterId, CreateSosRequest createDto) {
-        UserDTO requester = userFacade.getUserById(requesterId);
         boolean quickSos = isQuickSos(createDto);
+        Optional<SosRequest> existingByClientRequestId = findByClientRequestId(createDto.getClientRequestId());
+        if (existingByClientRequestId.isPresent()) {
+            log.info(
+                "SMS_INGEST_DUPLICATE_CLIENT_REQUEST_ID clientRequestId={}",
+                safeText(createDto.getClientRequestId())
+            );
+            return sosMapper.toResponse(existingByClientRequestId.get(), null);
+        }
+
+        UserDTO requester = userFacade.getUserById(requesterId);
 
         if (quickSos) {
             Optional<SosRequest> duplicate = findQuickSosDuplicate(requesterId, createDto);
@@ -65,6 +74,13 @@ public class CreateSosRequestUseCase {
             .urgencyLevel(urgencyLevel)
             .imageUrl(finalImageUrl)
             .status(SosStatus.PENDING)
+            .clientRequestId(trimToNull(createDto.getClientRequestId()))
+            .source(firstNonBlank(createDto.getSource(), "APP"))
+            .quickSos(quickSos)
+            .accuracy(createDto.getAccuracy())
+            .triggeredAt(createDto.getTriggeredAt())
+            .locationCapturedAt(createDto.getLocationCapturedAt())
+            .deviceInfo(trimToNull(createDto.getDeviceInfo()))
             .build();
 
         SosRequest savedSos = sosRequestRepository.save(sosRequest);
@@ -74,8 +90,18 @@ public class CreateSosRequestUseCase {
             savedSos.getLat(),
             savedSos.getLng()
         ));
+        log.info("SMS_INGEST_EVENT_PUBLISHED clientRequestId={}", safeText(createDto.getClientRequestId()));
 
         return sosMapper.toResponse(savedSos, null);
+    }
+
+    private Optional<SosRequest> findByClientRequestId(String clientRequestId) {
+        String value = trimToNull(clientRequestId);
+        if (value == null) {
+            return Optional.empty();
+        }
+        Optional<SosRequest> existing = sosRequestRepository.findByClientRequestId(value);
+        return existing != null ? existing : Optional.empty();
     }
 
     private boolean isQuickSos(CreateSosRequest request) {
@@ -173,5 +199,10 @@ public class CreateSosRequestUseCase {
 
     private String safeText(String value) {
         return value != null ? value.trim() : "";
+    }
+
+    private String firstNonBlank(String first, String fallback) {
+        String firstValue = trimToNull(first);
+        return firstValue != null ? firstValue : fallback;
     }
 }

@@ -2673,6 +2673,74 @@ components:
                     type: integer
 
     # ============================================================
+    # ADMIN STAFF - Matching users(role=STAFF) + hub_staff
+    # ============================================================
+    AdminStaff:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        fullName:
+          type: string
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+        hubId:
+          type: string
+          format: uuid
+        hubName:
+          type: string
+
+    CreateAdminStaffRequest:
+      type: object
+      required: [fullName, email, phoneNumber, password, hubId]
+      properties:
+        fullName:
+          type: string
+          maxLength: 100
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+          maxLength: 15
+        password:
+          type: string
+          minLength: 8
+          format: password
+        hubId:
+          type: string
+          format: uuid
+
+    AdminStaffListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminStaff'
+
+    AdminStaffResponseWrapper:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/AdminStaff'
+
+    # ============================================================
     # SYSTEM CONFIG - Matching system_config table
     # ============================================================
     SystemConfig:
@@ -5270,6 +5338,41 @@ paths:
   # ============================================================
   # ADMIN
   # ============================================================
+  /admin/staff:
+    get:
+      tags: [Admin]
+      summary: List staff accounts with assigned hub
+      operationId: listAdminStaff
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Staff list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminStaffListResponse'
+
+    post:
+      tags: [Admin]
+      summary: Create a staff account and assign it to a hub
+      operationId: createAdminStaff
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAdminStaffRequest'
+      responses:
+        '201':
+          description: Staff created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminStaffResponseWrapper'
+
   /admin/system-config:
     get:
       tags: [Admin]

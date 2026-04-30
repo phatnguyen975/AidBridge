@@ -12,13 +12,13 @@
     <string name="admin_action_manage_hubs">Quản lý trạm</string>
 
     <string name="admin_stat_total_hubs">TỔNG SỐ TRẠM</string>
-    <string name="admin_stat_total_hubs_value">12</string>
+    <string name="admin_stat_total_hubs_value">0</string>
     <string name="admin_stat_volunteers">TÌNH NGUYỆN VIÊN</string>
-    <string name="admin_stat_volunteers_value">1.2K</string>
+    <string name="admin_stat_volunteers_value">0</string>
     <string name="admin_stat_today_missions">NHIỆM VỤ HÔM NAY</string>
-    <string name="admin_stat_today_missions_value">156</string>
+    <string name="admin_stat_today_missions_value">0</string>
     <string name="admin_stat_distributed_items">VẬT PHẨM PHÂN PHỐI</string>
-    <string name="admin_stat_distributed_items_value">45K unit</string>
+    <string name="admin_stat_distributed_items_value">0</string>
 
     <string name="admin_chart_title">Số lượng hàng theo loại</string>
     <string name="admin_chart_label_medical">Y TẾ</string>
@@ -235,10 +235,44 @@
     <string name="admin_profile_manage_roles">Quản lý &amp; Phân quyền</string>
     <string name="admin_profile_system_settings">Cài đặt hệ thống</string>
     <string name="admin_profile_navigate_detail">Mở chi tiết cấu hình</string>
+    <string name="admin_profile_manage_staff">Quản lý Staff</string>
     <string name="admin_profile_logout">ĐĂNG XUẤT</string>
     <string name="admin_profile_logout_icon_desc">Biểu tượng đăng xuất</string>
     <string name="admin_profile_toast_change_info">Mở chức năng Thay đổi thông tin</string>
     <string name="admin_profile_toast_manage_roles">Mở chức năng Quản lý &amp; Phân quyền</string>
     <string name="admin_profile_toast_system_settings">Mở chức năng Cài đặt hệ thống</string>
     <string name="admin_profile_toast_logout_progress">Đang thực hiện đăng xuất...</string>
+
+    <string name="admin_staff_management_title">Quản lý Staff</string>
+    <string name="admin_staff_back">Quay lại</string>
+    <string name="admin_staff_add">Thêm Staff</string>
+    <string name="admin_staff_empty">Chưa có Staff nào</string>
+    <string name="admin_staff_error_generic">Không thể tải danh sách Staff</string>
+    <string name="admin_staff_retry">Thử lại</string>
+    <string name="admin_staff_item_icon_desc">Biểu tượng Staff</string>
+    <string name="admin_staff_name_fallback">Staff chưa có tên</string>
+    <string name="admin_staff_contact_fallback">Chưa có email hoặc số điện thoại</string>
+    <string name="admin_staff_hub_format">Hub quản lý: %1$s</string>
+    <string name="admin_staff_hub_fallback">Chưa gán Hub</string>
+
+    <string name="admin_add_staff_title">Thêm Staff</string>
+    <string name="admin_add_staff_full_name">Họ tên</string>
+    <string name="admin_add_staff_email">Email</string>
+    <string name="admin_add_staff_phone">Số điện thoại</string>
+    <string name="admin_add_staff_password">Mật khẩu</string>
+    <string name="admin_add_staff_confirm_password">Xác nhận mật khẩu</string>
+    <string name="admin_add_staff_hub">Chọn Hub quản lý</string>
+    <string name="admin_add_staff_hub_placeholder">Chọn Hub</string>
+    <string name="admin_add_staff_hub_empty">Chưa có Hub để gán Staff</string>
+    <string name="admin_add_staff_hub_load_error">Không thể tải danh sách Hub</string>
+    <string name="admin_add_staff_submit">Tạo Staff</string>
+    <string name="admin_add_staff_submitting">Đang tạo...</string>
+    <string name="admin_add_staff_success">Tạo Staff thành công</string>
+    <string name="admin_add_staff_error_generic">Không thể tạo Staff</string>
+    <string name="admin_add_staff_error_full_name">Vui lòng nhập họ tên</string>
+    <string name="admin_add_staff_error_email">Vui lòng nhập email hợp lệ</string>
+    <string name="admin_add_staff_error_phone">Vui lòng nhập số điện thoại</string>
+    <string name="admin_add_staff_error_password">Vui lòng nhập mật khẩu</string>
+    <string name="admin_add_staff_error_confirm_password">Mật khẩu xác nhận không khớp</string>
+    <string name="admin_add_staff_error_hub">Vui lòng chọn Hub</string>
 </resources>

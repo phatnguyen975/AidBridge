@@ -6,6 +6,7 @@ import com.drc.aidbridge.modules.volunteer.internal.entity.Volunteer;
 import com.drc.aidbridge.modules.volunteer.internal.mapper.VolunteerMapper;
 import com.drc.aidbridge.modules.volunteer.internal.repository.VolunteerJpaRepository;
 import com.drc.aidbridge.modules.volunteer.internal.usecase.CreateVolunteerProfileUseCase;
+import com.drc.aidbridge.modules.volunteer.internal.usecase.FindNearbyVolunteersUseCase;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class VolunteerFacadeImpl implements VolunteerFacade {
     private final VolunteerJpaRepository volunteerRepository;
     private final VolunteerMapper volunteerMapper;
     private final CreateVolunteerProfileUseCase createVolunteerProfileUseCase;
+    private final FindNearbyVolunteersUseCase findNearbyVolunteersUseCase;
 
     @Override
     public Optional<VolunteerDTO> getVolunteerByUserId(UUID userId) {
@@ -30,15 +32,8 @@ public class VolunteerFacadeImpl implements VolunteerFacade {
     }
 
     @Override
-    public List<VolunteerDTO> findNearbyVolunteers(BigDecimal lat, BigDecimal lng, double radiusMeters) {
-        Point location = Volunteer.createPoint(lat, lng);
-        if (location == null) {
-            return List.of();
-        }
-
-        return volunteerRepository.findNearbyVolunteers(location, radiusMeters).stream()
-                .map(volunteerMapper::toDTO)
-                .collect(Collectors.toList());
+    public List<VolunteerDTO> findNearbyVolunteers(BigDecimal lat, BigDecimal lng) {
+        return findNearbyVolunteersUseCase.execute(lat, lng);
     }
 
     @Override

@@ -88,25 +88,12 @@
         android:visibility="gone">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCancelMission"
-            style="@style/Widget.Material3.Button.ElevatedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/base_map_cancel_mission"
-            android:textColor="@color/sos_red"
-            android:textStyle="bold"
-            app:backgroundTint="@color/white"
-            app:cornerRadius="24dp"
-            app:icon="@drawable/ic_close"
-            app:iconTint="@color/sos_red" />
-
-        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnArrivedMission"
             style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/base_map_arrived"
+            android:text="@string/base_map_cancel_mission"
             android:textColor="@color/safe_green"
             android:textStyle="bold"
             app:backgroundTint="@color/white"

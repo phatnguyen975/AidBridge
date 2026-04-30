@@ -18,6 +18,7 @@ public class HubSearchInteractionHelper {
 
     public void setup(@NonNull Fragment fragment,
                       @NonNull FragmentMapBaseBinding binding,
+                      @NonNull com.drc.aidbridge.ui.map.base.BaseMapViewModel viewModel,
                       @NonNull HubSearchListener listener) {
         
         FragmentManager fm = fragment.getChildFragmentManager();
@@ -25,6 +26,7 @@ public class HubSearchInteractionHelper {
             (HubSearchDrawerFragment) fm.findFragmentById(R.id.hubSearchFragmentContainer);
             
         if (drawerFragment != null) {
+            drawerFragment.setViewModel(viewModel);
             drawerFragment.setListener(listener::onHubSelected);
         }
 

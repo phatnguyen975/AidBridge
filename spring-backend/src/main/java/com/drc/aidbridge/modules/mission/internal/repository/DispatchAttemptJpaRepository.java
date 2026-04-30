@@ -39,6 +39,8 @@ public interface DispatchAttemptJpaRepository extends JpaRepository<DispatchAtte
         List<DispatchAttempt> findByVolunteerIdAndResponseOrderByCreatedAtDesc(
                         UUID volunteerId, DispatchResponse response);
 
+        Optional<DispatchAttempt> findTopByVolunteerIdAndResponseOrderByCreatedAtDesc(UUID volunteerId, DispatchResponse response);
+
         /**
          * Tìm dispatch attempt mới nhất đang pending cho mission
          */

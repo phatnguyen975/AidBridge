@@ -24,6 +24,7 @@ public class PingVolunteerHeartbeatUseCase {
     private final VolunteerJpaRepository volunteerRepository;
     private final UserFacade userFacade;
     private final VolunteerMapper volunteerMapper;
+    private final com.uber.h3core.H3Core h3Core;
 
     // Update volunteer as online with current location and timestamp
     @Transactional
@@ -45,6 +46,12 @@ public class PingVolunteerHeartbeatUseCase {
                             BigDecimal.valueOf(request.getLng())
                     )
             );
+            try {
+                String h3Address = h3Core.latLngToCellAddress(request.getLat(), request.getLng(), 8);
+                volunteer.setH3Index(h3Address);
+            } catch (Exception e) {
+                // Ignore H3 computation error
+            }
         }
 
         volunteer = volunteerRepository.save(volunteer);

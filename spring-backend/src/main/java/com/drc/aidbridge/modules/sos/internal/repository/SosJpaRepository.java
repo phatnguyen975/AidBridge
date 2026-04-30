@@ -16,6 +16,7 @@ public interface SosJpaRepository extends JpaRepository<SosRequest, UUID> {
     List<SosRequest> findByRequesterIdOrderByCreatedAtDesc(UUID requesterId);
     List<SosRequest> findByRequesterIdAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(UUID requesterId,
                                                                                         Instant createdAt);
+    Optional<SosRequest> findByClientRequestId(String clientRequestId);
     Optional<SosRequest> findByIdAndRequesterId(UUID id, UUID requesterId);
     List<SosRequest> findByStatus(SosStatus status);
 }

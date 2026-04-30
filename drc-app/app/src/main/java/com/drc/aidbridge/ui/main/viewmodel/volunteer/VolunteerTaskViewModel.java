@@ -10,6 +10,10 @@ import com.drc.aidbridge.domain.model.VolunteerMission;
 import com.drc.aidbridge.domain.usecase.mission.AcceptVolunteerMissionUseCase;
 import com.drc.aidbridge.domain.usecase.mission.GetVolunteerMissionUseCase;
 import com.drc.aidbridge.domain.usecase.mission.RejectVolunteerMissionUseCase;
+import com.drc.aidbridge.domain.usecase.volunteer.GetLatestDispatchUseCase;
+import com.drc.aidbridge.domain.usecase.volunteer.CancelDispatchAttemptUseCase;
+import com.drc.aidbridge.domain.usecase.volunteer.AcceptDispatchAttemptUseCase;
+import com.drc.aidbridge.data.remote.dto.response.volunteer.LatestDispatchDataDto;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
 import java.time.Instant;
@@ -24,18 +28,39 @@ public class VolunteerTaskViewModel extends BaseViewModel {
     private final GetVolunteerMissionUseCase getVolunteerMissionUseCase;
     private final AcceptVolunteerMissionUseCase acceptVolunteerMissionUseCase;
     private final RejectVolunteerMissionUseCase rejectVolunteerMissionUseCase;
+    private final GetLatestDispatchUseCase getLatestDispatchUseCase;
+    private final CancelDispatchAttemptUseCase cancelDispatchAttemptUseCase;
+    private final AcceptDispatchAttemptUseCase acceptDispatchAttemptUseCase;
+    private final com.drc.aidbridge.domain.usecase.volunteer.GetVolunteerMissionHistoryFullUseCase getVolunteerMissionHistoryFullUseCase;
+    private final com.drc.aidbridge.domain.usecase.volunteer.GetCurrentVolunteerMissionUseCase getCurrentVolunteerMissionUseCase;
+    private final com.drc.aidbridge.domain.repository.volunteer.VolunteerRepository volunteerRepository;
 
     private final MutableLiveData<Boolean> isMissionAccepted = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isMissionIgnored = new MutableLiveData<>(false);
     private final MutableLiveData<String> currentMissionType = new MutableLiveData<>(null);
     private final MutableLiveData<Integer> currentDeliveryStep = new MutableLiveData<>(1);
     private final MutableLiveData<VolunteerMission> pendingMission = new MutableLiveData<>(null);
+    private final MutableLiveData<LatestDispatchDataDto> latestDispatch = new MutableLiveData<>(null);
 
     private final MediatorLiveData<NetworkResultWrapper<VolunteerMission>> pendingMissionResult =
+            new MediatorLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<com.drc.aidbridge.data.remote.dto.response.MissionDto>> completeMissionApiResult =
+            new MediatorLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<com.drc.aidbridge.data.remote.dto.response.MissionDto>> cancelMissionApiResult =
             new MediatorLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<VolunteerMission>> acceptResult =
             new MediatorLiveData<>();
     private final MediatorLiveData<NetworkResultWrapper<Boolean>> rejectResult =
+            new MediatorLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<LatestDispatchDataDto>> latestDispatchResult =
+            new MediatorLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<LatestDispatchDataDto>> cancelDispatchResult =
+            new MediatorLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<LatestDispatchDataDto>> acceptDispatchResult =
+            new MediatorLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<com.drc.aidbridge.data.remote.dto.response.volunteer.MissionHistoryFullDataDto>> missionHistoryResult =
+            new MediatorLiveData<>();
+    private final MediatorLiveData<NetworkResultWrapper<com.drc.aidbridge.data.remote.dto.response.volunteer.MissionHistoryFullItemDto>> currentMissionResult =
             new MediatorLiveData<>();
 
     @Nullable
@@ -44,10 +69,22 @@ public class VolunteerTaskViewModel extends BaseViewModel {
     @Inject
     public VolunteerTaskViewModel(GetVolunteerMissionUseCase getVolunteerMissionUseCase,
                                   AcceptVolunteerMissionUseCase acceptVolunteerMissionUseCase,
-                                  RejectVolunteerMissionUseCase rejectVolunteerMissionUseCase) {
+                                  RejectVolunteerMissionUseCase rejectVolunteerMissionUseCase,
+                                  GetLatestDispatchUseCase getLatestDispatchUseCase,
+                                  CancelDispatchAttemptUseCase cancelDispatchAttemptUseCase,
+                                  AcceptDispatchAttemptUseCase acceptDispatchAttemptUseCase,
+                                  com.drc.aidbridge.domain.usecase.volunteer.GetVolunteerMissionHistoryFullUseCase getVolunteerMissionHistoryFullUseCase,
+                                  com.drc.aidbridge.domain.usecase.volunteer.GetCurrentVolunteerMissionUseCase getCurrentVolunteerMissionUseCase,
+                                  com.drc.aidbridge.domain.repository.volunteer.VolunteerRepository volunteerRepository) {
         this.getVolunteerMissionUseCase = getVolunteerMissionUseCase;
         this.acceptVolunteerMissionUseCase = acceptVolunteerMissionUseCase;
         this.rejectVolunteerMissionUseCase = rejectVolunteerMissionUseCase;
+        this.getLatestDispatchUseCase = getLatestDispatchUseCase;
+        this.cancelDispatchAttemptUseCase = cancelDispatchAttemptUseCase;
+        this.acceptDispatchAttemptUseCase = acceptDispatchAttemptUseCase;
+        this.getVolunteerMissionHistoryFullUseCase = getVolunteerMissionHistoryFullUseCase;
+        this.getCurrentVolunteerMissionUseCase = getCurrentVolunteerMissionUseCase;
+        this.volunteerRepository = volunteerRepository;
     }
 
     public LiveData<Boolean> getIsMissionAccepted() {
@@ -80,6 +117,94 @@ public class VolunteerTaskViewModel extends BaseViewModel {
 
     public LiveData<NetworkResultWrapper<Boolean>> getRejectResult() {
         return rejectResult;
+    }
+
+    public LiveData<NetworkResultWrapper<LatestDispatchDataDto>> getLatestDispatchResult() {
+        return latestDispatchResult;
+    }
+
+    public LiveData<NetworkResultWrapper<LatestDispatchDataDto>> getCancelDispatchResult() {
+        return cancelDispatchResult;
+    }
+
+    public LiveData<NetworkResultWrapper<LatestDispatchDataDto>> getAcceptDispatchResult() {
+        return acceptDispatchResult;
+    }
+
+    public LiveData<NetworkResultWrapper<com.drc.aidbridge.data.remote.dto.response.volunteer.MissionHistoryFullDataDto>> getMissionHistoryResult() {
+        return missionHistoryResult;
+    }
+
+    public void fetchMissionHistoryFull(int page, int limit) {
+        LiveData<NetworkResultWrapper<com.drc.aidbridge.data.remote.dto.response.volunteer.MissionHistoryFullDataDto>> source = getVolunteerMissionHistoryFullUseCase.execute(page, limit);
+        missionHistoryResult.addSource(source, result -> {
+            missionHistoryResult.setValue(result);
+            if (result.isLoading()) return;
+            missionHistoryResult.removeSource(source);
+        });
+    }
+
+    public LiveData<LatestDispatchDataDto> getLatestDispatch() {
+        return latestDispatch;
+    }
+
+    public void fetchLatestDispatch() {
+        LiveData<NetworkResultWrapper<LatestDispatchDataDto>> source = getLatestDispatchUseCase.execute();
+        latestDispatchResult.addSource(source, result -> {
+            latestDispatchResult.setValue(result);
+            if (result.isLoading()) return;
+            latestDispatchResult.removeSource(source);
+            if (result.isSuccess()) {
+                latestDispatch.setValue(result.getData());
+            } else {
+                latestDispatch.setValue(null);
+            }
+        });
+    }
+
+    public LiveData<NetworkResultWrapper<com.drc.aidbridge.data.remote.dto.response.MissionDto>> getCompleteMissionApiResult() {
+        return completeMissionApiResult;
+    }
+
+    public LiveData<NetworkResultWrapper<com.drc.aidbridge.data.remote.dto.response.MissionDto>> getCancelMissionApiResult() {
+        return cancelMissionApiResult;
+    }
+
+    public LiveData<NetworkResultWrapper<com.drc.aidbridge.data.remote.dto.response.volunteer.MissionHistoryFullItemDto>> getCurrentMissionResult() {
+        return currentMissionResult;
+    }
+
+    public void fetchCurrentMission() {
+        LiveData<NetworkResultWrapper<com.drc.aidbridge.data.remote.dto.response.volunteer.MissionHistoryFullItemDto>> source = getCurrentVolunteerMissionUseCase.execute();
+        currentMissionResult.addSource(source, result -> {
+            currentMissionResult.setValue(result);
+            if (result.isLoading()) return;
+            currentMissionResult.removeSource(source);
+        });
+    }
+
+    public void acceptDispatch(String dispatchAttemptId) {
+        LiveData<NetworkResultWrapper<LatestDispatchDataDto>> source = acceptDispatchAttemptUseCase.execute(dispatchAttemptId);
+        acceptDispatchResult.addSource(source, result -> {
+            acceptDispatchResult.setValue(result);
+            if (result.isLoading()) return;
+            acceptDispatchResult.removeSource(source);
+            if (result.isSuccess()) {
+                latestDispatch.setValue(null);
+            }
+        });
+    }
+
+    public void cancelDispatch(String dispatchAttemptId) {
+        LiveData<NetworkResultWrapper<LatestDispatchDataDto>> source = cancelDispatchAttemptUseCase.execute(dispatchAttemptId);
+        cancelDispatchResult.addSource(source, result -> {
+            cancelDispatchResult.setValue(result);
+            if (result.isLoading()) return;
+            cancelDispatchResult.removeSource(source);
+            if (result.isSuccess()) {
+                latestDispatch.setValue(null);
+            }
+        });
     }
 
     public void setCurrentDeliveryStep(int step) {
@@ -172,6 +297,42 @@ public class VolunteerTaskViewModel extends BaseViewModel {
         currentDeliveryStep.setValue(1);
         isMissionAccepted.setValue(false);
         isMissionIgnored.setValue(true);
+    }
+
+    public void completeMission(String missionId, String notes) {
+        LiveData<NetworkResultWrapper<com.drc.aidbridge.data.remote.dto.response.MissionDto>> source = 
+            volunteerRepository.completeMission(missionId, notes);
+        completeMissionApiResult.addSource(source, result -> {
+            completeMissionApiResult.setValue(result);
+            if (result.isLoading()) {
+                return;
+            }
+            completeMissionApiResult.removeSource(source);
+            if (result.isSuccess()) {
+                currentMissionType.setValue(null);
+                currentDeliveryStep.setValue(1);
+                isMissionAccepted.setValue(false);
+                isMissionIgnored.setValue(true);
+            }
+        });
+    }
+
+    public void cancelMission(String missionId, String reason) {
+        LiveData<NetworkResultWrapper<com.drc.aidbridge.data.remote.dto.response.MissionDto>> source = 
+            volunteerRepository.cancelMission(missionId, reason);
+        cancelMissionApiResult.addSource(source, result -> {
+            cancelMissionApiResult.setValue(result);
+            if (result.isLoading()) {
+                return;
+            }
+            cancelMissionApiResult.removeSource(source);
+            if (result.isSuccess()) {
+                currentMissionType.setValue(null);
+                currentDeliveryStep.setValue(1);
+                isMissionAccepted.setValue(false);
+                isMissionIgnored.setValue(true);
+            }
+        });
     }
 
     private void loadPendingMission(String missionId) {

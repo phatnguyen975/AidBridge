@@ -1,7 +1,7 @@
 package com.drc.aidbridge.modules.volunteer.internal.usecase;
 
-import com.drc.aidbridge.modules.mission.internal.repository.MissionHistoryProjection;
-import com.drc.aidbridge.modules.mission.internal.repository.MissionJpaRepository;
+import com.drc.aidbridge.modules.mission.MissionFacade;
+import com.drc.aidbridge.modules.mission.MissionHistoryDTO;
 import com.drc.aidbridge.modules.shared.enums.MissionType;
 import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.volunteer.internal.repository.VolunteerJpaRepository;
@@ -25,7 +25,7 @@ import java.util.UUID;
 public class GetVolunteerMissionHistoryUseCase {
 
     private final VolunteerJpaRepository volunteerRepository;
-    private final MissionJpaRepository missionRepository;
+    private final MissionFacade missionFacade;
 
     /**
      * Returns paginated mission history including completed and cancelled missions.
@@ -44,10 +44,10 @@ public class GetVolunteerMissionHistoryUseCase {
         }
 
         PageRequest pageRequest = PageRequest.of(page - 1, limit);
-        Page<MissionHistoryProjection> historyPage = missionRepository.findHistoryProjectionByVolunteerId(userId, pageRequest);
+        Page<MissionHistoryDTO> historyPage = missionFacade.findHistoryByVolunteerId(userId, pageRequest);
 
         List<VolunteerMissionHistoryResponse.MissionHistoryItem> items = historyPage.getContent().stream()
-            .map(this::toMissionResponse)
+                .map(this::toMissionResponse)
                 .toList();
 
         log.debug("Retrieved {} history missions for volunteer {}", items.size(), userId);
@@ -74,7 +74,7 @@ public class GetVolunteerMissionHistoryUseCase {
         }
     }
 
-    private VolunteerMissionHistoryResponse.MissionHistoryItem toMissionResponse(MissionHistoryProjection row) {
+    private VolunteerMissionHistoryResponse.MissionHistoryItem toMissionResponse(MissionHistoryDTO row) {
         return VolunteerMissionHistoryResponse.MissionHistoryItem.builder()
                 .completedAt(row.getCompletedAt())
                 .missionType(parseMissionType(row.getMissionType()))

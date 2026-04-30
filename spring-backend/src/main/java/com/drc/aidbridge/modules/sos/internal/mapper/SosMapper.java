@@ -38,6 +38,12 @@ public class SosMapper {
                 .urgencyLevel(entity.getUrgencyLevel())
                 .status(entity.getStatus())
                 .imageUrl(entity.getImageUrl())
+                .clientRequestId(entity.getClientRequestId())
+                .source(entity.getSource())
+                .quickSos(entity.getQuickSos())
+                .accuracy(entity.getAccuracy())
+                .triggeredAt(entity.getTriggeredAt())
+                .locationCapturedAt(entity.getLocationCapturedAt())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();

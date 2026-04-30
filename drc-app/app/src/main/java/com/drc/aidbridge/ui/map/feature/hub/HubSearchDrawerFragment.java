@@ -24,16 +24,23 @@ import com.drc.aidbridge.data.remote.dto.response.hub.HubDto;
 import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerMapViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.slider.Slider;
-
 import org.osmdroid.util.GeoPoint;
+import com.drc.aidbridge.ui.map.base.BaseMapViewModel;
 
 import java.util.Locale;
 
 public class HubSearchDrawerFragment extends Fragment {
 
-    private VolunteerMapViewModel viewModel;
+    private BaseMapViewModel viewModel;
     private HubSearchAdapter adapter;
     private HubSearchListener listener;
+
+    public void setViewModel(BaseMapViewModel viewModel) {
+        this.viewModel = viewModel;
+        if (isAdded() && getView() != null && viewModel != null) {
+            observeViewModelResults();
+        }
+    }
 
     private RadioGroup rgLocationSource;
     private RadioButton rbCurrentLocation;
@@ -51,7 +58,8 @@ public class HubSearchDrawerFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_hub_search_drawer, container, false);
     }
 
@@ -59,8 +67,9 @@ public class HubSearchDrawerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Share ViewModel with parent activity
-        viewModel = new ViewModelProvider(requireActivity()).get(VolunteerMapViewModel.class);
+        if (viewModel != null) {
+            observeViewModelResults();
+        }
 
         rgLocationSource = view.findViewById(R.id.rgLocationSource);
         rbCurrentLocation = view.findViewById(R.id.rbCurrentLocation);
@@ -86,7 +95,11 @@ public class HubSearchDrawerFragment extends Fragment {
         });
 
         btnSearchHubs.setOnClickListener(v -> performSearch());
+    }
 
+    private void observeViewModelResults() {
+        if (viewModel == null)
+            return;
         viewModel.getHubSearchResult().observe(getViewLifecycleOwner(), result -> {
             if (result.isLoading()) {
                 progressHubSearch.setVisibility(View.VISIBLE);
@@ -120,7 +133,6 @@ public class HubSearchDrawerFragment extends Fragment {
         } else if (rbStartPoint.isChecked()) {
             location = viewModel.getStartPoint();
         }
-
 
         if (location == null) {
             Toast.makeText(requireContext(), "Chưa xác định được vị trí của bạn.", Toast.LENGTH_LONG).show();

@@ -4,7 +4,247 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/spacing_md">
+    android:padding="@dimen/spacing_md"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardSosAlert"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_md"
+        app:cardBackgroundColor="#D32F2F"
+        app:cardCornerRadius="@dimen/radius_xl"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/spacing_md">
+
+            <TextView
+                android:id="@+id/tvSosTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TÍN HIỆU SOS KHẨN CẤP!"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_lg"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvSosDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:text="Khoảng cách: -- km"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_sm"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSosTitle" />
+
+            <Button
+                android:id="@+id/btnAcceptSos"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:layout_marginEnd="@dimen/spacing_xs"
+                android:backgroundTint="@color/safe_green"
+                android:text="Nhận"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toStartOf="@+id/btnDeclineSos"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSosDistance" />
+
+            <Button
+                android:id="@+id/btnDeclineSos"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_xs"
+                android:textColor="@color/text_primary"
+                app:strokeColor="@color/text_primary"
+                android:text="Hủy"
+                app:layout_constraintBottom_toBottomOf="@id/btnAcceptSos"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnAcceptSos"
+                app:layout_constraintTop_toTopOf="@id/btnAcceptSos" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardCurrentMission"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_md"
+        app:cardBackgroundColor="#E8F5E9"
+        app:cardCornerRadius="@dimen/radius_xl"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardSosAlert"
+        android:visibility="gone">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/spacing_md">
+
+            <TextView
+                android:id="@+id/tvCurrentMissionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NHIỆM VỤ HIỆN TẠI"
+                android:textColor="#1B5E20"
+                android:textSize="@dimen/text_lg"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvCurrentMissionType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:text="Loại: --"
+                android:textColor="#2E7D32"
+                android:textSize="@dimen/text_sm"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCurrentMissionTitle" />
+
+            <TextView
+                android:id="@+id/tvCurrentMissionAddress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:text="Địa chỉ: --"
+                android:textColor="#2E7D32"
+                android:textSize="@dimen/text_sm"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCurrentMissionType" />
+
+            <TextView
+                android:id="@+id/tvCurrentMissionLocation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:text="Tọa độ: N/A"
+                android:textColor="#2E7D32"
+                android:textSize="@dimen/text_sm"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCurrentMissionAddress" />
+
+            <TextView
+                android:id="@+id/tvCurrentMissionRadius"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:text="Bán kính cứu trợ: N/A"
+                android:textColor="#2E7D32"
+                android:textSize="@dimen/text_sm"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCurrentMissionLocation" />
+
+            <Button
+                android:id="@+id/btnCompleteCurrentMission"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:layout_marginEnd="@dimen/spacing_xs"
+                android:backgroundTint="#4CAF50"
+                android:text="Hoàn thành"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toStartOf="@+id/btnCancelCurrentMission"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCurrentMissionRadius" />
+
+            <Button
+                android:id="@+id/btnCancelCurrentMission"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_xs"
+                android:textColor="#C62828"
+                app:strokeColor="#C62828"
+                android:text="Hủy"
+                app:layout_constraintBottom_toBottomOf="@id/btnCompleteCurrentMission"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnCompleteCurrentMission"
+                app:layout_constraintTop_toTopOf="@id/btnCompleteCurrentMission" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMissionHistory"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/spacing_md"
+        android:layout_marginBottom="@dimen/spacing_xs"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toTopOf="@id/layoutPagination"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardCurrentMission" />
+
+    <LinearLayout
+        android:id="@+id/layoutPagination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_md"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPrevPage"
+            style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trước"
+            app:icon="@android:drawable/ic_media_previous"
+            android:textColor="@color/color_primary"
+            app:strokeColor="@color/color_primary"
+            android:enabled="false"/>
+
+        <TextView
+            android:id="@+id/tvCurrentPage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:layout_marginEnd="@dimen/spacing_md"
+            android:text="Trang 1"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_md"
+            android:textStyle="bold"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNextPage"
+            style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sau"
+            app:icon="@android:drawable/ic_media_next"
+            android:textColor="@color/color_primary"
+            app:strokeColor="@color/color_primary"
+            app:iconGravity="textEnd"/>
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progressMissionRouter"
@@ -14,7 +254,7 @@
         app:layout_constraintBottom_toTopOf="@id/tvMissionPlaceholder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardSosAlert"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView

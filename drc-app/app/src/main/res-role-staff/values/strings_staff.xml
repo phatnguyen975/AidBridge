@@ -8,6 +8,8 @@
     <string name="staff_profile_status_subtitle">Sẵn sàng nhận nhiệm vụ mới</string>
     <string name="staff_profile_ready">Sẵn sàng</string>
     <string name="staff_profile_offline">Ngoại tuyến</string>
+    <string name="staff_gateway_sms_permission_missing">Chưa có quyền SMS</string>
+    <string name="staff_gateway_sms_permission_denied">Gateway chưa có quyền nhận SMS</string>
     <string name="staff_profile_phone_label">SỐ ĐIỆN THOẠI</string>
     <string name="staff_profile_phone_value">0901 234 567</string>
     <string name="staff_profile_email_label">EMAIL</string>

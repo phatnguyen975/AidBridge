@@ -47,7 +47,7 @@
     <string name="base_map_end_address_loading">Vị trí nạn nhân: đang cập nhật...</string>
     <string name="base_map_marker_legend">Chú thích marker: Start (xanh), End (đỏ), Bạn (xanh dương)</string>
     <string name="base_map_hud_waiting">Chờ xác nhận vị trí...</string>
-    <string name="base_map_cancel_mission">Hủy nhiệm vụ</string>
+    <string name="base_map_cancel_mission">Hủy</string>
     <string name="base_map_arrived">Tôi đã tới nơi</string>
     <string name="base_map_dev_sign">DEV</string>
     <string name="base_map_dev_avatar_desc">Ảnh đại diện nhân viên hỗ trợ</string>
@@ -69,7 +69,7 @@
     <string name="base_map_point_start_set">Đã đặt điểm đầu</string>
     <string name="base_map_point_end_set">Đã đặt điểm cuối</string>
     <string name="base_map_mission_cancelled">Đã hủy chế độ dẫn đường</string>
-    <string name="base_map_arrived_success">Đã xác nhận tới nơi nạn nhân</string>
+    <string name="base_map_arrived_success">Đã hủy chế độ dẫn đường</string>
     <string name="base_map_dev_simulate_stop">Dừng mô phỏng</string>
     <string name="base_map_dev_panel_title">Bảng điều khiển Dev</string>
     <string name="base_map_dev_coords_hint">Lat, Lon (ví dụ: 10.802, 106.713)</string>
