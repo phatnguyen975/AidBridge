@@ -36,8 +36,20 @@ public class HubResponseDto {
     @SerializedName("location")
     private LocationDto location;
 
+    @SerializedName("latitude")
+    private Double latitude;
+
+    @SerializedName(value = "longitude", alternate = { "lng" })
+    private Double longitude;
+
     @SerializedName(value = "inventory_groups", alternate = { "inventoryGroups" })
     private List<InventoryGroupDto> inventoryGroups;
+
+    @SerializedName(value = "total_imported_quantity", alternate = { "totalImportedQuantity" })
+    private Long totalImportedQuantity;
+
+    @SerializedName(value = "total_exported_quantity", alternate = { "totalExportedQuantity" })
+    private Long totalExportedQuantity;
 
     public String getId() {
         return id;
@@ -79,8 +91,24 @@ public class HubResponseDto {
         return location;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
     public List<InventoryGroupDto> getInventoryGroups() {
         return inventoryGroups;
+    }
+
+    public Long getTotalImportedQuantity() {
+        return totalImportedQuantity;
+    }
+
+    public Long getTotalExportedQuantity() {
+        return totalExportedQuantity;
     }
 
     public static class LocationDto {
@@ -103,11 +131,14 @@ public class HubResponseDto {
         @SerializedName(value = "parent_category_name", alternate = { "parentCategoryName" })
         private String parentCategoryName;
 
+        @SerializedName("category")
+        private String category;
+
         @SerializedName("items")
         private List<InventoryItemDto> items;
 
         public String getParentCategoryName() {
-            return parentCategoryName;
+            return parentCategoryName != null ? parentCategoryName : category;
         }
 
         public List<InventoryItemDto> getItems() {
@@ -119,14 +150,23 @@ public class HubResponseDto {
         @SerializedName(value = "item_category_id", alternate = { "itemCategoryId" })
         private String itemCategoryId;
 
+        @SerializedName(value = "item_id", alternate = { "itemId" })
+        private String itemId;
+
         @SerializedName(value = "item_category_name", alternate = { "itemCategoryName" })
         private String itemCategoryName;
+
+        @SerializedName("name")
+        private String name;
 
         @SerializedName("unit")
         private String unit;
 
         @SerializedName(value = "current_quantity", alternate = { "currentQuantity" })
         private Integer currentQuantity;
+
+        @SerializedName("quantity")
+        private Integer quantity;
 
         @SerializedName(value = "low_stock_threshold", alternate = { "lowStockThreshold" })
         private Integer lowStockThreshold;
@@ -135,11 +175,11 @@ public class HubResponseDto {
         private String lastRestockedAt;
 
         public String getItemCategoryId() {
-            return itemCategoryId;
+            return itemCategoryId != null ? itemCategoryId : itemId;
         }
 
         public String getItemCategoryName() {
-            return itemCategoryName;
+            return itemCategoryName != null ? itemCategoryName : name;
         }
 
         public String getUnit() {
@@ -147,7 +187,7 @@ public class HubResponseDto {
         }
 
         public Integer getCurrentQuantity() {
-            return currentQuantity;
+            return currentQuantity != null ? currentQuantity : quantity;
         }
 
         public Integer getLowStockThreshold() {

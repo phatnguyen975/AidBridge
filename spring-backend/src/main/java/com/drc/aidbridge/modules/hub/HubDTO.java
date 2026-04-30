@@ -1,13 +1,11 @@
 package com.drc.aidbridge.modules.hub;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.drc.aidbridge.modules.shared.enums.HubStatus;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +25,8 @@ public class HubDTO {
     private Instant createdAt;
     private Instant updatedAt;
     private LocationDTO location;
+    private Double latitude;
+    private Double longitude;
 
     // Always expose grouped inventory in JSON (at minimum as an empty array).
     @JsonInclude(JsonInclude.Include.ALWAYS)
@@ -41,6 +41,8 @@ public class HubDTO {
     }
     private List<InventoryItemDTO> inventory;
     private Double distanceInMeters;
+    private Long totalImportedQuantity;
+    private Long totalExportedQuantity;
 
     @Data
     @Builder
@@ -62,6 +64,22 @@ public class HubDTO {
         private Integer currentQuantity;
         private Integer lowStockThreshold;
         private Instant lastRestockedAt;
+
+        public UUID getItemId() {
+            return itemCategoryId;
+        }
+
+        public String getName() {
+            return itemCategoryName;
+        }
+
+        public Integer getQuantity() {
+            return currentQuantity != null ? currentQuantity : 0;
+        }
+
+        public String getExpiryDate() {
+            return null;
+        }
     }
 
     @Data
@@ -73,6 +91,10 @@ public class HubDTO {
 
         @Builder.Default
         private List<InventoryItemDTO> items = new ArrayList<>();
+
+        public String getCategory() {
+            return parentCategoryName;
+        }
     }
 
 }

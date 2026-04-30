@@ -2,6 +2,7 @@ package com.drc.aidbridge.modules.shared.exception;
 
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -112,13 +113,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(message));
     }
 
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDataAccessException(DataAccessException ex) {
+        Throwable rootCause = ex.getMostSpecificCause();
+        String rootMessage = rootCause != null && rootCause.getMessage() != null
+                ? rootCause.getMessage()
+                : ex.getMessage();
+        log.error("Database error: {}", rootMessage, ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error("Lỗi truy vấn cơ sở dữ liệu. Vui lòng thử lại sau."));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
         log.error("Unexpected error occurred", ex);
-        String message = ex.getMessage() != null && !ex.getMessage().isBlank()
-                ? ex.getMessage()
-                : "An unexpected error occurred";
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error(message));
+                .body(ApiResponse.error("Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau."));
     }
 }

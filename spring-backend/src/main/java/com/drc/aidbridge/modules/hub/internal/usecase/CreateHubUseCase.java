@@ -9,6 +9,7 @@ import com.drc.aidbridge.modules.hub.internal.repository.HubRepository;
 import com.drc.aidbridge.modules.hub.internal.web.dto.HubInventoryElementRequest;
 import com.drc.aidbridge.modules.hub.internal.web.dto.CreateHubRequest;
 import com.drc.aidbridge.modules.aid.internal.repository.AidItemCategoryJpaRepository;
+import com.drc.aidbridge.modules.shared.enums.HubStatus;
 import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -37,10 +38,20 @@ public class CreateHubUseCase {
         if (request == null) {
             throw new IllegalArgumentException("request is null");
         }
+        validateStatus(request.getStatus());
         Hub hub = hubMapper.toEntity(request);
         Hub saved = hubRepository.save(hub);
         upsertCreateInventories(saved.getId(), request.getElements());
         return hubMapper.toDTO(saved);
+    }
+
+    private void validateStatus(HubStatus status) {
+        if (status == null) {
+            return;
+        }
+        if (status != HubStatus.ACTIVE && status != HubStatus.INACTIVE) {
+            throw new IllegalArgumentException("Hub status must be ACTIVE or INACTIVE");
+        }
     }
 
     private void upsertCreateInventories(UUID hubId, List<HubInventoryElementRequest> elements) {

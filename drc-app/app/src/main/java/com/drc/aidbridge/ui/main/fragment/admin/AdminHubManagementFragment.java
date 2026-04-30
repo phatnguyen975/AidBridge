@@ -1,9 +1,11 @@
 package com.drc.aidbridge.ui.main.fragment.admin;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -12,14 +14,18 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.drc.aidbridge.R;
+import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.FragmentAdminHubManagementBinding;
 import com.drc.aidbridge.domain.enums.HubStatus;
 import com.drc.aidbridge.domain.model.admin.Hub;
+import com.drc.aidbridge.domain.model.admin.HubSummary;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.adapter.admin.AdminHubAdapter;
 import com.drc.aidbridge.ui.main.viewmodel.admin.AdminHubManagementViewModel;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -60,34 +66,46 @@ public class AdminHubManagementFragment extends BaseFragment<FragmentAdminHubMan
         });
 
         setupClickListeners();
-        viewModel.fetchHubs();
     }
 
     private void setupClickListeners() {
         binding.buttonAdminHubBack.setOnClickListener(v -> popBackStackSafely());
-        binding.fabAdminAddHub.setOnClickListener(v -> showToast(getString(R.string.admin_hub_mgmt_toast_add_new)));
+        binding.buttonAdminHubRetry.setOnClickListener(v -> refreshHubData());
+        binding.fabAdminAddHub.setOnClickListener(v ->
+                navigateSafely(R.id.action_adminHubManagementFragment_to_adminAddHubFragment));
     }
 
     @Override
     protected void observeViewModel() {
         viewModel.getHubsResult().observe(getViewLifecycleOwner(),
-                resultObserver(this::renderHubs, this::showHubLoadError));
+                resultObserver(this::renderHubs, this::renderHubError));
 
-        viewModel.getToggleHubStatusResult().observe(getViewLifecycleOwner(),
-                resultObserver(this::handleToggleHubStatusSuccess, this::showHubLoadError));
+        viewModel.getToggleHubStatusResult().observe(getViewLifecycleOwner(), this::renderToggleStatusResult);
 
-        viewModel.getTotalHubsCount().observe(getViewLifecycleOwner(),
-                count -> binding.textAdminHubTotal.setText(String.valueOf(count != null ? count : 0)));
+        viewModel.getHubSummary().observe(getViewLifecycleOwner(), this::renderSummary);
+    }
 
-        viewModel.getActiveHubsCount().observe(getViewLifecycleOwner(),
-                count -> binding.textAdminHubActive.setText(String.valueOf(count != null ? count : 0)));
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshHubData();
+    }
+
+    @Override
+    protected void onLoadingStateChanged(boolean isLoading) {
+        if (binding == null) {
+            return;
+        }
+        binding.progressAdminHubs.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        if (isLoading) {
+            binding.recyclerAdminHubs.setVisibility(View.GONE);
+            binding.layoutAdminHubEmpty.setVisibility(View.GONE);
+            binding.layoutAdminHubError.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void onViewHubDetails(@NonNull Hub hub) {
-        String hubName = resolveHubName(hub);
-        showToast(getString(R.string.admin_hub_mgmt_toast_open_details, hubName));
-
         if (hub.getId() == null) {
             showToast(getString(R.string.admin_hub_detail_error_invalid_hub_id));
             return;
@@ -100,15 +118,64 @@ public class AdminHubManagementFragment extends BaseFragment<FragmentAdminHubMan
 
     @Override
     public void onToggleHubStatus(@NonNull Hub hub) {
-        viewModel.toggleHubStatus(hub.getId());
+        HubStatus currentStatus = HubStatus.fromStringSafe(hub.getStatus());
+        boolean deactivate = currentStatus == HubStatus.ACTIVE;
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(deactivate
+                        ? R.string.admin_hub_mgmt_confirm_deactivate_title
+                        : R.string.admin_hub_mgmt_confirm_activate_title)
+                .setMessage(deactivate
+                        ? R.string.admin_hub_mgmt_confirm_deactivate_message
+                        : R.string.admin_hub_mgmt_confirm_activate_message)
+                .setNegativeButton(R.string.admin_hub_mgmt_confirm_cancel, null)
+                .setPositiveButton(R.string.admin_hub_mgmt_confirm_positive,
+                        (dialog, which) -> viewModel.toggleHubStatus(hub.getId()))
+                .show();
     }
 
-    private void renderHubs(@Nullable java.util.List<Hub> hubs) {
-        if (hubs == null) {
-            hubAdapter.submitList(new ArrayList<>());
+    private void refreshHubData() {
+        viewModel.fetchHubs();
+    }
+
+    private void renderHubs(@Nullable List<Hub> hubs) {
+        List<Hub> safeHubs = hubs != null ? hubs : Collections.emptyList();
+        hubAdapter.submitList(safeHubs);
+
+        boolean isEmpty = safeHubs.isEmpty();
+        binding.recyclerAdminHubs.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        binding.layoutAdminHubEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        binding.layoutAdminHubError.setVisibility(View.GONE);
+        if (isEmpty) {
+            boolean searching = binding.editTextAdminHubSearch.getText() != null
+                    && !binding.editTextAdminHubSearch.getText().toString().trim().isEmpty();
+            binding.textAdminHubEmpty.setText(searching
+                    ? R.string.admin_hub_mgmt_empty_search
+                    : R.string.admin_hub_mgmt_empty);
+        }
+    }
+
+    private void renderSummary(@Nullable HubSummary summary) {
+        binding.textAdminHubTotal.setText(String.valueOf(summary != null ? summary.getTotalHubs() : 0));
+        binding.textAdminHubActive.setText(String.valueOf(summary != null ? summary.getActiveHubs() : 0));
+    }
+
+    private void renderToggleStatusResult(@Nullable NetworkResultWrapper<Hub> result) {
+        if (result == null || result.isLoading() || result.hasBeenHandled()) {
             return;
         }
-        hubAdapter.submitList(hubs);
+
+        result.markAsHandled();
+        if (result.isSuccess()) {
+            handleToggleHubStatusSuccess(result.getData());
+            return;
+        }
+
+        if (result.isError()) {
+            String message = result.getMessage();
+            showToast(message != null && !message.trim().isEmpty()
+                    ? message
+                    : getString(R.string.admin_hub_mgmt_error_generic));
+        }
     }
 
     private void handleToggleHubStatusSuccess(@Nullable Hub updatedHub) {
@@ -121,12 +188,13 @@ public class AdminHubManagementFragment extends BaseFragment<FragmentAdminHubMan
         showToast(getString(R.string.admin_hub_mgmt_toast_status_changed, hubName, getString(statusRes)));
     }
 
-    private void showHubLoadError(@NonNull String message) {
-        if (message.trim().isEmpty()) {
-            showToast(getString(R.string.admin_hub_mgmt_error_generic));
-            return;
-        }
-        showToast(message);
+    private void renderHubError(@NonNull String message) {
+        hubAdapter.submitList(Collections.emptyList());
+        binding.recyclerAdminHubs.setVisibility(View.GONE);
+        binding.layoutAdminHubEmpty.setVisibility(View.GONE);
+        binding.layoutAdminHubError.setVisibility(View.VISIBLE);
+        Log.e("AdminHubMgmt", "Hub load error: " + message);
+        binding.textAdminHubError.setText(getString(R.string.admin_hub_mgmt_error_generic));
     }
 
     @NonNull

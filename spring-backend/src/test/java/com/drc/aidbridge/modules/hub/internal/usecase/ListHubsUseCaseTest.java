@@ -33,7 +33,7 @@ class ListHubsUseCaseTest {
         Hub active = Hub.builder().id(UUID.randomUUID()).name("A").status(HubStatus.ACTIVE).build();
         Hub inactive = Hub.builder().id(UUID.randomUUID()).name("B").status(HubStatus.INACTIVE).build();
 
-        when(hubRepository.findAll()).thenReturn(List.of(active, inactive));
+        when(hubRepository.searchHubs(null, null)).thenReturn(List.of(active, inactive));
         when(hubMapper.toDTO(active)).thenReturn(HubDTO.builder().id(active.getId()).name("A").build());
         when(hubMapper.toDTO(inactive)).thenReturn(HubDTO.builder().id(inactive.getId()).name("B").build());
 
@@ -46,12 +46,25 @@ class ListHubsUseCaseTest {
     void execute_ShouldFilterByStatus_WhenStatusProvided() {
         Hub active = Hub.builder().id(UUID.randomUUID()).name("A").status(HubStatus.ACTIVE).build();
 
-        when(hubRepository.findByStatus(HubStatus.ACTIVE)).thenReturn(List.of(active));
+        when(hubRepository.searchHubs(HubStatus.ACTIVE, null)).thenReturn(List.of(active));
         when(hubMapper.toDTO(active)).thenReturn(HubDTO.builder().id(active.getId()).name("A").build());
 
         List<HubDTO> result = useCase.execute(HubStatus.ACTIVE);
 
         assertEquals(1, result.size());
         assertEquals("A", result.get(0).getName());
+    }
+
+    @Test
+    void execute_ShouldSearchByKeyword_WhenKeywordProvided() {
+        Hub hub = Hub.builder().id(UUID.randomUUID()).name("Quan 1").status(HubStatus.ACTIVE).build();
+
+        when(hubRepository.searchHubs(null, "quan 1")).thenReturn(List.of(hub));
+        when(hubMapper.toDTO(hub)).thenReturn(HubDTO.builder().id(hub.getId()).name("Quan 1").build());
+
+        List<HubDTO> result = useCase.execute(null, "  quan 1  ");
+
+        assertEquals(1, result.size());
+        assertEquals("Quan 1", result.get(0).getName());
     }
 }

@@ -15,6 +15,20 @@ import java.util.UUID;
 public interface HubRepository extends JpaRepository<Hub, UUID> {
 	List<Hub> findByStatus(HubStatus status);
 
+	long countByStatus(HubStatus status);
+
+	@Query(value = """
+			SELECT * FROM hubs h
+			WHERE (CAST(:status AS text) IS NULL OR h.status::text = CAST(:status AS text))
+			AND (
+				CAST(:keyword AS text) IS NULL
+				OR LOWER(h.name) LIKE LOWER('%' || CAST(:keyword AS text) || '%')
+				OR LOWER(h.address) LIKE LOWER('%' || CAST(:keyword AS text) || '%')
+			)
+			ORDER BY h.created_at DESC
+			""", nativeQuery = true)
+	List<Hub> searchHubs(@Param("status") String status, @Param("keyword") String keyword);
+
 	@Query(value = "SELECT h.id, h.name, h.address, h.phone_number as \"phoneNumber\", " +
 			"h.image_url as \"imageUrl\", h.status, h.operating_hours as \"operatingHours\", " +
 			"h.created_at as \"createdAt\", h.updated_at as \"updatedAt\", " +

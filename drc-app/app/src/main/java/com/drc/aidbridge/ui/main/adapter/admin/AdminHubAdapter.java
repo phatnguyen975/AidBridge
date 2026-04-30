@@ -65,6 +65,7 @@ public class AdminHubAdapter extends RecyclerView.Adapter<AdminHubAdapter.AdminH
             binding.textHubName.setText(resolveText(hub.getName(), R.string.admin_hub_mgmt_name_fallback));
             binding.textHubAddress.setText(resolveText(hub.getAddress(), R.string.admin_hub_mgmt_address_fallback));
             binding.textHubOperatingHours.setText(resolveOperatingHoursText(hub.getOperatingHours()));
+            binding.textHubPhone.setText(resolvePhoneText(hub.getPhoneNumber()));
 
             HubStatus status = HubStatus.fromStringSafe(hub.getStatus());
 
@@ -129,6 +130,17 @@ public class AdminHubAdapter extends RecyclerView.Adapter<AdminHubAdapter.AdminH
             return binding.getRoot().getContext().getString(
                     R.string.admin_hub_mgmt_operating_hours_format,
                     content);
+        }
+
+        @NonNull
+        private String resolvePhoneText(String phoneNumber) {
+            String content = phoneNumber;
+            if (content == null || content.trim().isEmpty()) {
+                content = binding.getRoot().getContext().getString(R.string.admin_hub_detail_phone_empty_value);
+            } else {
+                content = content.trim();
+            }
+            return binding.getRoot().getContext().getString(R.string.admin_hub_detail_phone_format, content);
         }
     }
 

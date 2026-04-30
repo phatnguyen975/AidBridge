@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,15 +27,19 @@ public class HubController {
     private final HubFacade hubFacade;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<HubDTO>>> listHubs(@RequestParam(required = false) HubStatus status) {
-        List<HubDTO> list = hubFacade.list(status);
+    public ResponseEntity<ApiResponse<List<HubDTO>>> listHubs(@RequestParam(required = false) HubStatus status,
+                                                              @RequestParam(required = false) String keyword) {
+        List<HubDTO> list = hubFacade.list(status, keyword);
         return ResponseEntity.ok(ApiResponse.success("Hubs retrieved successfully", list));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<HubDTO>> getHub(@PathVariable UUID id) {
         HubDTO dto = getHubByIdUseCase.execute(id);
-        if (dto == null) return ResponseEntity.notFound().build();
+        if (dto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error("Hub not found: " + id));
+        }
         return ResponseEntity.ok(ApiResponse.success("Hub retrieved successfully", dto));
     }
 
@@ -45,12 +50,14 @@ public class HubController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<HubDTO>> createHub(@Valid @RequestBody CreateHubRequest request) {
         HubDTO dto = hubFacade.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Hub created", dto));
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<HubDTO>> updateHub(@PathVariable UUID id,
                                                           @Valid @RequestBody UpdateHubRequest request) {
         HubDTO dto = hubFacade.update(id, request);

@@ -77,6 +77,17 @@
             app:layout_constraintStart_toStartOf="@id/text_hub_name"
             app:layout_constraintTop_toBottomOf="@id/text_hub_address" />
 
+        <TextView
+            android:id="@+id/text_hub_phone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+            android:textColor="@color/admin_text_secondary"
+            android:textSize="@dimen/admin_hub_item_sub_text_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/text_hub_name"
+            app:layout_constraintTop_toBottomOf="@id/text_hub_operating_hours" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_hub_details"
             android:layout_width="0dp"
@@ -92,7 +103,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/button_hub_toggle_status"
             app:layout_constraintStart_toStartOf="@id/text_hub_name"
-            app:layout_constraintTop_toBottomOf="@id/text_hub_operating_hours"
+            app:layout_constraintTop_toBottomOf="@id/text_hub_phone"
             app:strokeColor="@color/admin_button_edit_stroke"
             app:strokeWidth="@dimen/admin_hub_item_card_stroke" />
 
@@ -109,7 +120,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/button_hub_details"
-            app:layout_constraintTop_toBottomOf="@id/text_hub_operating_hours" />
+            app:layout_constraintTop_toBottomOf="@id/text_hub_phone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

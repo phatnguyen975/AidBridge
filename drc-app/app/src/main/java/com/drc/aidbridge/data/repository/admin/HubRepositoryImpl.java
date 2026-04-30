@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.api.admin.HubApiService;
+import com.drc.aidbridge.data.remote.dto.request.admin.CreateHubRequest;
 import com.drc.aidbridge.data.remote.dto.request.admin.UpdateHubStatusRequest;
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 import com.drc.aidbridge.data.remote.dto.response.admin.HubResponseDto;
@@ -36,15 +37,22 @@ public class HubRepositoryImpl extends BaseRepository implements HubRepository {
 
     @Override
     public LiveData<NetworkResultWrapper<List<Hub>>> listHubs() {
+        return listHubs(null);
+    }
+
+    @Override
+    public LiveData<NetworkResultWrapper<List<Hub>>> listHubs(String keyword) {
         MutableLiveData<NetworkResultWrapper<List<Hub>>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
 
-        hubApiService.getHubs().enqueue(new Callback<BaseResponse<List<HubResponseDto>>>() {
+        hubApiService.getHubs(trimToNull(keyword)).enqueue(new Callback<BaseResponse<List<HubResponseDto>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<HubResponseDto>>> call,
                     Response<BaseResponse<List<HubResponseDto>>> response) {
                 if (!response.isSuccessful()) {
-                    result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
+                    result.postValue(NetworkResultWrapper.error(
+                            extractHubHttpError(response, "Khong the tai danh sach tram."),
+                            response.code()));
                     return;
                 }
 
@@ -88,6 +96,72 @@ public class HubRepositoryImpl extends BaseRepository implements HubRepository {
     }
 
     @Override
+    public LiveData<NetworkResultWrapper<Hub>> createHub(String name,
+            String address,
+            String phoneNumber,
+            String imageUrl,
+            String operatingHours,
+            Double latitude,
+            Double longitude) {
+        MutableLiveData<NetworkResultWrapper<Hub>> result = new MutableLiveData<>();
+        result.postValue(NetworkResultWrapper.loading());
+
+        CreateHubRequest request = new CreateHubRequest(
+                safeText(name),
+                safeText(address),
+                safeText(phoneNumber),
+                trimToNull(imageUrl),
+                HubStatus.ACTIVE.name(),
+                safeText(operatingHours),
+                latitude,
+                longitude);
+
+        hubApiService.createHub(request).enqueue(new Callback<BaseResponse<HubResponseDto>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<HubResponseDto>> call,
+                    Response<BaseResponse<HubResponseDto>> response) {
+                if (!response.isSuccessful()) {
+                    result.postValue(NetworkResultWrapper.error(
+                            extractHubHttpError(response, "Khong the them tram."),
+                            response.code()));
+                    return;
+                }
+
+                BaseResponse<HubResponseDto> baseResponse = response.body();
+                if (baseResponse == null) {
+                    result.postValue(NetworkResultWrapper.error("Phan hoi tao tram khong hop le."));
+                    return;
+                }
+
+                if (!baseResponse.isSuccess()) {
+                    String apiMessage = baseResponse.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                            apiMessage != null && !apiMessage.trim().isEmpty()
+                                    ? apiMessage
+                                    : "Khong the them tram."));
+                    return;
+                }
+
+                Hub mappedHub = mapToDomain(baseResponse.getData());
+                if (mappedHub == null) {
+                    result.postValue(NetworkResultWrapper.error("Du lieu tram vua tao khong hop le."));
+                    return;
+                }
+
+                result.postValue(NetworkResultWrapper.success(mappedHub));
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<HubResponseDto>> call, Throwable throwable) {
+                result.postValue(NetworkResultWrapper.error(
+                        "Khong the ket noi may chu: " + safeMessage(throwable)));
+            }
+        });
+
+        return result;
+    }
+
+    @Override
     public LiveData<NetworkResultWrapper<Hub>> updateHubStatus(UUID hubId, HubStatus status) {
         MutableLiveData<NetworkResultWrapper<Hub>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
@@ -98,7 +172,9 @@ public class HubRepositoryImpl extends BaseRepository implements HubRepository {
             public void onResponse(Call<BaseResponse<HubResponseDto>> call,
                     Response<BaseResponse<HubResponseDto>> response) {
                 if (!response.isSuccessful()) {
-                    result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
+                    result.postValue(NetworkResultWrapper.error(
+                            extractHubHttpError(response, "Khong the cap nhat trang thai tram."),
+                            response.code()));
                     return;
                 }
 
@@ -147,7 +223,9 @@ public class HubRepositoryImpl extends BaseRepository implements HubRepository {
             public void onResponse(Call<BaseResponse<HubResponseDto>> call,
                     Response<BaseResponse<HubResponseDto>> response) {
                 if (!response.isSuccessful()) {
-                    result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
+                    result.postValue(NetworkResultWrapper.error(
+                            extractHubHttpError(response, "Khong the tai chi tiet tram."),
+                            response.code()));
                     return;
                 }
 
@@ -200,6 +278,8 @@ public class HubRepositoryImpl extends BaseRepository implements HubRepository {
         Hub.Location location = null;
         if (locationDto != null) {
             location = new Hub.Location(locationDto.getLat(), locationDto.getLng());
+        } else if (dto.getLatitude() != null || dto.getLongitude() != null) {
+            location = new Hub.Location(dto.getLatitude(), dto.getLongitude());
         }
 
         List<Hub.InventoryGroup> inventoryGroups = new ArrayList<>();
@@ -245,7 +325,9 @@ public class HubRepositoryImpl extends BaseRepository implements HubRepository {
                 safeText(dto.getCreatedAt()),
                 safeText(dto.getUpdatedAt()),
                 location,
-                inventoryGroups);
+                inventoryGroups,
+                safeLong(dto.getTotalImportedQuantity()),
+                safeLong(dto.getTotalExportedQuantity()));
     }
 
     private UUID parseUuid(String rawId) {
@@ -264,7 +346,28 @@ public class HubRepositoryImpl extends BaseRepository implements HubRepository {
         return text == null ? "" : text.trim();
     }
 
+    private String trimToNull(String text) {
+        String safe = safeText(text);
+        return safe.isEmpty() ? null : safe;
+    }
+
     private int safeInteger(Integer value) {
         return value == null ? 0 : Math.max(value, 0);
+    }
+
+    private long safeLong(Long value) {
+        return value == null ? 0L : Math.max(value, 0L);
+    }
+
+    private String extractHubHttpError(Response<?> response, String fallback) {
+        if (response != null && response.code() == 403) {
+            return "Ban khong co quyen thuc hien thao tac nay";
+        }
+
+        String message = response != null ? extractHttpError(response) : "";
+        if (message == null || message.trim().isEmpty()) {
+            return fallback;
+        }
+        return message;
     }
 }

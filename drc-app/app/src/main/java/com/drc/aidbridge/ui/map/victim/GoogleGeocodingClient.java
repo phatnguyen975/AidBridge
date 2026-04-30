@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,19 +43,29 @@ public class GoogleGeocodingClient {
     @Nullable
     public GeocodingResult geocodeFirstAddress(@NonNull Context context,
                                                @NonNull String query) throws IOException {
+        List<GeocodingResult> suggestions = geocodeAddressSuggestions(context, query, 1);
+        return suggestions.isEmpty() ? null : suggestions.get(0);
+    }
+
+    @NonNull
+    public List<GeocodingResult> geocodeAddressSuggestions(@NonNull Context context,
+                                                           @NonNull String query,
+                                                           int maxResults) throws IOException {
         String trimmedQuery = query != null ? query.trim() : "";
+        int safeMaxResults = Math.max(1, maxResults);
         if (trimmedQuery.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
 
-        GeocodingResult geocoderResult = searchWithAndroidGeocoder(context, trimmedQuery);
-        if (geocoderResult != null) {
-            return geocoderResult;
+        List<GeocodingResult> geocoderResults =
+            searchWithAndroidGeocoder(context, trimmedQuery, safeMaxResults);
+        if (!geocoderResults.isEmpty()) {
+            return geocoderResults;
         }
 
         String apiKey = BuildConfig.MAPS_API_KEY != null ? BuildConfig.MAPS_API_KEY.trim() : "";
         if (apiKey.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
 
         // TODO(test-cost): Disable this call or switch to mock data after QA to avoid paid API usage.
@@ -80,11 +91,11 @@ public class GoogleGeocodingClient {
                 : connection.getErrorStream();
 
             if (stream == null) {
-                return null;
+                return new ArrayList<>();
             }
 
             String body = readAsText(stream);
-            return parseFirstResult(body);
+            return parseResults(body, safeMaxResults);
         } catch (JSONException exception) {
             String message = exception.getMessage();
             if (message == null || message.trim().isEmpty()) {
@@ -100,15 +111,22 @@ public class GoogleGeocodingClient {
 
     @Nullable
     private GeocodingResult parseFirstResult(String body) throws JSONException {
+        List<GeocodingResult> results = parseResults(body, 1);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    @NonNull
+    private List<GeocodingResult> parseResults(String body, int maxResults) throws JSONException {
+        List<GeocodingResult> parsedResults = new ArrayList<>();
         if (body == null || body.trim().isEmpty()) {
-            return null;
+            return parsedResults;
         }
 
         JSONObject root = new JSONObject(body);
         String status = root.optString("status", "");
         if (!"OK".equalsIgnoreCase(status)) {
             if ("ZERO_RESULTS".equalsIgnoreCase(status)) {
-                return null;
+                return parsedResults;
             }
 
             String errorMessage = root.optString("error_message", "").trim();
@@ -120,10 +138,10 @@ public class GoogleGeocodingClient {
 
         JSONArray results = root.optJSONArray("results");
         if (results == null || results.length() == 0) {
-            return null;
+            return parsedResults;
         }
 
-        for (int index = 0; index < results.length(); index++) {
+        for (int index = 0; index < results.length() && parsedResults.size() < maxResults; index++) {
             JSONObject candidate = results.optJSONObject(index);
             GeocodingResult parsed = parseCandidate(candidate);
             if (parsed == null) {
@@ -131,12 +149,11 @@ public class GoogleGeocodingClient {
             }
 
             if (isInVietnamBounds(parsed.latitude, parsed.longitude)) {
-                return parsed;
+                parsedResults.add(parsed);
             }
         }
 
-        // Ignore results outside Vietnam.
-        return null;
+        return parsedResults;
     }
 
     @Nullable
@@ -166,17 +183,20 @@ public class GoogleGeocodingClient {
     }
 
     @Nullable
-    private GeocodingResult searchWithAndroidGeocoder(@NonNull Context context,
-                                                      @NonNull String query) {
+    @NonNull
+    private List<GeocodingResult> searchWithAndroidGeocoder(@NonNull Context context,
+                                                            @NonNull String query,
+                                                            int maxResults) {
+        List<GeocodingResult> results = new ArrayList<>();
         if (!Geocoder.isPresent()) {
-            return null;
+            return results;
         }
 
         try {
             Geocoder geocoder = new Geocoder(context.getApplicationContext(), new Locale("vi", "VN"));
             List<Address> addresses = geocoder.getFromLocationName(
                 query,
-                5,
+                Math.max(1, maxResults),
                 VN_SOUTH_LAT,
                 VN_WEST_LNG,
                 VN_NORTH_LAT,
@@ -184,7 +204,7 @@ public class GoogleGeocodingClient {
             );
 
             if (addresses == null || addresses.isEmpty()) {
-                return null;
+                return results;
             }
 
             for (Address address : addresses) {
@@ -200,13 +220,16 @@ public class GoogleGeocodingClient {
 
                 String line = address.getAddressLine(0);
                 String formattedAddress = line != null ? line.trim() : "";
-                return new GeocodingResult(lat, lng, formattedAddress);
+                results.add(new GeocodingResult(lat, lng, formattedAddress));
+                if (results.size() >= maxResults) {
+                    break;
+                }
             }
         } catch (IOException ignored) {
             // Fall back to REST geocoding if local geocoder lookup fails.
         }
 
-        return null;
+        return results;
     }
 
     private boolean isInVietnamBounds(double latitude, double longitude) {

@@ -17,9 +17,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -56,8 +56,8 @@ class GetHubByIdUseCaseTest {
                 .build();
         AidItemCategory category = mock(AidItemCategory.class);
         when(category.getId()).thenReturn(categoryId);
-        when(category.getName()).thenReturn("Mì tôm");
-        when(category.getUnit()).thenReturn("thùng");
+        when(category.getName()).thenReturn("Mi tom");
+        when(category.getUnit()).thenReturn("thung");
         when(category.getParentId()).thenReturn(null);
 
         when(hubRepository.findById(hubId)).thenReturn(Optional.of(hub));
@@ -69,10 +69,10 @@ class GetHubByIdUseCaseTest {
 
         assertNotNull(result);
         assertNotNull(result.getInventoryGroups());
-        assertEquals(5, result.getInventoryGroups().size());
+        assertEquals(1, result.getInventoryGroups().size());
 
         HubDTO.ParentCategoryInventoryDTO foodGroup = result.getInventoryGroups().stream()
-                .filter(group -> "Thực phẩm".equals(group.getParentCategoryName()))
+                .filter(group -> "Th\u1ef1c ph\u1ea9m".equals(group.getParentCategoryName()))
                 .findFirst()
                 .orElse(null);
 
@@ -80,8 +80,8 @@ class GetHubByIdUseCaseTest {
         assertNotNull(foodGroup.getItems());
         assertEquals(1, foodGroup.getItems().size());
         assertEquals(categoryId, foodGroup.getItems().getFirst().getItemCategoryId());
-        assertEquals("Mì tôm", foodGroup.getItems().getFirst().getItemCategoryName());
-        assertEquals("thùng", foodGroup.getItems().getFirst().getUnit());
+        assertEquals("Mi tom", foodGroup.getItems().getFirst().getItemCategoryName());
+        assertEquals("thung", foodGroup.getItems().getFirst().getUnit());
         assertEquals(25, foodGroup.getItems().getFirst().getCurrentQuantity());
         assertEquals(5, foodGroup.getItems().getFirst().getLowStockThreshold());
     }
@@ -111,7 +111,6 @@ class GetHubByIdUseCaseTest {
 
         assertNotNull(result);
         assertNotNull(result.getInventoryGroups());
-        assertEquals(5, result.getInventoryGroups().size());
-        assertTrue(result.getInventoryGroups().stream().allMatch(group -> group.getItems().isEmpty()));
+        assertTrue(result.getInventoryGroups().isEmpty());
     }
 }

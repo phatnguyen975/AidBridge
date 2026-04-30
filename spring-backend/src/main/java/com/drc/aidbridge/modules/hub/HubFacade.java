@@ -11,6 +11,7 @@ import java.util.UUID;
 public interface HubFacade {
     HubDTO getById(UUID id);
     List<HubDTO> list(HubStatus status);
+    List<HubDTO> list(HubStatus status, String keyword);
     HubDTO create(CreateHubRequest request);
     HubDTO update(UUID id, UpdateHubRequest request);
     HubDTO stockIn(UUID id, StockInHubInventoryRequest request);
