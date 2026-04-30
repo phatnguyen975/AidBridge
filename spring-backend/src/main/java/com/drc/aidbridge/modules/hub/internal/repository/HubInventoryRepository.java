@@ -25,8 +25,8 @@ public interface HubInventoryRepository extends JpaRepository<HubInventory, UUID
                 child.name AS "name",
                 child.unit AS "unit",
                 child.icon_url AS "iconUrl",
-                parent.id AS "parentCategoryId",
-                parent.name AS "parentCategoryName",
+                COALESCE(parent.id, child.id) AS "parentCategoryId",
+                COALESCE(parent.name, child.name) AS "parentCategoryName",
                 hi.current_quantity AS "currentQuantity",
                 hi.low_stock_threshold AS "lowStockThreshold",
                 hi.last_restocked_at AS "lastRestockedAt"
@@ -34,9 +34,16 @@ public interface HubInventoryRepository extends JpaRepository<HubInventory, UUID
             JOIN item_categories child ON child.id = hi.item_category_id
             LEFT JOIN item_categories parent ON parent.id = child.parent_id
             WHERE hi.hub_id = :hubId
-              AND child.is_leaf = true
-              AND (CAST(:parentCategoryId AS uuid) IS NULL OR child.parent_id = CAST(:parentCategoryId AS uuid))
-              AND (:parentCategoryName IS NULL OR LOWER(parent.name) = LOWER(:parentCategoryName))
+              AND (
+                  CAST(:parentCategoryId AS uuid) IS NULL
+                  OR child.parent_id = CAST(:parentCategoryId AS uuid)
+                  OR child.id = CAST(:parentCategoryId AS uuid)
+              )
+              AND (
+                  :parentCategoryName IS NULL
+                  OR LOWER(parent.name) = LOWER(:parentCategoryName)
+                  OR LOWER(child.name) = LOWER(:parentCategoryName)
+              )
               AND (:keyword IS NULL OR LOWER(child.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
             ORDER BY COALESCE(parent.sort_order, 0) ASC, COALESCE(child.sort_order, 0) ASC, child.name ASC
             """,
@@ -46,9 +53,16 @@ public interface HubInventoryRepository extends JpaRepository<HubInventory, UUID
             JOIN item_categories child ON child.id = hi.item_category_id
             LEFT JOIN item_categories parent ON parent.id = child.parent_id
             WHERE hi.hub_id = :hubId
-              AND child.is_leaf = true
-              AND (CAST(:parentCategoryId AS uuid) IS NULL OR child.parent_id = CAST(:parentCategoryId AS uuid))
-              AND (:parentCategoryName IS NULL OR LOWER(parent.name) = LOWER(:parentCategoryName))
+              AND (
+                  CAST(:parentCategoryId AS uuid) IS NULL
+                  OR child.parent_id = CAST(:parentCategoryId AS uuid)
+                  OR child.id = CAST(:parentCategoryId AS uuid)
+              )
+              AND (
+                  :parentCategoryName IS NULL
+                  OR LOWER(parent.name) = LOWER(:parentCategoryName)
+                  OR LOWER(child.name) = LOWER(:parentCategoryName)
+              )
               AND (:keyword IS NULL OR LOWER(child.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
             """,
             nativeQuery = true)

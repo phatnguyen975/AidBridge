@@ -17,6 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class StaffManualEntryBottomSheet extends BottomSheetDialogFragment {
 
     private static final String ARG_MODE = "mode";
+    private static final String ARG_CODE = "code";
     private static final String MODE_IMPORT = "import";
     private static final String MODE_EXPORT = "export";
 
@@ -45,7 +46,15 @@ public class StaffManualEntryBottomSheet extends BottomSheetDialogFragment {
         super.onViewCreated(view, savedInstanceState);
         mode = resolveMode();
         binding.btnConfirmManual.setOnClickListener(v -> {
-            navigateByMode();
+            String code = binding.etManualCode.getText() != null
+                    ? binding.etManualCode.getText().toString().trim()
+                    : "";
+            if (code.isEmpty()) {
+                binding.tilManualCode.setError("Vui l\u00f2ng nh\u1eadp m\u00e3.");
+                return;
+            }
+            binding.tilManualCode.setError(null);
+            navigateByMode(code);
             dismissAllowingStateLoss();
         });
     }
@@ -62,7 +71,7 @@ public class StaffManualEntryBottomSheet extends BottomSheetDialogFragment {
         return MODE_IMPORT.equals(argMode) ? MODE_IMPORT : MODE_EXPORT;
     }
 
-    private void navigateByMode() {
+    private void navigateByMode(String code) {
         int destinationId = MODE_IMPORT.equals(mode)
                 ? R.id.staffImportDetailFragment
                 : R.id.staffExportDetailFragment;
@@ -70,7 +79,10 @@ public class StaffManualEntryBottomSheet extends BottomSheetDialogFragment {
         try {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host);
             if (navController.getGraph().findNode(destinationId) != null) {
-                navController.navigate(destinationId);
+                Bundle args = new Bundle();
+                args.putString(ARG_CODE, code);
+                args.putString(ARG_MODE, mode);
+                navController.navigate(destinationId, args);
             }
         } catch (IllegalStateException ignored) {
             // No-op: host controller is not ready.

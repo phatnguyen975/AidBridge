@@ -24,6 +24,8 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
 
         Optional<Mission> findByAidRequestId(UUID aidRequestId);
 
+        Optional<Mission> findByQrCodeToken(String qrCodeToken);
+
         Page<Mission> findByMissionType(MissionType missionType, Pageable pageable);
 
         Page<Mission> findByStatus(MissionStatus status, Pageable pageable);
