@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/admin_hub_item_spacing_medium"
+    app:cardBackgroundColor="@color/admin_hub_card_bg"
+    app:cardCornerRadius="@dimen/admin_hub_item_card_radius"
+    app:strokeColor="@color/admin_hub_card_stroke"
+    app:strokeWidth="@dimen/admin_hub_item_card_stroke">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/admin_hub_item_padding">
+
+        <ImageView
+            android:id="@+id/image_staff_avatar"
+            android:layout_width="@dimen/admin_hub_item_thumbnail_size"
+            android:layout_height="@dimen/admin_hub_item_thumbnail_size"
+            android:background="@drawable/bg_admin_hub_thumbnail"
+            android:contentDescription="@string/admin_staff_item_icon_desc"
+            android:padding="@dimen/admin_hub_item_spacing_medium"
+            android:src="@drawable/ic_admin_user"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/admin_text_secondary" />
+
+        <TextView
+            android:id="@+id/text_staff_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/admin_hub_item_spacing_medium"
+            android:textColor="@color/admin_text_primary"
+            android:textSize="@dimen/admin_hub_item_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/image_staff_avatar"
+            app:layout_constraintTop_toTopOf="@id/image_staff_avatar" />
+
+        <TextView
+            android:id="@+id/text_staff_contact"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+            android:textColor="@color/admin_text_secondary"
+            android:textSize="@dimen/admin_hub_item_sub_text_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/text_staff_name"
+            app:layout_constraintTop_toBottomOf="@id/text_staff_name" />
+
+        <TextView
+            android:id="@+id/text_staff_hub"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/admin_hub_item_spacing_small"
+            android:textColor="@color/admin_text_secondary"
+            android:textSize="@dimen/admin_hub_item_sub_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/text_staff_name"
+            app:layout_constraintTop_toBottomOf="@id/text_staff_contact" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

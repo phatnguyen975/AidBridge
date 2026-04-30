@@ -152,6 +152,7 @@
                             android:textSize="@dimen/admin_stat_label_text_size" />
 
                         <TextView
+                            android:id="@+id/text_admin_total_hubs_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/admin_stat_value_spacing"
@@ -195,6 +196,7 @@
                             android:textSize="@dimen/admin_stat_label_text_size" />
 
                         <TextView
+                            android:id="@+id/text_admin_volunteers_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/admin_stat_value_spacing"
@@ -238,6 +240,7 @@
                             android:textSize="@dimen/admin_stat_label_text_size" />
 
                         <TextView
+                            android:id="@+id/text_admin_today_missions_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/admin_stat_value_spacing"
@@ -280,6 +283,7 @@
                             android:textSize="@dimen/admin_stat_label_text_size" />
 
                         <TextView
+                            android:id="@+id/text_admin_distributed_items_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/admin_stat_value_spacing"

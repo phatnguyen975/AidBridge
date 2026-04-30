@@ -22,11 +22,14 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.BottomSheetGuestSosBinding;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.ui.auth.viewmodel.GuestSosViewModel;
+import com.drc.aidbridge.utils.NetworkMonitor;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -37,7 +40,11 @@ public class GuestSosBottomSheet extends BottomSheetDialogFragment {
     private GuestSosViewModel viewModel;
     private FusedLocationProviderClient fusedLocationProviderClient;
 
+    @Inject
+    NetworkMonitor networkMonitor;
+
     private ActivityResultLauncher<String[]> locationPermissionLauncher;
+    private ActivityResultLauncher<String> sendSmsPermissionLauncher;
 
     private Double currentLatitude;
     private Double currentLongitude;
@@ -63,6 +70,7 @@ public class GuestSosBottomSheet extends BottomSheetDialogFragment {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
         setupLocationPermissionLauncher();
+        setupSmsPermissionLauncher();
         setupSeverityDefault();
         setupInteractions();
         observeViewModel();
@@ -152,15 +160,7 @@ public class GuestSosBottomSheet extends BottomSheetDialogFragment {
             return;
         }
 
-        pendingInput = null;
-        viewModel.submitSos(
-            input.fullName,
-            input.peopleCount,
-            input.severity,
-            input.healthNote,
-            currentLatitude,
-            currentLongitude
-        );
+        submitReadyInput(input);
     }
 
     @Nullable
@@ -205,6 +205,21 @@ public class GuestSosBottomSheet extends BottomSheetDialogFragment {
                 showError(getString(R.string.guest_sos_location_permission_denied));
                 updateLocationStatus(false);
                 pendingInput = null;
+            }
+        );
+    }
+
+    private void setupSmsPermissionLauncher() {
+        sendSmsPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            isGranted -> {
+                if (!Boolean.TRUE.equals(isGranted)) {
+                    pendingInput = null;
+                    showError("Can cap quyen SMS de gui SOS qua staff gateway khi offline.");
+                    return;
+                }
+
+                submitIfPending();
             }
         );
     }
@@ -312,6 +327,23 @@ public class GuestSosBottomSheet extends BottomSheetDialogFragment {
 
         GuestSosInput input = pendingInput;
         pendingInput = null;
+        submitReadyInput(input);
+    }
+
+    private void submitReadyInput(@NonNull GuestSosInput input) {
+        if (currentLatitude == null || currentLongitude == null) {
+            pendingInput = input;
+            refreshLocationStatus(true);
+            return;
+        }
+
+        if (shouldRequestSendSmsPermissionBeforeSubmit()) {
+            pendingInput = input;
+            sendSmsPermissionLauncher.launch(Manifest.permission.SEND_SMS);
+            return;
+        }
+
+        pendingInput = null;
         viewModel.submitSos(
             input.fullName,
             input.peopleCount,
@@ -340,6 +372,17 @@ public class GuestSosBottomSheet extends BottomSheetDialogFragment {
         Context context = requireContext();
         return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
             || ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean shouldRequestSendSmsPermissionBeforeSubmit() {
+        if (networkMonitor.hasInternet()) {
+            return false;
+        }
+        if (!requireContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY_MESSAGING)) {
+            return false;
+        }
+        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.SEND_SMS)
+            != PackageManager.PERMISSION_GRANTED;
     }
 
     private boolean isLocationProviderEnabled() {

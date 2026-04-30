@@ -10,10 +10,14 @@ import com.drc.aidbridge.modules.sos.internal.service.SosSceneImageService;
 import com.drc.aidbridge.modules.sos.internal.web.dto.CreateGuestSosRequest;
 import com.drc.aidbridge.modules.sos.internal.web.dto.SosRequestResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CreateGuestSosRequestUseCase {
@@ -26,6 +30,15 @@ public class CreateGuestSosRequestUseCase {
     @Transactional
     public SosRequestResponse execute(CreateGuestSosRequest createDto) {
         boolean quickSos = isQuickSos(createDto);
+        Optional<SosRequest> existingByClientRequestId = findByClientRequestId(createDto.getClientRequestId());
+        if (existingByClientRequestId.isPresent()) {
+            log.info(
+                "SMS_INGEST_DUPLICATE_CLIENT_REQUEST_ID clientRequestId={}",
+                safeText(createDto.getClientRequestId())
+            );
+            return sosMapper.toResponse(existingByClientRequestId.get(), null);
+        }
+
         UrgencyLevel urgencyLevel = resolveUrgencyLevel(createDto, quickSos);
         String finalImageUrl = quickSos ? null : sosSceneImageService.resolveImageUrl(createDto.getImageUrl());
 
@@ -38,6 +51,13 @@ public class CreateGuestSosRequestUseCase {
             .urgencyLevel(urgencyLevel)
             .imageUrl(finalImageUrl)
             .status(SosStatus.PENDING)
+            .clientRequestId(trimToNull(createDto.getClientRequestId()))
+            .source(firstNonBlank(createDto.getSource(), "APP"))
+            .quickSos(quickSos)
+            .accuracy(createDto.getAccuracy())
+            .triggeredAt(createDto.getTriggeredAt())
+            .locationCapturedAt(createDto.getLocationCapturedAt())
+            .deviceInfo(trimToNull(createDto.getDeviceInfo()))
             .build();
 
         SosRequest savedSos = sosRequestRepository.save(sosRequest);
@@ -47,14 +67,28 @@ public class CreateGuestSosRequestUseCase {
             savedSos.getLat(),
             savedSos.getLng()
         ));
+        log.info("SMS_INGEST_EVENT_PUBLISHED clientRequestId={}", safeText(createDto.getClientRequestId()));
 
         return sosMapper.toResponse(savedSos, null);
     }
 
     private boolean isQuickSos(CreateGuestSosRequest request) {
+        if (Boolean.TRUE.equals(request.getQuickSos())) {
+            return true;
+        }
+
         return isBlank(request.getDescription())
             && isBlank(request.getImageUrl())
             && (request.getPeopleCount() == null || request.getPeopleCount() <= 1);
+    }
+
+    private Optional<SosRequest> findByClientRequestId(String clientRequestId) {
+        String value = trimToNull(clientRequestId);
+        if (value == null) {
+            return Optional.empty();
+        }
+        Optional<SosRequest> existing = sosRequestRepository.findByClientRequestId(value);
+        return existing != null ? existing : Optional.empty();
     }
 
     private UrgencyLevel resolveUrgencyLevel(CreateGuestSosRequest request, boolean quickSos) {
@@ -78,5 +112,14 @@ public class CreateGuestSosRequestUseCase {
 
         String trimmed = value.trim();
         return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    private String firstNonBlank(String first, String fallback) {
+        String firstValue = trimToNull(first);
+        return firstValue != null ? firstValue : fallback;
+    }
+
+    private String safeText(String value) {
+        return value != null ? value.trim() : "";
     }
 }

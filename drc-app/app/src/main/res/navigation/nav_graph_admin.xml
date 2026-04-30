@@ -49,6 +49,22 @@
         android:label="@string/admin_add_supply_type_title" />
 
     <fragment
+        android:id="@+id/adminStaffManagementFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminStaffManagementFragment"
+        android:label="@string/admin_staff_management_title">
+
+        <action
+            android:id="@+id/action_adminStaffManagementFragment_to_adminAddStaffFragment"
+            app:destination="@id/adminAddStaffFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/adminAddStaffFragment"
+        android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminAddStaffFragment"
+        android:label="@string/admin_add_staff_title" />
+
+    <fragment
         android:id="@+id/adminAiChatbotFragment"
         android:name="com.drc.aidbridge.ui.main.fragment.admin.AdminAiChatbotFragment"
         android:label="@string/admin_ai_chatbot_title" />

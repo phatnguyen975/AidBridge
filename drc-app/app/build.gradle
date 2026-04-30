@@ -15,6 +15,8 @@ if (localPropertiesFile.exists()) {
 // API_BASE_URL is the base URL for the backend API; defaults to localhost for emulator testing
 def localBaseUrl = properties.getProperty("API_BASE_URL", "http://10.0.2.2:8080/api/")
 def mapsKey = properties.getProperty("MAPS_API_KEY", "")
+def sosGatewayPhoneNumber = properties.getProperty("SOS_GATEWAY_PHONE_NUMBER", "")
+def smsGatewayToken = properties.getProperty("SMS_GATEWAY_TOKEN", "dev-gateway-token")
 
 android {
     namespace 'com.drc.aidbridge'
@@ -34,6 +36,8 @@ android {
 
         // BASE_URL is injected into BuildConfig at compile time; used by Retrofit to configure API client
         buildConfigField "String", "BASE_URL", "\"${localBaseUrl}\""
+        buildConfigField "String", "SOS_GATEWAY_PHONE_NUMBER", "\"${sosGatewayPhoneNumber}\""
+        buildConfigField "String", "SMS_GATEWAY_TOKEN", "\"${smsGatewayToken}\""
 
         // MAPS_API_KEY is injected into BuildConfig for use in MapFragment and other map-related classes
         manifestPlaceholders = [mapsApiKey: mapsKey]
@@ -177,6 +181,8 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.7.0'
     // Room Annotation Processor - generates type-safe DAO implementation classes at compile time
     annotationProcessor 'androidx.room:room-compiler:2.7.0'
+    // WorkManager - retries SOS fallback queues when connectivity is restored
+    implementation 'androidx.work:work-runtime:2.10.1'
 
     // ===========================
     // Image Loading

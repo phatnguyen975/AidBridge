@@ -5,6 +5,8 @@ import androidx.room.Room;
 
 import com.drc.aidbridge.data.local.AppDatabase;
 import com.drc.aidbridge.data.local.dao.AppSettingsDao;
+import com.drc.aidbridge.data.local.dao.GatewayPendingSmsDao;
+import com.drc.aidbridge.data.local.dao.LocalQuickSosDao;
 import com.drc.aidbridge.data.local.dao.PendingSosLocationUpdateDao;
 import com.drc.aidbridge.data.local.dao.VictimHistoryDao;
 import com.drc.aidbridge.utils.Constants;
@@ -55,5 +57,17 @@ public class DatabaseModule {
     @Singleton
     public PendingSosLocationUpdateDao providePendingSosLocationUpdateDao(AppDatabase database) {
         return database.pendingSosLocationUpdateDao();
+    }
+
+    @Provides
+    @Singleton
+    public LocalQuickSosDao provideLocalQuickSosDao(AppDatabase database) {
+        return database.localQuickSosDao();
+    }
+
+    @Provides
+    @Singleton
+    public GatewayPendingSmsDao provideGatewayPendingSmsDao(AppDatabase database) {
+        return database.gatewayPendingSmsDao();
     }
 }

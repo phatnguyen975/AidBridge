@@ -72,4 +72,8 @@ public class CreateSosRequest {
     @JsonProperty("device_info")
     @JsonAlias("deviceInfo")
     private String deviceInfo;
+
+    @Size(max = 30)
+    @JsonProperty("source")
+    private String source;
 }

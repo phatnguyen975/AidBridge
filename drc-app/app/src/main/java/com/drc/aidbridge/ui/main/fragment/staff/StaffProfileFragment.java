@@ -1,11 +1,16 @@
 package com.drc.aidbridge.ui.main.fragment.staff;
 
+import android.Manifest;
 import android.content.res.ColorStateList;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.util.Log;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
@@ -20,6 +25,10 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class StaffProfileFragment extends BaseFragment<FragmentStaffProfileBinding> {
 
+    private static final String TAG = "AidBridgeSmsGateway";
+
+    private ActivityResultLauncher<String> receiveSmsPermissionLauncher;
+
     @Nullable
     @Override
     protected FragmentStaffProfileBinding inflateBinding(LayoutInflater inflater, ViewGroup container) {
@@ -28,11 +37,17 @@ public class StaffProfileFragment extends BaseFragment<FragmentStaffProfileBindi
 
     @Override
     protected void setupViews() {
+        setupPermissionLauncher();
         binding.switchHubStatus.setChecked(true);
-        updateHubStatusUi(true);
+        updateGatewayStatusUi(hasReceiveSmsPermission());
 
-        binding.switchHubStatus.setOnCheckedChangeListener((buttonView, isChecked) ->
-            updateHubStatusUi(isChecked));
+        binding.switchHubStatus.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked && !hasReceiveSmsPermission()) {
+                receiveSmsPermissionLauncher.launch(Manifest.permission.RECEIVE_SMS);
+                return;
+            }
+            updateGatewayStatusUi(isChecked && hasReceiveSmsPermission());
+        });
 
         binding.btnLogout.setOnClickListener(v -> requestLogout());
     }
@@ -41,7 +56,26 @@ public class StaffProfileFragment extends BaseFragment<FragmentStaffProfileBindi
     protected void observeViewModel() {
     }
 
-    private void updateHubStatusUi(boolean isReady) {
+    private void setupPermissionLauncher() {
+        receiveSmsPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            isGranted -> {
+                boolean granted = Boolean.TRUE.equals(isGranted);
+                if (!granted) {
+                    Log.w(TAG, "SMS_GATEWAY_RECEIVE_PERMISSION_DENIED");
+                    showTopSnackbar(
+                        binding.getRoot(),
+                        getString(R.string.staff_gateway_sms_permission_denied),
+                        true
+                    );
+                }
+                binding.switchHubStatus.setChecked(granted);
+                updateGatewayStatusUi(granted);
+            }
+        );
+    }
+
+    private void updateGatewayStatusUi(boolean isReady) {
         int readyStroke = isReady ? R.color.staff_ready_color : R.color.staff_dim_color;
         int readyFill = isReady ? R.color.staff_ready_bg : android.R.color.transparent;
         int readyText = isReady ? R.color.staff_ready_color : R.color.staff_dim_color;
@@ -70,6 +104,19 @@ public class StaffProfileFragment extends BaseFragment<FragmentStaffProfileBindi
             ContextCompat.getColor(requireContext(), toggleThumbRes)));
         binding.switchHubStatus.setTrackTintList(ColorStateList.valueOf(
             ContextCompat.getColor(requireContext(), toggleTrackRes)));
+
+        if (!hasReceiveSmsPermission()) {
+            binding.tvReadyStatus.setText(R.string.staff_gateway_sms_permission_missing);
+            binding.tvOfflineStatus.setText(R.string.staff_profile_offline);
+        } else {
+            binding.tvReadyStatus.setText(R.string.staff_profile_ready);
+            binding.tvOfflineStatus.setText(R.string.staff_profile_offline);
+        }
+    }
+
+    private boolean hasReceiveSmsPermission() {
+        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECEIVE_SMS)
+            == PackageManager.PERMISSION_GRANTED;
     }
 
     private GradientDrawable createIndicatorBackground(int strokeColorRes, int fillColorRes) {
