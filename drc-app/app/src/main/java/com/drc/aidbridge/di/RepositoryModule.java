@@ -22,7 +22,7 @@ import com.drc.aidbridge.domain.repository.volunteer.VolunteerRepository;
 import com.drc.aidbridge.domain.repository.victim.VictimHistoryRepository;
 import com.drc.aidbridge.domain.repository.victim.VictimSosRepository;
 import com.drc.aidbridge.domain.repository.victim.VictimSupplyRepository;
-
+import com.drc.aidbridge.domain.repository.HubRepository;
 import dagger.Binds;
 import dagger.Module;
 import dagger.hilt.InstallIn;

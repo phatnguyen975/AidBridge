@@ -22,22 +22,15 @@ public interface VolunteerJpaRepository extends JpaRepository<Volunteer, UUID> {
         boolean existsByUserId(UUID userId);
 
         /**
-         * Tìm các volunteers có current_location trong bán kính (meters) từ một vị trí
-         * cho trước.
-         * Sử dụng PostGIS ST_DWithin để tìm kiếm hiệu quả với geography type.
+         * Tìm các volunteers dựa trên danh sách mã lục giác H3.
          *
-         * @param location     điểm trung tâm tìm kiếm
-         * @param radiusMeters bán kính tìm kiếm (đơn vị: meters)
-         * @return danh sách volunteers trong bán kính, sắp xếp theo khoảng cách tăng
-         *         dần
+         * @param h3Indices danh sách mã lục giác H3 xung quanh vị trí
+         * @return danh sách volunteers hoạt động trong các vùng H3 này
          */
         @Query(value = "SELECT v.* FROM volunteer_profiles v " +
-                        "WHERE v.current_location IS NOT NULL " +
-                        "AND ST_DWithin(v.current_location, CAST(:location AS geography), :radiusMeters) " +
-                        "ORDER BY ST_Distance(v.current_location, CAST(:location AS geography))", nativeQuery = true)
-        List<Volunteer> findNearbyVolunteers(
-                        @Param("location") Point location,
-                        @Param("radiusMeters") double radiusMeters);
+                        "WHERE v.h3_index IN (:h3Indices) " +
+                        "AND v.is_online = true", nativeQuery = true)
+        List<Volunteer> findByH3Indices(@Param("h3Indices") List<String> h3Indices);
 
         /**
          * Tìm tất cả volunteers có current_location, sắp xếp theo khoảng cách từ một vị

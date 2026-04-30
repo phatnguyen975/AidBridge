@@ -70,6 +70,7 @@ public class SecurityConfig {
                         // STAFF - hub management, can do most admin tasks
                         .requestMatchers("/api/staff/**").hasAnyRole("STAFF", "ADMIN")
 
+                        .requestMatchers("/api/volunteers/nearby").permitAll()
                         // VOLUNTEER - mission handling
                         .requestMatchers("/api/volunteers/**").hasAnyRole("VOLUNTEER", "STAFF", "ADMIN")
 

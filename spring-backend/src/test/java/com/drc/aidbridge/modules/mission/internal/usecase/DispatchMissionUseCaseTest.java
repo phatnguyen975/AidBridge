@@ -156,16 +156,17 @@ class DispatchMissionUseCaseTest {
         MissionResponse response = useCase.execute(mission.getId(), null);
 
         assertEquals(MissionStatus.DISPATCHING, response.getStatus());
-        verify(dispatchAttemptRepository).save(dispatchAttemptCaptor.capture());
+        verify(dispatchAttemptRepository, times(2)).save(dispatchAttemptCaptor.capture());
 
-        DispatchAttempt attempt = dispatchAttemptCaptor.getValue();
-        assertEquals(volunteerA.getUserId(), attempt.getVolunteerId());
-        assertEquals(DispatchType.SEQUENTIAL, attempt.getDispatchType());
-        assertEquals(DispatchResponse.PENDING, attempt.getResponse());
+        List<DispatchAttempt> attempts = dispatchAttemptCaptor.getAllValues();
+        assertEquals(Set.of(volunteerA.getUserId(), volunteerB.getUserId()),
+                attempts.stream().map(DispatchAttempt::getVolunteerId).collect(java.util.stream.Collectors.toSet()));
+        assertTrue(attempts.stream().allMatch(attempt -> attempt.getDispatchType() == DispatchType.SEQUENTIAL));
+        assertTrue(attempts.stream().allMatch(attempt -> attempt.getResponse() == DispatchResponse.PENDING));
 
         verify(eventPublisher).publishEvent(eventCaptor.capture());
         assertEquals(DispatchType.SEQUENTIAL, eventCaptor.getValue().getDispatchType());
-        assertEquals(1, eventCaptor.getValue().getTargets().size());
+        assertEquals(2, eventCaptor.getValue().getTargets().size());
     }
 
     @Test

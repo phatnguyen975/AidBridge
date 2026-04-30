@@ -32,6 +32,7 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,39 +134,16 @@ public class DispatchMissionUseCase {
             return DispatchPlan.empty(DispatchType.BROADCAST);
         }
 
-        Map<UUID, VolunteerDTO> candidates = new LinkedHashMap<>();
-        BigDecimal radiusKm = null;
+        List<VolunteerDTO> nearby = volunteerFacade.findNearbyVolunteers(
+                mission.getVictimLat(),
+                mission.getVictimLng());
 
-        for (double radiusMeters : DispatchPolicy.SEARCH_RADII_METERS) {
-            List<VolunteerDTO> nearby = volunteerFacade.findNearbyVolunteers(
-                    mission.getVictimLat(),
-                    mission.getVictimLng(),
-                    radiusMeters);
+        List<VolunteerDTO> selected = nearby.stream()
+                .filter(this::isEligibleVolunteer)
+                .limit(DispatchPolicy.SOS_BROADCAST_LIMIT) // Top candidates for critical rescue
+                .collect(Collectors.toList());
 
-            for (VolunteerDTO volunteer : nearby) {
-                if (isEligibleVolunteer(volunteer)) {
-                    candidates.putIfAbsent(volunteer.getUserId(), volunteer);
-                }
-                if (candidates.size() >= DispatchPolicy.SOS_BROADCAST_LIMIT) {
-                    radiusKm = toKm(radiusMeters);
-                    break;
-                }
-            }
-
-            if (candidates.size() >= DispatchPolicy.SOS_BROADCAST_LIMIT) {
-                break;
-            }
-
-            if (!candidates.isEmpty()) {
-                radiusKm = toKm(radiusMeters);
-            }
-        }
-
-        List<VolunteerDTO> selected = new ArrayList<>(candidates.values());
-        if (selected.size() > DispatchPolicy.SOS_BROADCAST_LIMIT) {
-            selected = selected.subList(0, DispatchPolicy.SOS_BROADCAST_LIMIT);
-        }
-
+        BigDecimal radiusKm = calculateMaxDistanceKm(mission.getVictimLocation(), selected);
         return new DispatchPlan(DispatchType.BROADCAST, radiusKm, selected);
     }
 
@@ -174,23 +152,17 @@ public class DispatchMissionUseCase {
             return DispatchPlan.empty(DispatchType.SEQUENTIAL);
         }
 
-        for (double radiusMeters : DispatchPolicy.SEARCH_RADII_METERS) {
-            List<VolunteerDTO> nearby = volunteerFacade.findNearbyVolunteers(
-                    mission.getVictimLat(),
-                    mission.getVictimLng(),
-                    radiusMeters);
+        List<VolunteerDTO> nearby = volunteerFacade.findNearbyVolunteers(
+                mission.getVictimLat(),
+                mission.getVictimLng());
 
-            List<VolunteerDTO> selected = nearby.stream()
-                    .filter(this::isEligibleVolunteer)
-                    .limit(DispatchPolicy.AID_BATCH_SIZE)
-                    .collect(Collectors.toList());
+        List<VolunteerDTO> selected = nearby.stream()
+                .filter(this::isEligibleVolunteer)
+                .limit(DispatchPolicy.AID_BATCH_SIZE) // Top candidates for delivery sequential
+                .collect(Collectors.toList());
 
-            if (!selected.isEmpty()) {
-                return new DispatchPlan(DispatchType.SEQUENTIAL, toKm(radiusMeters), selected);
-            }
-        }
-
-        return DispatchPlan.empty(DispatchType.SEQUENTIAL);
+        BigDecimal radiusKm = calculateMaxDistanceKm(mission.getVictimLocation(), selected);
+        return new DispatchPlan(DispatchType.SEQUENTIAL, radiusKm, selected);
     }
 
     private boolean isEligibleVolunteer(VolunteerDTO volunteer) {
@@ -223,9 +195,9 @@ public class DispatchMissionUseCase {
         return BigDecimal.valueOf(maxDistanceKm).setScale(2, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal toKm(double radiusMeters) {
-        return BigDecimal.valueOf(radiusMeters / 1000d).setScale(2, RoundingMode.HALF_UP);
-    }
+    // private BigDecimal toKm(double radiusMeters) {
+    //     return BigDecimal.valueOf(radiusMeters / 1000d).setScale(2, RoundingMode.HALF_UP);
+    // }
 
     private double haversineKm(double lat1, double lng1, double lat2, double lng2) {
         double earthRadiusKm = 6371d;

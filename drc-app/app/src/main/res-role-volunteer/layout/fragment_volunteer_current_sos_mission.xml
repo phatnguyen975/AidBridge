@@ -375,6 +375,24 @@
                         android:textColor="@color/volunteer_acceptance_text_primary"
                         android:textSize="@dimen/text_sm" />
 
+                    <TextView
+                        android:id="@+id/tvVictimLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:text="Tọa độ: N/A"
+                        android:textColor="@color/volunteer_acceptance_text_primary"
+                        android:textSize="@dimen/text_sm" />
+
+                    <TextView
+                        android:id="@+id/tvRadiusKm"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:text="Bán kính cứu trợ: N/A"
+                        android:textColor="@color/volunteer_acceptance_text_primary"
+                        android:textSize="@dimen/text_sm" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
