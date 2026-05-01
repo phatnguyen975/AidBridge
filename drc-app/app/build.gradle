@@ -4,6 +4,8 @@ plugins {
     id 'com.google.dagger.hilt.android'
     // Google Services - enables Firebase SDK configuration via google-services.json
     id 'com.google.gms.google-services'
+    // Kotlin Android plugin - commented out to avoid JVM target/metadata mismatch
+    // id 'org.jetbrains.kotlin.android'
 }
 
 // Load local.properties to read API_BASE_URL for Retrofit configuration
@@ -62,6 +64,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
+    // kotlinOptions {
+    //     jvmTarget = '17'
+    // }
 
     sourceSets {
         main {
@@ -129,14 +135,14 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
 
     // ===========================
-    // Real-time Communication (WebSocket / STOMP)
+    // Real-time Communication (WebSocket / STOMP) - Commented out as not used yet
     // ===========================
     // STOMP protocol over WebSocket - used for real-time chat, live tracking, and dispatch notifications
-    implementation 'com.github.NaikSoftware:stompprotocolandroid:1.6.6'
+    // implementation 'com.github.NaikSoftware:stompprotocolandroid:1.6.6'
     // RxJava3 - reactive streams library required by StompProtocolAndroid for async event handling
-    implementation 'io.reactivex.rxjava3:rxjava:3.1.9'
+    // implementation 'io.reactivex.rxjava3:rxjava:3.1.9'
     // RxAndroid - provides Android-aware schedulers (mainThread, io) for RxJava3
-    implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
+    // implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
 
     // ===========================
     // Push Notifications (Firebase FCM)
@@ -202,6 +208,15 @@ dependencies {
     // ===========================
     // Security Crypto - EncryptedSharedPreferences for AES-256 storage of JWT access/refresh tokens
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+
+    //    // ===========================
+    //    // Supabase & Real-time
+    //    // ===========================
+    //    implementation platform("io.github.jan-tennert.supabase:bom:3.5.0")
+    //    implementation "io.github.jan-tennert.supabase:realtime-kt"
+    //    implementation "io.ktor:ktor-client-android:2.3.10"
+    //    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
+    //    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
 
     // ===========================
     // Testing

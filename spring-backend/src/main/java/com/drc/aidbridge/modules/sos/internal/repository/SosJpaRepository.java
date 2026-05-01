@@ -19,4 +19,6 @@ public interface SosJpaRepository extends JpaRepository<SosRequest, UUID> {
     Optional<SosRequest> findByClientRequestId(String clientRequestId);
     Optional<SosRequest> findByIdAndRequesterId(UUID id, UUID requesterId);
     List<SosRequest> findByStatus(SosStatus status);
+
+    List<SosRequest> findByStatusAndCreatedAtBetween(SosStatus status, Instant start, Instant end);
 }

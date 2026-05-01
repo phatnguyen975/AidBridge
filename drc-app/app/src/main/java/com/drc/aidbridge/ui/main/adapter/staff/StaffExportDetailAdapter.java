@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.ItemStaffExportDetailBinding;
+import com.drc.aidbridge.domain.model.staff.InventoryConfirmItem;
+import com.drc.aidbridge.domain.model.staff.InventoryQrPreviewItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +83,45 @@ public class StaffExportDetailAdapter extends RecyclerView.Adapter<RecyclerView.
         notifyItemRangeInserted(start, newItems.size());
     }
 
+    public void submitPreviewItems(List<InventoryQrPreviewItem> previewItems) {
+        items.clear();
+        if (previewItems != null) {
+            for (InventoryQrPreviewItem previewItem : previewItems) {
+                if (previewItem == null) {
+                    continue;
+                }
+                items.add(new ExportDetailItem(
+                        previewItem.getItemCategoryId(),
+                        previewItem.getName(),
+                        previewItem.getCurrentQuantity(),
+                        previewItem.getRequiredQuantity(),
+                        previewItem.getUnit(),
+                        previewItem.getParentCategoryName(),
+                        previewItem.isEnoughStock()
+                ));
+            }
+        }
+        isLoadingMore = false;
+        notifyDataSetChanged();
+    }
+
+    public List<InventoryConfirmItem> getConfirmItems() {
+        List<InventoryConfirmItem> confirmItems = new ArrayList<>();
+        for (ExportDetailItem item : items) {
+            confirmItems.add(new InventoryConfirmItem(item.itemCategoryId, item.exportQuantity));
+        }
+        return confirmItems;
+    }
+
+    public boolean hasInsufficientStock() {
+        for (ExportDetailItem item : items) {
+            if (!item.enoughStock || item.stockQuantity < item.exportQuantity) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public int getDataCount() {
         return items.size();
     }
@@ -103,16 +144,32 @@ public class StaffExportDetailAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     public static class ExportDetailItem {
+        public final String itemCategoryId;
         public final String name;
         public final int stockQuantity;
         public final int exportQuantity;
         public final String unit;
+        public final String parentCategoryName;
+        public final boolean enoughStock;
 
         public ExportDetailItem(String name, int stockQuantity, int exportQuantity, String unit) {
+            this("", name, stockQuantity, exportQuantity, unit, "", stockQuantity >= exportQuantity);
+        }
+
+        public ExportDetailItem(String itemCategoryId,
+                                String name,
+                                int stockQuantity,
+                                int exportQuantity,
+                                String unit,
+                                String parentCategoryName,
+                                boolean enoughStock) {
+            this.itemCategoryId = itemCategoryId != null ? itemCategoryId : "";
             this.name = name;
             this.stockQuantity = stockQuantity;
             this.exportQuantity = exportQuantity;
             this.unit = unit;
+            this.parentCategoryName = parentCategoryName != null ? parentCategoryName : "";
+            this.enoughStock = enoughStock;
         }
     }
 
@@ -140,7 +197,7 @@ public class StaffExportDetailAdapter extends RecyclerView.Adapter<RecyclerView.
                     R.string.staff_detail_export_prefix
             ) + " " + item.exportQuantity + " " + item.unit);
 
-            boolean isInsufficient = item.stockQuantity < item.exportQuantity;
+            boolean isInsufficient = !item.enoughStock || item.stockQuantity < item.exportQuantity;
             if (isInsufficient) {
                 binding.ivStatus.setImageResource(R.drawable.ic_info);
                 binding.ivStatus.setColorFilter(ContextCompat.getColor(

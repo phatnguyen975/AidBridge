@@ -1,20 +1,25 @@
 package com.drc.aidbridge.ui.main.fragment.staff;
 
-import android.os.Handler;
-import android.os.Looper;
+import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.drc.aidbridge.R;
+import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.FragmentStaffExportDetailBinding;
+import com.drc.aidbridge.domain.model.staff.InventoryConfirmItem;
+import com.drc.aidbridge.domain.model.staff.InventoryQrPreview;
+import com.drc.aidbridge.domain.model.staff.InventoryQrPreviewItem;
+import com.drc.aidbridge.domain.model.staff.InventoryTransactionResult;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.adapter.staff.StaffExportDetailAdapter;
+import com.drc.aidbridge.ui.main.viewmodel.staff.StaffInventoryTransactionViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -22,12 +27,13 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class StaffExportDetailFragment extends BaseFragment<FragmentStaffExportDetailBinding> {
 
-    private final Handler handler = new Handler(Looper.getMainLooper());
-    private StaffExportDetailAdapter adapter;
+    private static final String ARG_CODE = "code";
+    private static final String MODE_EXPORT = StaffInventoryTransactionViewModel.MODE_EXPORT;
 
-    private int currentPage = 1;
-    private boolean isLoading = false;
-    private boolean isLastPage = false;
+    private StaffInventoryTransactionViewModel viewModel;
+    private StaffExportDetailAdapter adapter;
+    private InventoryQrPreview currentPreview;
+    private String code = "";
 
     @Nullable
     @Override
@@ -37,21 +43,25 @@ public class StaffExportDetailFragment extends BaseFragment<FragmentStaffExportD
 
     @Override
     protected void setupViews() {
+        viewModel = new ViewModelProvider(this).get(StaffInventoryTransactionViewModel.class);
+        code = resolveCode();
         setupToolbar();
         setupRecycler();
-        setupPagination();
         setupActions();
-        loadMockData();
+        hideUnavailableMockRows();
+        renderInitialHeader();
+
+        if (code.isEmpty()) {
+            renderPreviewError("Vui l\u00f2ng nh\u1eadp m\u00e3.");
+            return;
+        }
+        viewModel.preview(MODE_EXPORT, code);
     }
 
     @Override
     protected void observeViewModel() {
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        handler.removeCallbacksAndMessages(null);
+        viewModel.getPreviewResult().observe(getViewLifecycleOwner(), this::renderPreviewResult);
+        viewModel.getConfirmResult().observe(getViewLifecycleOwner(), this::renderConfirmResult);
     }
 
     private void setupToolbar() {
@@ -64,111 +74,154 @@ public class StaffExportDetailFragment extends BaseFragment<FragmentStaffExportD
         binding.rvItems.setAdapter(adapter);
     }
 
-    private void setupPagination() {
-        binding.rvItems.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@androidx.annotation.NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (dy <= 0 || isLoading || isLastPage) {
-                    return;
-                }
-                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-                if (!(layoutManager instanceof LinearLayoutManager)) {
-                    return;
-                }
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
-                int total = linearLayoutManager.getItemCount();
-                int lastVisible = linearLayoutManager.findLastVisibleItemPosition();
-                if (total > 0 && lastVisible >= total - 1) {
-                    currentPage++;
-                    loadMockData();
-                }
-            }
-        });
-    }
-
     private void setupActions() {
-        binding.btnConfirm.setOnClickListener(v -> popBackStackSafely(R.id.staffInventoryFragment, false));
+        binding.btnConfirm.setEnabled(false);
+        binding.btnConfirm.setOnClickListener(v -> confirmOutbound());
     }
 
-    private void loadMockData() {
-        if (isLoading || isLastPage) {
+    private void hideUnavailableMockRows() {
+        binding.layoutVolunteerInfo.setVisibility(View.GONE);
+        binding.layoutDestinationInfo.setVisibility(View.GONE);
+        binding.dividerPartner.setVisibility(View.GONE);
+    }
+
+    private void renderInitialHeader() {
+        binding.tvTaskId.setText(code.isEmpty() ? "--" : code);
+        binding.tvStatus.setText(R.string.staff_detail_processing);
+        binding.tvHubName.setText(R.string.staff_inventory_hub_unknown);
+        binding.tvTotalValue.setText("0 v\u1eadt ph\u1ea9m");
+        binding.tvItemCount.setText("0");
+        binding.tvTimeValue.setText("B\u00e2y gi\u1edd");
+    }
+
+    private void renderPreviewResult(@Nullable NetworkResultWrapper<InventoryQrPreview> result) {
+        if (result == null) {
+            renderPreviewError(getString(R.string.error_generic));
             return;
         }
 
-        isLoading = true;
-        boolean isInitialLoad = adapter.getDataCount() == 0;
-        binding.progressPagination.setVisibility(
-            isInitialLoad ? android.view.View.VISIBLE : android.view.View.GONE
-        );
-        adapter.setLoadingMore(!isInitialLoad);
+        if (result.isLoading()) {
+            binding.progressPagination.setVisibility(View.VISIBLE);
+            binding.btnConfirm.setEnabled(false);
+            return;
+        }
 
-        handler.postDelayed(() -> {
-            List<StaffExportDetailAdapter.ExportDetailItem> newItems = buildMockItems(currentPage);
-            if (newItems.isEmpty()) {
-                isLastPage = true;
-            } else {
-                adapter.addItems(newItems);
-                if (currentPage >= 3) {
-                    isLastPage = true;
-                }
-            }
+        binding.progressPagination.setVisibility(View.GONE);
+        if (result.isError()) {
+            renderPreviewError(result.getMessage());
+            return;
+        }
 
-            isLoading = false;
-            if (binding != null) {
-                adapter.setLoadingMore(false);
-                binding.progressPagination.setVisibility(android.view.View.GONE);
-            }
-        }, 500L);
+        currentPreview = result.getData();
+        renderPreview(currentPreview);
     }
 
-    private List<StaffExportDetailAdapter.ExportDetailItem> buildMockItems(int page) {
-        if (page > 3) {
-            return new ArrayList<>();
+    private void renderPreview(@Nullable InventoryQrPreview preview) {
+        if (preview == null) {
+            renderPreviewError(getString(R.string.error_generic));
+            return;
         }
 
-        List<StaffExportDetailAdapter.ExportDetailItem> items = new ArrayList<>();
-        if (page == 1) {
-            items.add(new StaffExportDetailAdapter.ExportDetailItem(
-                getString(R.string.staff_detail_item_noodle),
-                8,
-                10,
-                getString(R.string.staff_detail_unit_box)
-            ));
-            items.add(new StaffExportDetailAdapter.ExportDetailItem(
-                getString(R.string.staff_detail_item_water),
-                24,
-                12,
-                getString(R.string.staff_detail_unit_box)
-            ));
-            items.add(new StaffExportDetailAdapter.ExportDetailItem(
-                getString(R.string.staff_detail_item_milk),
-                18,
-                8,
-                getString(R.string.staff_detail_unit_box)
-            ));
-            return items;
+        String displayCode = !preview.getDisplayCode().isEmpty() ? preview.getDisplayCode() : code;
+        binding.tvTaskId.setText(displayCode);
+        binding.tvStatus.setText(preview.getStatus().isEmpty() ? "PENDING" : preview.getStatus());
+        binding.tvHubName.setText(preview.getHubName().isEmpty()
+                ? getString(R.string.staff_inventory_hub_unknown)
+                : preview.getHubName());
+        binding.tvItemCount.setText(String.valueOf(preview.getItems().size()));
+        binding.tvTotalValue.setText(totalQuantity(preview.getItems()) + " v\u1eadt ph\u1ea9m");
+        adapter.submitPreviewItems(preview.getItems());
+
+        boolean canConfirm = preview.canConfirm() && !adapter.hasInsufficientStock()
+                && !preview.getItems().isEmpty();
+        binding.btnConfirm.setEnabled(canConfirm);
+        if (!canConfirm) {
+            String message = !preview.getMessage().isEmpty()
+                    ? preview.getMessage()
+                    : "M\u1ed9t s\u1ed1 v\u1eadt ph\u1ea9m kh\u00f4ng \u0111\u1ee7 t\u1ed3n kho.";
+            showTopSnackbar(binding.getRoot(), message, true);
+        }
+    }
+
+    private void renderPreviewError(@Nullable String message) {
+        currentPreview = null;
+        adapter.clear();
+        binding.progressPagination.setVisibility(View.GONE);
+        binding.btnConfirm.setEnabled(false);
+        showTopSnackbar(binding.getRoot(), friendlyError(message), true);
+    }
+
+    private void confirmOutbound() {
+        if (adapter.hasInsufficientStock()) {
+            showTopSnackbar(binding.getRoot(), "Kh\u00f4ng th\u1ec3 xu\u1ea5t kho v\u00ec t\u1ed3n kho kh\u00f4ng \u0111\u1ee7.", true);
+            return;
         }
 
-        int base = (page - 1) * 10;
-        items.add(new StaffExportDetailAdapter.ExportDetailItem(
-            getString(R.string.staff_detail_item_rice_format, page),
-            40 + base,
-            10,
-            getString(R.string.staff_detail_unit_bag)
-        ));
-        items.add(new StaffExportDetailAdapter.ExportDetailItem(
-            getString(R.string.staff_detail_item_blanket_format, page),
-            30 + base,
-            6,
-            getString(R.string.staff_detail_unit_bundle)
-        ));
-        items.add(new StaffExportDetailAdapter.ExportDetailItem(
-            getString(R.string.staff_detail_item_raincoat_format, page),
-            20 + base,
-            5,
-            getString(R.string.staff_detail_unit_bundle)
-        ));
-        return items;
+        List<InventoryConfirmItem> items = adapter.getConfirmItems();
+        if (items.isEmpty()) {
+            showTopSnackbar(binding.getRoot(), "Kh\u00f4ng c\u00f3 v\u1eadt ph\u1ea9m \u0111\u1ec3 xu\u1ea5t kho.", true);
+            return;
+        }
+        for (InventoryConfirmItem item : items) {
+            if (item.getQuantity() <= 0) {
+                showTopSnackbar(binding.getRoot(), "S\u1ed1 l\u01b0\u1ee3ng xu\u1ea5t ph\u1ea3i l\u1edbn h\u01a1n 0.", true);
+                return;
+            }
+        }
+
+        binding.btnConfirm.setEnabled(false);
+        viewModel.confirm(MODE_EXPORT, code, items, "Xuat kho cho mission");
+    }
+
+    private void renderConfirmResult(@Nullable NetworkResultWrapper<InventoryTransactionResult> result) {
+        if (result == null) {
+            return;
+        }
+        if (result.isLoading()) {
+            binding.progressPagination.setVisibility(View.VISIBLE);
+            binding.btnConfirm.setEnabled(false);
+            return;
+        }
+
+        binding.progressPagination.setVisibility(View.GONE);
+        if (result.isError()) {
+            binding.btnConfirm.setEnabled(currentPreview != null
+                    && currentPreview.canConfirm()
+                    && !adapter.hasInsufficientStock());
+            showTopSnackbar(binding.getRoot(), friendlyError(result.getMessage()), true);
+            return;
+        }
+
+        InventoryTransactionResult transactionResult = result.getData();
+        String message = transactionResult != null && !transactionResult.getMessage().isEmpty()
+                ? transactionResult.getMessage()
+                : "Xu\u1ea5t kho th\u00e0nh c\u00f4ng.";
+        showTopSnackbar(binding.getRoot(), message, false);
+        binding.getRoot().postDelayed(
+                () -> popBackStackSafely(R.id.staffInventoryFragment, false),
+                700L
+        );
+    }
+
+    private int totalQuantity(List<InventoryQrPreviewItem> items) {
+        int total = 0;
+        if (items == null) {
+            return total;
+        }
+        for (InventoryQrPreviewItem item : items) {
+            total += item.getRequiredQuantity();
+        }
+        return total;
+    }
+
+    private String resolveCode() {
+        Bundle args = getArguments();
+        String argCode = args != null ? args.getString(ARG_CODE, "") : "";
+        return argCode != null ? argCode.trim() : "";
+    }
+
+    private String friendlyError(@Nullable String message) {
+        String safe = message != null ? message.trim() : "";
+        return safe.isEmpty() ? getString(R.string.error_generic) : safe;
     }
 }

@@ -75,7 +75,10 @@ public class AdminDashboardFragment extends BaseFragment<FragmentAdminDashboardB
     }
 
     private void onOpenMapClicked() {
-        showToast(getString(R.string.admin_dashboard_open_map_todo));
+        boolean navigated = navigateToDestinationSafely(R.id.adminMapFragment);
+        if (!navigated) {
+            showToast(getString(R.string.admin_dashboard_open_map_todo));
+        }
     }
 
     private void onManageHubClicked() {

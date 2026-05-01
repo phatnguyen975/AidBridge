@@ -21,14 +21,17 @@ public class UserMapper {
     // Entity → Public module DTO (for cross-module communication)
     public UserDTO toDTO(User user) {
         return UserDTO.builder()
-                .id(user.getId().toString())
-                .name(user.getFullName())
+                .id(user.getId())
+                .fullName(user.getFullName())
                 .email(user.getEmail())
-                .phone(user.getPhoneNumber())
-                .role(user.getRole().name())
+                .phoneNumber(user.getPhoneNumber())
+                .role(user.getRole())
                 .fcmToken(user.getFcmToken())
                 .avatarUrl(user.getAvatarUrl())
                 .isVerified(user.isVerified())
+                .isActive(user.isActive())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
                 .build();
     }
 

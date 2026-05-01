@@ -66,7 +66,7 @@ public class CreateSosRequestUseCase {
         String finalImageUrl = quickSos ? null : sosSceneImageService.resolveImageUrl(createDto.getImageUrl());
 
         SosRequest sosRequest = SosRequest.builder()
-            .requesterId(UUID.fromString(requester.getId()))
+            .requesterId(requester.getId())
             .location(SosRequest.createPoint(createDto.getLat(), createDto.getLng()))
             .address(trimToNull(createDto.getAddress()))
             .description(quickSos ? null : trimToNull(createDto.getDescription()))

@@ -29,6 +29,8 @@ public interface DonationItemRepository extends JpaRepository<DonationItem, UUID
 
     List<DonationItem> findAllByDonationId(UUID donationId);
 
+    boolean existsByDonationIdAndItemCategoryId(UUID donationId, UUID itemCategoryId);
+
     @Query(value = """
             select count(di.id)
             from donation_items di

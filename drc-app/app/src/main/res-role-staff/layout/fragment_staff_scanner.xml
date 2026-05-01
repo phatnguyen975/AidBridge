@@ -71,6 +71,15 @@
         app:layout_constraintStart_toStartOf="@id/view_scan_outer_frame"
         app:layout_constraintTop_toTopOf="@id/view_scan_outer_frame" />
 
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/view_scan_area"
+        app:layout_constraintEnd_toEndOf="@id/view_scan_area"
+        app:layout_constraintStart_toStartOf="@id/view_scan_area"
+        app:layout_constraintTop_toTopOf="@id/view_scan_area" />
+
     <ImageView
         android:id="@+id/iv_corner_top_left"
         android:layout_width="@dimen/staff_scanner_corner_size"
