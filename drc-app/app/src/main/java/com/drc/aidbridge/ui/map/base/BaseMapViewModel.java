@@ -13,8 +13,10 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.dto.request.RoutingRequestDto;
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 import com.drc.aidbridge.data.remote.dto.response.RoutingResponseDto;
+import com.drc.aidbridge.data.remote.dto.response.DangerousZoneResponseDto;
 import com.drc.aidbridge.data.remote.dto.response.hub.HubDto;
 import com.drc.aidbridge.domain.repository.HubRepository;
+import com.drc.aidbridge.domain.repository.RoutingRepository;
 import com.drc.aidbridge.domain.usecase.routing.CalculateRouteUseCase;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
@@ -41,7 +43,7 @@ public class BaseMapViewModel extends BaseViewModel {
     private static final String DEFAULT_NETWORK_ERROR_MESSAGE = "Khong the ket noi den may chu";
 
     private String selectedStrategy = STRATEGY_URGENT;
-    private boolean avoidDangerousZones;
+    private boolean avoidDangerousZones = true;
     private boolean isNavigationActive;
     private boolean isManualStartPoint;
     private boolean awaitDevStartPin = true;
@@ -76,8 +78,6 @@ public class BaseMapViewModel extends BaseViewModel {
     private final MutableLiveData<NetworkResultWrapper<List<HubDto>>> hubSearchResult = new MutableLiveData<>();
     private final MutableLiveData<GeoPoint> hubSearchPingPoint = new MutableLiveData<>();
 
-    private final HubRepository hubRepository;
-
     private final Handler simulationHandler = new Handler(Looper.getMainLooper());
     private Runnable simulationRunnable;
     private final MutableLiveData<GeoPoint> simulatedPoint = new MutableLiveData<>();
@@ -88,11 +88,50 @@ public class BaseMapViewModel extends BaseViewModel {
     private int lastSimulationPointBeforePause;
     private int cachedInstructionIndex = -1;
     private final List<RoutingRequestDto.DangerousZoneDto> cachedDangerousZones = new ArrayList<>();
+    private final MutableLiveData<NetworkResultWrapper<List<DangerousZoneResponseDto>>> serverDangerousZones = new MutableLiveData<>();
+
+    protected final RoutingRepository routingRepository;
+    protected final HubRepository hubRepository;
 
     protected BaseMapViewModel(@NonNull CalculateRouteUseCase calculateRouteUseCase,
-                               @NonNull HubRepository hubRepository) {
+            @NonNull HubRepository hubRepository,
+            @NonNull RoutingRepository routingRepository) {
         this.hubRepository = hubRepository;
+        this.routingRepository = routingRepository;
         routeResult = Transformations.switchMap(calculateRouteTrigger, calculateRouteUseCase::execute);
+
+        // Initial fetch of dangerous zones
+        fetchDangerousZones();
+    }
+
+    public LiveData<NetworkResultWrapper<List<DangerousZoneResponseDto>>> getServerDangerousZones() {
+        return serverDangerousZones;
+    }
+
+    public void fetchDangerousZones() {
+        android.util.Log.d("BaseMapViewModel", "fetchDangerousZones: Triggered");
+        routingRepository.getDangerousZones().observeForever(result -> {
+            android.util.Log.d("BaseMapViewModel", "fetchDangerousZones: Received result. Status: " + (result != null ? result.getClass().getSimpleName() : "null"));
+            if (result != null) {
+                serverDangerousZones.postValue(result);
+                if (result.isSuccess() && result.getData() != null) {
+                    android.util.Log.d("BaseMapViewModel", "fetchDangerousZones: Success. Data size: " + result.getData().size());
+                    // Update cached zones for routing
+                    List<RoutingRequestDto.DangerousZoneDto> mappedZones = new ArrayList<>();
+                    for (DangerousZoneResponseDto zone : result.getData()) {
+                        android.util.Log.d("BaseMapViewModel", "Mapping zone: " + zone.getName());
+                        mappedZones.add(new RoutingRequestDto.DangerousZoneDto(
+                                zone.getId().toString(),
+                                0,
+                                new RoutingRequestDto.GeometryDto(
+                                        zone.getGeometry().getType(),
+                                        zone.getGeometry().getCoordinates())));
+                    }
+                    android.util.Log.d("BaseMapViewModel", "fetchDangerousZones: Successfully mapped " + mappedZones.size() + " zones.");
+                    setCachedDangerousZones(mappedZones);
+                }
+            }
+        });
     }
 
     public LiveData<NetworkResultWrapper<RoutingResponseDto>> getRouteResult() {
@@ -100,6 +139,9 @@ public class BaseMapViewModel extends BaseViewModel {
     }
 
     public void calculateRoute(@NonNull RoutingRequestDto requestDto) {
+        android.util.Log.d("BaseMapViewModel", "Calculating route with " + 
+            (requestDto.getDangerousZones() != null ? requestDto.getDangerousZones().size() : 0) + 
+            " dangerous zones. Strategy: " + requestDto.getStrategy());
         calculateRouteTrigger.setValue(requestDto);
     }
 
@@ -121,7 +163,7 @@ public class BaseMapViewModel extends BaseViewModel {
                 .enqueue(new Callback<BaseResponse<List<HubDto>>>() {
                     @Override
                     public void onResponse(@NonNull Call<BaseResponse<List<HubDto>>> call,
-                                           @NonNull Response<BaseResponse<List<HubDto>>> response) {
+                            @NonNull Response<BaseResponse<List<HubDto>>> response) {
                         BaseResponse<List<HubDto>> body = response.body();
                         if (response.isSuccessful() && body != null && body.isSuccess() && body.getData() != null) {
                             hubSearchResult.postValue(NetworkResultWrapper.success(body.getData()));
@@ -134,7 +176,7 @@ public class BaseMapViewModel extends BaseViewModel {
 
                     @Override
                     public void onFailure(@NonNull Call<BaseResponse<List<HubDto>>> call,
-                                          @NonNull Throwable throwable) {
+                            @NonNull Throwable throwable) {
                         String message = throwable.getMessage();
                         if (message == null || message.trim().isEmpty()) {
                             message = DEFAULT_NETWORK_ERROR_MESSAGE;
@@ -146,8 +188,8 @@ public class BaseMapViewModel extends BaseViewModel {
 
     @NonNull
     public RoutingRequestDto createRoutingRequest(@NonNull GeoPoint start,
-                                                  @NonNull GeoPoint end,
-                                                  @Nullable List<RoutingRequestDto.DangerousZoneDto> overrideZones) {
+            @NonNull GeoPoint end,
+            @Nullable List<RoutingRequestDto.DangerousZoneDto> overrideZones) {
         List<RoutingRequestDto.DangerousZoneDto> dangerousZones = Collections.emptyList();
         if (avoidDangerousZones) {
             dangerousZones = (overrideZones == null || overrideZones.isEmpty())
@@ -155,14 +197,16 @@ public class BaseMapViewModel extends BaseViewModel {
                     : new ArrayList<>(overrideZones);
         }
 
-        return new RoutingRequestDto(
+        RoutingRequestDto request = new RoutingRequestDto(
                 start.getLatitude(),
                 start.getLongitude(),
                 end.getLatitude(),
                 end.getLongitude(),
                 selectedStrategy,
-                dangerousZones
-        );
+                dangerousZones);
+        
+        android.util.Log.d("BaseMapViewModel", "Created RoutingRequest with " + dangerousZones.size() + " zones. Avoid=" + avoidDangerousZones);
+        return request;
     }
 
     @NonNull
@@ -172,39 +216,8 @@ public class BaseMapViewModel extends BaseViewModel {
 
     @NonNull
     public List<RoutingRequestDto.DangerousZoneDto> buildDefaultDangerousZones() {
-        List<RoutingRequestDto.DangerousZoneDto> zones = new ArrayList<>();
-
-        zones.add(new RoutingRequestDto.DangerousZoneDto(
-                "1",
-                0,
-                new RoutingRequestDto.GeometryDto(
-                        "Polygon",
-                        createPolygonCoordinates(new double[][]{
-                                {106.7, 10.8},
-                                {106.71, 10.8},
-                                {106.75, 10.81},
-                                {106.65, 10.81},
-                                {106.7, 10.8}
-                        })
-                )
-        ));
-
-        zones.add(new RoutingRequestDto.DangerousZoneDto(
-                "2",
-                0,
-                new RoutingRequestDto.GeometryDto(
-                        "Polygon",
-                        createPolygonCoordinates(new double[][]{
-                                {106.72, 10.9},
-                                {107.0, 10.9},
-                                {107.0, 10.81},
-                                {106.8, 10.81},
-                                {106.72, 10.9}
-                        })
-                )
-        ));
-
-        return zones;
+        // Now returns the zones fetched from the server and cached in the ViewModel
+        return getCachedDangerousZones();
     }
 
     private List<List<List<Double>>> createPolygonCoordinates(double[][] lonLatPoints) {
@@ -440,10 +453,13 @@ public class BaseMapViewModel extends BaseViewModel {
     }
 
     public void setCachedDangerousZones(@Nullable List<RoutingRequestDto.DangerousZoneDto> zones) {
-        cachedDangerousZones.clear();
-        if (zones != null) {
-            cachedDangerousZones.addAll(zones);
+        if (zones == null) {
+            android.util.Log.w("BaseMapViewModel", "setCachedDangerousZones: Received null list!");
+            return;
         }
+        cachedDangerousZones.clear();
+        cachedDangerousZones.addAll(zones);
+        android.util.Log.d("BaseMapViewModel", "Cache updated. New size: " + cachedDangerousZones.size());
     }
 
     public void startSimulationFromCurrentRoute() {
