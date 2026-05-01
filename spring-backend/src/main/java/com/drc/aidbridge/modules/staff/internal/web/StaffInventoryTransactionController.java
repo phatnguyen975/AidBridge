@@ -2,7 +2,7 @@ package com.drc.aidbridge.modules.staff.internal.web;
 
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import com.drc.aidbridge.modules.shared.exception.AuthenticationException;
-import com.drc.aidbridge.modules.staff.internal.service.StaffInventoryTransactionService;
+import com.drc.aidbridge.modules.staff.internal.usecase.StaffOutboundInventoryUseCase;
 import com.drc.aidbridge.modules.staff.internal.web.dto.ConfirmOutboundInventoryRequest;
 import com.drc.aidbridge.modules.staff.internal.web.dto.InventoryQrPreviewResponse;
 import com.drc.aidbridge.modules.staff.internal.web.dto.InventoryTransactionResponse;
@@ -25,7 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StaffInventoryTransactionController {
 
-    private final StaffInventoryTransactionService transactionService;
+    private final StaffOutboundInventoryUseCase outboundInventoryUseCase;
 
     @GetMapping("/outbound/preview")
     @PreAuthorize("hasRole('STAFF')")
@@ -33,7 +33,7 @@ public class StaffInventoryTransactionController {
             @RequestParam String code,
             Authentication authentication
     ) {
-        InventoryQrPreviewResponse response = transactionService.previewOutbound(
+        InventoryQrPreviewResponse response = outboundInventoryUseCase.previewOutbound(
                 code,
                 resolveCurrentUserId(authentication)
         );
@@ -46,7 +46,7 @@ public class StaffInventoryTransactionController {
             @Valid @RequestBody ConfirmOutboundInventoryRequest request,
             Authentication authentication
     ) {
-        InventoryTransactionResponse response = transactionService.confirmOutbound(
+        InventoryTransactionResponse response = outboundInventoryUseCase.confirmOutbound(
                 request,
                 resolveCurrentUserId(authentication)
         );

@@ -52,6 +52,11 @@
     <string name="staff_scan_manual_btn">NHẬP MÃ THỦ CÔNG</string>
     <string name="staff_manual_title">NHẬP MÃ THỦ CÔNG</string>
     <string name="staff_manual_hint">VD: DON-12345</string>
+    <string name="staff_manual_title_import">NHẬP MÃ NHẬP KHO</string>
+    <string name="staff_manual_title_export">NHẬP MÃ NHIỆM VỤ</string>
+    <string name="staff_manual_hint_import">VD: DON-12345</string>
+    <string name="staff_manual_hint_export">VD: MIS-2026-001</string>
+    <string name="staff_manual_error_required">Vui lòng nhập mã.</string>
     <string name="staff_action_confirm">XÁC NHẬN</string>
 
     <!-- Staff import/export detail -->
@@ -65,8 +70,18 @@
     <string name="staff_detail_item_list">Danh sách vật tư</string>
     <string name="staff_detail_stock_prefix">Kho:</string>
     <string name="staff_detail_export_prefix">Xuất:</string>
+    <string name="staff_detail_required_prefix">Yêu cầu:</string>
     <string name="staff_detail_donation_prefix">Quyên góp:</string>
     <string name="staff_detail_insufficient">KHÔNG ĐỦ TỒN KHO</string>
+    <string name="staff_detail_export_quantity_hint">Số lượng xuất</string>
+    <string name="staff_detail_total_value_format">%1$d vật phẩm</string>
+    <string name="staff_detail_time_now">Bây giờ</string>
+    <string name="staff_detail_people_format">Người lớn: %1$d | Người già: %2$d | Trẻ em: %3$d</string>
+    <string name="staff_detail_no_description">Không có mô tả</string>
+    <string name="staff_export_stock_warning">Một số vật phẩm không đủ tồn kho.</string>
+    <string name="staff_export_over_stock">Số lượng xuất vượt quá tồn kho.</string>
+    <string name="staff_export_empty_quantity">Vui lòng nhập số lượng xuất.</string>
+    <string name="staff_export_note_default">Xuất kho cho mission</string>
     <string name="staff_detail_confirm_export">XÁC NHẬN XUẤT KHO</string>
     <string name="staff_detail_confirm_import">XÁC NHẬN NHẬP KHO</string>
 

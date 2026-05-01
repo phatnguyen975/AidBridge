@@ -1,9 +1,11 @@
-package com.drc.aidbridge.modules.staff.internal.service;
+package com.drc.aidbridge.modules.staff.internal.usecase;
 
 import com.drc.aidbridge.modules.aid.internal.entity.AidItemCategory;
+import com.drc.aidbridge.modules.aid.internal.entity.AidRequest;
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequestItem;
 import com.drc.aidbridge.modules.aid.internal.repository.AidItemCategoryJpaRepository;
 import com.drc.aidbridge.modules.aid.internal.repository.AidRequestItemJpaRepository;
+import com.drc.aidbridge.modules.aid.internal.repository.AidRequestJpaRepository;
 import com.drc.aidbridge.modules.hub.internal.entity.Hub;
 import com.drc.aidbridge.modules.hub.internal.entity.HubInventory;
 import com.drc.aidbridge.modules.hub.internal.entity.HubStaff;
@@ -25,8 +27,10 @@ import com.drc.aidbridge.modules.staff.internal.web.dto.InventoryQrPreviewItemDt
 import com.drc.aidbridge.modules.staff.internal.web.dto.InventoryQrPreviewResponse;
 import com.drc.aidbridge.modules.staff.internal.web.dto.InventoryTransactionItemDto;
 import com.drc.aidbridge.modules.staff.internal.web.dto.InventoryTransactionResponse;
+import com.drc.aidbridge.modules.staff.internal.web.dto.StaffOutboundAidRequestDto;
+import com.drc.aidbridge.modules.staff.internal.web.dto.StaffOutboundAidRequestItemDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -41,55 +45,73 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Service
+/**
+ * Use case for staff outbound inventory preview and confirmation.
+ */
+@Component
 @RequiredArgsConstructor
-public class StaffInventoryTransactionService {
+public class StaffOutboundInventoryUseCase {
 
-    private static final int DEFAULT_LOW_STOCK_THRESHOLD = 10;
     private static final String TYPE_OUTBOUND_MISSION = "OUTBOUND_MISSION";
-    private static final String CHANGE_TYPE_INBOUND = "INBOUND";
     private static final String CHANGE_TYPE_OUTBOUND = "OUTBOUND";
-    private static final String REFERENCE_MISSION = "MISSION";
+    private static final String REFERENCE_OUTBOUND = "OUTBOUND";
 
     private final HubStaffRepository hubStaffRepository;
     private final HubRepository hubRepository;
     private final MissionJpaRepository missionRepository;
+    private final AidRequestJpaRepository aidRequestRepository;
     private final AidRequestItemJpaRepository aidRequestItemRepository;
     private final AidItemCategoryJpaRepository itemCategoryRepository;
     private final HubInventoryRepository hubInventoryRepository;
     private final InventoryLogRepository inventoryLogRepository;
 
+    /**
+     * Builds outbound preview data for staff based on mission code name.
+     *
+     * @param codeName      mission code name
+     * @param currentUserId staff user id
+     * @return outbound preview response
+     */
     @Transactional(readOnly = true)
-    public InventoryQrPreviewResponse previewOutbound(String code, UUID currentUserId) {
+    public InventoryQrPreviewResponse previewOutbound(String codeName, UUID currentUserId) {
         Hub staffHub = findActiveStaffHub(currentUserId);
-        Mission mission = findMissionByCode(code);
+        Mission mission = findMissionByCodeName(codeName);
         validateMissionBelongsToHub(mission, staffHub.getId());
         validateMissionProcessable(mission);
 
+        AidRequest aidRequest = findAidRequest(mission.getAidRequestId());
         List<ItemAggregate> aggregates = aggregateAidRequestItems(mission.getAidRequestId());
         if (aggregates.isEmpty()) {
             throw new BadRequestException("Mission does not have aid request items");
         }
 
         List<InventoryQrPreviewItemDto> items = toOutboundPreviewItems(staffHub.getId(), aggregates);
-        boolean canConfirm = items.stream().allMatch(item -> Boolean.TRUE.equals(item.isEnoughStock()));
+        boolean canConfirm = items.stream().anyMatch(item -> safeQuantity(item.currentQuantity()) > 0);
 
         return new InventoryQrPreviewResponse(
                 TYPE_OUTBOUND_MISSION,
                 null,
                 null,
                 mission.getId(),
-                safeText(resolveMissionCode(mission)),
+                safeText(mission.getCodeName()),
                 mission.getStatus().name(),
                 staffHub.getId(),
                 safeText(staffHub.getName()),
                 items,
                 canConfirm,
+                buildAidRequestDetail(aidRequest, mission.getAidRequestId()),
                 canConfirm
                         ? "Mission is valid for outbound inventory"
-                        : "Some items do not have enough stock");
+                        : "No available inventory to export");
     }
 
+    /**
+     * Confirms outbound inventory for a mission code name.
+     *
+     * @param request       outbound confirmation payload
+     * @param currentUserId staff user id
+     * @return transaction response
+     */
     @Transactional
     public InventoryTransactionResponse confirmOutbound(ConfirmOutboundInventoryRequest request, UUID currentUserId) {
         if (request == null) {
@@ -97,26 +119,16 @@ public class StaffInventoryTransactionService {
         }
 
         Hub staffHub = findActiveStaffHub(currentUserId);
-        Mission mission = findMissionByCode(request.getCode());
+        Mission mission = findMissionByCodeName(request.getCode());
         validateMissionBelongsToHub(mission, staffHub.getId());
         validateMissionProcessable(mission);
 
-        List<ItemAggregate> requiredItems = aggregateAidRequestItems(mission.getAidRequestId());
-        if (requiredItems.isEmpty()) {
+        if (mission.getAidRequestId() == null) {
             throw new BadRequestException("Mission does not have aid request items");
         }
 
-        Map<UUID, Integer> requiredQuantities = requiredItems.stream()
-                .collect(Collectors.toMap(
-                        ItemAggregate::itemCategoryId,
-                        ItemAggregate::quantity,
-                        Integer::sum,
-                        LinkedHashMap::new));
         Map<UUID, Integer> requestedQuantities = aggregateRequestItems(request.getItems());
-        validateOutboundRequestedQuantities(requestedQuantities, requiredQuantities);
 
-        // Pre-validate all stock before mutating anything so the transaction rolls back
-        // cleanly on conflict.
         Map<UUID, CategoryMeta> metaByCategoryId = loadCategoryMeta(requestedQuantities.keySet());
         for (Map.Entry<UUID, Integer> entry : requestedQuantities.entrySet()) {
             UUID itemCategoryId = entry.getKey();
@@ -135,8 +147,7 @@ public class StaffInventoryTransactionService {
         List<InventoryTransactionItemDto> updatedItems = applyInventoryDelta(
                 staffHub.getId(),
                 requestedQuantities,
-                false,
-                REFERENCE_MISSION,
+                REFERENCE_OUTBOUND,
                 mission.getId(),
                 request.getNote(),
                 currentUserId);
@@ -150,7 +161,7 @@ public class StaffInventoryTransactionService {
                 null,
                 null,
                 mission.getId(),
-                safeText(resolveMissionCode(mission)),
+                safeText(mission.getCodeName()),
                 updatedItems);
     }
 
@@ -163,19 +174,10 @@ public class StaffInventoryTransactionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Assigned hub not found"));
     }
 
-    private Mission findMissionByCode(String rawCode) {
-        String code = normalizeCode(rawCode);
-        Optional<Mission> byQrToken = missionRepository.findByQrCodeToken(code);
-        if (byQrToken.isPresent()) {
-            return byQrToken.get();
-        }
-
-        try {
-            return missionRepository.findById(UUID.fromString(code))
-                    .orElseThrow(() -> new ResourceNotFoundException("Mission QR code not found"));
-        } catch (IllegalArgumentException ignored) {
-            throw new ResourceNotFoundException("Mission QR code not found");
-        }
+    private Mission findMissionByCodeName(String rawCodeName) {
+        String codeName = normalizeCode(rawCodeName);
+        return missionRepository.findByCodeNameIgnoreCase(codeName)
+                .orElseThrow(() -> new ResourceNotFoundException("Mission code not found"));
     }
 
     private String normalizeCode(String rawCode) {
@@ -203,6 +205,36 @@ public class StaffInventoryTransactionService {
                 || mission.getStatus() == MissionStatus.CANCELLED) {
             throw new ConflictException("Mission has already been processed");
         }
+    }
+
+    private AidRequest findAidRequest(UUID aidRequestId) {
+        if (aidRequestId == null) {
+            throw new BadRequestException("aidRequestId is required");
+        }
+        return aidRequestRepository.findById(aidRequestId)
+                .orElseThrow(() -> new ResourceNotFoundException("Aid request not found"));
+    }
+
+    private StaffOutboundAidRequestDto buildAidRequestDetail(AidRequest aidRequest, UUID aidRequestId) {
+        List<StaffOutboundAidRequestItemDto> items = aidRequestItemRepository
+                .findDetailRowsByAidRequestId(aidRequestId)
+                .stream()
+                .map(row -> new StaffOutboundAidRequestItemDto(
+                        row.getItemCategoryId(),
+                        safeText(row.getCategoryName()),
+                        safeText(row.getUnit()),
+                        row.getItemCount() != null ? row.getItemCount().intValue() : 0
+                ))
+                .toList();
+
+        return new StaffOutboundAidRequestDto(
+                aidRequest.getId(),
+                safeText(aidRequest.getDescription()),
+                safeQuantity(aidRequest.getNumberAdult()),
+                safeQuantity(aidRequest.getNumberElderly()),
+                safeQuantity(aidRequest.getNumberChildren()),
+                items
+        );
     }
 
     private List<ItemAggregate> aggregateAidRequestItems(UUID aidRequestId) {
@@ -258,7 +290,7 @@ public class StaffInventoryTransactionService {
                             null,
                             requiredQuantity,
                             currentQuantity,
-                            currentQuantity >= requiredQuantity);
+                            currentQuantity >= requiredQuantity && requiredQuantity > 0);
                 })
                 .toList();
     }
@@ -282,33 +314,8 @@ public class StaffInventoryTransactionService {
         return quantities;
     }
 
-    private void ensureRequestedItemsBelongToSource(Set<UUID> requestedIds, Set<UUID> allowedIds, String message) {
-        for (UUID requestedId : requestedIds) {
-            if (!allowedIds.contains(requestedId)) {
-                throw new BadRequestException(message);
-            }
-        }
-    }
-
-    private void validateOutboundRequestedQuantities(Map<UUID, Integer> requestedQuantities,
-            Map<UUID, Integer> requiredQuantities) {
-        ensureRequestedItemsBelongToSource(requestedQuantities.keySet(), requiredQuantities.keySet(),
-                "Item does not belong to mission aid request");
-
-        for (Map.Entry<UUID, Integer> required : requiredQuantities.entrySet()) {
-            Integer requestedQuantity = requestedQuantities.get(required.getKey());
-            if (requestedQuantity == null) {
-                throw new BadRequestException("Missing required item for outbound confirmation");
-            }
-            if (!requestedQuantity.equals(required.getValue())) {
-                throw new BadRequestException("Outbound quantity must match required quantity");
-            }
-        }
-    }
-
     private List<InventoryTransactionItemDto> applyInventoryDelta(UUID hubId,
             Map<UUID, Integer> quantities,
-            boolean inbound,
             String referenceType,
             UUID referenceId,
             String note,
@@ -325,34 +332,21 @@ public class StaffInventoryTransactionService {
             }
 
             HubInventory inventory = hubInventoryRepository.findByHubIdAndItemCategoryId(hubId, itemCategoryId)
-                    .orElseGet(() -> {
-                        if (!inbound) {
-                            throw new ConflictException("Inventory item not found");
-                        }
-                        return HubInventory.builder()
-                                .hubId(hubId)
-                                .itemCategoryId(itemCategoryId)
-                                .currentQuantity(0)
-                                .lowStockThreshold(DEFAULT_LOW_STOCK_THRESHOLD)
-                                .build();
-                    });
+                    .orElseThrow(() -> new ConflictException("Inventory item not found"));
 
             int oldQuantity = safeQuantity(inventory.getCurrentQuantity());
-            int delta = inbound ? quantity : -quantity;
+            int delta = -quantity;
             int newQuantity = oldQuantity + delta;
             if (newQuantity < 0) {
                 throw new ConflictException("Not enough stock for item: " + safeText(meta.name()));
             }
 
             inventory.setCurrentQuantity(newQuantity);
-            if (inbound) {
-                inventory.setLastRestockedAt(Instant.now());
-            }
             HubInventory savedInventory = hubInventoryRepository.save(inventory);
 
             inventoryLogRepository.save(InventoryLog.builder()
                     .hubInventoryId(savedInventory.getId())
-                    .changeType(inbound ? CHANGE_TYPE_INBOUND : CHANGE_TYPE_OUTBOUND)
+                    .changeType(CHANGE_TYPE_OUTBOUND)
                     .quantityDelta(delta)
                     .quantityAfter(newQuantity)
                     .referenceType(referenceType)
@@ -401,12 +395,6 @@ public class StaffInventoryTransactionService {
                     child.isLeaf()));
         }
         return result;
-    }
-
-    private String resolveMissionCode(Mission mission) {
-        return mission.getQrCodeToken() != null && !mission.getQrCodeToken().isBlank()
-                ? mission.getQrCodeToken()
-                : mission.getId().toString();
     }
 
     private int safeQuantity(Integer value) {

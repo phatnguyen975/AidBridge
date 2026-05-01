@@ -36,6 +36,9 @@ public class InventoryQrPreviewResponseDto {
     @SerializedName("canConfirm")
     private Boolean canConfirm;
 
+    @SerializedName("aidRequestDetail")
+    private OutboundAidRequestDetailDto aidRequestDetail;
+
     @SerializedName("message")
     private String message;
 
@@ -77,6 +80,10 @@ public class InventoryQrPreviewResponseDto {
 
     public Boolean getCanConfirm() {
         return canConfirm;
+    }
+
+    public OutboundAidRequestDetailDto getAidRequestDetail() {
+        return aidRequestDetail;
     }
 
     public String getMessage() {

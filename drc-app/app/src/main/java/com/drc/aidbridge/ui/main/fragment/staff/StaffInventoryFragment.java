@@ -24,6 +24,7 @@ import com.drc.aidbridge.domain.model.staff.StaffInventoryItem;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.adapter.staff.StaffInventoryAdapter;
 import com.drc.aidbridge.ui.main.viewmodel.staff.StaffInventoryViewModel;
+import com.drc.aidbridge.ui.main.fragment.staff.StaffManualEntryBottomSheet;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -119,7 +120,12 @@ public class StaffInventoryFragment extends BaseFragment<FragmentStaffInventoryB
 
     private void setupActionButtons() {
         binding.btnStockIn.setOnClickListener(v -> navigateToScanner("import"));
-        binding.btnStockOut.setOnClickListener(v -> navigateToScanner("export"));
+        binding.btnStockOut.setOnClickListener(v -> showManualExportEntry());
+    }
+
+    private void showManualExportEntry() {
+        StaffManualEntryBottomSheet.newInstance("export")
+                .show(getChildFragmentManager(), StaffManualEntryBottomSheet.class.getSimpleName());
     }
 
     private void setupRetry() {
