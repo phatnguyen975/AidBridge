@@ -77,8 +77,8 @@ public class AdminMapFragment extends BaseMapFragment<AdminMapViewModel> {
         adminBinding.btnToggleRoutingMenu.setOnClickListener(v -> toggleMenu());
 
         // Status Dropdown (Material 3)
-        String[] statuses = {"PENDING", "ACCEPTED", "COMPLETED", "CANCELED", "ARRIVED", "DISPATCHED"};
-        String[] displayStatuses = {"Đang chờ", "Đã chấp nhận", "Đã hoàn thành", "Đã hủy", "Đã đến nơi", "Đã điều phối"};
+        String[] statuses = {"PENDING", "ASSIGNED", "COMPLETED", "CANCELED"};
+        String[] displayStatuses = {"Đang chờ", "Đã phân công", "Đã hoàn thành", "Đã hủy"};
         
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, displayStatuses);
         adminBinding.autoCompleteStatus.setAdapter(adapter);

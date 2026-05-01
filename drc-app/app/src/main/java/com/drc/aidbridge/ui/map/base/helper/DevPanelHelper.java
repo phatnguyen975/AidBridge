@@ -33,10 +33,7 @@ public class DevPanelHelper {
     public void showDevPanelBottomSheet(
             @NonNull android.content.Context context,
             boolean isNetworkDropSimulated) {
-        
-        if (!BuildConfig.DEBUG) {
-            return;
-        }
+
 
         BottomSheetDialog dialog = new BottomSheetDialog(context);
         dialog.setCanceledOnTouchOutside(false);
