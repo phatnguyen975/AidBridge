@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.locationtech.jts.geom.Point;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +40,7 @@ import com.drc.aidbridge.modules.aid.AidRequestDTO;
 import com.drc.aidbridge.modules.sos.internal.mapper.SosMapper;
 import com.drc.aidbridge.modules.aid.internal.mapper.AidMapper;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,6 +83,7 @@ public class MissionFacadeImpl implements MissionFacade {
         Mission mission = Mission.builder()
                 .missionType(MissionType.DELIVERY)
                 .aidRequestId(aidRequestId)
+                .codeName(generateMissionCodeName())
                 .status(MissionStatus.PENDING)
                 .victimLocation(Mission.createPoint(lat, lng))
                 .build();
@@ -115,6 +119,7 @@ public class MissionFacadeImpl implements MissionFacade {
                 .missionType(MissionType.RESCUE)
                 .status(MissionStatus.PENDING)
                 .sosRequestId(sosRequestId)
+                .codeName(generateMissionCodeName())
                 .victimLocation(location)
                 .build();
 
@@ -250,6 +255,7 @@ public class MissionFacadeImpl implements MissionFacade {
                 .aidRequestId(response.getAidRequestId())
                 .volunteerId(response.getVolunteerId())
                 .hubId(response.getHubId())
+                .codeName(response.getCodeName())
                 .victimLat(response.getVictimLat())
                 .victimLng(response.getVictimLng())
                 .createdAt(response.getCreatedAt())
@@ -269,6 +275,7 @@ public class MissionFacadeImpl implements MissionFacade {
                 .aidRequestId(response.getAidRequestId())
                 .volunteerId(response.getVolunteerId())
                 .hubId(response.getHubId())
+                .codeName(response.getCodeName())
                 .victimLat(response.getVictimLat())
                 .victimLng(response.getVictimLng())
                 .createdAt(response.getCreatedAt())
@@ -295,5 +302,11 @@ public class MissionFacadeImpl implements MissionFacade {
                 .stream()
                 .map(aidMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    private String generateMissionCodeName() {
+    String timePart = String.valueOf(System.currentTimeMillis()).substring(7);
+    String randomPart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
+    return "MSN-" + timePart + "-" + randomPart;
     }
 }

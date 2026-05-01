@@ -27,6 +27,7 @@ public class MissionResponse {
     private UUID aidRequestId;
     private UUID volunteerId;
     private UUID hubId;
+    private String codeName;
 
     private BigDecimal victimLat;
     private BigDecimal victimLng;

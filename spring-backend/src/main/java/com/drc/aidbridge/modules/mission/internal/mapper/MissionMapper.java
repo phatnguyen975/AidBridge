@@ -24,6 +24,7 @@ public class MissionMapper {
                 .aidRequestId(mission.getAidRequestId())
                 .volunteerId(mission.getVolunteerId())
                 .hubId(mission.getHubId())
+                .codeName(mission.getCodeName())
                 .victimLat(mission.getVictimLat())
                 .victimLng(mission.getVictimLng())
                 .createdAt(mission.getCreatedAt())
@@ -41,6 +42,7 @@ public class MissionMapper {
                 .aidRequestId(mission.getAidRequestId())
                 .volunteerId(mission.getVolunteerId())
                 .hubId(mission.getHubId())
+                .codeName(mission.getCodeName())
                 .victimLat(mission.getVictimLat())
                 .victimLng(mission.getVictimLng())
                 .qrCodeToken(mission.getQrCodeToken());
