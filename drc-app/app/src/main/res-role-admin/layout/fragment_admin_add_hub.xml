@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/admin_screen_background"
+    android:paddingStart="@dimen/admin_screen_padding"
+    android:paddingTop="@dimen/admin_screen_padding"
+    android:paddingEnd="@dimen/admin_screen_padding">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_admin_add_hub_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/button_admin_add_hub_back"
+            android:layout_width="@dimen/admin_hub_mgmt_header_back_size"
+            android:layout_height="@dimen/admin_hub_mgmt_header_back_size"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/admin_add_hub_back"
+            android:padding="@dimen/admin_stat_value_spacing"
+            android:src="@drawable/ic_admin_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/admin_text_primary" />
+
+        <TextView
+            android:id="@+id/text_admin_add_hub_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/admin_add_hub_title"
+            android:textColor="@color/admin_text_primary"
+            android:textSize="@dimen/admin_screen_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_admin_add_hub"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/admin_section_spacing"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/admin_hub_mgmt_fab_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_admin_add_hub_header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_admin_add_hub_name"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/admin_add_hub_name">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_admin_add_hub_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_admin_add_hub_address"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                android:hint="@string/admin_add_hub_address">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/edit_text_admin_add_hub_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:completionThreshold="3"
+                    android:inputType="textPostalAddress"
+                    android:maxLines="2" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_admin_add_hub_phone"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                android:hint="@string/admin_add_hub_phone">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_admin_add_hub_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layout_admin_add_hub_start_time"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/admin_hub_item_spacing_small"
+                    android:layout_weight="1"
+                    android:hint="@string/admin_add_hub_start_time">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_text_admin_add_hub_start_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:inputType="none"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layout_admin_add_hub_end_time"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/admin_hub_item_spacing_small"
+                    android:layout_weight="1"
+                    android:hint="@string/admin_add_hub_end_time">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_text_admin_add_hub_end_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:inputType="none"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_admin_add_hub_image_url"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                android:hint="@string/admin_add_hub_image_url">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_admin_add_hub_image_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textUri"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+                android:text="@string/admin_add_hub_status_default"
+                android:textColor="@color/admin_text_secondary"
+                android:textSize="@dimen/text_md" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/admin_section_spacing">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_admin_add_hub_submit"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/admin_hub_detail_button_height"
+                    android:text="@string/admin_add_hub_submit"
+                    android:textAllCaps="false"
+                    android:textColor="@color/admin_action_button_text"
+                    android:textSize="@dimen/text_md"
+                    app:backgroundTint="@color/admin_action_button_primary_bg"
+                    app:cornerRadius="@dimen/admin_action_button_radius" />
+
+                <ProgressBar
+                    android:id="@+id/progress_admin_add_hub"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

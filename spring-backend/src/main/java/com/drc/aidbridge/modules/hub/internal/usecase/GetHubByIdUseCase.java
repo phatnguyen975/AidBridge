@@ -2,6 +2,8 @@ package com.drc.aidbridge.modules.hub.internal.usecase;
 
 import com.drc.aidbridge.modules.aid.internal.entity.AidItemCategory;
 import com.drc.aidbridge.modules.aid.internal.repository.AidItemCategoryJpaRepository;
+import com.drc.aidbridge.modules.aid.internal.repository.AidRequestItemJpaRepository;
+import com.drc.aidbridge.modules.donation.internal.repository.DonationItemRepository;
 import com.drc.aidbridge.modules.hub.HubDTO;
 import com.drc.aidbridge.modules.hub.internal.entity.HubInventory;
 import com.drc.aidbridge.modules.hub.internal.mapper.HubMapper;
@@ -12,8 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -22,11 +24,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GetHubByIdUseCase {
 
-    private static final String GROUP_FOOD = "Thực phẩm";
-    private static final String GROUP_WATER = "Nước uống";
-    private static final String GROUP_CLOTHES = "Quần áo";
-    private static final String GROUP_MEDICINE = "Thuốc";
-    private static final String GROUP_OTHER = "Nhu yếu phẩm khác";
+    private static final String GROUP_FOOD = "Th\u1ef1c ph\u1ea9m";
+    private static final String GROUP_WATER = "N\u01b0\u1edbc u\u1ed1ng";
+    private static final String GROUP_CLOTHES = "Qu\u1ea7n \u00e1o";
+    private static final String GROUP_MEDICINE = "Thu\u1ed1c men";
+    private static final String GROUP_OTHER = "Nhu y\u1ebfu ph\u1ea9m kh\u00e1c";
 
     private static final List<String> GROUP_ORDER = List.of(
             GROUP_FOOD,
@@ -38,6 +40,8 @@ public class GetHubByIdUseCase {
     private final HubRepository hubRepository;
     private final HubInventoryRepository hubInventoryRepository;
     private final AidItemCategoryJpaRepository aidItemCategoryJpaRepository;
+    private final DonationItemRepository donationItemRepository;
+    private final AidRequestItemJpaRepository aidRequestItemJpaRepository;
     private final HubMapper hubMapper;
 
     public HubDTO execute(UUID id) {
@@ -48,7 +52,7 @@ public class GetHubByIdUseCase {
                         return null;
                     }
 
-                    dto.setInventoryGroups(buildEmptyInventoryGroups());
+                    dto.setInventoryGroups(new ArrayList<>());
 
                     List<HubInventory> inventories = hubInventoryRepository.findAllByHubId(hub.getId());
                     if (inventories == null || inventories.isEmpty()) {
@@ -95,27 +99,21 @@ public class GetHubByIdUseCase {
 
                     List<HubDTO.ParentCategoryInventoryDTO> groupedInventory = new ArrayList<>();
                     for (String groupName : GROUP_ORDER) {
-                        groupedInventory.add(HubDTO.ParentCategoryInventoryDTO.builder()
-                                .parentCategoryName(groupName)
-                                .items(groupedItems.get(groupName))
-                                .build());
+                        List<HubDTO.InventoryItemDTO> items = groupedItems.get(groupName);
+                        if (items != null && !items.isEmpty()) {
+                            groupedInventory.add(HubDTO.ParentCategoryInventoryDTO.builder()
+                                    .parentCategoryName(groupName)
+                                    .items(items)
+                                    .build());
+                        }
                     }
 
                     dto.setInventoryGroups(groupedInventory);
+                    dto.setTotalImportedQuantity(resolveSafeQuantity(donationItemRepository.countImportedQuantityByHubId(hub.getId())));
+                    dto.setTotalExportedQuantity(resolveSafeQuantity(aidRequestItemJpaRepository.countExportedQuantityByHubId(hub.getId())));
                     return dto;
                 })
                 .orElse(null);
-    }
-
-    private List<HubDTO.ParentCategoryInventoryDTO> buildEmptyInventoryGroups() {
-        List<HubDTO.ParentCategoryInventoryDTO> groups = new ArrayList<>();
-        for (String groupName : GROUP_ORDER) {
-            groups.add(HubDTO.ParentCategoryInventoryDTO.builder()
-                    .parentCategoryName(groupName)
-                    .items(new ArrayList<>())
-                    .build());
-        }
-        return groups;
     }
 
     private Map<String, List<HubDTO.InventoryItemDTO>> initializeGroupedItems() {
@@ -149,8 +147,9 @@ public class GetHubByIdUseCase {
         if (normalized.contains("nuoc") || normalized.contains("water") || normalized.contains("drink")) {
             return GROUP_WATER;
         }
-        if (normalized.contains("quan ao") || normalized.contains("clothes") || normalized.contains("garment")
-                || normalized.contains("chan man") || normalized.contains("raincoat")) {
+        if (normalized.contains("quan ao") || normalized.contains("clothes") || normalized.contains("clothing")
+                || normalized.contains("garment") || normalized.contains("chan man")
+                || normalized.contains("raincoat")) {
             return GROUP_CLOTHES;
         }
         if (normalized.contains("thuc pham") || normalized.contains("food") || normalized.contains("gao")
@@ -187,5 +186,12 @@ public class GetHubByIdUseCase {
         return Normalizer.normalize(value, Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "")
                 .toLowerCase();
+    }
+
+    private long resolveSafeQuantity(Long value) {
+        if (value == null || value < 0L) {
+            return 0L;
+        }
+        return value;
     }
 }

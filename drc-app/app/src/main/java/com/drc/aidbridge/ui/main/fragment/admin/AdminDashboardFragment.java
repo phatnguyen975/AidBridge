@@ -157,6 +157,8 @@ public class AdminDashboardFragment extends BaseFragment<FragmentAdminDashboardB
         xAxis.setLabelRotationAngle(-25f);
         xAxis.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
         xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
+        
+        binding.barChartInventory.setExtraBottomOffset(30f);
 
         YAxis yAxis = binding.barChartInventory.getAxisLeft();
         yAxis.setDrawGridLines(false);

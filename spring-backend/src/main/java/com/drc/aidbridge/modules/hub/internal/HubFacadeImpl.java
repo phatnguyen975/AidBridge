@@ -53,6 +53,11 @@ public class HubFacadeImpl implements HubFacade {
     }
 
     @Override
+    public List<HubDTO> list(HubStatus status, String keyword) {
+        return listHubsUseCase.execute(status, keyword);
+    }
+
+    @Override
     public HubDTO create(CreateHubRequest request) {
         return createHubUseCase.execute(request);
     }

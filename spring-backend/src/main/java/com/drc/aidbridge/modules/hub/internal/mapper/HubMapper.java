@@ -37,6 +37,8 @@ public class HubMapper {
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .location(location)
+                .latitude(p != null ? p.getY() : null)
+                .longitude(p != null ? p.getX() : null)
                 .build();
     }
 
@@ -66,6 +68,8 @@ public class HubMapper {
                 .createdAt(projection.getCreatedAt())
                 .updatedAt(projection.getUpdatedAt())
                 .location(location)
+                .latitude(projection.getLatitude())
+                .longitude(projection.getLongitude())
                 .distanceInMeters(projection.getDistanceInMeters())
                 .build();
     }

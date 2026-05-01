@@ -8,13 +8,13 @@ import androidx.lifecycle.Transformations;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.domain.enums.HubStatus;
 import com.drc.aidbridge.domain.model.admin.Hub;
+import com.drc.aidbridge.domain.model.admin.HubSummary;
 import com.drc.aidbridge.domain.usecase.admin.ListHubsUseCase;
 import com.drc.aidbridge.domain.usecase.admin.UpdateHubStatusUseCase;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -28,15 +28,11 @@ public class AdminHubManagementViewModel extends BaseViewModel {
     private final MutableLiveData<ToggleHubStatusParams> toggleHubStatusTrigger = new MutableLiveData<>();
     private final MutableLiveData<String> searchQuery = new MutableLiveData<>("");
     private final MutableLiveData<List<Hub>> sourceHubs = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<HubSummary> hubSummary = new MutableLiveData<>(new HubSummary(0, 0, 0));
 
     private final LiveData<NetworkResultWrapper<List<Hub>>> fetchHubsResult;
     private final LiveData<NetworkResultWrapper<Hub>> toggleHubStatusResult;
     private final MediatorLiveData<NetworkResultWrapper<List<Hub>>> hubsResult = new MediatorLiveData<>();
-
-    private final LiveData<Integer> totalHubsCount;
-    private final LiveData<Integer> activeHubsCount;
-
-    private NetworkResultWrapper<List<Hub>> latestFetchResult;
 
     @Inject
     public AdminHubManagementViewModel(ListHubsUseCase listHubsUseCase,
@@ -49,12 +45,7 @@ public class AdminHubManagementViewModel extends BaseViewModel {
                 toggleHubStatusTrigger,
                 params -> updateHubStatusUseCase.execute(params.hubId, params.nextStatus));
 
-        this.totalHubsCount = Transformations.map(sourceHubs, hubs -> hubs != null ? hubs.size() : 0);
-        this.activeHubsCount = Transformations.map(sourceHubs, this::countActiveHubs);
-
         hubsResult.addSource(fetchHubsResult, this::handleFetchHubsResult);
-        hubsResult.addSource(searchQuery, ignored -> publishFilteredHubList());
-
         hubsResult.addSource(toggleHubStatusResult, result -> {
             if (result != null && result.isSuccess()) {
                 fetchHubs();
@@ -70,12 +61,8 @@ public class AdminHubManagementViewModel extends BaseViewModel {
         return toggleHubStatusResult;
     }
 
-    public LiveData<Integer> getTotalHubsCount() {
-        return totalHubsCount;
-    }
-
-    public LiveData<Integer> getActiveHubsCount() {
-        return activeHubsCount;
+    public LiveData<HubSummary> getHubSummary() {
+        return hubSummary;
     }
 
     public void fetchHubs() {
@@ -83,7 +70,9 @@ public class AdminHubManagementViewModel extends BaseViewModel {
     }
 
     public void updateSearchQuery(String query) {
-        searchQuery.setValue(query != null ? query : "");
+        String safeQuery = query != null ? query : "";
+        searchQuery.setValue(safeQuery);
+        hubsResult.setValue(NetworkResultWrapper.success(filterHubs(sourceHubs.getValue(), safeQuery)));
     }
 
     public void toggleHubStatus(UUID hubId) {
@@ -101,34 +90,65 @@ public class AdminHubManagementViewModel extends BaseViewModel {
 
     private void handleFetchHubsResult(NetworkResultWrapper<List<Hub>> result) {
         if (result == null) {
-            hubsResult.setValue(NetworkResultWrapper.error("Dữ liệu danh sách trạm không hợp lệ."));
+            hubsResult.setValue(NetworkResultWrapper.error("Du lieu danh sach tram khong hop le."));
             return;
         }
 
-        latestFetchResult = result;
         if (result.isLoading()) {
             hubsResult.setValue(NetworkResultWrapper.loading());
             return;
         }
 
         if (result.isError()) {
+            hubSummary.setValue(new HubSummary(0, 0, 0));
             hubsResult.setValue(NetworkResultWrapper.error(result.getMessage()));
             return;
         }
 
         List<Hub> fetchedHubs = result.getData() != null ? result.getData() : new ArrayList<>();
         sourceHubs.setValue(new ArrayList<>(fetchedHubs));
-        publishFilteredHubList();
+        hubSummary.setValue(buildSummary(fetchedHubs));
+        hubsResult.setValue(NetworkResultWrapper.success(filterHubs(fetchedHubs, searchQuery.getValue())));
     }
 
-    private void publishFilteredHubList() {
-        if (latestFetchResult == null || !latestFetchResult.isSuccess()) {
-            return;
+    private HubSummary buildSummary(List<Hub> hubs) {
+        if (hubs == null || hubs.isEmpty()) {
+            return new HubSummary(0, 0, 0);
         }
 
-        List<Hub> hubs = sourceHubs.getValue();
-        List<Hub> filtered = filterHubs(hubs, searchQuery.getValue());
-        hubsResult.setValue(NetworkResultWrapper.success(filtered));
+        int active = 0;
+        int inactive = 0;
+        for (Hub hub : hubs) {
+            HubStatus status = HubStatus.fromStringSafe(hub != null ? hub.getStatus() : null);
+            if (status == HubStatus.ACTIVE) {
+                active++;
+            } else if (status == HubStatus.INACTIVE) {
+                inactive++;
+            }
+        }
+        return new HubSummary(hubs.size(), active, inactive);
+    }
+
+    private List<Hub> filterHubs(List<Hub> hubs, String rawQuery) {
+        List<Hub> source = hubs != null ? hubs : new ArrayList<>();
+        String query = rawQuery != null ? rawQuery.trim().toLowerCase() : "";
+        if (query.isEmpty()) {
+            return new ArrayList<>(source);
+        }
+
+        List<Hub> filtered = new ArrayList<>();
+        for (Hub hub : source) {
+            if (hub == null) {
+                continue;
+            }
+
+            String name = hub.getName() != null ? hub.getName().toLowerCase() : "";
+            String address = hub.getAddress() != null ? hub.getAddress().toLowerCase() : "";
+            if (name.contains(query) || address.contains(query)) {
+                filtered.add(hub);
+            }
+        }
+        return filtered;
     }
 
     private Hub findHubById(UUID hubId) {
@@ -147,46 +167,6 @@ public class AdminHubManagementViewModel extends BaseViewModel {
             }
         }
         return null;
-    }
-
-    private List<Hub> filterHubs(List<Hub> hubs, String query) {
-        List<Hub> source = hubs != null ? hubs : new ArrayList<>();
-        String normalizedQuery = query != null ? query.trim().toLowerCase(Locale.getDefault()) : "";
-        if (normalizedQuery.isEmpty()) {
-            return new ArrayList<>(source);
-        }
-
-        List<Hub> filtered = new ArrayList<>();
-        for (Hub hub : source) {
-            if (hub == null) {
-                continue;
-            }
-
-            String hubName = safeText(hub.getName()).toLowerCase(Locale.getDefault());
-            String hubAddress = safeText(hub.getAddress()).toLowerCase(Locale.getDefault());
-            if (hubName.contains(normalizedQuery) || hubAddress.contains(normalizedQuery)) {
-                filtered.add(hub);
-            }
-        }
-        return filtered;
-    }
-
-    private int countActiveHubs(List<Hub> hubs) {
-        if (hubs == null || hubs.isEmpty()) {
-            return 0;
-        }
-
-        int activeCount = 0;
-        for (Hub hub : hubs) {
-            if (hub != null && HubStatus.fromStringSafe(hub.getStatus()) == HubStatus.ACTIVE) {
-                activeCount++;
-            }
-        }
-        return activeCount;
-    }
-
-    private String safeText(String value) {
-        return value == null ? "" : value;
     }
 
     private static final class ToggleHubStatusParams {

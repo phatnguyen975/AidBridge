@@ -53,6 +53,16 @@ public interface AidRequestItemJpaRepository extends JpaRepository<AidRequestIte
         """, nativeQuery = true)
     List<AidCategoryProjection> findAidCategoryRows();
 
+    @Query(value = """
+        select count(ari.id)
+        from aid_request_items ari
+        inner join missions m on m.aid_request_id = ari.aid_request_id
+        where m.hub_id = :hubId
+          and m.mission_type = 'DELIVERY'
+          and m.status = 'COMPLETED'
+        """, nativeQuery = true)
+    Long countExportedQuantityByHubId(@Param("hubId") UUID hubId);
+
     interface AidRequestItemDetailProjection {
         UUID getItemCategoryId();
 

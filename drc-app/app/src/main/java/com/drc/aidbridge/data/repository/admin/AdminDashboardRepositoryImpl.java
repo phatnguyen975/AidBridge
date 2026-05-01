@@ -132,12 +132,50 @@ public class AdminDashboardRepositoryImpl extends BaseRepository implements Admi
             }
         }
 
+        List<AdminDashboardSummary.AdminAlert> alerts = new ArrayList<>();
+        List<AdminDashboardSummaryResponseDto.AlertDto> alertDtos = dto.getAlerts();
+        if (alertDtos != null) {
+            for (AdminDashboardSummaryResponseDto.AlertDto alertDto : alertDtos) {
+                if (alertDto == null) {
+                    continue;
+                }
+                alerts.add(new AdminDashboardSummary.AdminAlert(
+                        safeText(alertDto.getId()),
+                        safeText(alertDto.getTitle()),
+                        safeText(alertDto.getMessage()),
+                        safeText(alertDto.getSeverity())
+                ));
+            }
+        }
+
+        List<AdminDashboardSummary.RecentActivity> activities = new ArrayList<>();
+        List<AdminDashboardSummaryResponseDto.RecentActivityDto> activityDtos = dto.getRecentActivities();
+        if (activityDtos != null) {
+            for (AdminDashboardSummaryResponseDto.RecentActivityDto activityDto : activityDtos) {
+                if (activityDto == null) {
+                    continue;
+                }
+                activities.add(new AdminDashboardSummary.RecentActivity(
+                        safeText(activityDto.getId()),
+                        safeText(activityDto.getTitle()),
+                        safeText(activityDto.getDescription()),
+                        safeText(activityDto.getType()),
+                        safeText(activityDto.getCreatedAt())
+                ));
+            }
+        }
+
         return new AdminDashboardSummary(
                 safeLong(dto.getTotalHubs()),
                 safeLong(dto.getTotalVolunteers()),
                 safeLong(dto.getTodayMissions()),
                 safeLong(dto.getDistributedItems()),
-                stats
+                stats,
+                safeLong(dto.getTotalPackages()),
+                safeDouble(dto.getPackageGrowthPercent()),
+                safeLong(dto.getTotalPeopleSupported()),
+                alerts,
+                activities
         );
     }
 
@@ -150,5 +188,12 @@ public class AdminDashboardRepositoryImpl extends BaseRepository implements Admi
 
     private String safeText(String value) {
         return value == null ? "" : value.trim();
+    }
+
+    private double safeDouble(Double value) {
+        if (value == null || value.isNaN() || value.isInfinite()) {
+            return 0d;
+        }
+        return value;
     }
 }

@@ -22,4 +22,8 @@ public class ListHubsUseCase {
     public LiveData<NetworkResultWrapper<List<Hub>>> execute() {
         return hubRepository.listHubs();
     }
+
+    public LiveData<NetworkResultWrapper<List<Hub>>> execute(String keyword) {
+        return hubRepository.listHubs(keyword);
+    }
 }

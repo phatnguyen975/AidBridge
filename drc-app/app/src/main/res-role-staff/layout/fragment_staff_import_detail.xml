@@ -122,11 +122,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_sm"
-                        android:layout_marginBottom="@dimen/staff_detail_screen_padding"
+                        android:layout_marginBottom="@dimen/spacing_sm"
                         android:text="@string/staff_detail_hub_name_mock"
                         android:textColor="@color/text_primary"
                         android:textSize="@dimen/staff_detail_hub_text_size"
                         android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_registered_categories"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/staff_detail_screen_padding"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/staff_detail_item_meta_size" />
 
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="match_parent"
@@ -135,6 +143,7 @@
                         app:dividerThickness="@dimen/staff_profile_divider_thickness" />
 
                     <LinearLayout
+                        android:id="@+id/layout_partner_info"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_sm"
@@ -173,6 +182,7 @@
                     </LinearLayout>
 
                     <com.google.android.material.divider.MaterialDivider
+                        android:id="@+id/divider_partner"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/staff_profile_divider_thickness"
                         android:layout_marginTop="@dimen/spacing_sm"
@@ -225,6 +235,7 @@
                             android:tint="@color/text_secondary" />
 
                         <TextView
+                            android:id="@+id/tv_time_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/spacing_xs"
@@ -235,6 +246,18 @@
                 </LinearLayout>
             </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_received_item"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:text="Thêm vật phẩm thực nhận"
+                android:textAllCaps="false"
+                android:textColor="@color/color_primary"
+                app:strokeColor="@color/color_primary"
+                app:strokeWidth="1dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
