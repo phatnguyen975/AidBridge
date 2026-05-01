@@ -11,4 +11,5 @@ public interface VolunteerFacade {
     List<VolunteerDTO> findVolunteersOrderByDistance(BigDecimal lat, BigDecimal lng);
     VolunteerDTO createVolunteerProfile(UUID userId);
     boolean existsByUserId(UUID userId);
+    long countTotalVolunteers();
 }

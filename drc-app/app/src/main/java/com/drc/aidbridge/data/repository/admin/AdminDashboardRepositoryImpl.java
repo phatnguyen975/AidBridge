@@ -7,6 +7,7 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.api.admin.AdminDashboardApiService;
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
 import com.drc.aidbridge.data.remote.dto.response.admin.AdminDashboardSummaryResponseDto;
+import com.drc.aidbridge.data.remote.dto.response.admin.AdminRoutingSosAidResponseDto;
 import com.drc.aidbridge.data.repository.BaseRepository;
 import com.drc.aidbridge.domain.model.admin.AdminDashboardSummary;
 import com.drc.aidbridge.domain.repository.admin.AdminDashboardRepository;
@@ -71,6 +72,39 @@ public class AdminDashboardRepositoryImpl extends BaseRepository implements Admi
 
             @Override
             public void onFailure(Call<BaseResponse<AdminDashboardSummaryResponseDto>> call, Throwable throwable) {
+                result.postValue(NetworkResultWrapper.error(
+                        "Không thể kết nối máy chủ: " + safeMessage(throwable)));
+            }
+        });
+
+        return result;
+    }
+
+    @Override
+    public LiveData<NetworkResultWrapper<AdminRoutingSosAidResponseDto>> getSosAidRequests(String status, String startDate, String endDate) {
+        MutableLiveData<NetworkResultWrapper<AdminRoutingSosAidResponseDto>> result = new MutableLiveData<>();
+        result.postValue(NetworkResultWrapper.loading());
+
+        apiService.getSosAidRequests(status, startDate, endDate).enqueue(new Callback<AdminRoutingSosAidResponseDto>() {
+            @Override
+            public void onResponse(Call<AdminRoutingSosAidResponseDto> call,
+                                   Response<AdminRoutingSosAidResponseDto> response) {
+                if (!response.isSuccessful()) {
+                    result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
+                    return;
+                }
+
+                AdminRoutingSosAidResponseDto body = response.body();
+                if (body == null) {
+                    result.postValue(NetworkResultWrapper.error("Phản hồi SOS/Aid không hợp lệ."));
+                    return;
+                }
+
+                result.postValue(NetworkResultWrapper.success(body));
+            }
+
+            @Override
+            public void onFailure(Call<AdminRoutingSosAidResponseDto> call, Throwable throwable) {
                 result.postValue(NetworkResultWrapper.error(
                         "Không thể kết nối máy chủ: " + safeMessage(throwable)));
             }

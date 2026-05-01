@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class LocalWhisperSpeechToTextService implements SpeechToTextService {
 
     private static final String MODEL = "small";
-    private static final String LANGUAGE = "en";
+    private static final String LANGUAGE = "vi";
     private static final long TIMEOUT_SECONDS = 300;
 
     @Override

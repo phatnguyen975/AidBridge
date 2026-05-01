@@ -16,4 +16,9 @@ public interface HubFacade {
     HubDTO update(UUID id, UpdateHubRequest request);
     HubDTO stockIn(UUID id, StockInHubInventoryRequest request);
     List<HubDTO> listNearLocation(HubStatus status, double lat, double lon, double radius);
+
+    long countTotalHubs();
+    List<HubInventoryDTO> getAllInventories();
+    HubStaffDTO assignStaff(UUID hubId, UUID userId);
+    List<HubStaffDTO> findActiveAssignmentsByUserIds(List<UUID> userIds);
 }

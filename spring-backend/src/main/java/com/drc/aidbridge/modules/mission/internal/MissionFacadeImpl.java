@@ -33,6 +33,12 @@ import com.drc.aidbridge.modules.mission.internal.web.dto.MissionResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
+import com.drc.aidbridge.modules.sos.SosDTO;
+import com.drc.aidbridge.modules.aid.AidRequestDTO;
+import com.drc.aidbridge.modules.sos.internal.mapper.SosMapper;
+import com.drc.aidbridge.modules.aid.internal.mapper.AidMapper;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +53,8 @@ public class MissionFacadeImpl implements MissionFacade {
     private final GetCurrentMissionUseCase getCurrentMissionUseCase;
     private final CompleteMissionUseCase completeMissionUseCase;
     private final CancelMissionUseCase cancelMissionUseCase;
+    private final SosMapper sosMapper;
+    private final AidMapper aidMapper;
 
     @Override
     public MissionDTO getMissionById(UUID missionId) {
@@ -250,7 +258,6 @@ public class MissionFacadeImpl implements MissionFacade {
     }
 
     @Override
-    @Transactional
     public MissionDTO cancelMission(UUID missionId, String reason) {
         CancelMissionRequest request = CancelMissionRequest.builder().cancellationReason(reason).build();
         MissionResponse response = cancelMissionUseCase.execute(missionId, request);
@@ -267,5 +274,26 @@ public class MissionFacadeImpl implements MissionFacade {
                 .createdAt(response.getCreatedAt())
                 .updatedAt(response.getUpdatedAt())
                 .build();
+    }
+
+    @Override
+    public long countMissionsInPeriod(Instant start, Instant end) {
+        return missionRepository.countByCreatedAtBetween(start, end);
+    }
+
+    @Override
+    public List<SosDTO> findSosByStatusAndDateRange(MissionStatus status, Instant start, Instant end) {
+        return missionRepository.findSosByMissionStatus(status, start, end)
+                .stream()
+                .map(sosMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AidRequestDTO> findAidByStatusAndDateRange(MissionStatus status, Instant start, Instant end) {
+        return missionRepository.findAidByMissionStatus(status, start, end)
+                .stream()
+                .map(aidMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }

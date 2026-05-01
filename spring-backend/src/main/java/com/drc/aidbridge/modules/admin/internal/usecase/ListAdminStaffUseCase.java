@@ -1,19 +1,17 @@
 package com.drc.aidbridge.modules.admin.internal.usecase;
 
 import com.drc.aidbridge.modules.admin.internal.web.dto.AdminStaffResponse;
-import com.drc.aidbridge.modules.hub.internal.entity.Hub;
-import com.drc.aidbridge.modules.hub.internal.entity.HubStaff;
-import com.drc.aidbridge.modules.hub.internal.repository.HubRepository;
-import com.drc.aidbridge.modules.hub.internal.repository.HubStaffRepository;
+import com.drc.aidbridge.modules.hub.HubDTO;
+import com.drc.aidbridge.modules.hub.HubFacade;
+import com.drc.aidbridge.modules.hub.HubStaffDTO;
 import com.drc.aidbridge.modules.shared.enums.UserRole;
-import com.drc.aidbridge.modules.user.internal.entity.User;
-import com.drc.aidbridge.modules.user.internal.repository.UserJpaRepository;
+import com.drc.aidbridge.modules.user.UserDTO;
+import com.drc.aidbridge.modules.user.UserFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -26,45 +24,48 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ListAdminStaffUseCase {
 
-    private final UserJpaRepository userRepository;
-    private final HubStaffRepository hubStaffRepository;
-    private final HubRepository hubRepository;
+    private final UserFacade userFacade;
+    private final HubFacade hubFacade;
 
     @Transactional(readOnly = true)
     public List<AdminStaffResponse> execute() {
-        List<User> staffUsers = userRepository.findByRole(UserRole.STAFF);
+        List<UserDTO> staffUsers = userFacade.findUsersByRole(UserRole.STAFF);
         if (staffUsers.isEmpty()) {
             return List.of();
         }
 
         List<UUID> userIds = staffUsers.stream()
-                .map(User::getId)
+                .map(UserDTO::getId)
                 .filter(Objects::nonNull)
                 .distinct()
                 .toList();
 
-        List<HubStaff> assignments = userIds.isEmpty()
+        List<HubStaffDTO> assignments = userIds.isEmpty()
                 ? List.of()
-                : hubStaffRepository.findByUserIdInAndUnassignedAtIsNull(userIds);
-        Map<UUID, HubStaff> assignmentByUserId = assignments.stream()
+                : hubFacade.findActiveAssignmentsByUserIds(userIds);
+        
+        Map<UUID, HubStaffDTO> assignmentByUserId = assignments.stream()
                 .filter(assignment -> assignment.getUserId() != null)
-                .collect(Collectors.toMap(HubStaff::getUserId, Function.identity(), (left, right) -> left));
+                .collect(Collectors.toMap(HubStaffDTO::getUserId, Function.identity(), (left, right) -> left));
 
         Set<UUID> hubIds = assignments.stream()
-                .map(HubStaff::getHubId)
+                .map(HubStaffDTO::getHubId)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        Map<UUID, Hub> hubById = hubRepository.findAllById(hubIds).stream()
-                .collect(Collectors.toMap(Hub::getId, Function.identity(), (left, right) -> left));
+                .collect(Collectors.toSet());
+        
+        Map<UUID, HubDTO> hubById = hubIds.stream()
+                .map(hubFacade::getById)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(HubDTO::getId, Function.identity(), (left, right) -> left));
 
         List<AdminStaffResponse> responses = new ArrayList<>();
-        for (User user : staffUsers) {
+        for (UserDTO user : staffUsers) {
             if (user == null || user.getId() == null) {
                 continue;
             }
 
-            HubStaff assignment = assignmentByUserId.get(user.getId());
-            Hub hub = assignment != null ? hubById.get(assignment.getHubId()) : null;
+            HubStaffDTO assignment = assignmentByUserId.get(user.getId());
+            HubDTO hub = assignment != null ? hubById.get(assignment.getHubId()) : null;
 
             responses.add(new AdminStaffResponse(
                     user.getId(),

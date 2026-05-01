@@ -23,7 +23,7 @@ public class LocalCliAidRequestVoiceLlmService implements AidRequestVoiceLlmServ
                             {"name":"Nhu yếu phẩm khác"},
                             {"name":"Quần áo"},
                             {"name":"Thuốc"},
-                            {"name":"Thực phẩm"}
+                            {"name":"Thức ăn"}
                         ]
                         """;
 

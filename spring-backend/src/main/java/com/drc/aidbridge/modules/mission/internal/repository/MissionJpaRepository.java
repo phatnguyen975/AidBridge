@@ -16,6 +16,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import com.drc.aidbridge.modules.sos.internal.entity.SosRequest;
+import com.drc.aidbridge.modules.aid.internal.entity.AidRequest;
 
 @Repository
 public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
@@ -304,4 +306,30 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
         default List<Mission> findPendingDispatch() {
                 return findPendingDispatchWithStatuses(List.of(MissionStatus.PENDING, MissionStatus.DISPATCHING));
         }
+
+        /**
+         * JPQL join to get SosRequest entities based on Mission status and date range
+         */
+        @Query("SELECT s FROM SosRequest s, Mission m " +
+               "WHERE m.sosRequestId = s.id " +
+               "AND m.status = :status " +
+               "AND (:start IS NULL OR m.createdAt >= :start) " +
+               "AND (:end IS NULL OR m.createdAt <= :end)")
+        List<SosRequest> findSosByMissionStatus(
+                @Param("status") MissionStatus status,
+                @Param("start") Instant start,
+                @Param("end") Instant end);
+
+        /**
+         * JPQL join to get AidRequest entities based on Mission status and date range
+         */
+        @Query("SELECT a FROM AidRequest a, Mission m " +
+               "WHERE m.aidRequestId = a.id " +
+               "AND m.status = :status " +
+               "AND (:start IS NULL OR m.createdAt >= :start) " +
+               "AND (:end IS NULL OR m.createdAt <= :end)")
+        List<AidRequest> findAidByMissionStatus(
+                @Param("status") MissionStatus status,
+                @Param("start") Instant start,
+                @Param("end") Instant end);
 }
