@@ -222,26 +222,25 @@
                             <FrameLayout
                                 android:layout_width="48dp"
                                 android:layout_height="48dp"
-                                android:layout_marginEnd="12dp">
-
-                                <TextView
-                                    android:id="@+id/tvDevHintSign"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:background="@drawable/bg_circle_icon"
-                                    android:gravity="center"
-                                    android:text="@string/base_map_dev_sign"
-                                    android:textColor="@color/white"
-                                    android:textSize="18sp"
-                                    android:textStyle="bold" />
+                                android:layout_marginEnd="12dp"
+                                android:background="@drawable/bg_circle_icon"
+                                android:backgroundTint="#F5F5F5">
 
                                 <ImageView
                                     android:id="@+id/ivDevAvatar"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
+                                    android:padding="6dp"
                                     android:background="?attr/selectableItemBackgroundBorderless"
                                     android:contentDescription="@string/base_map_dev_avatar_desc"
-                                    android:src="@null" />
+                                    android:src="@drawable/ic_secret_ninja" />
+
+                                <!-- Hidden hint sign (empty text but keeps ID for logic) -->
+                                <TextView
+                                    android:id="@+id/tvDevHintSign"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:visibility="gone" />
                             </FrameLayout>
 
                             <ImageButton

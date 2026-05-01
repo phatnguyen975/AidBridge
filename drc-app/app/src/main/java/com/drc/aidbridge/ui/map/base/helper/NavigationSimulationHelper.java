@@ -39,14 +39,15 @@ public class NavigationSimulationHelper {
                       @NonNull SimulationListener listener) {
         this.listener = listener;
 
-        boolean isDebug = BuildConfig.DEBUG;
-        binding.btnDevSimulate.setVisibility(isDebug ? View.VISIBLE : View.GONE);
-        binding.ivDevAvatar.setVisibility(isDebug ? View.VISIBLE : View.GONE);
-        binding.tvDevHintSign.setVisibility(isDebug ? View.VISIBLE : View.GONE);
+        // boolean isDebug = BuildConfig.DEBUG;
+        binding.btnDevSimulate.setVisibility(View.VISIBLE);
+        binding.ivDevAvatar.setVisibility(View.VISIBLE);
+        binding.tvDevHintSign.setVisibility(View.VISIBLE);
 
-        if (!isDebug) {
-            return;
-        }
+        // Ensure dev tools are above Admin panel (Z=100)
+        binding.btnDevSimulate.setTranslationZ(200f);
+        binding.ivDevAvatar.setTranslationZ(200f);
+        binding.tvDevHintSign.setTranslationZ(200f);
 
         binding.btnDevSimulate.setOnClickListener(v -> {
             if (listener != null) {
@@ -69,9 +70,7 @@ public class NavigationSimulationHelper {
     }
 
     public void updateSimulationButtonState(@NonNull FragmentMapBaseBinding binding, boolean isRunning) {
-        if (!BuildConfig.DEBUG) {
-            return;
-        }
+       
         binding.btnDevSimulate.setText(isRunning
                 ? R.string.base_map_dev_simulate_stop
                 : R.string.base_map_dev_simulate);
