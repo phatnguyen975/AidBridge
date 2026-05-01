@@ -1,6 +1,8 @@
 package com.drc.aidbridge.modules.aid.internal.mapper;
 
+import com.drc.aidbridge.modules.aid.AidItemCategoryDTO;
 import com.drc.aidbridge.modules.aid.AidRequestDTO;
+import com.drc.aidbridge.modules.aid.internal.entity.AidItemCategory;
 import com.drc.aidbridge.modules.mission.MissionDTO;
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequest;
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequestItem;
@@ -71,5 +73,15 @@ public class AidMapper {
                 .aidRequestId(item.getAidRequest() != null ? item.getAidRequest().getId() : null)
                 .itemCategoryId(item.getItemCategoryId())
                 .build();
+    }
+
+    public AidItemCategoryDTO toCategoryDTO(AidItemCategory entity) {
+        return new AidItemCategoryDTO(
+                entity.getId(),
+                entity.getName(),
+                entity.getParentId(),
+                entity.getUnit(),
+                entity.isLeaf()
+        );
     }
 }

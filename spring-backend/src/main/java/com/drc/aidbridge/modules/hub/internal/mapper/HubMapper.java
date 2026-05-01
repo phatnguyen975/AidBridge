@@ -1,7 +1,9 @@
 package com.drc.aidbridge.modules.hub.internal.mapper;
 
 import com.drc.aidbridge.modules.hub.HubDTO;
+import com.drc.aidbridge.modules.hub.HubInventoryDTO;
 import com.drc.aidbridge.modules.hub.internal.entity.Hub;
+import com.drc.aidbridge.modules.hub.internal.entity.HubInventory;
 import com.drc.aidbridge.modules.hub.internal.web.dto.CreateHubRequest;
 import com.drc.aidbridge.modules.hub.internal.web.dto.UpdateHubRequest;
 import com.drc.aidbridge.modules.shared.enums.HubStatus;
@@ -123,5 +125,15 @@ public class HubMapper {
                     : (currentLocation != null ? currentLocation.getX() : 0.0d);
             entity.setLocation(Hub.createPoint(lat, lng));
         }
+    }
+
+    public HubInventoryDTO toInventoryDTO(HubInventory entity) {
+        if (entity == null) return null;
+        return new HubInventoryDTO(
+                entity.getId(),
+                entity.getHubId(),
+                entity.getItemCategoryId(),
+                entity.getCurrentQuantity()
+        );
     }
 }

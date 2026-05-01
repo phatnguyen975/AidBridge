@@ -1,8 +1,13 @@
 package com.drc.aidbridge.modules.mission;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
+import com.drc.aidbridge.modules.shared.enums.MissionStatus;
+import com.drc.aidbridge.modules.sos.SosDTO;
+import com.drc.aidbridge.modules.aid.AidRequestDTO;
+import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 public interface MissionFacade {
@@ -43,4 +48,10 @@ public interface MissionFacade {
     MissionDTO completeMission(UUID missionId, String notes);
 
     MissionDTO cancelMission(UUID missionId, String reason);
+
+    long countMissionsInPeriod(Instant start, Instant end);
+
+    List<SosDTO> findSosByStatusAndDateRange(MissionStatus status, Instant start, Instant end);
+
+    List<AidRequestDTO> findAidByStatusAndDateRange(MissionStatus status, Instant start, Instant end);
 }

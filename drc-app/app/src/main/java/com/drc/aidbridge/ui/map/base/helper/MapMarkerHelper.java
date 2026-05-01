@@ -30,6 +30,7 @@ public class MapMarkerHelper {
     @Nullable
     private Marker currentMarker;
     private final List<Marker> hubMarkers = new ArrayList<>();
+    private final List<Marker> adminMarkers = new ArrayList<>();
 
     @Nullable
     private GeoPoint lastStartMarkerPoint;
@@ -284,6 +285,68 @@ public class MapMarkerHelper {
             }
         }
         mapView.invalidate();
+    }
+
+    public void clearAdminMarkers() {
+        if (mapView != null) {
+            for (Marker marker : adminMarkers) {
+                mapView.getOverlays().remove(marker);
+            }
+        }
+        adminMarkers.clear();
+        if (mapView != null) {
+            mapView.invalidate();
+        }
+    }
+
+    public void drawAdminMarkers(@NonNull Context context, 
+                                 @NonNull List<com.drc.aidbridge.data.remote.dto.response.admin.AdminRoutingSosAidResponseDto.AdminSosRequestDto> sosList,
+                                 @NonNull List<com.drc.aidbridge.data.remote.dto.response.admin.AdminRoutingSosAidResponseDto.AdminAidRequestDto> aidList,
+                                 @NonNull android.graphics.drawable.Drawable sosIcon,
+                                 @NonNull android.graphics.drawable.Drawable aidIcon,
+                                 @NonNull OnAdminMarkerClickListener listener) {
+        clearAdminMarkers();
+        if (mapView == null) return;
+
+        for (com.drc.aidbridge.data.remote.dto.response.admin.AdminRoutingSosAidResponseDto.AdminSosRequestDto sos : sosList) {
+            if (sos.getLat() != null && sos.getLng() != null) {
+                Marker m = new Marker(mapView);
+                m.setPosition(new GeoPoint(sos.getLat(), sos.getLng()));
+                m.setTitle("SOS Request");
+                m.setSnippet(sos.getAddress());
+                m.setIcon(sosIcon);
+                m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+                m.setOnMarkerClickListener((marker, mp) -> {
+                    listener.onSosClicked(sos);
+                    return true;
+                });
+                adminMarkers.add(m);
+                mapView.getOverlays().add(m);
+            }
+        }
+
+        for (com.drc.aidbridge.data.remote.dto.response.admin.AdminRoutingSosAidResponseDto.AdminAidRequestDto aid : aidList) {
+            if (aid.getLat() != null && aid.getLng() != null) {
+                Marker m = new Marker(mapView);
+                m.setPosition(new GeoPoint(aid.getLat(), aid.getLng()));
+                m.setTitle("Aid Request");
+                m.setSnippet(aid.getAddress());
+                m.setIcon(aidIcon);
+                m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+                m.setOnMarkerClickListener((marker, mp) -> {
+                    listener.onAidClicked(aid);
+                    return true;
+                });
+                adminMarkers.add(m);
+                mapView.getOverlays().add(m);
+            }
+        }
+        mapView.invalidate();
+    }
+
+    public interface OnAdminMarkerClickListener {
+        void onSosClicked(com.drc.aidbridge.data.remote.dto.response.admin.AdminRoutingSosAidResponseDto.AdminSosRequestDto sos);
+        void onAidClicked(com.drc.aidbridge.data.remote.dto.response.admin.AdminRoutingSosAidResponseDto.AdminAidRequestDto aid);
     }
 
     private double distanceMeters(@NonNull GeoPoint from, @NonNull GeoPoint to) {

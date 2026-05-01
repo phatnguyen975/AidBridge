@@ -57,4 +57,9 @@ public class VolunteerFacadeImpl implements VolunteerFacade {
     public boolean existsByUserId(UUID userId) {
         return volunteerRepository.existsByUserId(userId);
     }
+
+    @Override
+    public long countTotalVolunteers() {
+        return volunteerRepository.count();
+    }
 }
