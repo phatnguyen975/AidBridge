@@ -150,7 +150,8 @@ public abstract class BaseFragment<VB extends ViewBinding> extends Fragment {
     protected void showTopSnackbar(@NonNull View parentView,
                                    @NonNull String message,
                                    boolean isError) {
-        Snackbar snackbar = Snackbar.make(parentView, message, Snackbar.LENGTH_SHORT);
+        View root = requireActivity().findViewById(android.R.id.content);
+        Snackbar snackbar = Snackbar.make(root, message, Snackbar.LENGTH_SHORT);
         View snackbarView = snackbar.getView();
 
         int bgColor = ContextCompat.getColor(requireContext(), isError ? R.color.sos_red : R.color.safe_green);

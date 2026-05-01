@@ -82,8 +82,13 @@ public class AidController {
             @AuthenticationPrincipal Jwt jwt) {
         UUID userId = resolveUserId(jwt);
         System.out.println(System.getProperty("file.encoding"));
-        AidRequestResponse response = transcribeAidRequestVoiceUseCase.execute(userId, audioFile, request);
-        return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
+        try {
+            AidRequestResponse response = transcribeAidRequestVoiceUseCase.execute(userId, audioFile, request);
+            return ResponseEntity.ok(ApiResponse.success("Aid request created", response));
+        } catch (BadRequestException ex) {
+            String message = ex.getMessage() != null ? ex.getMessage() : "Yeu cau khong hop le";
+            return ResponseEntity.badRequest().body(ApiResponse.error(message));
+        }
     }
 
     @PostMapping("/{id}/location")

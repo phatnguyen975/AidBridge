@@ -133,7 +133,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
 
         String message = validation.getErrorMessage();
         showTopSnackbar(
-            binding.getRoot(),
+            binding.mainContainer,
             message != null && !message.trim().isEmpty()
                 ? message
                 : getString(R.string.victim_supply_submit_error),
@@ -165,7 +165,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
                 result.markAsHandled();
                 String message = result.getMessage();
                 showTopSnackbar(
-                    binding.getRoot(),
+                    binding.mainContainer,
                     message != null && !message.trim().isEmpty()
                         ? message
                         : getString(R.string.victim_supply_load_categories_error),
@@ -355,6 +355,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
                 return;
             }
 
+            // Sử dụng TransitionManager để tạo hiệu ứng chuyển cảnh mượt mà
             AutoTransition transition = new AutoTransition();
             transition.setDuration(250);
             TransitionManager.beginDelayedTransition(binding.mainContainer, transition);
@@ -444,7 +445,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
 
     private void submitVoiceRequest() {
         if (voiceRecordingFile == null || !voiceRecordingFile.exists()) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_voice_empty_error), true);
+            showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_voice_empty_error), true);
             return;
         }
 
@@ -486,7 +487,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
                 if ((fineLocation != null && fineLocation) || (coarseLocation != null && coarseLocation)) {
                     fetchCurrentLocation(true);
                 } else {
-                    showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_permission_location_denied), true);
+                    showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_permission_location_denied), true);
                 }
             }
         );
@@ -495,7 +496,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
     private void fetchCurrentLocation(boolean shouldSubmitAfterFetch) {
         if (!userLocationManager.isLocationProviderEnabled()) {
             if (shouldSubmitAfterFetch) {
-                showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_location_disabled), true);
+                showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_location_disabled), true);
             }
             return;
         }
@@ -510,24 +511,24 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
                             executeSubmitWithLocation();
                         }
                     } else if (shouldSubmitAfterFetch) {
-                        showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_location_unavailable), true);
+                        showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_location_unavailable), true);
                     }
                 })
                 .addOnFailureListener(e -> {
                     if (shouldSubmitAfterFetch) {
-                        showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_location_unavailable), true);
+                        showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_location_unavailable), true);
                     }
                 });
         } catch (SecurityException e) {
             if (shouldSubmitAfterFetch) {
-                showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_permission_location_denied), true);
+                showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_permission_location_denied), true);
             }
         }
     }
 
     private void executeSubmitWithLocation() {
         if (currentLatitude == null || currentLongitude == null) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_location_unavailable), true);
+            showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_location_unavailable), true);
             return;
         }
 
@@ -571,7 +572,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
                 if (isGranted) {
                     startVoiceRecording();
                 } else {
-                    showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_voice_permission_denied), true);
+                    showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_voice_permission_denied), true);
                 }
             }
         );
@@ -618,7 +619,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
             voiceRecorder.start();
         } catch (IOException e) {
             stopVoiceRecording();
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_voice_init_error), true);
+            showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_voice_init_error), true);
         }
     }
 
@@ -651,7 +652,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
             isVoicePlaying = true;
             updateVoiceStatusText();
         } catch (IOException e) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.error_generic), true);
+            showTopSnackbar(binding.mainContainer, getString(R.string.error_generic), true);
         }
     }
 
@@ -718,12 +719,12 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
     }
 
     private void handleSubmitSuccess(String message) {
-        showTopSnackbar(binding.getRoot(), message != null ? message : getString(R.string.victim_supply_submit_success), false);
+        showTopSnackbar(binding.mainContainer, message != null ? message : getString(R.string.victim_supply_submit_success), false);
         resetForm();
     }
 
     private void handleSubmitError(String message) {
-        showTopSnackbar(binding.getRoot(), message != null ? message : getString(R.string.victim_supply_submit_error), true);
+        showTopSnackbar(binding.mainContainer, message != null ? message : getString(R.string.victim_supply_submit_error), true);
     }
 
     private void resetForm() {
