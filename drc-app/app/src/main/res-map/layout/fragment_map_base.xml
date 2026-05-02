@@ -114,20 +114,20 @@
         app:fabSize="mini"
         app:tint="#4285F4" />
 
-    <com.google.android.material.card.MaterialCardView
+    <FrameLayout
         android:id="@+id/cardTopOverview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="64dp"
+        android:background="@drawable/bg_bottom_sheet_white_rounded"
+        android:elevation="7dp"
+        android:theme="@style/ThemeOverlay.AidBridge.Light"
         app:behavior_draggable="true"
-        app:behavior_fitToContents="false"
-        app:behavior_hideable="false"
-        app:behavior_peekHeight="220dp"
-        app:behavior_skipCollapsed="false"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="16dp"
+        app:behavior_fitToContents="true"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="0dp"
+        app:behavior_skipCollapsed="true"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <androidx.core.widget.NestedScrollView
@@ -142,6 +142,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:background="@android:color/transparent"
                 android:paddingBottom="24dp">
 
                 <!-- Drag Handle -->
@@ -314,7 +315,7 @@
                     android:layout_marginTop="24dp"
                     android:paddingHorizontal="20dp"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <View
                         android:layout_width="match_parent"
@@ -387,7 +388,9 @@
                         android:id="@+id/btnRouteOptions"
                         style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="match_parent"
-                        android:layout_height="52dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="64dp"
+                        android:paddingVertical="8dp"
                         android:layout_marginTop="24dp"
                         android:text="@string/base_map_route_options"
                         android:textColor="#333333"
@@ -417,7 +420,7 @@
                         android:layout_gravity="end"
                         android:text="@string/base_map_dev_simulate"
                         android:textColor="#FF9800"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         app:cornerRadius="12dp"
                         app:strokeColor="@color/warning_orange"
                         app:strokeWidth="1dp" />
@@ -427,14 +430,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:visibility="gone"
+                        android:visibility="invisible"
                         app:indicatorColor="#4285F4"
                         app:trackColor="#E3F2FD"
                         app:trackCornerRadius="4dp" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-    </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -504,6 +507,8 @@
             app:tint="#34A853" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    
+
     <FrameLayout
         android:id="@+id/childContentContainer"
         android:layout_width="match_parent"
@@ -524,3 +529,4 @@
     </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>
+

@@ -70,15 +70,8 @@ public class AdminDashboardFragment extends BaseFragment<FragmentAdminDashboardB
     }
 
     private void setupClickListeners() {
-        binding.buttonAdminOpenMap.setOnClickListener(v -> onOpenMapClicked());
-        binding.buttonAdminManageHub.setOnClickListener(v -> onManageHubClicked());
-    }
 
-    private void onOpenMapClicked() {
-        boolean navigated = navigateToDestinationSafely(R.id.adminMapFragment);
-        if (!navigated) {
-            showToast(getString(R.string.admin_dashboard_open_map_todo));
-        }
+        binding.buttonAdminManageHub.setOnClickListener(v -> onManageHubClicked());
     }
 
     private void onManageHubClicked() {

@@ -79,7 +79,7 @@
         android:label="@string/admin_ai_chatbot_title" />
 
     <fragment
-        android:id="@+id/adminMapFragment"
+        android:id="@+id/nav_admin_map"
         android:name="com.drc.aidbridge.ui.map.fragment.AdminMapFragment"
         android:label="@string/admin_nav_map" />
 </navigation>
