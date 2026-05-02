@@ -20,6 +20,8 @@ public class Hub {
     private final String updatedAt;
     private final Location location;
     private final List<InventoryGroup> inventoryGroups;
+    private final long totalImportedQuantity;
+    private final long totalExportedQuantity;
 
     public Hub(UUID id,
             String name,
@@ -27,7 +29,7 @@ public class Hub {
             String imageUrl,
             String operatingHours,
             String status) {
-        this(id, name, address, "", imageUrl, status, operatingHours, "", "", null, Collections.emptyList());
+        this(id, name, address, "", imageUrl, status, operatingHours, "", "", null, Collections.emptyList(), 0L, 0L);
     }
 
     public Hub(UUID id,
@@ -40,7 +42,9 @@ public class Hub {
             String createdAt,
             String updatedAt,
             Location location,
-            List<InventoryGroup> inventoryGroups) {
+            List<InventoryGroup> inventoryGroups,
+            long totalImportedQuantity,
+            long totalExportedQuantity) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -54,6 +58,8 @@ public class Hub {
         this.inventoryGroups = inventoryGroups == null
                 ? Collections.emptyList()
                 : Collections.unmodifiableList(new ArrayList<>(inventoryGroups));
+        this.totalImportedQuantity = Math.max(totalImportedQuantity, 0L);
+        this.totalExportedQuantity = Math.max(totalExportedQuantity, 0L);
     }
 
     public UUID getId() {
@@ -106,6 +112,14 @@ public class Hub {
 
     public boolean isActive() {
         return getStatusEnum() == HubStatus.ACTIVE;
+    }
+
+    public long getTotalImportedQuantity() {
+        return totalImportedQuantity;
+    }
+
+    public long getTotalExportedQuantity() {
+        return totalExportedQuantity;
     }
 
     public static class Location {

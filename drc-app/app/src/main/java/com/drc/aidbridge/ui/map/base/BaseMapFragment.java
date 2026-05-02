@@ -507,7 +507,7 @@ public abstract class BaseMapFragment<VM extends BaseMapViewModel> extends BaseF
 
         getViewModel().setCachedInstructionIndex(cachedInstructionIndex);
         getViewModel().setLastSimulationPointBeforePause(getViewModel().getSimulationPointIndex());
-        getViewModel().setCachedDangerousZones(currentDangerousZones);
+        // Removed setCachedDangerousZones
 
         locationServiceHelper.stopLocationUpdates();
         getViewModel().pauseSimulationForBackground();
@@ -1067,7 +1067,6 @@ public abstract class BaseMapFragment<VM extends BaseMapViewModel> extends BaseF
 
     protected void renderDangerousZones(@NonNull List<RoutingRequestDto.DangerousZoneDto> zones) {
         currentDangerousZones = new ArrayList<>(zones);
-        getViewModel().setCachedDangerousZones(zones);
         renderDangerousZoneOverlays(
                 zones,
                 R.color.base_map_polygon_fill,
@@ -1280,7 +1279,6 @@ public abstract class BaseMapFragment<VM extends BaseMapViewModel> extends BaseF
         getViewModel().clearRouteData();
         getViewModel().setInstructions(Collections.emptyList());
         getViewModel().setRoutePoints(Collections.emptyList());
-        getViewModel().setCachedDangerousZones(Collections.emptyList());
 
         endPoint = null;
         getViewModel().setEndPoint(null);
@@ -1311,7 +1309,6 @@ public abstract class BaseMapFragment<VM extends BaseMapViewModel> extends BaseF
         getViewModel().setLastPolyline(null);
         getViewModel().setRoutePoints(Collections.emptyList());
         getViewModel().setInstructions(Collections.emptyList());
-        getViewModel().setCachedDangerousZones(Collections.emptyList());
         getViewModel().setLastDistanceMeters(null);
         getViewModel().setLastDurationSeconds(null);
 

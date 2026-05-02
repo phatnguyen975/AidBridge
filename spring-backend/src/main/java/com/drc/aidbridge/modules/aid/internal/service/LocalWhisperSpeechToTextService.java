@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class LocalWhisperSpeechToTextService implements SpeechToTextService {
 
     private static final String MODEL = "small";
-    private static final String LANGUAGE = "en";
+    private static final String LANGUAGE = "vi";
     private static final long TIMEOUT_SECONDS = 300;
 
     @Override
@@ -35,9 +35,11 @@ public class LocalWhisperSpeechToTextService implements SpeechToTextService {
 
             outputDir = Files.createTempDirectory("aidbridge-whisper-output");
 
+            System.out.println("🎤 Processing: " + audioFile.getOriginalFilename());
+            
             ProcessBuilder pb = new ProcessBuilder(
                     "python",
-                    "-X", "utf8", // force UTF-8 mode
+                    "-X", "utf8",
                     "-m", "whisper",
                     tempFile.toAbsolutePath().toString(),
                     "--model", MODEL,
@@ -47,7 +49,6 @@ public class LocalWhisperSpeechToTextService implements SpeechToTextService {
                     "--output_format", "txt"
             );
 
-            // ✅ Fix encoding environment
             pb.environment().put("PYTHONIOENCODING", "UTF-8");
             pb.environment().put("PYTHONUTF8", "1");
             pb.environment().put("LANG", "en_US.UTF-8");
@@ -58,18 +59,15 @@ public class LocalWhisperSpeechToTextService implements SpeechToTextService {
 
             Process process = pb.start();
 
-            // Read output safely as UTF-8
             StringBuilder outputBuilder = new StringBuilder();
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
-
                 String line;
                 while ((line = reader.readLine()) != null) {
                     outputBuilder.append(line).append("\n");
                 }
             }
 
-            // Wait with timeout
             boolean finished = process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS);
             if (!finished) {
                 process.destroyForcibly();

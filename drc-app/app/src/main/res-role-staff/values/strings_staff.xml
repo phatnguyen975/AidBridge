@@ -20,17 +20,26 @@
     <string name="staff_profile_avatar_desc">Ảnh đại diện nhân viên</string>
 
     <!-- Staff inventory -->
-    <string name="staff_inventory_title">QUẢN LÝ TỒN KHO</string>
-    <string name="staff_inventory_search_hint">Tìm kiếm nhu yếu phẩm...</string>
+    <string name="staff_inventory_title">Quản lý tồn kho</string>
+    <string name="staff_inventory_search_hint">Tìm kiếm vật phẩm...</string>
     <string name="staff_inventory_chip_all">Tất cả</string>
-    <string name="staff_inventory_chip_food">Thực phẩm</string>
     <string name="staff_inventory_chip_water">Nước uống</string>
+    <string name="staff_inventory_chip_necessities">Nhu yếu phẩm khác</string>
+    <string name="staff_inventory_chip_clothing">Quần áo</string>
+    <string name="staff_inventory_chip_medicine">Thuốc</string>
+    <string name="staff_inventory_chip_food">Thức ăn</string>
     <string name="staff_inventory_chip_medical">Y tế</string>
-    <string name="staff_inventory_list_title">Danh sách vật tư</string>
-    <string name="staff_inventory_updated_ago">5 phút trước</string>
+    <string name="staff_inventory_hub_format">Hub: %1$s</string>
+    <string name="staff_inventory_hub_unknown">Chưa xác định hub</string>
+    <string name="staff_inventory_list_title">Danh sách vật phẩm</string>
+    <string name="staff_inventory_updated_ago">Dữ liệu mới nhất</string>
     <string name="staff_inventory_status_shortage">Thiếu hụt</string>
     <string name="staff_inventory_status_low_stock">Sắp hết</string>
     <string name="staff_inventory_status_stable">Ổn định</string>
+    <string name="staff_inventory_low_threshold_format">Ngưỡng thấp: %1$d %2$s</string>
+    <string name="staff_inventory_empty">Không có vật phẩm phù hợp</string>
+    <string name="staff_inventory_error_generic">Không thể tải danh sách tồn kho. Vui lòng thử lại.</string>
+    <string name="staff_inventory_retry">Thử lại</string>
     <string name="staff_inventory_action_stock_in">Nhập kho</string>
     <string name="staff_inventory_action_stock_out">Xuất kho</string>
 
@@ -43,6 +52,11 @@
     <string name="staff_scan_manual_btn">NHẬP MÃ THỦ CÔNG</string>
     <string name="staff_manual_title">NHẬP MÃ THỦ CÔNG</string>
     <string name="staff_manual_hint">VD: DON-12345</string>
+    <string name="staff_manual_title_import">NHẬP MÃ NHẬP KHO</string>
+    <string name="staff_manual_title_export">NHẬP MÃ NHIỆM VỤ</string>
+    <string name="staff_manual_hint_import">VD: DON-12345</string>
+    <string name="staff_manual_hint_export">VD: MIS-2026-001</string>
+    <string name="staff_manual_error_required">Vui lòng nhập mã.</string>
     <string name="staff_action_confirm">XÁC NHẬN</string>
 
     <!-- Staff import/export detail -->
@@ -56,8 +70,18 @@
     <string name="staff_detail_item_list">Danh sách vật tư</string>
     <string name="staff_detail_stock_prefix">Kho:</string>
     <string name="staff_detail_export_prefix">Xuất:</string>
+    <string name="staff_detail_required_prefix">Yêu cầu:</string>
     <string name="staff_detail_donation_prefix">Quyên góp:</string>
     <string name="staff_detail_insufficient">KHÔNG ĐỦ TỒN KHO</string>
+    <string name="staff_detail_export_quantity_hint">Số lượng xuất</string>
+    <string name="staff_detail_total_value_format">%1$d vật phẩm</string>
+    <string name="staff_detail_time_now">Bây giờ</string>
+    <string name="staff_detail_people_format">Người lớn: %1$d | Người già: %2$d | Trẻ em: %3$d</string>
+    <string name="staff_detail_no_description">Không có mô tả</string>
+    <string name="staff_export_stock_warning">Một số vật phẩm không đủ tồn kho.</string>
+    <string name="staff_export_over_stock">Số lượng xuất vượt quá tồn kho.</string>
+    <string name="staff_export_empty_quantity">Vui lòng nhập số lượng xuất.</string>
+    <string name="staff_export_note_default">Xuất kho cho mission</string>
     <string name="staff_detail_confirm_export">XÁC NHẬN XUẤT KHO</string>
     <string name="staff_detail_confirm_import">XÁC NHẬN NHẬP KHO</string>
 

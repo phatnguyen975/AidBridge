@@ -12,14 +12,19 @@ import com.drc.aidbridge.data.remote.dto.response.victim.SupplyCategoryResponse;
 import com.drc.aidbridge.data.repository.BaseRepository;
 import com.drc.aidbridge.domain.model.victim.VictimReliefRequest;
 import com.drc.aidbridge.domain.model.victim.VictimSupplyCategory;
+import com.drc.aidbridge.domain.model.victim.VictimVoiceReliefRequest;
 import com.drc.aidbridge.domain.repository.victim.VictimSupplyRepository;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -130,5 +135,95 @@ public class VictimSupplyRepositoryImpl extends BaseRepository implements Victim
         });
 
         return result;
+    }
+
+    @Override
+    public LiveData<NetworkResultWrapper<String>> submitVoiceReliefRequest(VictimVoiceReliefRequest request) {
+        MutableLiveData<NetworkResultWrapper<String>> result = new MutableLiveData<>();
+        result.postValue(NetworkResultWrapper.loading());
+
+        if (request == null || request.getAudioFile() == null || !request.getAudioFile().exists()) {
+            result.postValue(NetworkResultWrapper.error("File ghi âm không hợp lệ."));
+            return result;
+        }
+
+        double lat = request.getLatitude() != null ? request.getLatitude() : 0D;
+        double lng = request.getLongitude() != null ? request.getLongitude() : 0D;
+
+        MultipartBody.Part audioPart = createAudioPart(request.getAudioFile());
+        RequestBody latPart = createTextPart(String.valueOf(lat));
+        RequestBody lngPart = createTextPart(String.valueOf(lng));
+        RequestBody addressPart = createTextPart(safeText(request.getAddress()));
+        RequestBody adultsPart = createTextPart(String.valueOf(request.getAdultsCount()));
+        RequestBody elderlyPart = createTextPart(String.valueOf(request.getEldersCount()));
+        RequestBody childrenPart = createTextPart(String.valueOf(request.getChildrenCount()));
+        RequestBody notesPart = createTextPart(safeText(request.getNote()));
+        RequestBody urgencyPart = createTextPart(safeText(request.getUrgencyLevel()));
+
+        supplyApiService.submitVoiceReliefRequest(
+            audioPart,
+            latPart,
+            lngPart,
+            addressPart,
+            adultsPart,
+            elderlyPart,
+            childrenPart,
+            notesPart,
+            urgencyPart
+        ).enqueue(new Callback<BaseResponse<Object>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<Object>> call,
+                                   Response<BaseResponse<Object>> response) {
+                if (!response.isSuccessful()) {
+                    result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
+                    return;
+                }
+
+                BaseResponse<Object> body = response.body();
+                if (body == null) {
+                    result.postValue(NetworkResultWrapper.error("Phản hồi gửi yêu cầu giọng nói không hợp lệ."));
+                    return;
+                }
+
+                if (!body.isSuccess()) {
+                    String message = body.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                        message != null && !message.trim().isEmpty()
+                            ? message.trim()
+                            : "Gửi yêu cầu giọng nói thất bại."
+                    ));
+                    return;
+                }
+
+                String message = body.getMessage();
+                if (message == null || message.trim().isEmpty()) {
+                    message = "Gửi yêu cầu giọng nói thành công.";
+                }
+
+                result.postValue(NetworkResultWrapper.success(message.trim()));
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<Object>> call, Throwable t) {
+                result.postValue(NetworkResultWrapper.error("Gửi yêu cầu giọng nói thất bại: " + safeMessage(t)));
+            }
+        });
+
+        return result;
+    }
+
+    private MultipartBody.Part createAudioPart(File audioFile) {
+        MediaType mediaType = MediaType.get("audio/mp4");
+        RequestBody requestBody = RequestBody.create(audioFile, mediaType);
+        return MultipartBody.Part.createFormData("file", audioFile.getName(), requestBody);
+    }
+
+    private RequestBody createTextPart(String value) {
+        String safeValue = value != null ? value : "";
+        return RequestBody.create(safeValue, MediaType.get("text/plain"));
+    }
+
+    private String safeText(String value) {
+        return value != null ? value.trim() : "";
     }
 }

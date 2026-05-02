@@ -29,6 +29,17 @@ public interface DonationItemRepository extends JpaRepository<DonationItem, UUID
 
     List<DonationItem> findAllByDonationId(UUID donationId);
 
+    boolean existsByDonationIdAndItemCategoryId(UUID donationId, UUID itemCategoryId);
+
+    @Query(value = """
+            select count(di.id)
+            from donation_items di
+            inner join donations d on d.id = di.donation_id
+            where d.hub_id = :hubId
+              and d.status = 'RECEIVED'
+            """, nativeQuery = true)
+    Long countImportedQuantityByHubId(@Param("hubId") UUID hubId);
+
     interface DonationHistoryAggregateProjection {
         UUID getDonationId();
 

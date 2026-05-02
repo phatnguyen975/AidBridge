@@ -17,6 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class StaffManualEntryBottomSheet extends BottomSheetDialogFragment {
 
     private static final String ARG_MODE = "mode";
+    private static final String ARG_CODE = "code";
     private static final String MODE_IMPORT = "import";
     private static final String MODE_EXPORT = "export";
 
@@ -44,8 +45,17 @@ public class StaffManualEntryBottomSheet extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mode = resolveMode();
+        applyModeUi();
         binding.btnConfirmManual.setOnClickListener(v -> {
-            navigateByMode();
+            String code = binding.etManualCode.getText() != null
+                    ? binding.etManualCode.getText().toString().trim()
+                    : "";
+            if (code.isEmpty()) {
+                binding.tilManualCode.setError(getString(R.string.staff_manual_error_required));
+                return;
+            }
+            binding.tilManualCode.setError(null);
+            navigateByMode(code);
             dismissAllowingStateLoss();
         });
     }
@@ -62,7 +72,17 @@ public class StaffManualEntryBottomSheet extends BottomSheetDialogFragment {
         return MODE_IMPORT.equals(argMode) ? MODE_IMPORT : MODE_EXPORT;
     }
 
-    private void navigateByMode() {
+    private void applyModeUi() {
+        if (MODE_IMPORT.equals(mode)) {
+            binding.tvManualTitle.setText(R.string.staff_manual_title_import);
+            binding.tilManualCode.setHint(getString(R.string.staff_manual_hint_import));
+            return;
+        }
+        binding.tvManualTitle.setText(R.string.staff_manual_title_export);
+        binding.tilManualCode.setHint(getString(R.string.staff_manual_hint_export));
+    }
+
+    private void navigateByMode(String code) {
         int destinationId = MODE_IMPORT.equals(mode)
                 ? R.id.staffImportDetailFragment
                 : R.id.staffExportDetailFragment;
@@ -70,7 +90,10 @@ public class StaffManualEntryBottomSheet extends BottomSheetDialogFragment {
         try {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host);
             if (navController.getGraph().findNode(destinationId) != null) {
-                navController.navigate(destinationId);
+                Bundle args = new Bundle();
+                args.putString(ARG_CODE, code);
+                args.putString(ARG_MODE, mode);
+                navController.navigate(destinationId, args);
             }
         } catch (IllegalStateException ignored) {
             // No-op: host controller is not ready.

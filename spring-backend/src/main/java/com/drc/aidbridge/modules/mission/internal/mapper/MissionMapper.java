@@ -24,6 +24,7 @@ public class MissionMapper {
                 .aidRequestId(mission.getAidRequestId())
                 .volunteerId(mission.getVolunteerId())
                 .hubId(mission.getHubId())
+                .codeName(mission.getCodeName())
                 .victimLat(mission.getVictimLat())
                 .victimLng(mission.getVictimLng())
                 .createdAt(mission.getCreatedAt())
@@ -41,6 +42,7 @@ public class MissionMapper {
                 .aidRequestId(mission.getAidRequestId())
                 .volunteerId(mission.getVolunteerId())
                 .hubId(mission.getHubId())
+                .codeName(mission.getCodeName())
                 .victimLat(mission.getVictimLat())
                 .victimLng(mission.getVictimLng())
                 .qrCodeToken(mission.getQrCodeToken());
@@ -76,9 +78,9 @@ public class MissionMapper {
 
         if (volunteer != null) {
             response.setVolunteer(MissionResponse.VolunteerBrief.builder()
-                    .id(java.util.UUID.fromString(volunteer.getId()))
-                    .fullName(volunteer.getName())
-                    .phoneNumber(volunteer.getPhone())
+                    .id(volunteer.getId())
+                    .fullName(volunteer.getFullName())
+                    .phoneNumber(volunteer.getPhoneNumber())
                     .avatarUrl(volunteer.getAvatarUrl())
                     .build());
         }
@@ -111,8 +113,8 @@ public class MissionMapper {
         MissionTrackingResponse.VolunteerLocation volunteerLocation = null;
         if (volunteer != null) {
             volunteerLocation = MissionTrackingResponse.VolunteerLocation.builder()
-                    .id(java.util.UUID.fromString(volunteer.getId()))
-                    .fullName(volunteer.getName())
+                    .id(volunteer.getId())
+                    .fullName(volunteer.getFullName())
                     .avatarUrl(volunteer.getAvatarUrl())
                     .currentLat(null)
                     .currentLng(null)

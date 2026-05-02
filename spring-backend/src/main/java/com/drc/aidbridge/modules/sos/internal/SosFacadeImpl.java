@@ -39,4 +39,18 @@ public class SosFacadeImpl implements SosFacade {
     public boolean existsById(UUID id) {
         return sosRequestRepository.existsById(id);
     }
+
+    @Override
+    public java.util.List<SosDTO> findAllByStatus(SosStatus status) {
+        return sosRequestRepository.findByStatus(status).stream()
+                .map(sosMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    public java.util.List<SosDTO> findAllByStatusAndDateRange(SosStatus status, java.time.Instant start, java.time.Instant end) {
+        return sosRequestRepository.findByStatusAndCreatedAtBetween(status, start, end).stream()
+                .map(sosMapper::toDTO)
+                .toList();
+    }
 }

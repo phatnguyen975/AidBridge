@@ -2,11 +2,13 @@ package com.drc.aidbridge.modules.shared.exception;
 
 import com.drc.aidbridge.modules.shared.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
 
@@ -44,6 +46,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(ex.getMessage()));
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ApiResponse<Void>> handleConflictException(ConflictException ex) {
+        log.warn("Conflict: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(ForbiddenOperationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleForbiddenOperationException(ForbiddenOperationException ex) {
+        log.warn("Forbidden operation: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error(ex.getMessage()));
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleResourceNotFoundException(ResourceNotFoundException ex) {
         log.warn("Resource not found: {}", ex.getMessage());
@@ -73,6 +87,15 @@ public class GlobalExceptionHandler {
         }
         log.warn("Validation failed: {}", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(errors));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException ex) {
+        String parameterName = ex.getName() != null ? ex.getName() : "parameter";
+        log.warn("Invalid request parameter '{}': {}", parameterName, ex.getValue());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error("Invalid request parameter: " + parameterName));
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
@@ -112,13 +135,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(message));
     }
 
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDataAccessException(DataAccessException ex) {
+        Throwable rootCause = ex.getMostSpecificCause();
+        String rootMessage = rootCause != null && rootCause.getMessage() != null
+                ? rootCause.getMessage()
+                : ex.getMessage();
+        log.error("Database error: {}", rootMessage, ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error("Lỗi truy vấn cơ sở dữ liệu. Vui lòng thử lại sau."));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
         log.error("Unexpected error occurred", ex);
-        String message = ex.getMessage() != null && !ex.getMessage().isBlank()
-                ? ex.getMessage()
-                : "An unexpected error occurred";
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error(message));
+                .body(ApiResponse.error("Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau."));
     }
 }

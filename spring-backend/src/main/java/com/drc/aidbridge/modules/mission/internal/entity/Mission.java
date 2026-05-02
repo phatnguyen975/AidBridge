@@ -54,6 +54,9 @@ public class Mission {
     @Column(name = "qr_code_token", length = 100, unique = true)
     private String qrCodeToken;
 
+    @Column(name = "code_name", length = 20, nullable = false)
+    private String codeName;
+
     @Column(name = "priority_score", precision = 5, scale = 2)
     private BigDecimal priorityScore;
 

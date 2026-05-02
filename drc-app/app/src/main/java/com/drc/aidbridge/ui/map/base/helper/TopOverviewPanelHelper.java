@@ -40,7 +40,7 @@ public class TopOverviewPanelHelper {
     private StateListener listener;
 
     public void setupTopOverviewBottomSheet(@NonNull FragmentMapBaseBinding binding,
-                                            @NonNull StateListener listener) {
+            @NonNull StateListener listener) {
         this.listener = listener;
 
         try {
@@ -66,22 +66,17 @@ public class TopOverviewPanelHelper {
                 topOverviewBaseRecenterFabBottomMarginPx = ((ViewGroup.MarginLayoutParams) recenterFabParams).bottomMargin;
             }
 
-            topOverviewBottomSheetBehavior.setHideable(false);
-            topOverviewBottomSheetBehavior.setSkipCollapsed(false);
-            topOverviewBottomSheetBehavior.setDraggable(false);
-            topOverviewBottomSheetBehavior.setFitToContents(false);
+            topOverviewBottomSheetBehavior.setHideable(true);
+            topOverviewBottomSheetBehavior.setSkipCollapsed(true);
+            topOverviewBottomSheetBehavior.setDraggable(true);
+            topOverviewBottomSheetBehavior.setFitToContents(true);
             topOverviewBottomSheetBehavior.setHalfExpandedRatio(TOP_OVERVIEW_HALF_EXPANDED_RATIO);
-            topOverviewBottomSheetBehavior.setPeekHeight(currentTopOverviewCollapsedPeekHeightPx, false);
+            topOverviewBottomSheetBehavior.setPeekHeight(0);
             topOverviewBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
                 @Override
                 public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                    if (newState == BottomSheetBehavior.STATE_HIDDEN && topOverviewBottomSheetBehavior != null) {
-                        topOverviewBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        return;
-                    }
-
                     if (newState != BottomSheetBehavior.STATE_EXPANDED
-                            && newState != BottomSheetBehavior.STATE_COLLAPSED) {
+                            && newState != BottomSheetBehavior.STATE_HIDDEN) {
                         return;
                     }
                     isTopOverviewExpanded = newState == BottomSheetBehavior.STATE_EXPANDED;
@@ -89,7 +84,6 @@ public class TopOverviewPanelHelper {
                         TopOverviewPanelHelper.this.listener.onStateChanged(isTopOverviewExpanded);
                     }
                     applyTopOverviewState(binding);
-                    updateOpenControlFabVisibility(binding);
                 }
 
                 @Override
@@ -99,17 +93,14 @@ public class TopOverviewPanelHelper {
 
             installTopOverviewInsetsHandling(binding);
 
-            binding.cardTopOverview.post(() -> {
-                if (topOverviewBottomSheetBehavior == null) {
-                    return;
-                }
+            if (topOverviewBottomSheetBehavior != null) {
                 applyResponsiveTopOverviewLayout(binding);
                 topOverviewBottomSheetBehavior.setState(
                         isTopOverviewExpanded
                                 ? BottomSheetBehavior.STATE_EXPANDED
-                                : BottomSheetBehavior.STATE_COLLAPSED);
+                                : BottomSheetBehavior.STATE_HIDDEN);
                 updateOpenControlFabVisibility(binding);
-            });
+            }
         } catch (Exception e) {
             topOverviewBottomSheetBehavior = null;
         }
@@ -133,18 +124,15 @@ public class TopOverviewPanelHelper {
             }
 
             binding.cardTopOverview.setVisibility(View.VISIBLE);
-            binding.layoutTopOverviewContent
-                    .setVisibility(isTopOverviewExpanded ? View.VISIBLE : View.GONE);
+            binding.layoutTopOverviewContent.setVisibility(View.VISIBLE);
             binding.btnToggleTopPanel.setRotation(isTopOverviewExpanded ? 0f : 180f);
 
             if (topOverviewBottomSheetBehavior != null) {
                 applyResponsiveTopOverviewLayout(binding);
-                topOverviewBottomSheetBehavior.setPeekHeight(currentTopOverviewCollapsedPeekHeightPx, true);
-                topOverviewBottomSheetBehavior.setDraggable(isTopOverviewExpanded);
 
                 int targetState = isTopOverviewExpanded
                         ? BottomSheetBehavior.STATE_EXPANDED
-                        : BottomSheetBehavior.STATE_COLLAPSED;
+                        : BottomSheetBehavior.STATE_HIDDEN;
                 if (topOverviewBottomSheetBehavior.getState() != targetState) {
                     topOverviewBottomSheetBehavior.setState(targetState);
                 }
@@ -167,8 +155,8 @@ public class TopOverviewPanelHelper {
             binding.cardTopOverview.setVisibility(View.GONE);
 
             if (topOverviewBottomSheetBehavior != null
-                    && topOverviewBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
-                topOverviewBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    && topOverviewBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                topOverviewBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
         } else {
             binding.cardTopOverview.setVisibility(View.VISIBLE);
@@ -180,7 +168,7 @@ public class TopOverviewPanelHelper {
     public void updateOpenControlFabVisibility(@NonNull FragmentMapBaseBinding binding) {
         try {
             boolean isNavOrSimActive = binding.cardNavigationHud.getVisibility() == View.VISIBLE;
-            if (isNavOrSimActive) {
+            if (isNavOrSimActive || isTopOverviewExpanded) {
                 binding.fabOpenControlPanel.setVisibility(View.GONE);
                 binding.btnSetStartPoint.setVisibility(View.GONE);
                 binding.btnSetEndPoint.setVisibility(View.GONE);
@@ -244,6 +232,8 @@ public class TopOverviewPanelHelper {
             return;
         }
 
+        // Card margin is now fixed in XML to be flush with bottom
+        /*
         ViewGroup.LayoutParams cardParams = binding.cardTopOverview.getLayoutParams();
         if (cardParams instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) cardParams;
@@ -253,6 +243,7 @@ public class TopOverviewPanelHelper {
                 binding.cardTopOverview.setLayoutParams(marginParams);
             }
         }
+        */
 
         ViewGroup.LayoutParams fabParams = binding.fabOpenControlPanel.getLayoutParams();
         if (fabParams instanceof ViewGroup.MarginLayoutParams) {
@@ -267,7 +258,8 @@ public class TopOverviewPanelHelper {
         ViewGroup.LayoutParams recenterFabParams = binding.fabRecenterCurrentLocation.getLayoutParams();
         if (recenterFabParams instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) recenterFabParams;
-            int targetRecenterFabBottomMargin = topOverviewBaseRecenterFabBottomMarginPx + topOverviewSystemBottomInsetPx;
+            int targetRecenterFabBottomMargin = topOverviewBaseRecenterFabBottomMarginPx
+                    + topOverviewSystemBottomInsetPx;
             if (marginParams.bottomMargin != targetRecenterFabBottomMargin) {
                 marginParams.bottomMargin = targetRecenterFabBottomMargin;
                 binding.fabRecenterCurrentLocation.setLayoutParams(marginParams);

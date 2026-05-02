@@ -8,12 +8,16 @@ import androidx.lifecycle.MutableLiveData;
 import com.drc.aidbridge.data.local.routing.OfflineRoutingLocalDataSource;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.data.remote.api.RoutingApiService;
+import com.drc.aidbridge.data.remote.dto.request.DangerousZoneRequestDto;
 import com.drc.aidbridge.data.remote.dto.request.RoutingRequestDto;
 import com.drc.aidbridge.data.remote.dto.response.BaseResponse;
+import com.drc.aidbridge.data.remote.dto.response.DangerousZoneResponseDto;
 import com.drc.aidbridge.data.remote.dto.response.RoutingResponseDto;
 import com.drc.aidbridge.domain.repository.RoutingRepository;
 import com.drc.aidbridge.utils.NetworkUtils;
 
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -116,6 +120,98 @@ public class RoutingRepositoryImpl extends BaseRepository implements RoutingRepo
         });
 
         return result;
+    }
+
+    @Override
+    public LiveData<NetworkResultWrapper<List<DangerousZoneResponseDto>>> getDangerousZones() {
+        MutableLiveData<NetworkResultWrapper<List<DangerousZoneResponseDto>>> result = new MutableLiveData<>();
+        result.postValue(NetworkResultWrapper.loading());
+        
+        routingApiService.getDangerousZones().enqueue(new Callback<BaseResponse<List<DangerousZoneResponseDto>>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<List<DangerousZoneResponseDto>>> call, Response<BaseResponse<List<DangerousZoneResponseDto>>> response) {
+                handleSimpleResponse(response, result);
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<List<DangerousZoneResponseDto>>> call, Throwable t) {
+                result.postValue(NetworkResultWrapper.error(safeMessage(t)));
+            }
+        });
+        return result;
+    }
+
+    @Override
+    public LiveData<NetworkResultWrapper<DangerousZoneResponseDto>> createDangerousZone(DangerousZoneRequestDto request) {
+        MutableLiveData<NetworkResultWrapper<DangerousZoneResponseDto>> result = new MutableLiveData<>();
+        result.postValue(NetworkResultWrapper.loading());
+        
+        routingApiService.createDangerousZone(request).enqueue(new Callback<BaseResponse<DangerousZoneResponseDto>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<DangerousZoneResponseDto>> call, Response<BaseResponse<DangerousZoneResponseDto>> response) {
+                handleSimpleResponse(response, result);
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<DangerousZoneResponseDto>> call, Throwable t) {
+                result.postValue(NetworkResultWrapper.error(safeMessage(t)));
+            }
+        });
+        return result;
+    }
+
+    @Override
+    public LiveData<NetworkResultWrapper<DangerousZoneResponseDto>> updateDangerousZone(UUID id, DangerousZoneRequestDto request) {
+        MutableLiveData<NetworkResultWrapper<DangerousZoneResponseDto>> result = new MutableLiveData<>();
+        result.postValue(NetworkResultWrapper.loading());
+        
+        routingApiService.updateDangerousZone(id, request).enqueue(new Callback<BaseResponse<DangerousZoneResponseDto>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<DangerousZoneResponseDto>> call, Response<BaseResponse<DangerousZoneResponseDto>> response) {
+                handleSimpleResponse(response, result);
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<DangerousZoneResponseDto>> call, Throwable t) {
+                result.postValue(NetworkResultWrapper.error(safeMessage(t)));
+            }
+        });
+        return result;
+    }
+
+    @Override
+    public LiveData<NetworkResultWrapper<Void>> deleteDangerousZone(UUID id) {
+        MutableLiveData<NetworkResultWrapper<Void>> result = new MutableLiveData<>();
+        result.postValue(NetworkResultWrapper.loading());
+        
+        routingApiService.deleteDangerousZone(id).enqueue(new Callback<BaseResponse<Void>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
+                handleSimpleResponse(response, result);
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
+                result.postValue(NetworkResultWrapper.error(safeMessage(t)));
+            }
+        });
+        return result;
+    }
+
+    private <T> void handleSimpleResponse(Response<BaseResponse<T>> response, MutableLiveData<NetworkResultWrapper<T>> result) {
+        if (!response.isSuccessful()) {
+            result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
+            return;
+        }
+
+        BaseResponse<T> baseResponse = response.body();
+        if (baseResponse == null || !baseResponse.isSuccess()) {
+            String msg = (baseResponse != null) ? baseResponse.getMessage() : "Yêu cầu thất bại";
+            result.postValue(NetworkResultWrapper.error(msg));
+            return;
+        }
+
+        result.postValue(NetworkResultWrapper.success(baseResponse.getData()));
     }
 
     private void tryOfflineFallback(RoutingRequestDto request,

@@ -4,12 +4,10 @@ import com.drc.aidbridge.modules.donation.internal.entity.Donation;
 import com.drc.aidbridge.modules.shared.enums.DonationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import com.drc.aidbridge.modules.shared.enums.DonationStatus;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -26,5 +24,7 @@ public interface DonationRepository extends JpaRepository<Donation, UUID> {
 	Page<Donation> findBySponsorIdAndStatus(UUID sponsorId, DonationStatus status, Pageable pageable);
 
 	boolean existsByQrCodeToken(String qrCodeToken);
+
+	Optional<Donation> findFirstByQrCodeTokenOrDonationCode(String qrCodeToken, String donationCode);
 
 }

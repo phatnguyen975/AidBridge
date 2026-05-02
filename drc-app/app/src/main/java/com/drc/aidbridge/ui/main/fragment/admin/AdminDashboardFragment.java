@@ -70,12 +70,8 @@ public class AdminDashboardFragment extends BaseFragment<FragmentAdminDashboardB
     }
 
     private void setupClickListeners() {
-        binding.buttonAdminOpenMap.setOnClickListener(v -> onOpenMapClicked());
-        binding.buttonAdminManageHub.setOnClickListener(v -> onManageHubClicked());
-    }
 
-    private void onOpenMapClicked() {
-        showToast(getString(R.string.admin_dashboard_open_map_todo));
+        binding.buttonAdminManageHub.setOnClickListener(v -> onManageHubClicked());
     }
 
     private void onManageHubClicked() {
@@ -154,6 +150,8 @@ public class AdminDashboardFragment extends BaseFragment<FragmentAdminDashboardB
         xAxis.setLabelRotationAngle(-25f);
         xAxis.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
         xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
+        
+        binding.barChartInventory.setExtraBottomOffset(30f);
 
         YAxis yAxis = binding.barChartInventory.getAxisLeft();
         yAxis.setDrawGridLines(false);

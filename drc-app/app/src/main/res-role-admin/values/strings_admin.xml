@@ -3,6 +3,7 @@
     <string name="admin_nav_dashboard">Dashboard</string>
     <string name="admin_nav_ai">AI</string>
     <string name="admin_nav_profile">Cá nhân</string>
+    <string name="admin_nav_map">Bản đồ</string>
 
     <string name="admin_dashboard_screen_title">ADMIN DASHBOARD SCREEN</string>
     <string name="admin_dashboard_title">Bảng quản trị</string>
@@ -33,9 +34,9 @@
     <string name="admin_hub_mgmt_back">Quay lại Dashboard</string>
     <string name="admin_hub_mgmt_search_hint">Tìm kiếm theo tên trạm hoặc địa điểm...</string>
     <string name="admin_hub_mgmt_summary_total_hubs">TỔNG SỐ TRẠM</string>
-    <string name="admin_hub_mgmt_summary_total_hubs_value">12</string>
+    <string name="admin_hub_mgmt_summary_total_hubs_value">0</string>
     <string name="admin_hub_mgmt_summary_active_hubs">ĐANG HOẠT ĐỘNG</string>
-    <string name="admin_hub_mgmt_summary_active_hubs_value">9</string>
+    <string name="admin_hub_mgmt_summary_active_hubs_value">0</string>
     <string name="admin_hub_mgmt_hub_thumbnail_desc">Hình ảnh minh họa trạm trung chuyển</string>
     <string name="admin_hub_mgmt_hub_icon_desc">Biểu tượng trạm trung chuyển</string>
     <string name="admin_hub_mgmt_status_active">ACTIVE</string>
@@ -60,21 +61,6 @@
     <string name="admin_hub_mgmt_toast_add_new">Mở form thêm mới trạm trung chuyển</string>
     <string name="admin_hub_mgmt_toast_status_changed">Đã cập nhật trạng thái %1$s: %2$s</string>
 
-    <string name="admin_hub_mock_name_q1">Hub Q1</string>
-    <string name="admin_hub_mock_name_q7">Hub Q7</string>
-    <string name="admin_hub_mock_name_thu_duc">Hub Thủ Đức</string>
-    <string name="admin_hub_mock_name_binh_thanh">Hub Bình Thạnh</string>
-
-    <string name="admin_hub_mock_address_q1">12 Nguyễn Huệ, Quận 1</string>
-    <string name="admin_hub_mock_address_q7">220 Nguyễn Thị Thập, Quận 7</string>
-    <string name="admin_hub_mock_address_thu_duc">09 Võ Văn Ngân, TP Thủ Đức</string>
-    <string name="admin_hub_mock_address_binh_thanh">88 Điện Biên Phủ, Bình Thạnh</string>
-
-    <string name="admin_hub_mock_inventory_q1">18.200 đơn vị</string>
-    <string name="admin_hub_mock_inventory_q7">9.700 đơn vị</string>
-    <string name="admin_hub_mock_inventory_thu_duc">6.150 đơn vị</string>
-    <string name="admin_hub_mock_inventory_binh_thanh">12.600 đơn vị</string>
-
     <string name="admin_hub_detail_back">Quay lại Quản lý trạm</string>
     <string name="admin_hub_detail_hub_name">Hub Quận 1</string>
     <string name="admin_hub_detail_status_active">HOẠT ĐỘNG</string>
@@ -90,7 +76,6 @@
     <string name="admin_hub_detail_name_fallback">Trạm chưa có tên</string>
     <string name="admin_hub_detail_manager">Quản lý: Chưa cập nhật</string>
     <string name="admin_hub_detail_manager_format">Quản lý: %1$s</string>
-    <string name="admin_hub_detail_manager_mock_name">Nguyễn Văn A</string>
     <string name="admin_hub_detail_map_desc">Bản đồ vị trí trạm trung chuyển</string>
     <string name="admin_hub_detail_button_add_inventory">Thêm / Cập nhật loại vật tư</string>
     <string name="admin_hub_detail_inventory_toast">Mở chức năng thêm vật tư cho trạm</string>
@@ -108,9 +93,9 @@
     <string name="admin_hub_detail_error_invalid_hub_id">Không tìm thấy mã trạm hợp lệ.</string>
     <string name="admin_hub_detail_error_generic">Không thể tải chi tiết trạm lúc này.</string>
     <string name="admin_hub_detail_stat_total_import">TỔNG NHẬP KHO</string>
-    <string name="admin_hub_detail_stat_total_import_value">1.240 đơn vị</string>
+    <string name="admin_hub_detail_stat_total_import_value">%1$d đơn vị</string>
     <string name="admin_hub_detail_stat_relief_runs">LƯỢT CỨU TRỢ</string>
-    <string name="admin_hub_detail_stat_relief_runs_value">386 lượt</string>
+    <string name="admin_hub_detail_stat_relief_runs_value">%1$d lượt</string>
 
     <string name="admin_hub_category_medicine">Thuốc</string>
     <string name="admin_hub_category_clothes">Quần áo</string>
@@ -177,17 +162,36 @@
     <string name="admin_ai_screen_title">ADMIN AI SUMMARY SCREEN</string>
     <string name="admin_ai_summary_title">Tóm tắt AI</string>
     <string name="admin_ai_summary_updated_at">Cập nhật lúc 08:30, Hôm nay</string>
+    <string name="admin_ai_summary_updated_placeholder">Đang đồng bộ dữ liệu...</string>
+    <string name="admin_ai_summary_updated_now_format">Cập nhật lúc %1$s</string>
     <string name="admin_ai_summary_report_icon_desc">Biểu tượng báo cáo AI</string>
     <string name="admin_ai_summary_report_title">Báo cáo cứu trợ hôm nay</string>
     <string name="admin_ai_summary_goods_value">1.240 kiện hàng</string>
     <string name="admin_ai_summary_goods_growth">+12%%</string>
     <string name="admin_ai_summary_people_value">320 người được hỗ trợ</string>
+    <string name="admin_ai_summary_goods_placeholder">0 kiện hàng</string>
+    <string name="admin_ai_summary_growth_placeholder">+0%%</string>
+    <string name="admin_ai_summary_people_placeholder">0 người được hỗ trợ</string>
+    <string name="admin_ai_summary_total_packages_format">%1$s kiện hàng</string>
+    <string name="admin_ai_summary_growth_format">+%1$s%%</string>
+    <string name="admin_ai_summary_people_supported_format">%1$s người được hỗ trợ</string>
     <string name="admin_ai_summary_warning_icon_desc">Cảnh báo kho vật tư</string>
     <string name="admin_ai_summary_alert_water">Hub Quận 7 thiếu nước uống</string>
     <string name="admin_ai_summary_alert_overload">Hub Thủ Đức đang quá tải tiếp nhận</string>
     <string name="admin_ai_summary_create_report">Tạo báo cáo</string>
+    <string name="admin_ai_summary_generating">Đang tạo...</string>
     <string name="admin_ai_summary_recent_title">HOẠT ĐỘNG GẦN ĐÂY</string>
     <string name="admin_ai_summary_view_all">Xem tất cả</string>
+    <string name="admin_ai_summary_activities_empty">Chưa có hoạt động gần đây</string>
+    <string name="admin_ai_summary_alert_empty">Không có cảnh báo nào</string>
+    <string name="admin_ai_summary_alert_default_title">Cảnh báo hệ thống</string>
+    <string name="admin_ai_summary_alert_default_message">Không có chi tiết cảnh báo</string>
+    <string name="admin_ai_activity_default_title">Hoạt động hệ thống</string>
+    <string name="admin_ai_activity_default_description">Không có mô tả</string>
+    <string name="admin_alert_severity_low">Thông tin</string>
+    <string name="admin_alert_severity_medium">Cảnh báo</string>
+    <string name="admin_alert_severity_high">Nghiêm trọng</string>
+    <string name="admin_alert_severity_critical">Khẩn cấp</string>
     <string name="admin_ai_summary_activity_one_content">Đã điều phối 40 thùng nước về Hub Quận 7</string>
     <string name="admin_ai_summary_activity_one_time">10p trước</string>
     <string name="admin_ai_summary_activity_two_content">Đã tạo cảnh báo ưu tiên cho Hub Thủ Đức</string>
@@ -275,4 +279,46 @@
     <string name="admin_add_staff_error_password">Vui lòng nhập mật khẩu</string>
     <string name="admin_add_staff_error_confirm_password">Mật khẩu xác nhận không khớp</string>
     <string name="admin_add_staff_error_hub">Vui lòng chọn Hub</string>
+    <string name="admin_hub_mgmt_empty">Ch\u01b0a c\u00f3 tr\u1ea1m trung chuy\u1ec3n</string>
+    <string name="admin_hub_mgmt_empty_search">Kh\u00f4ng t\u00ecm th\u1ea5y tr\u1ea1m ph\u00f9 h\u1ee3p</string>
+    <string name="admin_hub_mgmt_retry">Th\u1eed l\u1ea1i</string>
+    <string name="admin_hub_mgmt_summary_error">Kh\u00f4ng th\u1ec3 t\u1ea3i th\u1ed1ng k\u00ea tr\u1ea1m</string>
+    <string name="admin_hub_mgmt_confirm_deactivate_title">V\u00f4 hi\u1ec7u h\u00f3a tr\u1ea1m</string>
+    <string name="admin_hub_mgmt_confirm_deactivate_message">B\u1ea1n c\u00f3 ch\u1eafc mu\u1ed1n v\u00f4 hi\u1ec7u h\u00f3a tr\u1ea1m n\u00e0y kh\u00f4ng?</string>
+    <string name="admin_hub_mgmt_confirm_activate_title">K\u00edch ho\u1ea1t tr\u1ea1m</string>
+    <string name="admin_hub_mgmt_confirm_activate_message">B\u1ea1n c\u00f3 ch\u1eafc mu\u1ed1n k\u00edch ho\u1ea1t l\u1ea1i tr\u1ea1m n\u00e0y kh\u00f4ng?</string>
+    <string name="admin_hub_mgmt_confirm_positive">X\u00e1c nh\u1eadn</string>
+    <string name="admin_hub_mgmt_confirm_cancel">H\u1ee7y</string>
+
+    <string name="admin_add_hub_title">Th\u00eam tr\u1ea1m</string>
+    <string name="admin_add_hub_back">Quay l\u1ea1i Qu\u1ea3n l\u00fd tr\u1ea1m</string>
+    <string name="admin_add_hub_name">T\u00ean tr\u1ea1m</string>
+    <string name="admin_add_hub_address">\u0110\u1ecba ch\u1ec9 / \u0111\u1ecba \u0111i\u1ec3m</string>
+    <string name="admin_add_hub_phone">S\u1ed1 \u0111i\u1ec7n tho\u1ea1i</string>
+    <string name="admin_add_hub_start_time">Gi\u1edd b\u1eaft \u0111\u1ea7u</string>
+    <string name="admin_add_hub_end_time">Gi\u1edd k\u1ebft th\u00fac</string>
+    <string name="admin_add_hub_image_url">Link \u1ea3nh (n\u1ebfu c\u00f3)</string>
+    <string name="admin_add_hub_status_default">Tr\u1ea1ng th\u00e1i m\u1eb7c \u0111\u1ecbnh: ACTIVE</string>
+    <string name="admin_add_hub_submit">Th\u00eam tr\u1ea1m</string>
+    <string name="admin_add_hub_geocoding">\u0110ang x\u00e1c \u0111\u1ecbnh v\u1ecb tr\u00ed...</string>
+    <string name="admin_add_hub_submitting">\u0110ang th\u00eam...</string>
+    <string name="admin_add_hub_success">Th\u00eam tr\u1ea1m th\u00e0nh c\u00f4ng</string>
+    <string name="admin_add_hub_error_generic">Kh\u00f4ng th\u1ec3 th\u00eam tr\u1ea1m</string>
+    <string name="admin_add_hub_error_name">Vui l\u00f2ng nh\u1eadp t\u00ean tr\u1ea1m</string>
+    <string name="admin_add_hub_error_address">Vui l\u00f2ng nh\u1eadp \u0111\u1ecba ch\u1ec9 tr\u1ea1m</string>
+    <string name="admin_add_hub_error_phone">Vui l\u00f2ng nh\u1eadp s\u1ed1 \u0111i\u1ec7n tho\u1ea1i</string>
+    <string name="admin_add_hub_error_start_time">Vui l\u00f2ng ch\u1ecdn gi\u1edd b\u1eaft \u0111\u1ea7u</string>
+    <string name="admin_add_hub_error_end_time">Vui l\u00f2ng ch\u1ecdn gi\u1edd k\u1ebft th\u00fac</string>
+    <string name="admin_add_hub_error_time_order">Gi\u1edd k\u1ebft th\u00fac ph\u1ea3i sau gi\u1edd b\u1eaft \u0111\u1ea7u</string>
+    <string name="admin_add_hub_error_geocode_not_found">Kh\u00f4ng t\u00ecm th\u1ea5y t\u1ecda \u0111\u1ed9 t\u1eeb \u0111\u1ecba ch\u1ec9 n\u00e0y</string>
+    <string name="admin_add_hub_error_geocode_failed">Kh\u00f4ng th\u1ec3 x\u00e1c \u0111\u1ecbnh v\u1ecb tr\u00ed t\u1eeb \u0111\u1ecba ch\u1ec9</string>
+
+    <string name="admin_hub_detail_retry">Th\u1eed l\u1ea1i</string>
+    <string name="admin_hub_detail_manager_unassigned">Qu\u1ea3n l\u00fd: Ch\u01b0a ph\u00e2n c\u00f4ng</string>
+    <string name="admin_hub_detail_phone_empty">S\u1ed1 \u0111i\u1ec7n tho\u1ea1i: Ch\u01b0a c\u1eadp nh\u1eadt</string>
+    <string name="admin_hub_detail_phone_empty_value">Ch\u01b0a c\u1eadp nh\u1eadt</string>
+    <string name="admin_hub_detail_phone_format">S\u1ed1 \u0111i\u1ec7n tho\u1ea1i: %1$s</string>
+    <string name="admin_hub_detail_location_empty">V\u1ecb tr\u00ed: Ch\u01b0a c\u1eadp nh\u1eadt</string>
+    <string name="admin_hub_detail_location_format">V\u1ecb tr\u00ed: %1$.6f, %2$.6f</string>
+    <string name="admin_hub_detail_inventory_empty">Tr\u1ea1m n\u00e0y ch\u01b0a c\u00f3 v\u1eadt ph\u1ea9m</string>
 </resources>

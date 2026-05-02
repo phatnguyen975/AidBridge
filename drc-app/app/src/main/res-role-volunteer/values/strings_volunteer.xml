@@ -219,8 +219,8 @@
     <string name="volunteer_mission_acceptance_supply_items_fallback">Chi tiết vật phẩm sẽ được cập nhật sau khi xác nhận nhiệm vụ.</string>
     <string name="volunteer_mission_acceptance_rescue_subject">Người cần cứu hộ</string>
     <string name="volunteer_mission_acceptance_delivery_subject">Điểm tiếp nhận hỗ trợ</string>
-    <string name="volunteer_mission_acceptance_coordinates_badge">Tọa độ %.4f, %.4f</string>
-    <string name="volunteer_mission_acceptance_coordinates_fallback">Tọa độ %.4f, %.4f</string>
+    <string name="volunteer_mission_acceptance_coordinates_badge">Tọa độ %1$.4f, %2$.4f</string>
+    <string name="volunteer_mission_acceptance_coordinates_fallback">Tọa độ %1$.4f, %2$.4f</string>
     <string name="volunteer_mission_acceptance_distance_unavailable">Vị trí đang được cập nhật</string>
     <string name="volunteer_mission_reject_reason_title">Chọn lý do từ chối</string>
     <string name="volunteer_mission_reject_reason_busy">Đang bận</string>

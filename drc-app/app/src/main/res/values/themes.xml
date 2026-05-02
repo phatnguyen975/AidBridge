@@ -24,6 +24,15 @@
         <item name="android:navigationBarColor">@color/bg_primary</item>
     </style>
 
+    <!-- Light Theme Overlay for specific panels -->
+    <style name="ThemeOverlay.AidBridge.Light" parent="ThemeOverlay.Material3.Light">
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">#0F172A</item>
+        <item name="colorOnSurfaceVariant">#475569</item>
+        <item name="android:textColorPrimary">#0F172A</item>
+        <item name="android:textColorSecondary">#475569</item>
+    </style>
+
     <!-- Main application theme -->
     <style name="Theme.AidBridge" parent="Base.Theme.AidBridge" />
 
@@ -81,5 +90,13 @@
     <style name="CircleAppearance">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="ShapeAppearance.TopRounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">28dp</item>
+        <item name="cornerSizeTopRight">28dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
     </style>
 </resources>

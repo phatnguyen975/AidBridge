@@ -1,6 +1,7 @@
 package com.drc.aidbridge.modules.hub.internal.web.dto;
 
 import com.drc.aidbridge.modules.shared.enums.HubStatus;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Size;
@@ -36,9 +37,11 @@ public class UpdateHubRequest {
 
     @DecimalMin(value = "-90.0", message = "lat must be >= -90")
     @DecimalMax(value = "90.0", message = "lat must be <= 90")
+    @JsonAlias({"latitude"})
     private BigDecimal lat;
 
     @DecimalMin(value = "-180.0", message = "lng must be >= -180")
     @DecimalMax(value = "180.0", message = "lng must be <= 180")
+    @JsonAlias({"longitude", "lon"})
     private BigDecimal lng;
 }

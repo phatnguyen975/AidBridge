@@ -69,6 +69,19 @@
                 android:visibility="gone" />
         </LinearLayout>
 
+        <EditText
+            android:id="@+id/et_quantity"
+            android:layout_width="72dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="@dimen/spacing_sm"
+            android:background="@drawable/bg_staff_detail_status_chip"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLines="1"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/staff_detail_item_meta_size"
+            android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/iv_status"
             android:layout_width="@dimen/staff_detail_status_icon_size"

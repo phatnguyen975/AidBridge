@@ -96,5 +96,5 @@ public class CreateDonationUseCase {
     String timePart = String.valueOf(System.currentTimeMillis()).substring(7);
     String randomPart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
     return "DON-" + timePart + "-" + randomPart;
-}
+    }
 }

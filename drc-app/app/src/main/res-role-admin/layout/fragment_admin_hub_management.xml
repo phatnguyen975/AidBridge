@@ -172,6 +172,73 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layout_admin_hub_summary" />
 
+    <ProgressBar
+        android:id="@+id/progress_admin_hubs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_admin_hub_summary" />
+
+    <LinearLayout
+        android:id="@+id/layout_admin_hub_empty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_admin_hub_summary">
+
+        <TextView
+            android:id="@+id/text_admin_hub_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/admin_hub_mgmt_empty"
+            android:textColor="@color/admin_text_secondary"
+            android:textSize="@dimen/admin_profile_item_text_size" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_admin_hub_error"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_admin_hub_summary">
+
+        <TextView
+            android:id="@+id/text_admin_hub_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/admin_hub_mgmt_error_generic"
+            android:textColor="@color/admin_text_secondary"
+            android:textSize="@dimen/admin_profile_item_text_size" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_admin_hub_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+            android:text="@string/admin_hub_mgmt_retry"
+            android:textAllCaps="false"
+            android:textColor="@color/admin_action_button_text"
+            app:backgroundTint="@color/admin_action_button_primary_bg"
+            app:cornerRadius="@dimen/admin_action_button_radius" />
+
+    </LinearLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_admin_add_hub"
         android:layout_width="wrap_content"

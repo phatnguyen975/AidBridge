@@ -24,7 +24,7 @@ public class StaffController {
     private final GetStaffByUserIdUseCase getStaffByUserIdUseCase;
     private final CreateStaffUseCase createStaffUseCase;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}")
     public ResponseEntity<ApiResponse<StaffDTO>> getStaff(@PathVariable UUID id) {
         StaffDTO dto = getStaffByIdUseCase.execute(id);
         if (dto == null) {
