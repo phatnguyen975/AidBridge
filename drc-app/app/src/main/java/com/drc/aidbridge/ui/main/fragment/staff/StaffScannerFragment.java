@@ -85,6 +85,10 @@ public class StaffScannerFragment extends BaseFragment<FragmentStaffScannerBindi
 
         binding.ivBack.setOnClickListener(v -> popBackStackSafely());
         binding.btnManualEntry.setOnClickListener(v -> showManualEntryBottomSheet());
+        if (MODE_EXPORT.equals(mode)) {
+            showManualEntryBottomSheet();
+            return;
+        }
         requestCameraOrStart();
     }
 

@@ -12,6 +12,7 @@ import com.drc.aidbridge.domain.model.staff.InventoryTransactionResult;
 import com.drc.aidbridge.domain.model.staff.InboundDonationPreview;
 import com.drc.aidbridge.domain.model.staff.InboundDraftItem;
 import com.drc.aidbridge.domain.model.staff.InboundSubCategory;
+import com.drc.aidbridge.domain.model.staff.StaffInventory;
 import com.drc.aidbridge.domain.repository.staff.StaffInventoryRepository;
 import com.drc.aidbridge.ui.base.BaseViewModel;
 
@@ -32,10 +33,12 @@ public class StaffInventoryTransactionViewModel extends BaseViewModel {
     private final MutableLiveData<String> inboundPreviewCode = new MutableLiveData<>();
     private final MutableLiveData<ConfirmParams> confirmParams = new MutableLiveData<>();
     private final MutableLiveData<InboundConfirmParams> inboundConfirmParams = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> exportInventoryTrigger = new MutableLiveData<>();
     private final LiveData<NetworkResultWrapper<InventoryQrPreview>> previewResult;
     private final LiveData<NetworkResultWrapper<InboundDonationPreview>> inboundPreviewResult;
     private final LiveData<NetworkResultWrapper<InventoryTransactionResult>> confirmResult;
     private final LiveData<NetworkResultWrapper<InventoryTransactionResult>> inboundConfirmResult;
+    private final LiveData<NetworkResultWrapper<StaffInventory>> exportInventoryResult;
 
     @Inject
     public StaffInventoryTransactionViewModel(StaffInventoryRepository repository) {
@@ -64,6 +67,8 @@ public class StaffInventoryTransactionViewModel extends BaseViewModel {
             }
             return repository.confirmInbound(params.donationId, params.code, params.items, params.generalNote);
         });
+        exportInventoryResult = Transformations.switchMap(exportInventoryTrigger, trigger ->
+                repository.getMyHubInventory(null, null, null, 0, 200));
     }
 
     public LiveData<NetworkResultWrapper<InventoryQrPreview>> getPreviewResult() {
@@ -82,12 +87,20 @@ public class StaffInventoryTransactionViewModel extends BaseViewModel {
         return inboundConfirmResult;
     }
 
+    public LiveData<NetworkResultWrapper<StaffInventory>> getExportInventoryResult() {
+        return exportInventoryResult;
+    }
+
     public void preview(String mode, @Nullable String code) {
         previewParams.setValue(new PreviewParams(normalizeMode(mode), trimToEmpty(code)));
     }
 
     public void previewInbound(@Nullable String code) {
         inboundPreviewCode.setValue(trimToEmpty(code));
+    }
+
+    public void loadExportInventory() {
+        exportInventoryTrigger.setValue(Boolean.TRUE);
     }
 
     public void confirm(String mode,

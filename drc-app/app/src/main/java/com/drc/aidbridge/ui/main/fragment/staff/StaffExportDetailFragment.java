@@ -14,8 +14,11 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.FragmentStaffExportDetailBinding;
 import com.drc.aidbridge.domain.model.staff.InventoryConfirmItem;
 import com.drc.aidbridge.domain.model.staff.InventoryQrPreview;
-import com.drc.aidbridge.domain.model.staff.InventoryQrPreviewItem;
+import com.drc.aidbridge.domain.model.staff.StaffInventoryItem;
 import com.drc.aidbridge.domain.model.staff.InventoryTransactionResult;
+import com.drc.aidbridge.domain.model.staff.OutboundAidRequestDetail;
+import com.drc.aidbridge.domain.model.staff.OutboundAidRequestItem;
+import com.drc.aidbridge.domain.model.staff.StaffInventory;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.adapter.staff.StaffExportDetailAdapter;
 import com.drc.aidbridge.ui.main.viewmodel.staff.StaffInventoryTransactionViewModel;
@@ -61,6 +64,7 @@ public class StaffExportDetailFragment extends BaseFragment<FragmentStaffExportD
     @Override
     protected void observeViewModel() {
         viewModel.getPreviewResult().observe(getViewLifecycleOwner(), this::renderPreviewResult);
+        viewModel.getExportInventoryResult().observe(getViewLifecycleOwner(), this::renderExportInventoryResult);
         viewModel.getConfirmResult().observe(getViewLifecycleOwner(), this::renderConfirmResult);
     }
 
@@ -89,9 +93,11 @@ public class StaffExportDetailFragment extends BaseFragment<FragmentStaffExportD
         binding.tvTaskId.setText(code.isEmpty() ? "--" : code);
         binding.tvStatus.setText(R.string.staff_detail_processing);
         binding.tvHubName.setText(R.string.staff_inventory_hub_unknown);
-        binding.tvTotalValue.setText("0 v\u1eadt ph\u1ea9m");
+        binding.tvAidPeople.setText("");
+        binding.tvAidDescription.setText("");
+        binding.tvTotalValue.setText(getString(R.string.staff_detail_total_value_format, 0));
         binding.tvItemCount.setText("0");
-        binding.tvTimeValue.setText("B\u00e2y gi\u1edd");
+        binding.tvTimeValue.setText(getString(R.string.staff_detail_time_now));
     }
 
     private void renderPreviewResult(@Nullable NetworkResultWrapper<InventoryQrPreview> result) {
@@ -128,19 +134,91 @@ public class StaffExportDetailFragment extends BaseFragment<FragmentStaffExportD
         binding.tvHubName.setText(preview.getHubName().isEmpty()
                 ? getString(R.string.staff_inventory_hub_unknown)
                 : preview.getHubName());
-        binding.tvItemCount.setText(String.valueOf(preview.getItems().size()));
-        binding.tvTotalValue.setText(totalQuantity(preview.getItems()) + " v\u1eadt ph\u1ea9m");
-        adapter.submitPreviewItems(preview.getItems());
+        renderAidRequestDetail(preview.getAidRequestDetail());
+        binding.tvItemCount.setText("0");
+        binding.tvTotalValue.setText(getString(R.string.staff_detail_total_value_format, 0));
+        adapter.clear();
+        viewModel.loadExportInventory();
+    }
 
-        boolean canConfirm = preview.canConfirm() && !adapter.hasInsufficientStock()
-                && !preview.getItems().isEmpty();
+    private void renderExportInventoryResult(@Nullable NetworkResultWrapper<StaffInventory> result) {
+        if (result == null) {
+            return;
+        }
+
+        if (result.isLoading()) {
+            binding.progressPagination.setVisibility(View.VISIBLE);
+            binding.btnConfirm.setEnabled(false);
+            return;
+        }
+
+        binding.progressPagination.setVisibility(View.GONE);
+        if (result.isError()) {
+            adapter.clear();
+            binding.btnConfirm.setEnabled(false);
+            showTopSnackbar(binding.getRoot(), friendlyError(result.getMessage()), true);
+            return;
+        }
+
+        StaffInventory inventory = result.getData();
+        List<StaffInventoryItem> inventoryItems = inventory != null ? inventory.getItems() : null;
+        adapter.submitInventoryItems(inventoryItems);
+        binding.tvItemCount.setText(String.valueOf(adapter.getDataCount()));
+
+        boolean canConfirm = currentPreview != null && !adapter.hasInsufficientStock() && adapter.getDataCount() > 0;
         binding.btnConfirm.setEnabled(canConfirm);
-        if (!canConfirm) {
-            String message = !preview.getMessage().isEmpty()
-                    ? preview.getMessage()
-                    : "M\u1ed9t s\u1ed1 v\u1eadt ph\u1ea9m kh\u00f4ng \u0111\u1ee7 t\u1ed3n kho.";
+        if (!canConfirm && currentPreview != null) {
+            String message = !currentPreview.getMessage().isEmpty()
+                    ? currentPreview.getMessage()
+                    : getString(R.string.staff_export_stock_warning);
             showTopSnackbar(binding.getRoot(), message, true);
         }
+    }
+
+    private void renderAidRequestDetail(@Nullable OutboundAidRequestDetail detail) {
+        if (detail == null) {
+            binding.tvAidPeople.setText("");
+            binding.tvAidDescription.setText("");
+            return;
+        }
+
+        binding.tvAidPeople.setText(getString(
+                R.string.staff_detail_people_format,
+                detail.getNumberAdult(),
+                detail.getNumberElderly(),
+                detail.getNumberChildren()
+        ));
+
+        String description = detail.getDescription().isEmpty()
+                ? getString(R.string.staff_detail_no_description)
+                : detail.getDescription();
+
+        String requestedItemsText = buildRequestedItemsText(detail.getItems());
+        binding.tvAidDescription.setText(description + "\n\n" + requestedItemsText);
+    }
+
+    private String buildRequestedItemsText(@Nullable List<OutboundAidRequestItem> requestedItems) {
+        if (requestedItems == null || requestedItems.isEmpty()) {
+            return "Danh sach vat pham yeu cau: Khong co";
+        }
+
+        StringBuilder builder = new StringBuilder("Danh sach vat pham yeu cau:");
+        int index = 1;
+        for (OutboundAidRequestItem item : requestedItems) {
+            if (item == null || item.getName().isEmpty()) {
+                continue;
+            }
+            builder.append("\n")
+                    .append(index)
+                    .append(". ")
+                    .append(item.getName());
+            index++;
+        }
+
+        if (index == 1) {
+            return "Danh sach vat pham yeu cau: Khong co";
+        }
+        return builder.toString();
     }
 
     private void renderPreviewError(@Nullable String message) {
@@ -153,24 +231,18 @@ public class StaffExportDetailFragment extends BaseFragment<FragmentStaffExportD
 
     private void confirmOutbound() {
         if (adapter.hasInsufficientStock()) {
-            showTopSnackbar(binding.getRoot(), "Kh\u00f4ng th\u1ec3 xu\u1ea5t kho v\u00ec t\u1ed3n kho kh\u00f4ng \u0111\u1ee7.", true);
+            showTopSnackbar(binding.getRoot(), getString(R.string.staff_export_over_stock), true);
             return;
         }
 
         List<InventoryConfirmItem> items = adapter.getConfirmItems();
         if (items.isEmpty()) {
-            showTopSnackbar(binding.getRoot(), "Kh\u00f4ng c\u00f3 v\u1eadt ph\u1ea9m \u0111\u1ec3 xu\u1ea5t kho.", true);
+            showTopSnackbar(binding.getRoot(), getString(R.string.staff_export_empty_quantity), true);
             return;
-        }
-        for (InventoryConfirmItem item : items) {
-            if (item.getQuantity() <= 0) {
-                showTopSnackbar(binding.getRoot(), "S\u1ed1 l\u01b0\u1ee3ng xu\u1ea5t ph\u1ea3i l\u1edbn h\u01a1n 0.", true);
-                return;
-            }
         }
 
         binding.btnConfirm.setEnabled(false);
-        viewModel.confirm(MODE_EXPORT, code, items, "Xuat kho cho mission");
+        viewModel.confirm(MODE_EXPORT, code, items, getString(R.string.staff_export_note_default));
     }
 
     private void renderConfirmResult(@Nullable NetworkResultWrapper<InventoryTransactionResult> result) {
@@ -201,17 +273,6 @@ public class StaffExportDetailFragment extends BaseFragment<FragmentStaffExportD
                 () -> popBackStackSafely(R.id.staffInventoryFragment, false),
                 700L
         );
-    }
-
-    private int totalQuantity(List<InventoryQrPreviewItem> items) {
-        int total = 0;
-        if (items == null) {
-            return total;
-        }
-        for (InventoryQrPreviewItem item : items) {
-            total += item.getRequiredQuantity();
-        }
-        return total;
     }
 
     private String resolveCode() {

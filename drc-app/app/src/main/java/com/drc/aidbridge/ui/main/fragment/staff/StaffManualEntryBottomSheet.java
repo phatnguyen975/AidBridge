@@ -45,12 +45,13 @@ public class StaffManualEntryBottomSheet extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mode = resolveMode();
+        applyModeUi();
         binding.btnConfirmManual.setOnClickListener(v -> {
             String code = binding.etManualCode.getText() != null
                     ? binding.etManualCode.getText().toString().trim()
                     : "";
             if (code.isEmpty()) {
-                binding.tilManualCode.setError("Vui l\u00f2ng nh\u1eadp m\u00e3.");
+                binding.tilManualCode.setError(getString(R.string.staff_manual_error_required));
                 return;
             }
             binding.tilManualCode.setError(null);
@@ -69,6 +70,16 @@ public class StaffManualEntryBottomSheet extends BottomSheetDialogFragment {
         Bundle arguments = getArguments();
         String argMode = arguments != null ? arguments.getString(ARG_MODE, MODE_EXPORT) : MODE_EXPORT;
         return MODE_IMPORT.equals(argMode) ? MODE_IMPORT : MODE_EXPORT;
+    }
+
+    private void applyModeUi() {
+        if (MODE_IMPORT.equals(mode)) {
+            binding.tvManualTitle.setText(R.string.staff_manual_title_import);
+            binding.tilManualCode.setHint(getString(R.string.staff_manual_hint_import));
+            return;
+        }
+        binding.tvManualTitle.setText(R.string.staff_manual_title_export);
+        binding.tilManualCode.setHint(getString(R.string.staff_manual_hint_export));
     }
 
     private void navigateByMode(String code) {

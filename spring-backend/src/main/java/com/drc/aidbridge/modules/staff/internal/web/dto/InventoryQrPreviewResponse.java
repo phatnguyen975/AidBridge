@@ -14,6 +14,7 @@ public record InventoryQrPreviewResponse(
         String hubName,
         List<InventoryQrPreviewItemDto> items,
         Boolean canConfirm,
+        StaffOutboundAidRequestDto aidRequestDetail,
         String message
 ) {
 }

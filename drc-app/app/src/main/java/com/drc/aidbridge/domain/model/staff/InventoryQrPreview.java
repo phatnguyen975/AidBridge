@@ -17,6 +17,7 @@ public class InventoryQrPreview {
     private final String hubName;
     private final List<InventoryQrPreviewItem> items;
     private final boolean canConfirm;
+    private final OutboundAidRequestDetail aidRequestDetail;
     private final String message;
 
     public InventoryQrPreview(String type,
@@ -29,6 +30,7 @@ public class InventoryQrPreview {
                               String hubName,
                               List<InventoryQrPreviewItem> items,
                               boolean canConfirm,
+                              OutboundAidRequestDetail aidRequestDetail,
                               String message) {
         this.type = safeText(type);
         this.donationId = safeText(donationId);
@@ -40,6 +42,7 @@ public class InventoryQrPreview {
         this.hubName = safeText(hubName);
         this.items = items != null ? items : new ArrayList<>();
         this.canConfirm = canConfirm;
+        this.aidRequestDetail = aidRequestDetail;
         this.message = safeText(message);
     }
 
@@ -90,6 +93,10 @@ public class InventoryQrPreview {
 
     public boolean canConfirm() {
         return canConfirm;
+    }
+
+    public OutboundAidRequestDetail getAidRequestDetail() {
+        return aidRequestDetail;
     }
 
     @NonNull

@@ -5,6 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -14,6 +16,7 @@ import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.ItemStaffExportDetailBinding;
 import com.drc.aidbridge.domain.model.staff.InventoryConfirmItem;
 import com.drc.aidbridge.domain.model.staff.InventoryQrPreviewItem;
+import com.drc.aidbridge.domain.model.staff.StaffInventoryItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +97,8 @@ public class StaffExportDetailAdapter extends RecyclerView.Adapter<RecyclerView.
                         previewItem.getItemCategoryId(),
                         previewItem.getName(),
                         previewItem.getCurrentQuantity(),
-                        previewItem.getRequiredQuantity(),
+                    previewItem.getRequiredQuantity(),
+                    previewItem.getRequiredQuantity(),
                         previewItem.getUnit(),
                         previewItem.getParentCategoryName(),
                         previewItem.isEnoughStock()
@@ -105,17 +109,42 @@ public class StaffExportDetailAdapter extends RecyclerView.Adapter<RecyclerView.
         notifyDataSetChanged();
     }
 
+    public void submitInventoryItems(List<StaffInventoryItem> inventoryItems) {
+        items.clear();
+        if (inventoryItems != null) {
+            for (StaffInventoryItem inventoryItem : inventoryItems) {
+                if (inventoryItem == null || inventoryItem.getCurrentQuantity() <= 0) {
+                    continue;
+                }
+                items.add(new ExportDetailItem(
+                        inventoryItem.getItemCategoryId(),
+                        inventoryItem.getName(),
+                        inventoryItem.getCurrentQuantity(),
+                        0,
+                        0,
+                        inventoryItem.getUnit(),
+                        inventoryItem.getParentCategoryName(),
+                        true
+                ));
+            }
+        }
+        isLoadingMore = false;
+        notifyDataSetChanged();
+    }
+
     public List<InventoryConfirmItem> getConfirmItems() {
         List<InventoryConfirmItem> confirmItems = new ArrayList<>();
         for (ExportDetailItem item : items) {
-            confirmItems.add(new InventoryConfirmItem(item.itemCategoryId, item.exportQuantity));
+            if (item.exportQuantity > 0) {
+                confirmItems.add(new InventoryConfirmItem(item.itemCategoryId, item.exportQuantity));
+            }
         }
         return confirmItems;
     }
 
     public boolean hasInsufficientStock() {
         for (ExportDetailItem item : items) {
-            if (!item.enoughStock || item.stockQuantity < item.exportQuantity) {
+            if (item.exportQuantity > 0 && item.stockQuantity < item.exportQuantity) {
                 return true;
             }
         }
@@ -147,19 +176,21 @@ public class StaffExportDetailAdapter extends RecyclerView.Adapter<RecyclerView.
         public final String itemCategoryId;
         public final String name;
         public final int stockQuantity;
-        public final int exportQuantity;
+        public int exportQuantity;
+        public final int requiredQuantity;
         public final String unit;
         public final String parentCategoryName;
         public final boolean enoughStock;
 
         public ExportDetailItem(String name, int stockQuantity, int exportQuantity, String unit) {
-            this("", name, stockQuantity, exportQuantity, unit, "", stockQuantity >= exportQuantity);
+            this("", name, stockQuantity, exportQuantity, 0, unit, "", stockQuantity >= exportQuantity);
         }
 
         public ExportDetailItem(String itemCategoryId,
                                 String name,
                                 int stockQuantity,
                                 int exportQuantity,
+                                int requiredQuantity,
                                 String unit,
                                 String parentCategoryName,
                                 boolean enoughStock) {
@@ -167,6 +198,7 @@ public class StaffExportDetailAdapter extends RecyclerView.Adapter<RecyclerView.
             this.name = name;
             this.stockQuantity = stockQuantity;
             this.exportQuantity = exportQuantity;
+            this.requiredQuantity = requiredQuantity;
             this.unit = unit;
             this.parentCategoryName = parentCategoryName != null ? parentCategoryName : "";
             this.enoughStock = enoughStock;
@@ -182,6 +214,7 @@ public class StaffExportDetailAdapter extends RecyclerView.Adapter<RecyclerView.
     static class ExportDetailViewHolder extends RecyclerView.ViewHolder {
 
         private final ItemStaffExportDetailBinding binding;
+        private TextWatcher exportWatcher;
 
         ExportDetailViewHolder(ItemStaffExportDetailBinding binding) {
             super(binding.getRoot());
@@ -193,25 +226,72 @@ public class StaffExportDetailAdapter extends RecyclerView.Adapter<RecyclerView.
             binding.tvStockValue.setText(binding.getRoot().getContext().getString(
                     R.string.staff_detail_stock_prefix
             ) + " " + item.stockQuantity + " " + item.unit);
-            binding.tvExportValue.setText(binding.getRoot().getContext().getString(
-                    R.string.staff_detail_export_prefix
-            ) + " " + item.exportQuantity + " " + item.unit);
+            binding.tvRequiredValue.setText(binding.getRoot().getContext().getString(
+                    R.string.staff_detail_required_prefix
+            ) + " " + item.requiredQuantity + " " + item.unit);
 
-            boolean isInsufficient = !item.enoughStock || item.stockQuantity < item.exportQuantity;
+            if (exportWatcher != null) {
+                binding.etExportQuantity.removeTextChangedListener(exportWatcher);
+            }
+
+            String exportText = item.exportQuantity > 0 ? String.valueOf(item.exportQuantity) : "";
+            binding.etExportQuantity.setText(exportText);
+            binding.etExportQuantity.setSelection(binding.etExportQuantity.getText() != null
+                    ? binding.etExportQuantity.getText().length()
+                    : 0);
+
+            exportWatcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    int value = 0;
+                    if (s != null && s.length() > 0) {
+                        try {
+                            value = Integer.parseInt(s.toString());
+                        } catch (NumberFormatException ignored) {
+                            value = 0;
+                        }
+                    }
+                    item.exportQuantity = Math.max(value, 0);
+                    boolean overStock = item.exportQuantity > 0 && item.exportQuantity > item.stockQuantity;
+                    if (overStock) {
+                        binding.tilExportQuantity.setError(binding.getRoot().getContext().getString(
+                                R.string.staff_export_over_stock
+                        ));
+                    } else {
+                        binding.tilExportQuantity.setError(null);
+                    }
+                    updateStatusBadge(item);
+                }
+            };
+            binding.etExportQuantity.addTextChangedListener(exportWatcher);
+
+            updateStatusBadge(item);
+        }
+
+        private void updateStatusBadge(ExportDetailItem item) {
+            boolean isInsufficient = item.exportQuantity > 0 && item.exportQuantity > item.stockQuantity;
             if (isInsufficient) {
                 binding.ivStatus.setImageResource(R.drawable.ic_info);
                 binding.ivStatus.setColorFilter(ContextCompat.getColor(
                         binding.getRoot().getContext(),
                         R.color.sos_red
                 ));
-                binding.tvErrorBadge.setVisibility(android.view.View.VISIBLE);
+                binding.tvErrorBadge.setVisibility(View.VISIBLE);
             } else {
                 binding.ivStatus.setImageResource(R.drawable.ic_circle_check);
                 binding.ivStatus.setColorFilter(ContextCompat.getColor(
                         binding.getRoot().getContext(),
                         R.color.safe_green
                 ));
-                binding.tvErrorBadge.setVisibility(android.view.View.GONE);
+                binding.tvErrorBadge.setVisibility(View.GONE);
             }
         }
     }

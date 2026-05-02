@@ -21,6 +21,8 @@ import com.drc.aidbridge.data.remote.dto.response.staff.InventoryQrPreviewItemDt
 import com.drc.aidbridge.data.remote.dto.response.staff.InventoryQrPreviewResponseDto;
 import com.drc.aidbridge.data.remote.dto.response.staff.InventoryTransactionItemDto;
 import com.drc.aidbridge.data.remote.dto.response.staff.InventoryTransactionResponseDto;
+import com.drc.aidbridge.data.remote.dto.response.staff.OutboundAidRequestDetailDto;
+import com.drc.aidbridge.data.remote.dto.response.staff.OutboundAidRequestItemDto;
 import com.drc.aidbridge.data.remote.dto.response.staff.SearchInboundSubCategoriesResponseDto;
 import com.drc.aidbridge.domain.model.staff.InventoryConfirmItem;
 import com.drc.aidbridge.domain.model.staff.InventoryQrPreview;
@@ -33,6 +35,8 @@ import com.drc.aidbridge.domain.model.staff.InboundDonationPreview;
 import com.drc.aidbridge.domain.model.staff.InboundDraftItem;
 import com.drc.aidbridge.domain.model.staff.InboundParentCategory;
 import com.drc.aidbridge.domain.model.staff.InboundSubCategory;
+import com.drc.aidbridge.domain.model.staff.OutboundAidRequestDetail;
+import com.drc.aidbridge.domain.model.staff.OutboundAidRequestItem;
 import com.drc.aidbridge.domain.model.staff.StaffInventory;
 import com.drc.aidbridge.domain.model.staff.StaffInventoryFilter;
 import com.drc.aidbridge.domain.model.staff.StaffInventoryHub;
@@ -577,7 +581,7 @@ public class StaffInventoryRepositoryImpl extends BaseRepository implements Staf
         if (dto == null) {
             return new InventoryQrPreview(
                     "", "", "", "", "", "", "", "",
-                    new ArrayList<>(), false, ""
+                    new ArrayList<>(), false, null, ""
             );
         }
 
@@ -592,8 +596,42 @@ public class StaffInventoryRepositoryImpl extends BaseRepository implements Staf
                 dto.getHubName(),
                 mapPreviewItems(dto.getItems()),
                 dto.getCanConfirm() != null && dto.getCanConfirm(),
+                mapAidRequestDetail(dto.getAidRequestDetail()),
                 dto.getMessage()
         );
+    }
+
+    private OutboundAidRequestDetail mapAidRequestDetail(@Nullable OutboundAidRequestDetailDto dto) {
+        if (dto == null) {
+            return null;
+        }
+        return new OutboundAidRequestDetail(
+                dto.getId(),
+                dto.getDescription(),
+                safeInt(dto.getNumberAdult()),
+                safeInt(dto.getNumberElderly()),
+                safeInt(dto.getNumberChildren()),
+                mapAidRequestItems(dto.getItems())
+        );
+    }
+
+    private List<OutboundAidRequestItem> mapAidRequestItems(@Nullable List<OutboundAidRequestItemDto> dtos) {
+        List<OutboundAidRequestItem> items = new ArrayList<>();
+        if (dtos == null) {
+            return items;
+        }
+        for (OutboundAidRequestItemDto dto : dtos) {
+            if (dto == null) {
+                continue;
+            }
+            items.add(new OutboundAidRequestItem(
+                    dto.getItemCategoryId(),
+                    dto.getName(),
+                    dto.getUnit(),
+                    safeInt(dto.getRequestedQuantity())
+            ));
+        }
+        return items;
     }
 
     private List<InventoryQrPreviewItem> mapPreviewItems(@Nullable List<InventoryQrPreviewItemDto> dtos) {

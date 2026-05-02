@@ -128,6 +128,22 @@
                         android:textSize="@dimen/staff_detail_hub_text_size"
                         android:textStyle="bold" />
 
+                    <TextView
+                        android:id="@+id/tv_aid_people"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_xs"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/staff_detail_item_meta_size" />
+
+                    <TextView
+                        android:id="@+id/tv_aid_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/staff_detail_screen_padding"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/staff_detail_item_meta_size" />
+
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/staff_profile_divider_thickness"
