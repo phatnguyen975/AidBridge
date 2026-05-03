@@ -3,22 +3,23 @@ package com.drc.aidbridge.ui.main.fragment.victim;
 import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
-import android.speech.RecognizerIntent;
+import android.content.res.ColorStateList;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -30,6 +31,7 @@ import com.drc.aidbridge.databinding.ItemSupplyCategoryBinding;
 import com.drc.aidbridge.domain.model.victim.VictimSupplyCategory;
 import com.drc.aidbridge.domain.model.victim.VictimSupplyItem;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
+import com.drc.aidbridge.service.UserLocationManager;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.victim.VictimSupplyViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -37,6 +39,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.material.checkbox.MaterialCheckBox;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -45,25 +49,39 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTabBinding> {
 
+    @Inject
+    UserLocationManager userLocationManager;
+
     private VictimSupplyViewModel viewModel;
 
-    private boolean isRecording;
+    private InputMode inputMode = InputMode.MANUAL;
+    private boolean isVoiceRecording;
+    private boolean isVoicePlaying;
     private AnimatorSet voicePulseAnimator;
     private ActivityResultLauncher<String> recordAudioPermissionLauncher;
     private ActivityResultLauncher<String[]> locationPermissionLauncher;
-    private ActivityResultLauncher<Intent> speechRecognizerLauncher;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Double currentLatitude;
     private Double currentLongitude;
     private PendingSubmitInput pendingSubmitInput;
+    private PendingVoiceSubmitInput pendingVoiceSubmitInput;
+    private MediaRecorder voiceRecorder;
+    private MediaPlayer mediaPlayer;
+    private File voiceRecordingFile;
 
     private final List<VictimSupplyCategory> categoryData = new ArrayList<>();
     private final LinkedHashMap<String, Boolean> itemSelections = new LinkedHashMap<>();
+
+    private enum InputMode {
+        MANUAL, VOICE
+    }
 
     @Nullable
     @Override
@@ -76,14 +94,19 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         viewModel = new ViewModelProvider(this).get(VictimSupplyViewModel.class);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
+        setupInputModeToggle();
         setupSteppers();
         setupSpeechToText();
         setupLocationPermissionLauncher();
-        binding.btnSubmitSupply.setOnClickListener(v -> extractDataAndSubmit());
+        binding.btnSubmitSupply.setOnClickListener(v -> submitByCurrentMode());
 
         renderCategoriesLoading(true);
         viewModel.loadCategories();
-        fetchCurrentLocation(false);
+        syncCurrentLocationFromCache();
+        userLocationManager.refreshOnce();
+        if (userLocationManager.hasLocationPermission()) {
+            fetchCurrentLocation(false);
+        }
     }
 
     @Override
@@ -96,6 +119,11 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
             getViewLifecycleOwner(),
             resultObserver(this::handleSubmitSuccess, this::handleSubmitError)
         );
+
+        viewModel.getVoiceSubmitResult().observe(
+            getViewLifecycleOwner(),
+            resultObserver(this::handleSubmitSuccess, this::handleSubmitError)
+        );
     }
 
     private void renderValidationError(@Nullable ValidationResult validation) {
@@ -105,7 +133,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
 
         String message = validation.getErrorMessage();
         showTopSnackbar(
-            binding.getRoot(),
+            binding.mainContainer,
             message != null && !message.trim().isEmpty()
                 ? message
                 : getString(R.string.victim_supply_submit_error),
@@ -137,7 +165,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
                 result.markAsHandled();
                 String message = result.getMessage();
                 showTopSnackbar(
-                    binding.getRoot(),
+                    binding.mainContainer,
                     message != null && !message.trim().isEmpty()
                         ? message
                         : getString(R.string.victim_supply_load_categories_error),
@@ -321,20 +349,53 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         return value != null ? value.trim() : "";
     }
 
-    private List<VictimSupplyViewModel.RequestedItem> collectRequestedItems() {
-        List<VictimSupplyViewModel.RequestedItem> requestedItems = new ArrayList<>();
-        for (Map.Entry<String, Boolean> entry : itemSelections.entrySet()) {
-            String itemId = entry.getKey();
-            Boolean selected = entry.getValue();
-
-            if (itemId == null || itemId.trim().isEmpty() || !Boolean.TRUE.equals(selected)) {
-                continue;
+    private void setupInputModeToggle() {
+        binding.toggleInputMode.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked) {
+                return;
             }
 
-            requestedItems.add(new VictimSupplyViewModel.RequestedItem(itemId.trim(), 1));
+            // Sử dụng TransitionManager để tạo hiệu ứng chuyển cảnh mượt mà
+            AutoTransition transition = new AutoTransition();
+            transition.setDuration(250);
+            TransitionManager.beginDelayedTransition(binding.mainContainer, transition);
+
+            if (checkedId == binding.btnInputVoice.getId()) {
+                setInputMode(InputMode.VOICE);
+            } else {
+                setInputMode(InputMode.MANUAL);
+            }
+        });
+
+        binding.toggleInputMode.check(binding.btnInputManual.getId());
+        setInputMode(InputMode.MANUAL);
+    }
+
+    private void setInputMode(InputMode mode) {
+        if (mode == null) {
+            return;
         }
 
-        return requestedItems;
+        if (inputMode == mode) {
+            updateUiForInputMode();
+            return;
+        }
+
+        inputMode = mode;
+        if (inputMode == InputMode.MANUAL) {
+            stopVoiceRecording();
+            stopVoicePlayback();
+            clearVoiceRecordingFile();
+        }
+
+        updateUiForInputMode();
+    }
+
+    private void updateUiForInputMode() {
+        boolean isManual = inputMode == InputMode.MANUAL;
+        binding.layoutManualSection.setVisibility(isManual ? View.VISIBLE : View.GONE);
+        binding.layoutVoiceSection.setVisibility(isManual ? View.GONE : View.VISIBLE);
+        updateVoiceStatusText();
     }
 
     private void setupSteppers() {
@@ -355,403 +416,362 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         countView.setText(String.valueOf(nextCount));
     }
 
-    private void setupSpeechToText() {
-        recordAudioPermissionLauncher = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(),
-            isGranted -> {
-                if (Boolean.TRUE.equals(isGranted)) {
-                    launchSpeechRecognizer();
-                    return;
-                }
-
-                showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_voice_permission_denied), true);
-            }
-        );
-
-        speechRecognizerLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            this::handleSpeechRecognizerResult
-        );
-
-        binding.btnVoiceToggle.setOnClickListener(v -> requestSpeechToText());
-    }
-
-    private void requestSpeechToText() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
-            == PackageManager.PERMISSION_GRANTED) {
-            launchSpeechRecognizer();
-            return;
-        }
-
-        recordAudioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
-    }
-
-    private void launchSpeechRecognizer() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "vi-VN");
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.victim_supply_voice_prompt));
-
+    private int parseInt(String value) {
         try {
-            setRecordingUi(true);
-            speechRecognizerLauncher.launch(intent);
-        } catch (ActivityNotFoundException exception) {
-            setRecordingUi(false);
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_voice_not_supported), true);
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return 0;
         }
     }
 
-    private void handleSpeechRecognizerResult(ActivityResult activityResult) {
-        setRecordingUi(false);
-
-        if (activityResult.getResultCode() != Activity.RESULT_OK) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_voice_result_error), true);
-            return;
-        }
-
-        Intent data = activityResult.getData();
-        if (data == null) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_voice_result_error), true);
-            return;
-        }
-
-        ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-        if (results == null || results.isEmpty()) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_voice_result_error), true);
-            return;
-        }
-
-        String recognizedText = safeText(results.get(0));
-        if (recognizedText.isEmpty()) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_voice_result_error), true);
-            return;
-        }
-
-        appendRecognizedText(recognizedText);
-    }
-
-    private void appendRecognizedText(String text) {
-        String currentNote = binding.etNotes.getText() != null
-            ? binding.etNotes.getText().toString().trim()
-            : "";
-
-        String mergedText = currentNote.isEmpty()
-            ? text
-            : String.format(Locale.getDefault(), "%s\n%s", currentNote, text);
-
-        binding.etNotes.setText(mergedText);
-        binding.etNotes.setSelection(mergedText.length());
-    }
-
-    private void setRecordingUi(boolean recording) {
-        isRecording = recording;
-        binding.btnVoiceToggle.setIconResource(recording ? R.drawable.ic_pause : R.drawable.ic_mic);
-        binding.tvVoiceStatus.setText(recording ? R.string.victim_supply_voice_recording : R.string.victim_supply_voice_idle);
-
-        if (recording) {
-            startVoicePulse();
+    private void submitByCurrentMode() {
+        if (inputMode == InputMode.VOICE) {
+            submitVoiceRequest();
         } else {
-            stopVoicePulse();
+            submitManualRequest();
         }
     }
 
-    private void startVoicePulse() {
-        if (!isRecording) {
-            return;
-        }
+    private void submitManualRequest() {
+        List<VictimSupplyViewModel.RequestedItem> items = collectRequestedItems();
+        String notes = safeText(binding.etNotes.getText() != null ? binding.etNotes.getText().toString() : "");
+        int adults = parseInt(binding.tvCountAdult.getText().toString());
+        int elderly = parseInt(binding.tvCountElderly.getText().toString());
+        int children = parseInt(binding.tvCountChild.getText().toString());
 
-        if (voicePulseAnimator == null) {
-            ObjectAnimator scaleX = ObjectAnimator.ofFloat(binding.btnVoiceToggle, View.SCALE_X, 1.0f, 1.08f);
-            ObjectAnimator scaleY = ObjectAnimator.ofFloat(binding.btnVoiceToggle, View.SCALE_Y, 1.0f, 1.08f);
-            scaleX.setRepeatMode(ObjectAnimator.REVERSE);
-            scaleY.setRepeatMode(ObjectAnimator.REVERSE);
-            scaleX.setRepeatCount(ObjectAnimator.INFINITE);
-            scaleY.setRepeatCount(ObjectAnimator.INFINITE);
-            scaleX.setDuration(700L);
-            scaleY.setDuration(700L);
-
-            voicePulseAnimator = new AnimatorSet();
-            voicePulseAnimator.playTogether(scaleX, scaleY);
-        }
-
-        if (!voicePulseAnimator.isRunning()) {
-            voicePulseAnimator.start();
-        }
+        pendingSubmitInput = new PendingSubmitInput(items, adults, elderly, children, notes);
+        checkLocationAndSubmit();
     }
 
-    private void stopVoicePulse() {
-        if (voicePulseAnimator != null) {
-            voicePulseAnimator.cancel();
+    private void submitVoiceRequest() {
+        if (voiceRecordingFile == null || !voiceRecordingFile.exists()) {
+            showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_voice_empty_error), true);
+            return;
         }
-        binding.btnVoiceToggle.setScaleX(1.0f);
-        binding.btnVoiceToggle.setScaleY(1.0f);
+
+        int adults = parseInt(binding.tvCountAdult.getText().toString());
+        int elderly = parseInt(binding.tvCountElderly.getText().toString());
+        int children = parseInt(binding.tvCountChild.getText().toString());
+
+        pendingVoiceSubmitInput = new PendingVoiceSubmitInput(voiceRecordingFile, adults, elderly, children);
+        checkLocationAndSubmit();
     }
 
-    private void extractDataAndSubmit() {
-        List<VictimSupplyViewModel.RequestedItem> requestedItems = collectRequestedItems();
-        int adultCount = parseInt(String.valueOf(binding.tvCountAdult.getText()).trim());
-        int elderlyCount = parseInt(String.valueOf(binding.tvCountElderly.getText()).trim());
-        int childCount = parseInt(String.valueOf(binding.tvCountChild.getText()).trim());
-        String notes = String.valueOf(binding.etNotes.getText()).trim();
-
-        if (requestedItems.isEmpty()) {
-            showTopSnackbar(
-                binding.getRoot(),
-                getString(R.string.victim_supply_validation_items_required),
-                true
-            );
-            return;
+    private List<VictimSupplyViewModel.RequestedItem> collectRequestedItems() {
+        List<VictimSupplyViewModel.RequestedItem> requestedItems = new ArrayList<>();
+        for (Map.Entry<String, Boolean> entry : itemSelections.entrySet()) {
+            if (Boolean.TRUE.equals(entry.getValue())) {
+                requestedItems.add(new VictimSupplyViewModel.RequestedItem(entry.getKey(), 1));
+            }
         }
-
-        if ((adultCount + elderlyCount + childCount) <= 0) {
-            showTopSnackbar(
-                binding.getRoot(),
-                getString(R.string.victim_supply_validation_people_required),
-                true
-            );
-            return;
-        }
-
-        PendingSubmitInput input = new PendingSubmitInput(
-            adultCount,
-            elderlyCount,
-            childCount,
-            notes,
-            requestedItems
-        );
-
-        submitOrFetchLocation(input);
+        return requestedItems;
     }
 
-    private void submitOrFetchLocation(PendingSubmitInput input) {
-        if (input == null) {
-            return;
+    private void checkLocationAndSubmit() {
+        if (userLocationManager.hasLocationPermission()) {
+            fetchCurrentLocation(true);
+        } else {
+            locationPermissionLauncher.launch(new String[]{
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            });
         }
-
-        if (currentLatitude != null && currentLongitude != null) {
-            submitToViewModel(input, currentLatitude, currentLongitude);
-            return;
-        }
-
-        pendingSubmitInput = input;
-        fetchCurrentLocation(true);
-    }
-
-    private void submitToViewModel(PendingSubmitInput input, Double latitude, Double longitude) {
-        if (input == null) {
-            return;
-        }
-
-        viewModel.submitRequest(
-            input.adultCount,
-            input.elderlyCount,
-            input.childCount,
-            input.notes,
-            input.requestedItems,
-            latitude,
-            longitude
-        );
-        pendingSubmitInput = null;
     }
 
     private void setupLocationPermissionLauncher() {
         locationPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestMultiplePermissions(),
             result -> {
-                if (isLocationPermissionGranted()) {
-                    fetchCurrentLocation(pendingSubmitInput != null);
-                    return;
+                Boolean fineLocation = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
+                Boolean coarseLocation = result.get(Manifest.permission.ACCESS_COARSE_LOCATION);
+                if ((fineLocation != null && fineLocation) || (coarseLocation != null && coarseLocation)) {
+                    fetchCurrentLocation(true);
+                } else {
+                    showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_permission_location_denied), true);
                 }
-
-                pendingSubmitInput = null;
-                showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_permission_location_denied), true);
             }
         );
     }
 
-    private void fetchCurrentLocation(boolean trySubmitAfterFetch) {
-        if (!isAdded()) {
-            return;
-        }
-
-        if (!isLocationPermissionGranted()) {
-            locationPermissionLauncher.launch(new String[] {
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            });
-            return;
-        }
-
-        if (!isLocationProviderEnabled()) {
-            if (trySubmitAfterFetch) {
-                pendingSubmitInput = null;
+    private void fetchCurrentLocation(boolean shouldSubmitAfterFetch) {
+        if (!userLocationManager.isLocationProviderEnabled()) {
+            if (shouldSubmitAfterFetch) {
+                showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_location_disabled), true);
             }
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_location_disabled), true);
             return;
         }
 
         try {
-            fusedLocationProviderClient
-                .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+            fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
                 .addOnSuccessListener(location -> {
-                    if (!isAdded()) {
-                        return;
-                    }
-
                     if (location != null) {
                         currentLatitude = location.getLatitude();
                         currentLongitude = location.getLongitude();
-
-                        if (trySubmitAfterFetch && pendingSubmitInput != null) {
-                            submitToViewModel(pendingSubmitInput, currentLatitude, currentLongitude);
+                        if (shouldSubmitAfterFetch) {
+                            executeSubmitWithLocation();
                         }
-                        return;
+                    } else if (shouldSubmitAfterFetch) {
+                        showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_location_unavailable), true);
                     }
-
-                    requestLastKnownLocation(trySubmitAfterFetch);
                 })
-                .addOnFailureListener(ignored -> requestLastKnownLocation(trySubmitAfterFetch));
-        } catch (SecurityException exception) {
-            if (trySubmitAfterFetch) {
-                pendingSubmitInput = null;
-            }
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_permission_location_denied), true);
-        }
-    }
-
-    private void requestLastKnownLocation(boolean trySubmitAfterFetch) {
-        try {
-            fusedLocationProviderClient.getLastLocation()
-                .addOnSuccessListener(location -> {
-                    if (!isAdded()) {
-                        return;
+                .addOnFailureListener(e -> {
+                    if (shouldSubmitAfterFetch) {
+                        showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_location_unavailable), true);
                     }
-
-                    if (location != null) {
-                        currentLatitude = location.getLatitude();
-                        currentLongitude = location.getLongitude();
-
-                        if (trySubmitAfterFetch && pendingSubmitInput != null) {
-                            submitToViewModel(pendingSubmitInput, currentLatitude, currentLongitude);
-                        }
-                        return;
-                    }
-
-                    if (trySubmitAfterFetch) {
-                        pendingSubmitInput = null;
-                    }
-                    showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_location_unavailable), true);
-                })
-                .addOnFailureListener(ignored -> {
-                    if (!isAdded()) {
-                        return;
-                    }
-
-                    if (trySubmitAfterFetch) {
-                        pendingSubmitInput = null;
-                    }
-                    showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_location_unavailable), true);
                 });
-        } catch (SecurityException exception) {
-            if (trySubmitAfterFetch) {
-                pendingSubmitInput = null;
+        } catch (SecurityException e) {
+            if (shouldSubmitAfterFetch) {
+                showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_permission_location_denied), true);
             }
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_supply_permission_location_denied), true);
         }
     }
 
-    private boolean isLocationPermissionGranted() {
-        Context context = getContext();
-        if (context == null) {
-            return false;
+    private void executeSubmitWithLocation() {
+        if (currentLatitude == null || currentLongitude == null) {
+            showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_location_unavailable), true);
+            return;
         }
 
-        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED
-            || ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED;
+        if (inputMode == InputMode.VOICE && pendingVoiceSubmitInput != null) {
+            viewModel.submitVoiceRequest(
+                pendingVoiceSubmitInput.adults,
+                pendingVoiceSubmitInput.elderly,
+                pendingVoiceSubmitInput.children,
+                "",
+                currentLatitude,
+                currentLongitude,
+                pendingVoiceSubmitInput.file
+            );
+            pendingVoiceSubmitInput = null;
+        } else if (pendingSubmitInput != null) {
+            viewModel.submitRequest(
+                pendingSubmitInput.adults,
+                pendingSubmitInput.elderly,
+                pendingSubmitInput.children,
+                pendingSubmitInput.notes,
+                pendingSubmitInput.items,
+                currentLatitude,
+                currentLongitude
+            );
+            pendingSubmitInput = null;
+        }
     }
 
-    private boolean isLocationProviderEnabled() {
-        LocationManager locationManager =
-            (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager == null) {
-            return false;
+    private void syncCurrentLocationFromCache() {
+        UserLocationManager.LocationSnapshot lastLocation = userLocationManager.getLatestLocation();
+        if (lastLocation != null) {
+            currentLatitude = lastLocation.getLatitude();
+            currentLongitude = lastLocation.getLongitude();
         }
-
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-            || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-    private int parseInt(String value) {
-        if (value.isEmpty()) {
-            return 0;
+    private void setupSpeechToText() {
+        recordAudioPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            isGranted -> {
+                if (isGranted) {
+                    startVoiceRecording();
+                } else {
+                    showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_voice_permission_denied), true);
+                }
+            }
+        );
+
+        binding.btnVoiceToggle.setOnClickListener(v -> {
+            if (isVoiceRecording) {
+                stopVoiceRecording();
+            } else {
+                checkVoicePermissionAndStart();
+            }
+        });
+
+        binding.btnVoicePlay.setOnClickListener(v -> {
+            if (isVoicePlaying) {
+                stopVoicePlayback();
+            } else {
+                startVoicePlayback();
+            }
+        });
+    }
+
+    private void checkVoicePermissionAndStart() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            startVoiceRecording();
+        } else {
+            recordAudioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
         }
+    }
+
+    private void startVoiceRecording() {
+        stopVoicePlayback();
+        isVoiceRecording = true;
+        updateVoiceStatusText();
+        startVoicePulseAnimation();
 
         try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException exception) {
-            return 0;
+            voiceRecordingFile = File.createTempFile("victim_supply_voice_", ".m4a", requireContext().getCacheDir());
+            voiceRecorder = new MediaRecorder();
+            voiceRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            voiceRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            voiceRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            voiceRecorder.setOutputFile(voiceRecordingFile.getAbsolutePath());
+            voiceRecorder.prepare();
+            voiceRecorder.start();
+        } catch (IOException e) {
+            stopVoiceRecording();
+            showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_voice_init_error), true);
         }
     }
 
-    private void handleSubmitSuccess(@Nullable String message) {
-        String successMessage = message != null && !message.trim().isEmpty()
-            ? message.trim()
-            : getString(R.string.victim_supply_submit_success);
+    private void stopVoiceRecording() {
+        if (!isVoiceRecording) return;
+        isVoiceRecording = false;
+        updateVoiceStatusText();
+        stopVoicePulseAnimation();
 
-        showTopSnackbar(binding.getRoot(), successMessage, false);
-        clearInputFocusAndHideKeyboard();
-        resetFormAfterSubmit();
+        if (voiceRecorder != null) {
+            try {
+                voiceRecorder.stop();
+            } catch (RuntimeException e) {
+                // Ignore stop failure
+            }
+            voiceRecorder.release();
+            voiceRecorder = null;
+        }
+    }
+
+    private void startVoicePlayback() {
+        if (voiceRecordingFile == null || !voiceRecordingFile.exists()) return;
+
+        try {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(voiceRecordingFile.getAbsolutePath());
+            mediaPlayer.prepare();
+            mediaPlayer.setOnCompletionListener(mp -> stopVoicePlayback());
+            mediaPlayer.start();
+            isVoicePlaying = true;
+            updateVoiceStatusText();
+        } catch (IOException e) {
+            showTopSnackbar(binding.mainContainer, getString(R.string.error_generic), true);
+        }
+    }
+
+    private void stopVoicePlayback() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        isVoicePlaying = false;
+        updateVoiceStatusText();
+    }
+
+    private void clearVoiceRecordingFile() {
+        if (voiceRecordingFile != null && voiceRecordingFile.exists()) {
+            voiceRecordingFile.delete();
+        }
+        voiceRecordingFile = null;
+    }
+
+    private void updateVoiceStatusText() {
+        if (inputMode == InputMode.MANUAL) return;
+
+        if (isVoiceRecording) {
+            binding.tvVoiceStatus.setText(R.string.victim_supply_voice_recording);
+            binding.btnVoiceToggle.setIconResource(R.drawable.ic_stop);
+            binding.btnVoiceToggle.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.sos_red)));
+            binding.btnVoicePlay.setVisibility(View.GONE);
+        } else {
+            if (voiceRecordingFile != null && voiceRecordingFile.exists()) {
+                binding.tvVoiceStatus.setText(R.string.victim_supply_voice_recorded);
+                binding.btnVoiceToggle.setIconResource(R.drawable.ic_mic);
+                binding.btnVoiceToggle.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.safe_green)));
+                
+                binding.btnVoicePlay.setVisibility(View.VISIBLE);
+                binding.btnVoicePlay.setIconResource(isVoicePlaying ? R.drawable.ic_pause : R.drawable.ic_play);
+            } else {
+                binding.tvVoiceStatus.setText(R.string.victim_supply_voice_idle);
+                binding.btnVoiceToggle.setIconResource(R.drawable.ic_mic);
+                binding.btnVoiceToggle.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.color_primary)));
+                binding.btnVoicePlay.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void startVoicePulseAnimation() {
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(binding.btnVoiceToggle, View.SCALE_X, 1f, 1.2f, 1f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(binding.btnVoiceToggle, View.SCALE_Y, 1f, 1.2f, 1f);
+        scaleX.setRepeatCount(ObjectAnimator.INFINITE);
+        scaleY.setRepeatCount(ObjectAnimator.INFINITE);
+
+        voicePulseAnimator = new AnimatorSet();
+        voicePulseAnimator.playTogether(scaleX, scaleY);
+        voicePulseAnimator.setDuration(1000);
+        voicePulseAnimator.start();
+    }
+
+    private void stopVoicePulseAnimation() {
+        if (voicePulseAnimator != null) {
+            voicePulseAnimator.cancel();
+            binding.btnVoiceToggle.setScaleX(1f);
+            binding.btnVoiceToggle.setScaleY(1f);
+        }
+    }
+
+    private void handleSubmitSuccess(String message) {
+        showTopSnackbar(binding.mainContainer, message != null ? message : getString(R.string.victim_supply_submit_success), false);
+        resetForm();
     }
 
     private void handleSubmitError(String message) {
-        String errorMessage = message != null && !message.trim().isEmpty()
-            ? message.trim()
-            : getString(R.string.victim_supply_submit_error);
-
-        showTopSnackbar(binding.getRoot(), errorMessage, true);
+        showTopSnackbar(binding.mainContainer, message != null ? message : getString(R.string.victim_supply_submit_error), true);
     }
 
-    private void resetFormAfterSubmit() {
-        binding.etNotes.setText(null);
+    private void resetForm() {
+        itemSelections.clear();
+        setupDynamicCategories(categoryData);
+        binding.etNotes.setText("");
         binding.tvCountAdult.setText(R.string.victim_supply_count_default);
         binding.tvCountElderly.setText(R.string.victim_supply_count_default);
         binding.tvCountChild.setText(R.string.victim_supply_count_default);
-
-        for (String itemId : new ArrayList<>(itemSelections.keySet())) {
-            itemSelections.put(itemId, false);
-        }
-
-        if (!categoryData.isEmpty()) {
-            setupDynamicCategories(categoryData);
-        }
+        clearVoiceRecordingFile();
+        stopVoicePlayback();
+        updateVoiceStatusText();
     }
 
     @Override
     public void onDestroyView() {
-        stopVoicePulse();
-        voicePulseAnimator = null;
+        stopVoicePlayback();
         super.onDestroyView();
     }
 
-    private static final class PendingSubmitInput {
-        private final int adultCount;
-        private final int elderlyCount;
-        private final int childCount;
-        private final String notes;
-        private final List<VictimSupplyViewModel.RequestedItem> requestedItems;
+    private static class PendingSubmitInput {
+        final List<VictimSupplyViewModel.RequestedItem> items;
+        final int adults;
+        final int elderly;
+        final int children;
+        final String notes;
 
-        private PendingSubmitInput(int adultCount,
-                                   int elderlyCount,
-                                   int childCount,
-                                   String notes,
-                                   List<VictimSupplyViewModel.RequestedItem> requestedItems) {
-            this.adultCount = Math.max(0, adultCount);
-            this.elderlyCount = Math.max(0, elderlyCount);
-            this.childCount = Math.max(0, childCount);
-            this.notes = notes != null ? notes.trim() : "";
-            this.requestedItems = requestedItems != null ? requestedItems : new ArrayList<>();
+        PendingSubmitInput(List<VictimSupplyViewModel.RequestedItem> items, int adults, int elderly, int children, String notes) {
+            this.items = items;
+            this.adults = adults;
+            this.elderly = elderly;
+            this.children = children;
+            this.notes = notes;
+        }
+    }
+
+    private static class PendingVoiceSubmitInput {
+        final File file;
+        final int adults;
+        final int elderly;
+        final int children;
+
+        PendingVoiceSubmitInput(File file, int adults, int elderly, int children) {
+            this.file = file;
+            this.adults = adults;
+            this.elderly = elderly;
+            this.children = children;
         }
     }
 }

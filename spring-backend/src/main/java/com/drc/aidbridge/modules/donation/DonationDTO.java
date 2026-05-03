@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -19,9 +20,21 @@ public class DonationDTO {
     private UUID hubId;
     private String qrCodeToken;
     private DonationStatus status;
-    private String notes;
+    private String donationCode;
     private Instant receivedAt;
     private UUID receivedBy;
     private Instant createdAt;
     private Instant updatedAt;
+    private List<DonationItemDTO> items;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DonationItemDTO {
+        private UUID id;
+        private UUID itemCategoryId;
+        private String itemCategoryName;
+        private Instant createdAt;
+    }
 }

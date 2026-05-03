@@ -49,12 +49,17 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll() // WebSocket handshake
                         // Permit for springdoc OpenAPI
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/sms-ingest/sos").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sos-requests").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/sos-requests").permitAll()
                         .requestMatchers("/api/sos-requests/**").permitAll() // Allow public access to SOS request endpoints
                         .requestMatchers(HttpMethod.GET, "/api/hubs", "/api/hubs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/hubs").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/hubs/*/inventory/import").hasAnyRole("STAFF", "ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/hubs/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/donations").hasAnyRole("SPONSOR", "STAFF", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/donations/**").hasAnyRole("STAFF", "ADMIN", "SPONSOR")
+                        .requestMatchers("/api/donations/**").hasAnyRole("STAFF", "ADMIN")
                         .requestMatchers("/api/routing/**").permitAll() // GraphHopper routing endpoints
                         // Role-based endpoint authorization
                         // ADMIN - full system access
@@ -65,6 +70,7 @@ public class SecurityConfig {
                         // STAFF - hub management, can do most admin tasks
                         .requestMatchers("/api/staff/**").hasAnyRole("STAFF", "ADMIN")
 
+                        .requestMatchers("/api/volunteers/nearby").permitAll()
                         // VOLUNTEER - mission handling
                         .requestMatchers("/api/volunteers/**").hasAnyRole("VOLUNTEER", "STAFF", "ADMIN")
 

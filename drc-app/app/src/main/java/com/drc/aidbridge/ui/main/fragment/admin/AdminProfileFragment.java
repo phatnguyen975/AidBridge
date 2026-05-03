@@ -30,19 +30,15 @@ public class AdminProfileFragment extends BaseFragment<FragmentAdminProfileBindi
         viewModel = new ViewModelProvider(this).get(AdminProfileViewModel.class);
         binding.textAdminProfileTitle.setText(getString(R.string.admin_profile_title));
 
-        viewModel.loadMockProfile();
+        viewModel.loadCurrentUserInfo();
         setupClickListeners();
     }
 
     private void setupClickListeners() {
-        binding.layoutAdminChangeInfo
-                .setOnClickListener(v -> showToast(getString(R.string.admin_profile_toast_change_info)));
-        binding.layoutAdminManageRoles
-                .setOnClickListener(v -> showToast(getString(R.string.admin_profile_toast_manage_roles)));
-        binding.layoutAdminSystemSettings
-                .setOnClickListener(v -> showToast(getString(R.string.admin_profile_toast_system_settings)));
+        binding.buttonAdminManageStaff
+                .setOnClickListener(v -> navigateToDestinationSafely(R.id.adminStaffManagementFragment));
         binding.buttonAdminLogout
-            .setOnClickListener(v -> requestLogout());
+                .setOnClickListener(v -> requestLogout());
     }
 
     @Override

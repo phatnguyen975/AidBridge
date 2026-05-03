@@ -1,32 +1,36 @@
 package com.drc.aidbridge.ui.map.victim;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.drc.aidbridge.R;
+
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapController;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 
 /**
- * Controls a minimal victim-relative map that only displays one pinned location.
+ * Controls a minimal victim-relative map that only displays one pinned location
+ * using the app's osmdroid/GraphHopper map stack.
  */
-public class RelativeLocationMapController implements OnMapReadyCallback {
+public class RelativeLocationMapController {
 
-    private static final String MAP_TAG = "VictimRelativeLocationMap";
     private static final float DEFAULT_ZOOM = 16f;
+    private static final double DEFAULT_CENTER_LAT = 10.7769;
+    private static final double DEFAULT_CENTER_LON = 106.7009;
 
     private final Fragment hostFragment;
     private final int mapContainerId;
 
-    private GoogleMap googleMap;
+    private MapView mapView;
     private Marker pinnedMarker;
-    private LatLng pendingPin;
+    private GeoPoint pendingPin;
     private String pendingTitle;
 
     public RelativeLocationMapController(@NonNull Fragment hostFragment, int mapContainerId) {
@@ -38,18 +42,32 @@ public class RelativeLocationMapController implements OnMapReadyCallback {
         if (!hostFragment.isAdded()) {
             return;
         }
+        mapView = hostFragment.requireView().findViewById(mapContainerId);
+        if (mapView == null) {
+            return;
+        }
 
-        FragmentManager fragmentManager = hostFragment.getChildFragmentManager();
-        SupportMapFragment mapFragment = findOrCreateMapFragment(fragmentManager);
-        mapFragment.getMapAsync(this);
+        Context context = hostFragment.requireContext().getApplicationContext();
+        Configuration.getInstance().setUserAgentValue(context.getPackageName());
+        mapView.setTileSource(TileSourceFactory.MAPNIK);
+        mapView.setMultiTouchControls(true);
+        mapView.setBuiltInZoomControls(false);
+
+        MapController controller = (MapController) mapView.getController();
+        controller.setZoom(DEFAULT_ZOOM);
+        controller.setCenter(new GeoPoint(DEFAULT_CENTER_LAT, DEFAULT_CENTER_LON));
+
+        if (pendingPin != null) {
+            applyPin(pendingPin, pendingTitle);
+        }
     }
 
     public void pinLocation(double latitude, double longitude, @Nullable String markerTitle) {
-        LatLng target = new LatLng(latitude, longitude);
+        GeoPoint target = new GeoPoint(latitude, longitude);
         pendingPin = target;
         pendingTitle = markerTitle != null ? markerTitle.trim() : "";
 
-        if (googleMap == null) {
+        if (mapView == null) {
             return;
         }
 
@@ -60,73 +78,61 @@ public class RelativeLocationMapController implements OnMapReadyCallback {
         pendingPin = null;
         pendingTitle = "";
         if (pinnedMarker != null) {
-            pinnedMarker.remove();
+            mapView.getOverlays().remove(pinnedMarker);
             pinnedMarker = null;
+            mapView.invalidate();
         }
     }
 
-    @Override
-    public void onMapReady(@NonNull GoogleMap readyMap) {
-        googleMap = readyMap;
-        configureMapUi(googleMap);
-
-        if (pendingPin != null) {
-            applyPin(pendingPin, pendingTitle);
+    public void onResume() {
+        if (mapView != null) {
+            mapView.onResume();
         }
     }
 
-    private SupportMapFragment findOrCreateMapFragment(FragmentManager fragmentManager) {
-        Fragment byId = fragmentManager.findFragmentById(mapContainerId);
-        if (byId instanceof SupportMapFragment) {
-            return (SupportMapFragment) byId;
+    public void onPause() {
+        if (mapView != null) {
+            mapView.onPause();
         }
-
-        Fragment byTag = fragmentManager.findFragmentByTag(MAP_TAG);
-        if (byTag instanceof SupportMapFragment) {
-            fragmentManager.beginTransaction()
-                .replace(mapContainerId, byTag, MAP_TAG)
-                .commitNowAllowingStateLoss();
-            return (SupportMapFragment) byTag;
-        }
-
-        SupportMapFragment newMapFragment = SupportMapFragment.newInstance();
-        fragmentManager.beginTransaction()
-            .replace(mapContainerId, newMapFragment, MAP_TAG)
-            .commitNowAllowingStateLoss();
-        return newMapFragment;
     }
 
-    private void configureMapUi(GoogleMap map) {
-        map.getUiSettings().setMapToolbarEnabled(false);
-        map.getUiSettings().setCompassEnabled(false);
-        map.getUiSettings().setMyLocationButtonEnabled(false);
-        map.getUiSettings().setZoomControlsEnabled(false);
-
-        // Keep map interactive for manual inspection after searching an address.
-        map.getUiSettings().setScrollGesturesEnabled(true);
-        map.getUiSettings().setZoomGesturesEnabled(true);
-        map.getUiSettings().setRotateGesturesEnabled(true);
-        map.getUiSettings().setTiltGesturesEnabled(true);
+    public void onDestroy() {
+        if (mapView != null) {
+            mapView.getOverlays().clear();
+            mapView.onDetach();
+            mapView = null;
+        }
+        pinnedMarker = null;
     }
 
-    private void applyPin(LatLng target, String markerTitle) {
-        if (googleMap == null) {
+    private void applyPin(GeoPoint target, String markerTitle) {
+        if (mapView == null) {
             return;
         }
 
         if (pinnedMarker != null) {
-            pinnedMarker.remove();
+            mapView.getOverlays().remove(pinnedMarker);
         }
 
         String safeTitle = markerTitle != null && !markerTitle.trim().isEmpty()
             ? markerTitle.trim()
             : null;
 
-        pinnedMarker = googleMap.addMarker(
-            new MarkerOptions()
-                .position(target)
-                .title(safeTitle)
-        );
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(target, DEFAULT_ZOOM));
+        pinnedMarker = new Marker(mapView);
+        pinnedMarker.setPosition(target);
+        pinnedMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        pinnedMarker.setIcon(androidx.core.content.ContextCompat.getDrawable(
+                hostFragment.requireContext(),
+                R.drawable.bg_map_end_marker
+        ));
+        if (safeTitle != null) {
+            pinnedMarker.setTitle(safeTitle);
+            pinnedMarker.showInfoWindow();
+        }
+
+        mapView.getOverlays().add(pinnedMarker);
+        mapView.getController().setZoom(DEFAULT_ZOOM);
+        mapView.getController().animateTo(target);
+        mapView.invalidate();
     }
 }

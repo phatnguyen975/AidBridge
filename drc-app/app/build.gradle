@@ -4,6 +4,8 @@ plugins {
     id 'com.google.dagger.hilt.android'
     // Google Services - enables Firebase SDK configuration via google-services.json
     id 'com.google.gms.google-services'
+    // Kotlin Android plugin - commented out to avoid JVM target/metadata mismatch
+    // id 'org.jetbrains.kotlin.android'
 }
 
 // Load local.properties to read API_BASE_URL for Retrofit configuration
@@ -15,6 +17,8 @@ if (localPropertiesFile.exists()) {
 // API_BASE_URL is the base URL for the backend API; defaults to localhost for emulator testing
 def localBaseUrl = properties.getProperty("API_BASE_URL", "http://10.0.2.2:8080/api/")
 def mapsKey = properties.getProperty("MAPS_API_KEY", "")
+def sosGatewayPhoneNumber = properties.getProperty("SOS_GATEWAY_PHONE_NUMBER", "")
+def smsGatewayToken = properties.getProperty("SMS_GATEWAY_TOKEN", "dev-gateway-token")
 
 android {
     namespace 'com.drc.aidbridge'
@@ -34,6 +38,8 @@ android {
 
         // BASE_URL is injected into BuildConfig at compile time; used by Retrofit to configure API client
         buildConfigField "String", "BASE_URL", "\"${localBaseUrl}\""
+        buildConfigField "String", "SOS_GATEWAY_PHONE_NUMBER", "\"${sosGatewayPhoneNumber}\""
+        buildConfigField "String", "SMS_GATEWAY_TOKEN", "\"${smsGatewayToken}\""
 
         // MAPS_API_KEY is injected into BuildConfig for use in MapFragment and other map-related classes
         manifestPlaceholders = [mapsApiKey: mapsKey]
@@ -59,11 +65,16 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
+    // kotlinOptions {
+    //     jvmTarget = '17'
+    // }
+
     sourceSets {
         main {
             res.srcDirs = [
                     'src/main/res',
                     'src/main/res-core',
+                    'src/main/res-map',
                     'src/main/res-auth',
                     'src/main/res-guest',
                     'src/main/res-role-victim',
@@ -124,14 +135,14 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
 
     // ===========================
-    // Real-time Communication (WebSocket / STOMP)
+    // Real-time Communication (WebSocket / STOMP) - Commented out as not used yet
     // ===========================
     // STOMP protocol over WebSocket - used for real-time chat, live tracking, and dispatch notifications
-    implementation 'com.github.NaikSoftware:stompprotocolandroid:1.6.6'
+    // implementation 'com.github.NaikSoftware:stompprotocolandroid:1.6.6'
     // RxJava3 - reactive streams library required by StompProtocolAndroid for async event handling
-    implementation 'io.reactivex.rxjava3:rxjava:3.1.9'
+    // implementation 'io.reactivex.rxjava3:rxjava:3.1.9'
     // RxAndroid - provides Android-aware schedulers (mainThread, io) for RxJava3
-    implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
+    // implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
 
     // ===========================
     // Push Notifications (Firebase FCM)
@@ -146,6 +157,10 @@ dependencies {
     // ===========================
     // Google Maps SDK - renders interactive map; supports custom markers, polylines, and heatmap tiles
     implementation 'com.google.android.gms:play-services-maps:19.1.0'
+    // osmdroid - OpenStreetMap SDK for custom map rendering without Google Maps dependency at runtime
+    implementation 'org.osmdroid:osmdroid-android:6.1.20'
+    // GraphHopper Core 11.0 - keeps runtime compatible with graph-data imported by v11 toolchain
+    implementation 'com.graphhopper:graphhopper-core:11.0'
     // Fused Location Provider - battery-efficient GPS for live tracking and SOS coordinate capture
     implementation 'com.google.android.gms:play-services-location:21.2.0'
 
@@ -162,6 +177,8 @@ dependencies {
     implementation 'androidx.camera:camera-lifecycle:1.4.1'
     // CameraX View - provides PreviewView widget for embedding camera preview in XML layouts
     implementation 'androidx.camera:camera-view:1.4.1'
+    // ZXing Core - generates QR bitmap from server-provided donation token
+    implementation 'com.google.zxing:core:3.5.3'
 
     // ===========================
     // Local Database (Room)
@@ -170,6 +187,8 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.7.0'
     // Room Annotation Processor - generates type-safe DAO implementation classes at compile time
     annotationProcessor 'androidx.room:room-compiler:2.7.0'
+    // WorkManager - retries SOS fallback queues when connectivity is restored
+    implementation 'androidx.work:work-runtime:2.10.1'
 
     // ===========================
     // Image Loading
@@ -189,6 +208,15 @@ dependencies {
     // ===========================
     // Security Crypto - EncryptedSharedPreferences for AES-256 storage of JWT access/refresh tokens
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+
+    //    // ===========================
+    //    // Supabase & Real-time
+    //    // ===========================
+    //    implementation platform("io.github.jan-tennert.supabase:bom:3.5.0")
+    //    implementation "io.github.jan-tennert.supabase:realtime-kt"
+    //    implementation "io.ktor:ktor-client-android:2.3.10"
+    //    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
+    //    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
 
     // ===========================
     // Testing

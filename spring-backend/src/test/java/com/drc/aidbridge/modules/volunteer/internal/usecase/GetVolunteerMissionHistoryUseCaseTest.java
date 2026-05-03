@@ -1,7 +1,7 @@
 package com.drc.aidbridge.modules.volunteer.internal.usecase;
 
-import com.drc.aidbridge.modules.mission.internal.repository.MissionHistoryProjection;
 import com.drc.aidbridge.modules.mission.internal.repository.MissionJpaRepository;
+import com.drc.aidbridge.modules.mission.internal.repository.projection.MissionHistoryProjection;
 import com.drc.aidbridge.modules.shared.enums.MissionType;
 import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import com.drc.aidbridge.modules.volunteer.internal.repository.VolunteerJpaRepository;

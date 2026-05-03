@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/admin_screen_background"
+    android:paddingStart="@dimen/admin_screen_padding"
+    android:paddingTop="@dimen/admin_screen_padding"
+    android:paddingEnd="@dimen/admin_screen_padding">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_admin_staff_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/button_admin_staff_back"
+            android:layout_width="@dimen/admin_hub_mgmt_header_back_size"
+            android:layout_height="@dimen/admin_hub_mgmt_header_back_size"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/admin_staff_back"
+            android:padding="@dimen/admin_stat_value_spacing"
+            android:src="@drawable/ic_admin_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/admin_text_primary" />
+
+        <TextView
+            android:id="@+id/text_admin_staff_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/admin_staff_management_title"
+            android:textColor="@color/admin_text_primary"
+            android:textSize="@dimen/admin_screen_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_admin_staff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_admin_staff_header" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_admin_staff"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/admin_section_spacing"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/admin_hub_mgmt_list_bottom_padding"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_admin_staff_header" />
+
+    <LinearLayout
+        android:id="@+id/layout_admin_staff_empty"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_admin_staff_header">
+
+        <TextView
+            android:id="@+id/text_admin_staff_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/admin_staff_empty"
+            android:textColor="@color/admin_text_secondary"
+            android:textSize="@dimen/admin_profile_item_text_size" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_admin_staff_error"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_admin_staff_header">
+
+        <TextView
+            android:id="@+id/text_admin_staff_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/admin_staff_error_generic"
+            android:textColor="@color/admin_text_secondary"
+            android:textSize="@dimen/admin_profile_item_text_size" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_admin_staff_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/admin_hub_item_spacing_medium"
+            android:text="@string/admin_staff_retry"
+            android:textAllCaps="false"
+            android:textColor="@color/admin_action_button_text"
+            app:backgroundTint="@color/admin_action_button_primary_bg"
+            app:cornerRadius="@dimen/admin_action_button_radius" />
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_admin_add_staff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/admin_hub_mgmt_fab_margin"
+        android:layout_marginBottom="@dimen/admin_hub_mgmt_fab_margin"
+        android:contentDescription="@string/admin_staff_add"
+        android:src="@drawable/ic_admin_add"
+        android:tint="@color/admin_text_primary"
+        app:backgroundTint="@color/admin_fab_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

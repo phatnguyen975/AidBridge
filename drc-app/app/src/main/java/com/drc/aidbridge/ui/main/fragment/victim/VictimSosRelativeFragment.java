@@ -114,6 +114,22 @@ public class VictimSosRelativeFragment extends BaseFragment<FragmentVictimSosRel
         );
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (relativeLocationMapController != null) {
+            relativeLocationMapController.onResume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        if (relativeLocationMapController != null) {
+            relativeLocationMapController.onPause();
+        }
+        super.onPause();
+    }
+
     private void renderValidationError(@Nullable ValidationResult validation) {
         if (validation == null || validation.isValid()) {
             return;
@@ -324,6 +340,10 @@ public class VictimSosRelativeFragment extends BaseFragment<FragmentVictimSosRel
 
     @Override
     public void onDestroyView() {
+        if (relativeLocationMapController != null) {
+            relativeLocationMapController.onDestroy();
+            relativeLocationMapController = null;
+        }
         if (geocodingExecutor != null) {
             geocodingExecutor.shutdownNow();
             geocodingExecutor = null;

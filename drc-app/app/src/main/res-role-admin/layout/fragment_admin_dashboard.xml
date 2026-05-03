@@ -80,24 +80,9 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_admin_open_map"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:text="@string/admin_action_open_relief_map"
-                    android:textAllCaps="false"
-                    android:textColor="@color/admin_action_button_text"
-                    android:textSize="@dimen/admin_action_button_text_size"
-                    app:backgroundTint="@color/admin_action_button_primary_bg"
-                    app:cornerRadius="@dimen/admin_action_button_radius" />
-
-                <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_admin_manage_hub"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/admin_action_button_spacing"
                     android:layout_weight="1"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
@@ -152,6 +137,7 @@
                             android:textSize="@dimen/admin_stat_label_text_size" />
 
                         <TextView
+                            android:id="@+id/text_admin_total_hubs_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/admin_stat_value_spacing"
@@ -195,6 +181,7 @@
                             android:textSize="@dimen/admin_stat_label_text_size" />
 
                         <TextView
+                            android:id="@+id/text_admin_volunteers_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/admin_stat_value_spacing"
@@ -238,6 +225,7 @@
                             android:textSize="@dimen/admin_stat_label_text_size" />
 
                         <TextView
+                            android:id="@+id/text_admin_today_missions_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/admin_stat_value_spacing"
@@ -280,6 +268,7 @@
                             android:textSize="@dimen/admin_stat_label_text_size" />
 
                         <TextView
+                            android:id="@+id/text_admin_distributed_items_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/admin_stat_value_spacing"

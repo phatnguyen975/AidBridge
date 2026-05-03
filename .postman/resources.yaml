@@ -1,0 +1,12 @@
+# Use this workspace to collaborate
+workspace:
+  id: c030e142-9965-4a4a-bc55-f5fa5f4a23da
+
+localResources:
+  collections:
+    - ..\spring-backend\postman\AidBridge_Auth_API.postman_collection.json
+    - ..\spring-backend\postman\AidBridge_Mission_API.postman_collection.json
+  environments:
+    - ..\spring-backend\postman\AidBridge_Local.postman_environment.json
+  specs:
+    - ..\docs\api.yaml

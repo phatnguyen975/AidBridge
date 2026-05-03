@@ -165,6 +165,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/admin_section_spacing"
+                android:visibility="gone"
                 app:cardBackgroundColor="@color/admin_summary_card_bg"
                 app:cardCornerRadius="@dimen/admin_hub_detail_card_radius"
                 app:cardElevation="0dp"
@@ -299,6 +300,24 @@
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_admin_manage_staff"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/admin_hub_detail_button_height"
+                android:layout_marginTop="@dimen/admin_section_spacing"
+                android:text="@string/admin_profile_manage_staff"
+                android:textAllCaps="false"
+                android:textColor="@color/admin_action_button_text"
+                android:textSize="@dimen/admin_action_button_text_size"
+                android:gravity="start|center_vertical"
+                android:paddingStart="@dimen/admin_hub_item_spacing_small"
+                app:backgroundTint="@color/admin_action_button_primary_bg"
+                app:cornerRadius="@dimen/admin_action_button_radius"
+                app:icon="@drawable/ic_admin_user"
+                app:iconGravity="textStart"
+                app:iconPadding="@dimen/admin_hub_item_spacing_small"
+                app:iconTint="@color/admin_action_button_text" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_admin_logout"

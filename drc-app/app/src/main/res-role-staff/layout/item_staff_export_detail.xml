@@ -53,12 +53,31 @@
                 android:textSize="@dimen/staff_detail_item_meta_size" />
 
             <TextView
-                android:id="@+id/tv_export_value"
+                android:id="@+id/tv_required_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xs"
                 android:textColor="@color/text_secondary"
                 android:textSize="@dimen/staff_detail_item_meta_size" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_export_quantity"
+                style="@style/Widget.AidBridge.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:hint="@string/staff_detail_export_quantity_hint"
+                app:boxBackgroundMode="outline"
+                app:boxStrokeColor="@color/staff_manual_input_stroke_selector"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="2dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_export_quantity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/tv_error_badge"

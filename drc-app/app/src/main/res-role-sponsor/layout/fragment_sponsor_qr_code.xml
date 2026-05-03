@@ -167,12 +167,15 @@
 
                         <TextView
                             android:id="@+id/tv_donation_code_value"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_md"
+                            android:textAlignment="viewEnd"
                             android:textColor="@color/text_primary"
                             android:textSize="@dimen/sponsor_qr_row_value_text_size"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/tv_donation_code_label"
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -199,12 +202,15 @@
 
                         <TextView
                             android:id="@+id/tv_item_type_value"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_md"
+                            android:textAlignment="viewEnd"
                             android:textColor="@color/text_primary"
                             android:textSize="@dimen/sponsor_qr_row_value_text_size"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/tv_item_type_label"
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -230,12 +236,15 @@
 
                         <TextView
                             android:id="@+id/tv_quantity_value"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_md"
+                            android:textAlignment="viewEnd"
                             android:textColor="@color/text_primary"
                             android:textSize="@dimen/sponsor_qr_row_value_text_size"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/tv_quantity_label"
                             app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>

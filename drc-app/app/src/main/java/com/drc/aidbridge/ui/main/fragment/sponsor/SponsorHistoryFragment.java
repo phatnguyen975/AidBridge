@@ -1,37 +1,46 @@
 package com.drc.aidbridge.ui.main.fragment.sponsor;
 
-import android.os.Handler;
-import android.os.Looper;
+import android.os.Bundle;
 import android.view.View;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentSponsorHistoryBinding;
+import com.drc.aidbridge.domain.model.sponsor.SponsorDonationHistoryItem;
+import com.drc.aidbridge.domain.model.sponsor.SponsorDonationStatus;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.adapter.sponsor.SponsorHistoryAdapter;
+import com.drc.aidbridge.ui.main.viewmodel.sponsor.SponsorHistoryViewModel;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class SponsorHistoryFragment extends BaseFragment<FragmentSponsorHistoryBinding> {
 
-    private SponsorHistoryAdapter sponsorHistoryAdapter;
-    private int baseRecyclerBottomPadding;
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
+                    .withZone(ZoneId.systemDefault());
 
-    private int currentPage = 1;
-    private String currentFilterTab = "Tất cả";
-    private boolean isLoading = false;
-    private boolean isLastPage = false;
+    private SponsorHistoryAdapter sponsorHistoryAdapter;
+    private SponsorHistoryViewModel viewModel;
+    private int baseRecyclerBottomPadding;
 
     @Nullable
     @Override
@@ -41,6 +50,7 @@ public class SponsorHistoryFragment extends BaseFragment<FragmentSponsorHistoryB
 
     @Override
     protected void setupViews() {
+        viewModel = new ViewModelProvider(this).get(SponsorHistoryViewModel.class);
         binding.ivBack.setOnClickListener(v -> popBackStackSafely());
 
         sponsorHistoryAdapter = new SponsorHistoryAdapter(this::onHistoryItemClicked);
@@ -52,7 +62,7 @@ public class SponsorHistoryFragment extends BaseFragment<FragmentSponsorHistoryB
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                if (dy <= 0 || isLoading || isLastPage) {
+                if (dy <= 0) {
                     return;
                 }
 
@@ -66,47 +76,81 @@ public class SponsorHistoryFragment extends BaseFragment<FragmentSponsorHistoryB
                 int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
                 if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
-                    currentPage++;
-                    loadMockData();
+                    viewModel.loadNextPage();
                 }
             }
         });
 
         setupTabs();
-        currentFilterTab = getString(R.string.sponsor_history_tab_all);
-        loadMockData();
     }
 
     @Override
     protected void observeViewModel() {
-        // TODO: Observe real data from ViewModel when implemented
+        if (viewModel == null) {
+            return;
+        }
+
+        viewModel.getHistoryItems().observe(getViewLifecycleOwner(), items -> {
+            sponsorHistoryAdapter.submitItems(mapToUiItems(items));
+        });
+
+        viewModel.getHistoryResult().observe(getViewLifecycleOwner(), result -> {
+            if (result == null) {
+                return;
+            }
+
+            if (result.isLoading()) {
+                updatePaginationLoading(true);
+                return;
+            }
+
+            updatePaginationLoading(false);
+
+            if (result.isError() && !result.hasBeenHandled()) {
+                result.markAsHandled();
+                showTopSnackbar(
+                        binding.getRoot(),
+                        result.getMessage() != null ? result.getMessage() : getString(R.string.error_generic),
+                        true
+                );
+                return;
+            }
+
+            if (result.isSuccess() && !result.hasBeenHandled()) {
+                if (result.getData() == null) {
+                    return;
+                }
+
+                boolean isFirstPage = result.getData().getPage() <= 1;
+                boolean isEmptyPage = result.getData().getItems() == null || result.getData().getItems().isEmpty();
+                if (!isFirstPage || !isEmptyPage) {
+                    return;
+                }
+
+                result.markAsHandled();
+                showTopSnackbar(binding.getRoot(), getString(R.string.sponsor_history_empty), false);
+            }
+        });
     }
 
     private void setupTabs() {
-        String[] tabs = new String[] {
-                getString(R.string.sponsor_history_tab_all),
-                getString(R.string.sponsor_history_status_pending),
-                getString(R.string.sponsor_history_status_stocked),
-                getString(R.string.sponsor_history_status_shipping),
-                getString(R.string.sponsor_history_status_arrived)
-        };
-
-        for (String tabLabel : tabs) {
-            binding.tabLayout.addTab(binding.tabLayout.newTab().setText(tabLabel));
-        }
+        addAllTab();
+        addStatusTab(SponsorDonationStatus.REGISTERED, R.string.sponsor_history_status_registered);
+        addStatusTab(SponsorDonationStatus.RECEIVED, R.string.sponsor_history_status_received);
+        addStatusTab(SponsorDonationStatus.OUTDATED, R.string.sponsor_history_status_outdated);
 
         binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (tab == null || tab.getText() == null) {
+                if (tab == null) {
                     return;
                 }
 
-                currentFilterTab = tab.getText().toString();
-                currentPage = 1;
-                isLastPage = false;
-                sponsorHistoryAdapter.clear();
-                loadMockData();
+                SponsorDonationStatus selectedStatus =
+                        tab.getTag() instanceof SponsorDonationStatus
+                                ? (SponsorDonationStatus) tab.getTag()
+                                : null;
+                viewModel.loadInitialHistory(selectedStatus);
             }
 
             @Override
@@ -119,40 +163,124 @@ public class SponsorHistoryFragment extends BaseFragment<FragmentSponsorHistoryB
                 // No-op
             }
         });
+
+        // Tab đầu có thể đã được auto-selected khi addTab, nên gọi API chủ động để đảm bảo luôn load lần đầu.
+        TabLayout.Tab initialTab = binding.tabLayout.getTabAt(0);
+        SponsorDonationStatus initialStatus = null;
+        if (initialTab != null && initialTab.getTag() instanceof SponsorDonationStatus) {
+            initialStatus = (SponsorDonationStatus) initialTab.getTag();
+        }
+        viewModel.loadInitialHistory(initialStatus);
+
+        if (initialTab != null && !initialTab.isSelected()) {
+            initialTab.select();
+        }
+    }
+
+    private void addAllTab() {
+        TabLayout.Tab tab = binding.tabLayout.newTab().setText(getString(R.string.sponsor_history_tab_all));
+        tab.setTag(null);
+        binding.tabLayout.addTab(tab);
     }
 
     private void onHistoryItemClicked(@NonNull SponsorHistoryAdapter.HistoryItem item) {
-        if (item.status.equals(getString(R.string.sponsor_history_status_pending))) {
-            navigateToDestinationSafely(R.id.sponsorQrCodeFragment);
-        }
-    }
-
-    private void loadMockData() {
-        if (isLoading || isLastPage) {
+        if (!"REGISTERED".equalsIgnoreCase(item.statusKey)) {
             return;
         }
 
-        // TODO(API): Remove mock pagination delay and call ViewModel paged history endpoint.
-        isLoading = true;
-        updatePaginationLoading(true);
+        String donationCode = safeText(item.donationCode);
+        if (donationCode.isEmpty()) {
+            donationCode = getString(R.string.sponsor_qr_missing_value);
+        }
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            List<SponsorHistoryAdapter.HistoryItem> pageData = buildMockHistoryItems(currentPage, currentFilterTab);
+        String itemSummary = safeText(item.itemSummary);
+        if (itemSummary.isEmpty()) {
+            itemSummary = getString(R.string.sponsor_qr_missing_value);
+        }
 
-            if (pageData.isEmpty()) {
-                isLastPage = true;
-            } else {
-                sponsorHistoryAdapter.addItems(pageData);
-                if (currentPage >= 3) {
-                    isLastPage = true;
-                }
+        String quantityText = safeText(item.quantity);
+        if (quantityText.isEmpty()) {
+            quantityText = getString(R.string.sponsor_qr_missing_value);
+        }
+
+        Bundle args = new Bundle();
+        args.putString(SponsorQrCodeFragment.ARG_DONATION_CODE, donationCode);
+        args.putString(SponsorQrCodeFragment.ARG_QR_CODE_TOKEN, item.qrCodeToken);
+        args.putString(SponsorQrCodeFragment.ARG_ITEM_NAME, itemSummary);
+        args.putString(SponsorQrCodeFragment.ARG_QUANTITY_TEXT, quantityText);
+        navigateSafely(R.id.action_sponsor_history_to_qr, args);
+    }
+
+    private void addStatusTab(@NonNull SponsorDonationStatus status, int titleRes) {
+        TabLayout.Tab tab = binding.tabLayout.newTab().setText(getString(titleRes));
+        tab.setTag(status);
+        binding.tabLayout.addTab(tab);
+    }
+
+    @NonNull
+    private List<SponsorHistoryAdapter.HistoryItem> mapToUiItems(@Nullable List<SponsorDonationHistoryItem> source) {
+        List<SponsorHistoryAdapter.HistoryItem> mapped = new ArrayList<>();
+        if (source == null || source.isEmpty()) {
+            return mapped;
+        }
+
+        for (SponsorDonationHistoryItem item : source) {
+            if (item == null || item.getStatus() == null) {
+                continue;
             }
 
-            isLoading = false;
-            if (binding != null) {
-                updatePaginationLoading(false);
-            }
-        }, 500);
+            String donationCode = safeText(item.getDonationCode());
+            String displayDonationCode = !donationCode.isEmpty()
+                    ? donationCode
+                    : getString(R.string.sponsor_qr_missing_value);
+
+            String itemSummary = safeText(item.getItemSummary());
+            String displayItemSummary = !itemSummary.isEmpty()
+                    ? itemSummary
+                    : getString(R.string.sponsor_qr_missing_value);
+
+            String dateText = formatDate(item.getCreatedAt());
+
+            int itemCount = item.getItemCount();
+            String quantityText = itemCount > 0
+                    ? getString(R.string.sponsor_history_item_count_value, itemCount)
+                    : getString(R.string.sponsor_qr_missing_value);
+
+            String hubRawText = safeText(item.getHubId());
+            String hubText = !hubRawText.isEmpty()
+                    ? hubRawText
+                    : getString(R.string.sponsor_hub_unknown_name);
+
+            String statusKey = item.getStatus().name();
+            String statusLabel = getStatusLabel(item.getStatus());
+
+            mapped.add(new SponsorHistoryAdapter.HistoryItem(
+                    safeText(item.getId()),
+                    dateText,
+                    displayItemSummary,
+                    quantityText,
+                    hubText,
+                    statusKey,
+                    statusLabel,
+                    displayItemSummary,
+                    displayDonationCode,
+                    safeText(item.getQrCodeToken()),
+                    R.mipmap.ic_launcher
+            ));
+        }
+
+        return mapped;
+    }
+
+    @NonNull
+    private String getStatusLabel(@NonNull SponsorDonationStatus status) {
+        if (status == SponsorDonationStatus.REGISTERED) {
+            return getString(R.string.sponsor_history_status_registered);
+        }
+        if (status == SponsorDonationStatus.RECEIVED) {
+            return getString(R.string.sponsor_history_status_received);
+        }
+        return getString(R.string.sponsor_history_status_outdated);
     }
 
     private void updatePaginationLoading(boolean show) {
@@ -181,79 +309,22 @@ public class SponsorHistoryFragment extends BaseFragment<FragmentSponsorHistoryB
     }
 
     @NonNull
-    private List<SponsorHistoryAdapter.HistoryItem> buildMockHistoryItems(int page, @NonNull String statusFilter) {
-        // TODO(API): Remove this mock generator and map paged API response items.
-        List<SponsorHistoryAdapter.HistoryItem> items = new ArrayList<>();
-        String statusPending = getString(R.string.sponsor_history_status_pending);
-        String statusStocked = getString(R.string.sponsor_history_status_stocked);
-        String statusShipping = getString(R.string.sponsor_history_status_shipping);
-        String statusArrived = getString(R.string.sponsor_history_status_arrived);
-
-        List<SponsorHistoryAdapter.HistoryItem> pageItems = new ArrayList<>();
-        pageItems.add(new SponsorHistoryAdapter.HistoryItem(
-                "DON-P" + page + "-01",
-                "24/05/2024",
-                getString(R.string.sponsor_donate_category_food),
-                "50 thùng",
-                "Trạm Quận 7",
-                statusPending,
-                R.mipmap.ic_launcher
-        ));
-        pageItems.add(new SponsorHistoryAdapter.HistoryItem(
-                "DON-P" + page + "-02",
-                "21/05/2024",
-                getString(R.string.sponsor_donate_category_water),
-                "120 thùng",
-                "Trạm Bình Thạnh",
-                statusStocked,
-                R.mipmap.ic_launcher
-        ));
-        pageItems.add(new SponsorHistoryAdapter.HistoryItem(
-                "DON-P" + page + "-03",
-                "19/05/2024",
-                getString(R.string.sponsor_donate_category_medicine),
-                "30 kiện",
-                "Trạm Thủ Đức",
-                statusShipping,
-                R.mipmap.ic_launcher
-        ));
-        pageItems.add(new SponsorHistoryAdapter.HistoryItem(
-                "DON-P" + page + "-04",
-                "16/05/2024",
-                getString(R.string.sponsor_donate_category_clothes),
-                "200 bộ",
-                "Trạm Gò Vấp",
-                statusArrived,
-                R.mipmap.ic_launcher
-        ));
-        pageItems.add(new SponsorHistoryAdapter.HistoryItem(
-                "DON-P" + page + "-05",
-                "15/05/2024",
-                getString(R.string.sponsor_donate_category_food),
-                "80 suất",
-                "Trạm Quận 12",
-                statusPending,
-                R.mipmap.ic_launcher
-        ));
-        pageItems.add(new SponsorHistoryAdapter.HistoryItem(
-                "DON-P" + page + "-06",
-                "12/05/2024",
-                getString(R.string.sponsor_donate_category_water),
-                "90 bình",
-                "Trạm Tân Bình",
-                statusArrived,
-                R.mipmap.ic_launcher
-        ));
-
-        if (statusFilter.equals(getString(R.string.sponsor_history_tab_all))) {
-            return pageItems;
+    private String formatDate(@Nullable String isoDateTime) {
+        String safeIsoDateTime = safeText(isoDateTime);
+        if (safeIsoDateTime.isEmpty()) {
+            return getString(R.string.sponsor_qr_missing_value);
         }
 
-        for (SponsorHistoryAdapter.HistoryItem item : pageItems) {
-            if (item.status.equals(statusFilter)) {
-                items.add(item);
-            }
+        try {
+            Instant instant = Instant.parse(safeIsoDateTime);
+            return DATE_FORMATTER.format(instant);
+        } catch (DateTimeParseException exception) {
+            return safeIsoDateTime;
         }
-        return items;
+    }
+
+    @NonNull
+    private String safeText(@Nullable String value) {
+        return value != null ? value.trim() : "";
     }
 }

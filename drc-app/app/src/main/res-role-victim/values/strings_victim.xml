@@ -110,15 +110,15 @@
         <item>Nhẹ</item>
     </string-array>
     <string name="victim_rescue_sos_button">!\nSOS</string>
-    <string name="victim_rescue_sos_hint">Nhấn để gửi tín hiệu khẩn cấp</string>
-    <string name="victim_rescue_info_title">Thông tin cứu hộ</string>
+    <string name="victim_rescue_sos_hint">Nhấn để gửi SOS ngay, không cần điền thêm</string>
+    <string name="victim_rescue_info_title">Thông tin bổ sung (không bắt buộc)</string>
     <string name="victim_rescue_full_name_hint">Họ và tên</string>
     <string name="victim_rescue_default_name">Nguyễn Văn A</string>
     <string name="victim_rescue_people_count_hint">Số người</string>
     <string name="victim_rescue_default_people_count">1</string>
     <string name="victim_rescue_severity_hint">Tình trạng</string>
     <string name="victim_rescue_health_detail_hint">Chi tiết sức khỏe</string>
-    <string name="victim_rescue_images_title">Hình ảnh hiện trường</string>
+    <string name="victim_rescue_images_title">Ảnh hiện trường (bổ sung sau)</string>
     <string name="victim_rescue_upload_label">Tải ảnh lên hoặc chụp mới</string>
     <string name="victim_rescue_upload_icon_desc">Biểu tượng tải ảnh hiện trường</string>
     <string name="victim_rescue_image_desc">Ảnh hiện trường</string>
@@ -143,10 +143,15 @@
 
     <!-- Victim Supply Tab -->
     <string name="victim_supply_section_request">Yêu cầu tiếp tế</string>
+    <string name="victim_supply_input_manual">Nhập tay</string>
+    <string name="victim_supply_input_voice">Giọng nói</string>
+    <string name="victim_supply_voice_only_hint">Nói trực tiếp để AI tự động phân loại vật phẩm cần hỗ trợ.</string>
     <string name="victim_supply_section_notes">Ghi chú &amp; Mô tả chi tiết</string>
     <string name="victim_supply_notes_hint">Nhập mô tả chi tiết...</string>
     <string name="victim_supply_voice_idle">Nhấn để nói...</string>
+    <string name="victim_supply_voice_only_idle">Nhấn để ghi âm...</string>
     <string name="victim_supply_voice_recording">Đang ghi âm...</string>
+    <string name="victim_supply_voice_recorded">Đã ghi âm, nhấn gửi để hoàn tất.</string>
     <string name="victim_supply_voice_icon_desc">Biểu tượng ghi âm giọng nói</string>
     <string name="victim_supply_section_people">Số lượng người</string>
     <string name="victim_supply_people_adult">Người lớn</string>
@@ -170,8 +175,12 @@
     <string name="victim_supply_voice_permission_denied">Bạn cần cấp quyền micro để sử dụng nhập liệu giọng nói.</string>
     <string name="victim_supply_voice_result_error">Không nhận diện được giọng nói. Vui lòng thử lại.</string>
     <string name="victim_supply_voice_not_supported">Thiết bị không hỗ trợ nhập liệu giọng nói.</string>
+    <string name="victim_supply_voice_record_error">Không thể ghi âm. Vui lòng thử lại.</string>
+    <string name="victim_supply_voice_empty_error">Vui lòng ghi âm nội dung yêu cầu trước khi gửi.</string>
+    <string name="victim_supply_voice_init_error">Không thể khởi tạo ghi âm. Vui lòng thử lại.</string>
     <string name="victim_supply_validation_items_required">Vui lòng chọn ít nhất một vật phẩm cần hỗ trợ.</string>
     <string name="victim_supply_validation_people_required">Vui lòng nhập số lượng người cần hỗ trợ.</string>
+    <string name="victim_supply_validation_voice_required">Vui lòng ghi âm nội dung yêu cầu trước khi gửi.</string>
     <string name="victim_supply_permission_location_denied">Bạn cần cấp quyền vị trí để gửi yêu cầu tiếp tế.</string>
     <string name="victim_supply_location_disabled">Vui lòng bật GPS để gửi yêu cầu tiếp tế.</string>
     <string name="victim_supply_location_unavailable">Không thể lấy vị trí hiện tại. Vui lòng thử lại.</string>

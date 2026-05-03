@@ -3,6 +3,7 @@ package com.drc.aidbridge.domain.usecase.victim;
 import androidx.lifecycle.LiveData;
 
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
+import com.drc.aidbridge.domain.model.QuickSosSubmissionResult;
 import com.drc.aidbridge.domain.repository.victim.VictimSosRepository;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
 import com.drc.aidbridge.domain.usecase.validation.VictimSosInputValidator;
@@ -35,6 +36,24 @@ public class UploadSosUseCase {
                                                     String relativeAddress,
                                                     String severity) {
         return victimSosInputValidator.validateRelativeSos(relativeName, relativeAddress, severity);
+    }
+
+    public LiveData<NetworkResultWrapper<QuickSosSubmissionResult>> uploadQuickSos(double latitude,
+                                                                                   double longitude,
+                                                                                   Double accuracy,
+                                                                                   long triggeredAtMillis,
+                                                                                   long locationCapturedAtMillis,
+                                                                                   String clientRequestId,
+                                                                                   String deviceInfo) {
+        return victimSosRepository.uploadQuickSelfSos(
+            latitude,
+            longitude,
+            accuracy,
+            triggeredAtMillis,
+            locationCapturedAtMillis,
+            clientRequestId,
+            deviceInfo
+        );
     }
 
     public LiveData<NetworkResultWrapper<String>> uploadSelfSos(String fullName,

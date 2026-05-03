@@ -35,6 +35,7 @@ public class TranscribeAidRequestVoiceUseCase {
         }
 
         String rawTranscript = speechToTextService.transcribe(audioFile);
+        System.out.println("Raw transcript: " + rawTranscript);
         AidRequestVoiceLlmService.ExtractionResult extractionResult = aidRequestVoiceLlmService.extractItems(rawTranscript);
 
         List<AidItemCategory> categories = aidItemCategoryJpaRepository.findByIsLeafFalse();

@@ -51,6 +51,8 @@ dependencies {
     implementation 'org.hibernate.orm:hibernate-spatial'
     // JTS Topology Suite - Java geometry types (Point, LineString, Polygon) used by Hibernate Spatial
     implementation 'org.locationtech.jts:jts-core:1.20.0'
+    // Uber H3 Spatial Indexing for fast cell-based proximity queries
+    implementation 'com.uber:h3:4.1.1'
 
     // ===========================
     // Cache & Session Store
@@ -128,7 +130,7 @@ dependencies {
     // GraphHopper Routing Engine (Embedded)
     // ===========================
     // Offline routing engine — reads OSM data, builds graph, calculates routes
-    // reader-osm is bundled inside graphhopper-core since v8+
+    // reader-osm is bundled inside graphhopper-core since v11
     implementation 'com.graphhopper:graphhopper-core:11.0'
 
     // ===========================

@@ -20,6 +20,7 @@ public class VolunteerDTO {
     private Integer totalTasksCompleted;
     private BigDecimal avgRating;
     private Integer avgResponseSeconds;
+    private Long etaSeconds;
 
     @Data
     @Builder

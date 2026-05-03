@@ -5,6 +5,7 @@ import com.drc.aidbridge.modules.hub.internal.entity.Hub;
 import com.drc.aidbridge.modules.hub.internal.mapper.HubMapper;
 import com.drc.aidbridge.modules.hub.internal.repository.HubRepository;
 import com.drc.aidbridge.modules.hub.internal.web.dto.UpdateHubRequest;
+import com.drc.aidbridge.modules.shared.enums.HubStatus;
 import com.drc.aidbridge.modules.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -28,8 +29,18 @@ public class UpdateHubUseCase {
         Hub hub = hubRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hub not found: " + id));
 
+        validateStatus(request.getStatus());
         hubMapper.patchEntity(hub, request);
         Hub saved = hubRepository.save(hub);
         return hubMapper.toDTO(saved);
+    }
+
+    private void validateStatus(HubStatus status) {
+        if (status == null) {
+            return;
+        }
+        if (status != HubStatus.ACTIVE && status != HubStatus.INACTIVE) {
+            throw new IllegalArgumentException("Hub status must be ACTIVE or INACTIVE");
+        }
     }
 }

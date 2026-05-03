@@ -67,15 +67,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <!-- TODO(test-cost): Hide this map container after QA to avoid paid Google Maps calls in production. -->
-                    <androidx.fragment.app.FragmentContainerView
+                    <org.osmdroid.views.MapView
                         android:id="@+id/relative_location_map_container"
-                        android:name="com.google.android.gms.maps.SupportMapFragment"
                         android:layout_width="0dp"
-                        android:layout_height="0dp"
+                        android:layout_height="@dimen/victim_relative_sos_map_height"
                         android:contentDescription="@string/victim_relative_sos_map_desc"
-                        app:layout_constraintDimensionRatio="1:1"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />

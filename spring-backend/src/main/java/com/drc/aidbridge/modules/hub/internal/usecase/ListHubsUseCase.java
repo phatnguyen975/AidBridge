@@ -17,9 +17,22 @@ public class ListHubsUseCase {
     private final HubMapper hubMapper;
 
     public List<HubDTO> execute(HubStatus status) {
-        if (status != null) {
-            return hubRepository.findByStatus(status).stream().map(hubMapper::toDTO).toList();
+        return execute(status, null);
+    }
+
+    public List<HubDTO> execute(HubStatus status, String keyword) {
+        String statusStr = status != null ? status.name() : null;
+        return hubRepository.searchHubs(statusStr, normalizeKeyword(keyword))
+                .stream()
+                .map(hubMapper::toDTO)
+                .toList();
+    }
+
+    private String normalizeKeyword(String keyword) {
+        if (keyword == null) {
+            return null;
         }
-        return hubRepository.findAll().stream().map(hubMapper::toDTO).toList();
+        String trimmed = keyword.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

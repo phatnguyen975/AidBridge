@@ -3,7 +3,8 @@ package com.drc.aidbridge.modules.mission.internal.repository;
 import com.drc.aidbridge.modules.shared.enums.MissionStatus;
 import com.drc.aidbridge.modules.shared.enums.MissionType;
 import com.drc.aidbridge.modules.mission.internal.entity.Mission;
-import org.locationtech.jts.geom.Point;
+import com.drc.aidbridge.modules.mission.internal.repository.projection.MissionHistoryProjection;
+import com.drc.aidbridge.modules.mission.internal.repository.projection.MissionHistoryFullProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +16,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import com.drc.aidbridge.modules.sos.internal.entity.SosRequest;
+import com.drc.aidbridge.modules.aid.internal.entity.AidRequest;
 
 @Repository
 public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
@@ -22,6 +25,12 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
         Optional<Mission> findBySosRequestId(UUID sosRequestId);
 
         Optional<Mission> findByAidRequestId(UUID aidRequestId);
+
+        Optional<Mission> findByQrCodeToken(String qrCodeToken);
+
+        Optional<Mission> findByCodeNameIgnoreCase(String codeName);
+
+        boolean existsByCodeName(String codeName);
 
         Page<Mission> findByMissionType(MissionType missionType, Pageable pageable);
 
@@ -174,6 +183,62 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
         Page<MissionHistoryProjection> findHistoryProjectionByVolunteerId(@Param("volunteerId") UUID volunteerId,
                         Pageable pageable);
 
+
+        @Query(value = "SELECT " +
+                "m.*, " +
+                "ST_Y(CAST(m.victim_location AS geometry)) AS \"victimLat\", " +
+                "ST_X(CAST(m.victim_location AS geometry)) AS \"victimLng\", " +
+                "CAST(m.mission_type AS text) AS \"missionType\", " +
+                "m.completed_at AS \"completedAt\", " +
+                "da.radius_km AS \"radiusKm\", " +
+                "CASE " +
+                "WHEN m.mission_type = 'RESCUE' THEN s.address " +
+                "WHEN m.mission_type = 'DELIVERY' THEN a.address " +
+                "ELSE NULL END AS \"address\", " +
+                "CASE " +
+                "WHEN m.mission_type = 'RESCUE' THEN s.description " +
+                "WHEN m.mission_type = 'DELIVERY' THEN a.description " +
+                "ELSE NULL END AS \"description\" " +
+                "FROM missions m " +
+                "LEFT JOIN sos_requests s ON s.id = m.sos_request_id " +
+                "LEFT JOIN aid_requests a ON a.id = m.aid_request_id " +
+                "LEFT JOIN dispatch_attempts da ON da.mission_id = m.id " +
+                "AND da.volunteer_id = m.volunteer_id " +
+                "AND da.response = 'ACCEPTED' " +
+                "WHERE m.volunteer_id = :volunteerId " +
+                "ORDER BY m.created_at DESC", 
+                countQuery = "SELECT COUNT(*) FROM missions m WHERE m.volunteer_id = :volunteerId",
+                nativeQuery = true)
+        Page<MissionHistoryFullProjection> findFullHistoryByVolunteerId(@Param("volunteerId") UUID volunteerId, Pageable pageable);
+
+
+        @Query(value = "SELECT " +
+                "m.*, " +
+                "ST_Y(CAST(m.victim_location AS geometry)) AS \"victimLat\", " +
+                "ST_X(CAST(m.victim_location AS geometry)) AS \"victimLng\", " +
+                "CAST(m.mission_type AS text) AS \"missionType\", " +
+                "m.completed_at AS \"completedAt\", " +
+                "da.radius_km AS \"radiusKm\", " +
+                "CASE " +
+                "WHEN m.mission_type = 'RESCUE' THEN s.address " +
+                "WHEN m.mission_type = 'DELIVERY' THEN a.address " +
+                "ELSE NULL END AS \"address\", " +
+                "CASE " +
+                "WHEN m.mission_type = 'RESCUE' THEN s.description " +
+                "WHEN m.mission_type = 'DELIVERY' THEN a.description " +
+                "ELSE NULL END AS \"description\" " +
+                "FROM missions m " +
+                "LEFT JOIN sos_requests s ON s.id = m.sos_request_id " +
+                "LEFT JOIN aid_requests a ON a.id = m.aid_request_id " +
+                "LEFT JOIN dispatch_attempts da ON da.mission_id = m.id " +
+                "AND da.volunteer_id = m.volunteer_id " +
+                "AND da.response = 'ACCEPTED' " +
+                "WHERE m.volunteer_id = :volunteerId " +
+                "AND m.status IN ('ASSIGNED', 'PICKING_UP', 'PICKED_UP', 'IN_TRANSIT') " +
+                "ORDER BY m.created_at DESC LIMIT 1",
+                nativeQuery = true)
+        Optional<MissionHistoryFullProjection> findCurrentFullMissionByVolunteerId(@Param("volunteerId") UUID volunteerId);
+
         /**
          * Statistics: Đếm missions trong khoảng thời gian
          */
@@ -245,4 +310,30 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
         default List<Mission> findPendingDispatch() {
                 return findPendingDispatchWithStatuses(List.of(MissionStatus.PENDING, MissionStatus.DISPATCHING));
         }
+
+        /**
+         * JPQL join to get SosRequest entities based on Mission status and date range
+         */
+        @Query("SELECT s FROM SosRequest s, Mission m " +
+               "WHERE m.sosRequestId = s.id " +
+               "AND m.status = :status " +
+               "AND (:start IS NULL OR m.createdAt >= :start) " +
+               "AND (:end IS NULL OR m.createdAt <= :end)")
+        List<SosRequest> findSosByMissionStatus(
+                @Param("status") MissionStatus status,
+                @Param("start") Instant start,
+                @Param("end") Instant end);
+
+        /**
+         * JPQL join to get AidRequest entities based on Mission status and date range
+         */
+        @Query("SELECT a FROM AidRequest a, Mission m " +
+               "WHERE m.aidRequestId = a.id " +
+               "AND m.status = :status " +
+               "AND (:start IS NULL OR m.createdAt >= :start) " +
+               "AND (:end IS NULL OR m.createdAt <= :end)")
+        List<AidRequest> findAidByMissionStatus(
+                @Param("status") MissionStatus status,
+                @Param("start") Instant start,
+                @Param("end") Instant end);
 }

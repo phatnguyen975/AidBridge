@@ -1847,32 +1847,61 @@ components:
       properties:
         name:
           type: string
-          maxLength: 100
+          maxLength: 255
         address:
           type: string
+          maxLength: 500
+        phoneNumber:
+          type: string
+          maxLength: 50
+        imageUrl:
+          type: string
+          maxLength: 500
+        status:
+          type: string
+          enum: [ACTIVE, INACTIVE]
+          default: ACTIVE
+        operatingHours:
+          type: string
+          maxLength: 255
         lat:
           type: number
+          minimum: -90
+          maximum: 90
         lng:
           type: number
-        contact_phone:
-          type: string
-          maxLength: 20
-        accepted_category_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
+          minimum: -180
+          maximum: 180
 
     UpdateHubRequest:
       type: object
       properties:
         name:
           type: string
-          maxLength: 100
+          maxLength: 255
         address:
           type: string
-        contact_phone:
+          maxLength: 500
+        phoneNumber:
           type: string
+          maxLength: 50
+        imageUrl:
+          type: string
+          maxLength: 500
+        status:
+          type: string
+          enum: [ACTIVE, INACTIVE]
+        operatingHours:
+          type: string
+          maxLength: 255
+        lat:
+          type: number
+          minimum: -90
+          maximum: 90
+        lng:
+          type: number
+          minimum: -180
+          maximum: 180
 
     HubResponse:
       type: object
@@ -1887,18 +1916,12 @@ components:
       properties:
         success:
           type: boolean
+        message:
+          type: string
         data:
-          type: object
-          properties:
-            items:
-              type: array
-              items:
-                allOf:
-                  - $ref: '#/components/schemas/Hub'
-                  - type: object
-                    properties:
-                      distance_km:
-                        type: number
+          type: array
+          items:
+            $ref: '#/components/schemas/Hub'
 
     HubDetailResponse:
       type: object
@@ -1918,6 +1941,32 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/HubInventory'
+                inventoryGroups:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      category:
+                        type: string
+                      parentCategoryName:
+                        type: string
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            itemId:
+                              type: string
+                              format: uuid
+                            name:
+                              type: string
+                            quantity:
+                              type: integer
+                            unit:
+                              type: string
+                            expiryDate:
+                              type: string
+                              nullable: true
                 staff:
                   type: array
                   items:
@@ -2671,6 +2720,74 @@ components:
                     type: string
                   distance_m:
                     type: integer
+
+    # ============================================================
+    # ADMIN STAFF - Matching users(role=STAFF) + hub_staff
+    # ============================================================
+    AdminStaff:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        fullName:
+          type: string
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+        hubId:
+          type: string
+          format: uuid
+        hubName:
+          type: string
+
+    CreateAdminStaffRequest:
+      type: object
+      required: [fullName, email, phoneNumber, password, hubId]
+      properties:
+        fullName:
+          type: string
+          maxLength: 100
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+          maxLength: 15
+        password:
+          type: string
+          minLength: 8
+          format: password
+        hubId:
+          type: string
+          format: uuid
+
+    AdminStaffListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminStaff'
+
+    AdminStaffResponseWrapper:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/AdminStaff'
 
     # ============================================================
     # SYSTEM CONFIG - Matching system_config table
@@ -4665,18 +4782,11 @@ paths:
           in: query
           schema:
             $ref: '#/components/schemas/HubStatus'
-        - name: lat
+        - name: keyword
           in: query
+          description: Search by hub name or address, case-insensitive
           schema:
-            type: number
-        - name: lng
-          in: query
-          schema:
-            type: number
-        - name: radius_km
-          in: query
-          schema:
-            type: number
+            type: string
       responses:
         '200':
           description: Hubs list
@@ -4747,40 +4857,6 @@ paths:
       responses:
         '200':
           description: Hub updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HubResponse'
-
-  /hubs/{id}/status:
-    post:
-      tags: [Hubs]
-      summary: Change hub status (Admin/Staff)
-      operationId: changeHubStatus
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [status]
-              properties:
-                status:
-                  $ref: '#/components/schemas/HubStatus'
-                reason:
-                  type: string
-      responses:
-        '200':
-          description: Status changed
           content:
             application/json:
               schema:
@@ -5270,6 +5346,41 @@ paths:
   # ============================================================
   # ADMIN
   # ============================================================
+  /admin/staff:
+    get:
+      tags: [Admin]
+      summary: List staff accounts with assigned hub
+      operationId: listAdminStaff
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Staff list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminStaffListResponse'
+
+    post:
+      tags: [Admin]
+      summary: Create a staff account and assign it to a hub
+      operationId: createAdminStaff
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAdminStaffRequest'
+      responses:
+        '201':
+          description: Staff created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminStaffResponseWrapper'
+
   /admin/system-config:
     get:
       tags: [Admin]

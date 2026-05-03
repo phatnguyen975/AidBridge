@@ -5,19 +5,22 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.ItemAdminHubBinding;
-import com.drc.aidbridge.ui.main.viewmodel.admin.AdminHubManagementViewModel;
+import com.drc.aidbridge.domain.enums.HubStatus;
+import com.drc.aidbridge.domain.model.admin.Hub;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AdminHubAdapter extends RecyclerView.Adapter<AdminHubAdapter.AdminHubViewHolder> {
 
-    private final List<AdminHubManagementViewModel.Hub> items = new ArrayList<>();
+    private final List<Hub> items = new ArrayList<>();
     private final HubActionListener listener;
 
     public AdminHubAdapter(@NonNull HubActionListener listener) {
@@ -34,7 +37,7 @@ public class AdminHubAdapter extends RecyclerView.Adapter<AdminHubAdapter.AdminH
 
     @Override
     public void onBindViewHolder(@NonNull AdminHubViewHolder holder, int position) {
-        AdminHubManagementViewModel.Hub item = items.get(position);
+        Hub item = items.get(position);
         holder.bind(item, listener);
     }
 
@@ -43,7 +46,7 @@ public class AdminHubAdapter extends RecyclerView.Adapter<AdminHubAdapter.AdminH
         return items.size();
     }
 
-    public void submitList(@NonNull List<AdminHubManagementViewModel.Hub> hubs) {
+    public void submitList(@NonNull List<Hub> hubs) {
         items.clear();
         items.addAll(hubs);
         notifyDataSetChanged();
@@ -58,43 +61,92 @@ public class AdminHubAdapter extends RecyclerView.Adapter<AdminHubAdapter.AdminH
             this.binding = binding;
         }
 
-        void bind(@NonNull AdminHubManagementViewModel.Hub hub, @NonNull HubActionListener listener) {
-            binding.textHubName.setText(hub.nameResId);
-            binding.textHubAddress.setText(hub.addressResId);
+        void bind(@NonNull Hub hub, @NonNull HubActionListener listener) {
+            binding.textHubName.setText(resolveText(hub.getName(), R.string.admin_hub_mgmt_name_fallback));
+            binding.textHubAddress.setText(resolveText(hub.getAddress(), R.string.admin_hub_mgmt_address_fallback));
+            binding.textHubOperatingHours.setText(resolveOperatingHoursText(hub.getOperatingHours()));
+            binding.textHubPhone.setText(resolvePhoneText(hub.getPhoneNumber()));
 
-            String inventoryText = binding.getRoot().getContext()
-                    .getString(R.string.admin_hub_mgmt_inventory_format,
-                            binding.getRoot().getContext().getString(hub.inventoryResId));
-            binding.textHubInventory.setText(inventoryText);
+            HubStatus status = HubStatus.fromStringSafe(hub.getStatus());
 
-            if (hub.isActive) {
-                binding.textHubStatus.setText(R.string.admin_hub_mgmt_status_active);
-                binding.textHubStatus.setBackgroundResource(R.drawable.bg_admin_badge_active);
-                binding.textHubStatus.setTextColor(
-                        ContextCompat.getColor(binding.getRoot().getContext(), R.color.admin_badge_active_text));
-                binding.buttonHubToggleStatus.setText(R.string.admin_hub_mgmt_btn_deactivate);
-                binding.buttonHubToggleStatus.setBackgroundTintList(
-                        ColorStateList.valueOf(ContextCompat.getColor(
-                                binding.getRoot().getContext(), R.color.admin_button_danger_bg)));
+            Glide.with(binding.imageHubThumbnail)
+                    .load(hub.getImageUrl())
+                    .placeholder(R.drawable.ic_hub_placeholder)
+                    .error(R.drawable.ic_hub_placeholder)
+                    .centerCrop()
+                    .into(binding.imageHubThumbnail);
+
+            if (status == HubStatus.ACTIVE) {
+                applyActiveState();
+            } else if (status == HubStatus.EMERGENCY) {
+                applyInactiveState();
+                binding.textHubStatus.setText(R.string.admin_hub_mgmt_status_emergency);
             } else {
-                binding.textHubStatus.setText(R.string.admin_hub_mgmt_status_suspended);
-                binding.textHubStatus.setBackgroundResource(R.drawable.bg_admin_badge_suspended);
-                binding.textHubStatus.setTextColor(
-                        ContextCompat.getColor(binding.getRoot().getContext(), R.color.admin_badge_suspended_text));
-                binding.buttonHubToggleStatus.setText(R.string.admin_hub_mgmt_btn_activate);
-                binding.buttonHubToggleStatus.setBackgroundTintList(
-                        ColorStateList.valueOf(ContextCompat.getColor(
-                                binding.getRoot().getContext(), R.color.admin_button_success_bg)));
+                applyInactiveState();
             }
 
             binding.buttonHubDetails.setOnClickListener(v -> listener.onViewHubDetails(hub));
             binding.buttonHubToggleStatus.setOnClickListener(v -> listener.onToggleHubStatus(hub));
         }
+
+        private void applyActiveState() {
+            binding.textHubStatus.setText(R.string.admin_hub_mgmt_status_active);
+            binding.textHubStatus.setBackgroundResource(R.drawable.bg_admin_badge_active);
+            binding.textHubStatus.setTextColor(
+                    ContextCompat.getColor(binding.getRoot().getContext(), R.color.admin_badge_active_text));
+            binding.buttonHubToggleStatus.setText(R.string.admin_hub_mgmt_btn_deactivate);
+            binding.buttonHubToggleStatus.setBackgroundTintList(
+                    ColorStateList.valueOf(ContextCompat.getColor(
+                            binding.getRoot().getContext(), R.color.admin_button_danger_bg)));
+        }
+
+        private void applyInactiveState() {
+            binding.textHubStatus.setText(R.string.admin_hub_mgmt_status_inactive);
+            binding.textHubStatus.setBackgroundResource(R.drawable.bg_admin_badge_suspended);
+            binding.textHubStatus.setTextColor(
+                    ContextCompat.getColor(binding.getRoot().getContext(), R.color.admin_badge_suspended_text));
+            binding.buttonHubToggleStatus.setText(R.string.admin_hub_mgmt_btn_activate);
+            binding.buttonHubToggleStatus.setBackgroundTintList(
+                    ColorStateList.valueOf(ContextCompat.getColor(
+                            binding.getRoot().getContext(), R.color.admin_button_success_bg)));
+        }
+
+        @NonNull
+        private String resolveText(String value, @StringRes int fallbackRes) {
+            if (value == null || value.trim().isEmpty()) {
+                return binding.getRoot().getContext().getString(fallbackRes);
+            }
+            return value.trim();
+        }
+
+        @NonNull
+        private String resolveOperatingHoursText(String operatingHours) {
+            String content = operatingHours;
+            if (content == null || content.trim().isEmpty()) {
+                content = binding.getRoot().getContext().getString(R.string.admin_hub_mgmt_operating_hours_empty);
+            } else {
+                content = content.trim();
+            }
+            return binding.getRoot().getContext().getString(
+                    R.string.admin_hub_mgmt_operating_hours_format,
+                    content);
+        }
+
+        @NonNull
+        private String resolvePhoneText(String phoneNumber) {
+            String content = phoneNumber;
+            if (content == null || content.trim().isEmpty()) {
+                content = binding.getRoot().getContext().getString(R.string.admin_hub_detail_phone_empty_value);
+            } else {
+                content = content.trim();
+            }
+            return binding.getRoot().getContext().getString(R.string.admin_hub_detail_phone_format, content);
+        }
     }
 
     public interface HubActionListener {
-        void onViewHubDetails(@NonNull AdminHubManagementViewModel.Hub hub);
+        void onViewHubDetails(@NonNull Hub hub);
 
-        void onToggleHubStatus(@NonNull AdminHubManagementViewModel.Hub hub);
+        void onToggleHubStatus(@NonNull Hub hub);
     }
 }

@@ -24,4 +24,9 @@
     <color name="volunteer_current_mission_health_dot">#FACC15</color>
     <color name="volunteer_current_mission_note_bg">#1A2D45</color>
     <color name="volunteer_current_mission_note_stroke">#FACC15</color>
+
+    <!-- Volunteer Map Colors -->
+    <color name="volunteer_map_instruction_card_bg">#1A2D45</color>
+    <color name="volunteer_map_instruction_card_stroke">#2A3C52</color>
+    <color name="volunteer_map_instruction_order_bg">#2F86E8</color>
 </resources>

@@ -1,5 +1,7 @@
 package com.drc.aidbridge.ui.main.adapter.staff;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.ItemStaffImportDetailBinding;
+import com.drc.aidbridge.domain.model.staff.InventoryConfirmItem;
+import com.drc.aidbridge.domain.model.staff.InventoryQrPreviewItem;
+import com.drc.aidbridge.domain.model.staff.InboundDraftItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +86,54 @@ public class StaffImportDetailAdapter extends RecyclerView.Adapter<RecyclerView.
         notifyItemRangeInserted(start, newItems.size());
     }
 
+    public void submitPreviewItems(List<InventoryQrPreviewItem> previewItems) {
+        items.clear();
+        if (previewItems != null) {
+            for (InventoryQrPreviewItem previewItem : previewItems) {
+                if (previewItem == null) {
+                    continue;
+                }
+                items.add(new ImportDetailItem(
+                        previewItem.getItemCategoryId(),
+                        previewItem.getName(),
+                        previewItem.getQuantity(),
+                        previewItem.getUnit(),
+                        previewItem.getParentCategoryName()
+                ));
+            }
+        }
+        isLoadingMore = false;
+        notifyDataSetChanged();
+    }
+
+    public void submitDraftItems(List<InboundDraftItem> draftItems) {
+        items.clear();
+        if (draftItems != null) {
+            for (InboundDraftItem draftItem : draftItems) {
+                if (draftItem == null) {
+                    continue;
+                }
+                items.add(new ImportDetailItem(
+                        draftItem.getItemCategoryId(),
+                        draftItem.getItemName(),
+                        draftItem.getQuantity(),
+                        draftItem.getUnit(),
+                        draftItem.getParentCategoryName()
+                ));
+            }
+        }
+        isLoadingMore = false;
+        notifyDataSetChanged();
+    }
+
+    public List<InventoryConfirmItem> getConfirmItems() {
+        List<InventoryConfirmItem> confirmItems = new ArrayList<>();
+        for (ImportDetailItem item : items) {
+            confirmItems.add(new InventoryConfirmItem(item.itemCategoryId, item.confirmQuantity));
+        }
+        return confirmItems;
+    }
+
     public int getDataCount() {
         return items.size();
     }
@@ -103,14 +156,28 @@ public class StaffImportDetailAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     public static class ImportDetailItem {
+        public final String itemCategoryId;
         public final String name;
         public final int donationQuantity;
         public final String unit;
+        public final String parentCategoryName;
+        public int confirmQuantity;
 
         public ImportDetailItem(String name, int donationQuantity, String unit) {
+            this("", name, donationQuantity, unit, "");
+        }
+
+        public ImportDetailItem(String itemCategoryId,
+                                String name,
+                                int donationQuantity,
+                                String unit,
+                                String parentCategoryName) {
+            this.itemCategoryId = itemCategoryId != null ? itemCategoryId : "";
             this.name = name;
             this.donationQuantity = donationQuantity;
             this.unit = unit;
+            this.parentCategoryName = parentCategoryName != null ? parentCategoryName : "";
+            this.confirmQuantity = Math.max(donationQuantity, 1);
         }
     }
 
@@ -133,13 +200,43 @@ public class StaffImportDetailAdapter extends RecyclerView.Adapter<RecyclerView.
             binding.tvName.setText(item.name);
             binding.tvDonationValue.setText(binding.getRoot().getContext().getString(
                     R.string.staff_detail_donation_prefix
-            ) + " " + item.donationQuantity + " " + item.unit);
+            ) + " " + item.donationQuantity + " " + item.unit
+                    + (item.parentCategoryName.isEmpty() ? "" : " - " + item.parentCategoryName));
+            Object existingWatcher = binding.etQuantity.getTag();
+            if (existingWatcher instanceof TextWatcher) {
+                binding.etQuantity.removeTextChangedListener((TextWatcher) existingWatcher);
+            }
+            binding.etQuantity.setText(String.valueOf(item.confirmQuantity));
+            TextWatcher watcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    item.confirmQuantity = parsePositiveInt(s != null ? s.toString() : "");
+                }
+            };
+            binding.etQuantity.addTextChangedListener(watcher);
+            binding.etQuantity.setTag(watcher);
             binding.ivStatus.setImageResource(R.drawable.ic_circle_check);
             binding.ivStatus.setColorFilter(ContextCompat.getColor(
                     binding.getRoot().getContext(),
                     R.color.safe_green
             ));
             binding.tvErrorBadge.setVisibility(android.view.View.GONE);
+        }
+
+        private int parsePositiveInt(String value) {
+            try {
+                return Math.max(Integer.parseInt(value.trim()), 0);
+            } catch (NumberFormatException ignored) {
+                return 0;
+            }
         }
     }
 }

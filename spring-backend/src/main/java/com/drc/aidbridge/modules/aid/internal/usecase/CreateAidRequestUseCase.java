@@ -1,6 +1,6 @@
 package com.drc.aidbridge.modules.aid.internal.usecase;
 
-import com.drc.aidbridge.modules.shared.enums.AidStatus;
+import com.drc.aidbridge.modules.aid.AidRequestCreatedEvent;
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequest;
 import com.drc.aidbridge.modules.aid.internal.entity.AidRequestItem;
 import com.drc.aidbridge.modules.aid.internal.mapper.AidMapper;
@@ -8,9 +8,10 @@ import com.drc.aidbridge.modules.aid.internal.repository.AidRequestItemJpaReposi
 import com.drc.aidbridge.modules.aid.internal.repository.AidRequestJpaRepository;
 import com.drc.aidbridge.modules.aid.internal.web.dto.AidRequestResponse;
 import com.drc.aidbridge.modules.aid.internal.web.dto.CreateAidRequest;
-import com.drc.aidbridge.modules.aid.AidRequestCreatedEvent;
+import com.drc.aidbridge.modules.shared.enums.AidStatus;
 import com.drc.aidbridge.modules.user.UserFacade;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CreateAidRequestUseCase {
@@ -32,7 +34,6 @@ public class CreateAidRequestUseCase {
 
     @Transactional
     public AidRequestResponse execute(UUID requesterId, CreateAidRequest request) {
-        // Validate requester exists via facade
         userFacade.getUserById(requesterId);
 
         int adults = request.getAdultsCount() != null ? request.getAdultsCount() : 0;
@@ -44,30 +45,37 @@ public class CreateAidRequestUseCase {
         }
 
         AidRequest aidRequest = AidRequest.builder()
-                .requesterId(requesterId)
-                .status(AidStatus.PENDING)
-                .location(AidRequest.createPoint(request.getLat().doubleValue(), request.getLng().doubleValue()))
-                .address(request.getAddress())
-                .description(request.getNotes())
-                .numberAdult(adults)
-                .numberElderly(elderly)
-                .numberChildren(children)
-                .build();
+            .requesterId(requesterId)
+            .status(AidStatus.PENDING)
+            .location(AidRequest.createPoint(request.getLat().doubleValue(), request.getLng().doubleValue()))
+            .address(request.getAddress())
+            .description(request.getNotes())
+            .numberAdult(adults)
+            .numberElderly(elderly)
+            .numberChildren(children)
+            .build();
 
         AidRequest saved = aidRequestRepository.save(aidRequest);
 
         List<AidRequestItem> items = request.getItems().stream()
-                .map(aidMapper::toItemEntity)
-                .peek(i -> i.setAidRequest(saved))
-                .collect(Collectors.toList());
+            .map(aidMapper::toItemEntity)
+            .peek(item -> item.setAidRequest(saved))
+            .collect(Collectors.toList());
 
         List<AidRequestItem> savedItems = aidRequestItemRepository.saveAll(items);
         saved.setItems(savedItems);
 
-        // Publish event so mission module can create delivery mission in a transactional listener
         BigDecimal lat = saved.getLocation() != null ? BigDecimal.valueOf(saved.getLocation().getY()) : null;
         BigDecimal lng = saved.getLocation() != null ? BigDecimal.valueOf(saved.getLocation().getX()) : null;
 
+        log.info(
+            "Creating aid request id={} requesterId={} urgencyLevel={} lat={} lng={}",
+            saved.getId(),
+            requesterId,
+            request.getUrgencyLevel(),
+            lat,
+            lng
+        );
         eventPublisher.publishEvent(new AidRequestCreatedEvent(saved.getId(), lat, lng));
 
         return aidMapper.toResponse(saved, savedItems, null);

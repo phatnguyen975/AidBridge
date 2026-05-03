@@ -81,9 +81,9 @@ public class GetDispatchAttemptsUseCase {
         DispatchAttemptResponse.VolunteerBrief volunteerBrief = null;
         if (volunteer != null) {
             volunteerBrief = DispatchAttemptResponse.VolunteerBrief.builder()
-                    .id(UUID.fromString(volunteer.getId()))
-                    .fullName(volunteer.getName())
-                    .phoneNumber(volunteer.getPhone())
+                    .id(volunteer.getId())
+                    .fullName(volunteer.getFullName())
+                    .phoneNumber(volunteer.getPhoneNumber())
                     .avatarUrl(volunteer.getAvatarUrl())
                     .build();
         }

@@ -11,8 +11,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.UUID;
 
 @Slf4j
@@ -33,6 +36,7 @@ public class CreateMissionUseCase {
                 .sosRequestId(request.getSosRequestId())
                 .aidRequestId(request.getAidRequestId())
                 .hubId(request.getHubId())
+                .codeName(generateMissionCodeName())
                 .status(MissionStatus.PENDING)
                 .priorityScore(request.getPriorityScore() != null ? request.getPriorityScore() : BigDecimal.ZERO)
                 .victimLocation(Mission.createPoint(request.getVictimLat(), request.getVictimLng()))
@@ -54,5 +58,17 @@ public class CreateMissionUseCase {
             preferredVolunteerIds.addAll(request.getVolunteerIds());
         }
         return preferredVolunteerIds.stream().distinct().toList();
+    }
+
+    private String generateMissionCodeName() {
+        String datePart = LocalDate.now(ZoneOffset.UTC).toString().replace("-", "");
+        for (int i = 0; i < 10; i++) {
+            String randomPart = String.format("%04d", ThreadLocalRandom.current().nextInt(0, 10000));
+            String codeName = "MSN" + datePart + randomPart;
+            if (!missionRepository.existsByCodeName(codeName)) {
+                return codeName;
+            }
+        }
+        throw new IllegalStateException("Unable to generate unique mission code name");
     }
 }

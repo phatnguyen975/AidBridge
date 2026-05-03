@@ -31,6 +31,8 @@ import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.ActivityMainBinding;
 import com.drc.aidbridge.domain.enums.UserRole;
 import com.drc.aidbridge.domain.usecase.auth.LogoutUseCase;
+import com.drc.aidbridge.service.EmergencyTrackingService;
+import com.drc.aidbridge.service.UserLocationManager;
 import com.drc.aidbridge.ui.auth.AuthActivity;
 import com.drc.aidbridge.ui.base.BaseActivity;
 import com.drc.aidbridge.ui.main.fragment.volunteer.VoluteerMissionAcceptanceFragment;
@@ -58,6 +60,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     @Inject
     LogoutUseCase logoutUseCase;
 
+    @Inject
+    UserLocationManager userLocationManager;
+
     private NavController navController;
 
     // Declare the launcher at the top of your Activity/Fragment:
@@ -71,14 +76,45 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 }
             });
 
+    private final ActivityResultLauncher<String[]> requestLocationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                if (hasLocationPermission()) {
+                    userLocationManager.startForegroundTracking();
+                    return;
+                }
+
+                if (shouldTrackForegroundLocation()) {
+                    Toast.makeText(
+                        this,
+                        R.string.main_location_permission_required,
+                        Toast.LENGTH_LONG
+                    ).show();
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupNavigation();
 
         askNotificationPermission();
+        ensureForegroundLocationTracking();
         fetchFcmToken();
         handleLaunchIntent(getIntent());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (shouldTrackForegroundLocation() && hasLocationPermission()) {
+            userLocationManager.startForegroundTracking();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        userLocationManager.stopForegroundTracking();
+        super.onStop();
     }
 
     @Override
@@ -122,6 +158,22 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 Log.d(TAG, "Use this token to test messages in Firebase Console.");
                 Log.d(TAG, "=============================================");
             });
+    }
+
+    private void ensureForegroundLocationTracking() {
+        if (!shouldTrackForegroundLocation()) {
+            return;
+        }
+
+        if (hasLocationPermission()) {
+            userLocationManager.startForegroundTracking();
+            return;
+        }
+
+        requestLocationPermissionLauncher.launch(new String[] {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        });
     }
 
     @Override
@@ -395,6 +447,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         }
     }
 
+    private boolean shouldTrackForegroundLocation() {
+        UserRole role = UserRole.fromStringSafe(tokenManager.getUserRole());
+        return role == UserRole.VICTIM || role == UserRole.VOLUNTEER;
+    }
+
+    private boolean hasLocationPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED;
+    }
+
     private static final class RoleShellConfig {
         final int menuResId;
         final int navGraphResId;
@@ -405,6 +469,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     public void requestLogout() {
+        EmergencyTrackingService.stopTracking(this);
+        userLocationManager.stopForegroundTracking();
         LiveData<NetworkResultWrapper<Boolean>> logoutResult = logoutUseCase.execute();
         logoutResult.observe(this, result -> {
             if (result == null || result.isLoading() || result.hasBeenHandled()) {
@@ -417,6 +483,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void navigateToAuthShell() {
+        EmergencyTrackingService.stopTracking(this);
+        userLocationManager.stopForegroundTracking();
         Intent intent = new Intent(this, AuthActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

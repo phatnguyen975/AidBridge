@@ -30,6 +30,9 @@
     <string name="volunteer_dashboard_toast_view_mission_detail">Xem chi tiết nhiệm vụ cứu hộ</string>
     <string name="volunteer_dashboard_toast_logout">Xử lý đăng xuất</string>
     <string name="volunteer_dashboard_toast_personal_info_todo">Tính năng Thông tin cá nhân đang được phát triển</string>
+    <string name="volunteer_dashboard_location_permission_required">Can quyen vi tri de bat che do san sang</string>
+    <string name="volunteer_dashboard_location_disabled">Hay bat GPS de cap nhat vi tri khi san sang</string>
+    <string name="volunteer_dashboard_location_unavailable">Chua lay duoc vi tri hien tai. Vui long thu lai.</string>
 
     <!-- Volunteer Mission History Item -->
     <string name="volunteer_mission_history_category_emergency">Cứu hộ khẩn cấp</string>
@@ -175,6 +178,7 @@
     <string name="volunteer_personal_info_toast_change_password_success">Đổi mật khẩu thành công</string>
     <string name="volunteer_personal_info_toast_change_password_mismatch">Xác nhận mật khẩu không khớp</string>
     <string name="volunteer_personal_info_toast_change_password_empty">Vui lòng nhập đầy đủ mật khẩu mới và xác nhận</string>
+    <string name="volunteer_personal_info_message_avatar_updated">Cập nhật ảnh đại diện thành công</string>
 
     <!-- Volunteer SOS Acceptance -->
     <string name="volunteer_sos_acceptance_title">Nhiệm vụ mới</string>
@@ -215,8 +219,8 @@
     <string name="volunteer_mission_acceptance_supply_items_fallback">Chi tiết vật phẩm sẽ được cập nhật sau khi xác nhận nhiệm vụ.</string>
     <string name="volunteer_mission_acceptance_rescue_subject">Người cần cứu hộ</string>
     <string name="volunteer_mission_acceptance_delivery_subject">Điểm tiếp nhận hỗ trợ</string>
-    <string name="volunteer_mission_acceptance_coordinates_badge">Tọa độ %.4f, %.4f</string>
-    <string name="volunteer_mission_acceptance_coordinates_fallback">Tọa độ %.4f, %.4f</string>
+    <string name="volunteer_mission_acceptance_coordinates_badge">Tọa độ %1$.4f, %2$.4f</string>
+    <string name="volunteer_mission_acceptance_coordinates_fallback">Tọa độ %1$.4f, %2$.4f</string>
     <string name="volunteer_mission_acceptance_distance_unavailable">Vị trí đang được cập nhật</string>
     <string name="volunteer_mission_reject_reason_title">Chọn lý do từ chối</string>
     <string name="volunteer_mission_reject_reason_busy">Đang bận</string>
@@ -250,4 +254,28 @@
     <string name="volunteer_current_mission_toast_arrived">Đã xác nhận đến vị trí nạn nhân</string>
     <string name="volunteer_current_mission_toast_completed">Nhiệm vụ đã hoàn thành</string>
     <string name="volunteer_current_mission_dialer_not_found">Không tìm thấy ứng dụng gọi điện</string>
+
+    <!-- Volunteer Map -->
+    <string name="volunteer_map_dev_panel_title">Bảng Điều Khiển Tình Nguyện Viên (Dev)</string>
+    <string name="volunteer_map_dev_coords_hint">Nhập tọa độ (VD: 10.762622, 106.660172)</string>
+    <string name="volunteer_map_dev_apply_coordinates">Áp Dụng Tọa Độ</string>
+    <string name="volunteer_map_dev_scenario_2km">Mô Phỏng: Cách 2km</string>
+    <string name="volunteer_map_dev_scenario_network_drop">Mô Phỏng: Mất Mạng</string>
+    <string name="volunteer_map_dev_clear_markers">Xóa Tất Cả Marker</string>
+    
+    <string name="volunteer_map_route_options">Tùy Chọn Tuyến Đường</string>
+    <string name="volunteer_map_strategy_urgent">Nhanh Nhất (Khẩn Cấp)</string>
+    <string name="volunteer_map_strategy_safe">An Toàn Nhất</string>
+    <string name="volunteer_map_strategy_heavy_aid">Tải Trọng Nặng (Xe Cứu Trợ)</string>
+    <string name="volunteer_map_strategy_community">Qua Các Trạm Cộng Đồng</string>
+    <string name="volunteer_map_strategy_offroad">Địa Hình Phức Tạp</string>
+    <string name="volunteer_map_avoid_dangerous">Tránh Khu Vực Nguy Hiểm</string>
+    <string name="volunteer_map_apply_options">Áp Dụng</string>
+    
+    <string name="volunteer_map_start_mode_sheet_title">Chọn Chế Độ Bắt Đầu</string>
+    <string name="volunteer_map_start_mode_sheet_subtitle">Vui lòng chọn cách bạn muốn bắt đầu hành trình</string>
+    <string name="volunteer_map_start_mode_manual">Nhập Thủ Công</string>
+    <string name="volunteer_map_start_mode_manual_desc">Tự nhập vị trí xuất phát của bạn</string>
+    <string name="volunteer_map_start_mode_current">Vị Trí Hiện Tại</string>
+    <string name="volunteer_map_start_mode_current_desc">Sử dụng GPS của thiết bị</string>
 </resources>

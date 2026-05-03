@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:padding="@dimen/spacing_md">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/volunteer_map_start_mode_sheet_title"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_lg"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:text="@string/volunteer_map_start_mode_sheet_subtitle"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_sm" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardStartModeManual"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/volunteer_map_instruction_card_bg"
+            app:cardCornerRadius="@dimen/radius_lg"
+            app:strokeColor="@color/volunteer_map_instruction_card_stroke"
+            app:strokeWidth="@dimen/volunteer_map_instruction_stroke">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_md">
+
+                <ImageView
+                    android:layout_width="@dimen/volunteer_map_start_mode_icon_size"
+                    android:layout_height="@dimen/volunteer_map_start_mode_icon_size"
+                    android:src="@drawable/ic_dot_green" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_sm"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/volunteer_map_start_mode_manual"
+                        android:textColor="@color/volunteer_acceptance_text_primary"
+                        android:textSize="@dimen/text_md"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="@string/volunteer_map_start_mode_manual_desc"
+                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                        android:textSize="@dimen/text_sm" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="@dimen/volunteer_map_start_mode_chevron_size"
+                    android:layout_height="@dimen/volunteer_map_start_mode_chevron_size"
+                    android:src="@drawable/ic_chevron_right"
+                    android:tint="@color/white" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardStartModeCurrent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/volunteer_map_instruction_card_bg"
+            app:cardCornerRadius="@dimen/radius_lg"
+            app:strokeColor="@color/volunteer_map_instruction_card_stroke"
+            app:strokeWidth="@dimen/volunteer_map_instruction_stroke">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_md">
+
+                <ImageView
+                    android:layout_width="@dimen/volunteer_map_start_mode_icon_size"
+                    android:layout_height="@dimen/volunteer_map_start_mode_icon_size"
+                    android:src="@drawable/ic_wifi_tethering"
+                    android:tint="@color/volunteer_acceptance_accept_button_bg" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_sm"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/volunteer_map_start_mode_current"
+                        android:textColor="@color/volunteer_acceptance_text_primary"
+                        android:textSize="@dimen/text_md"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="@string/volunteer_map_start_mode_current_desc"
+                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                        android:textSize="@dimen/text_sm" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="@dimen/volunteer_map_start_mode_chevron_size"
+                    android:layout_height="@dimen/volunteer_map_start_mode_chevron_size"
+                    android:src="@drawable/ic_chevron_right"
+                    android:tint="@color/white" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

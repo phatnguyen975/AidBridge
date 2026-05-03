@@ -5,8 +5,11 @@ import androidx.lifecycle.Transformations;
 
 import com.drc.aidbridge.data.mapper.volunteer.VolunteerInfoMapper;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
+import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerHistoryDataDto;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerHistoryItemDto;
+import com.drc.aidbridge.data.remote.dto.response.volunteer.VolunteerHistoryPaginationDto;
 import com.drc.aidbridge.domain.model.volunteer.VolunteerHistoryItem;
+import com.drc.aidbridge.domain.model.volunteer.VolunteerHistoryPage;
 import com.drc.aidbridge.domain.repository.volunteer.VolunteerRepository;
 
 import java.util.ArrayList;
@@ -26,9 +29,9 @@ public class GetVolunteerMissionHistoryUseCase {
         this.volunteerInfoMapper = volunteerInfoMapper;
     }
 
-    public LiveData<NetworkResultWrapper<List<VolunteerHistoryItem>>> execute() {
+    public LiveData<NetworkResultWrapper<VolunteerHistoryPage>> execute(int page, int limit) {
         return Transformations.map(
-                volunteerRepository.getMissionHistory(),
+                volunteerRepository.getMissionHistory(page, limit),
                 result -> {
                     if (result == null) {
                         return NetworkResultWrapper.error("Dữ liệu lịch sử nhiệm vụ không hợp lệ.");
@@ -42,14 +45,32 @@ public class GetVolunteerMissionHistoryUseCase {
                         return NetworkResultWrapper.error(result.getMessage());
                     }
 
-                    List<VolunteerHistoryItemDto> source = result.getData();
+                    VolunteerHistoryDataDto dataDto = result.getData();
                     List<VolunteerHistoryItem> mapped = new ArrayList<>();
-                    if (source != null) {
-                        for (VolunteerHistoryItemDto itemDto : source) {
+                    List<VolunteerHistoryItemDto> sourceItems = dataDto != null ? dataDto.getItems() : null;
+                    if (sourceItems != null) {
+                        for (VolunteerHistoryItemDto itemDto : sourceItems) {
                             mapped.add(volunteerInfoMapper.mapToHistoryItemDomain(itemDto));
                         }
                     }
-                    return NetworkResultWrapper.success(mapped);
+
+                    VolunteerHistoryPaginationDto pagination = dataDto != null ? dataDto.getPagination() : null;
+                    int mappedPage = pagination != null ? pagination.getPage() : page;
+                    int mappedLimit = pagination != null ? pagination.getLimit() : limit;
+                    long mappedTotal = pagination != null ? pagination.getTotal() : mapped.size();
+                    int mappedTotalPages = pagination != null ? pagination.getTotalPages() : 1;
+                    boolean mappedHasNext = pagination != null && pagination.isHasNext();
+                    boolean mappedHasPrevious = pagination != null && pagination.isHasPrevious();
+
+                    VolunteerHistoryPage historyPage = new VolunteerHistoryPage(
+                            mapped,
+                            mappedPage,
+                            mappedLimit,
+                            mappedTotal,
+                            mappedTotalPages,
+                            mappedHasNext,
+                            mappedHasPrevious);
+                    return NetworkResultWrapper.success(historyPage);
                 });
     }
 }
