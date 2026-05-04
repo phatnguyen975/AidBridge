@@ -290,7 +290,7 @@ public class MissionFacadeImpl implements MissionFacade {
 
     @Override
     public List<SosDTO> findSosByStatusAndDateRange(MissionStatus status, Instant start, Instant end) {
-        return missionRepository.findSosByMissionStatus(status, start, end)
+        return missionRepository.findSosByMissionStatus(status.name(), start, end)
                 .stream()
                 .map(sosMapper::toDTO)
                 .collect(Collectors.toList());
@@ -298,15 +298,15 @@ public class MissionFacadeImpl implements MissionFacade {
 
     @Override
     public List<AidRequestDTO> findAidByStatusAndDateRange(MissionStatus status, Instant start, Instant end) {
-        return missionRepository.findAidByMissionStatus(status, start, end)
+        return missionRepository.findAidByMissionStatus(status.name(), start, end)
                 .stream()
                 .map(aidMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     private String generateMissionCodeName() {
-    String timePart = String.valueOf(System.currentTimeMillis()).substring(7);
-    String randomPart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
-    return "MSN-" + timePart + "-" + randomPart;
+        String timePart = String.valueOf(System.currentTimeMillis()).substring(7);
+        String randomPart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
+        return "MSN-" + timePart + "-" + randomPart;
     }
 }
