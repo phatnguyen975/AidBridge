@@ -23,10 +23,16 @@ import com.drc.aidbridge.modules.aid.internal.entity.AidRequest;
 public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
 
         Optional<Mission> findBySosRequestId(UUID sosRequestId);
+        List<Mission> findBySosRequestIdIn(List<UUID> sosRequestIds);
 
         Optional<Mission> findByAidRequestId(UUID aidRequestId);
+        List<Mission> findByAidRequestIdIn(List<UUID> aidRequestIds);
 
-        Optional<Mission> findByQrCodeToken(String qrCodeToken);
+        @Query("SELECT m FROM Mission m WHERE m.sosRequestId IN (SELECT s.id FROM SosRequest s WHERE s.requesterId = :requesterId)")
+        List<Mission> findMissionsBySosRequesterId(@Param("requesterId") UUID requesterId);
+
+        @Query("SELECT m FROM Mission m WHERE m.aidRequestId IN (SELECT a.id FROM AidRequest a WHERE a.requesterId = :requesterId)")
+        List<Mission> findMissionsByAidRequesterId(@Param("requesterId") UUID requesterId);
 
         Optional<Mission> findByCodeNameIgnoreCase(String codeName);
 
@@ -310,6 +316,17 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
         default List<Mission> findPendingDispatch() {
                 return findPendingDispatchWithStatuses(List.of(MissionStatus.PENDING, MissionStatus.DISPATCHING));
         }
+
+        /**
+         * Tìm các missions cần retry dispatch dựa trên status, số lần retry và thời gian dispatch cuối
+         */
+        @Query("SELECT m FROM Mission m WHERE m.status IN (:statuses) " +
+               "AND m.retryCount < :maxRetry " +
+               "AND (m.lastDispatchAt IS NULL OR m.lastDispatchAt < :threshold) " +
+               "ORDER BY m.priorityScore DESC, m.createdAt ASC")
+        List<Mission> findMissionsForRetry(@Param("statuses") List<MissionStatus> statuses,
+                                          @Param("threshold") Instant threshold,
+                                          @Param("maxRetry") int maxRetry);
 
         /**
          * JPQL join to get SosRequest entities based on Mission status and date range

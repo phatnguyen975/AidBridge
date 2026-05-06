@@ -9,7 +9,7 @@ import com.drc.aidbridge.ui.map.base.BaseMapFragment;
 import com.drc.aidbridge.ui.main.viewmodel.guest.GuestMapViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
-
+import com.drc.aidbridge.R;
 @AndroidEntryPoint
 public class GuestMapFragment extends BaseMapFragment<GuestMapViewModel> {
 
@@ -31,7 +31,7 @@ public class GuestMapFragment extends BaseMapFragment<GuestMapViewModel> {
 
     @Override
     protected int getContentLayout() {
-        return 0;
+        return R.layout.fragment_guest_map;
     }
 
     @Override

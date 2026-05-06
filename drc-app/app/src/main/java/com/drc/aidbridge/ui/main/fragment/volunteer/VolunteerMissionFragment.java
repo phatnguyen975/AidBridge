@@ -265,6 +265,10 @@ public class VolunteerMissionFragment extends BaseFragment<FragmentVolunteerMiss
                 stopGlowAnimation();
                 binding.cardSosAlert.setVisibility(View.GONE);
                 android.widget.Toast.makeText(requireContext(), "Đã nhận tín hiệu SOS thành công.", android.widget.Toast.LENGTH_SHORT).show();
+                
+                // Tự động load lại dữ liệu để hiển thị nhiệm vụ hiện tại và cập nhật lịch sử
+                volunteerTaskViewModel.fetchCurrentMission();
+                volunteerTaskViewModel.fetchMissionHistoryFull(currentPage, PAGE_LIMIT);
             } else if (result != null && result.isError()) {
                 android.widget.Toast.makeText(requireContext(), "Nhận thất bại: " + result.getMessage(), android.widget.Toast.LENGTH_SHORT).show();
             }

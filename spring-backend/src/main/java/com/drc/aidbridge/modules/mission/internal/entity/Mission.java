@@ -90,6 +90,13 @@ public class Mission {
     @Column(name = "comment", columnDefinition = "text")
     private String comment;
 
+    @Column(name = "retry_count")
+    @Builder.Default
+    private Integer retryCount = 0;
+
+    @Column(name = "last_dispatch_at")
+    private Instant lastDispatchAt;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

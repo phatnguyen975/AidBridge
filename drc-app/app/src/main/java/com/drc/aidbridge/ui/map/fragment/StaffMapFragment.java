@@ -9,7 +9,7 @@ import com.drc.aidbridge.ui.map.base.BaseMapFragment;
 import com.drc.aidbridge.ui.main.viewmodel.staff.StaffMapViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
-
+import com.drc.aidbridge.R;
 @AndroidEntryPoint
 public class StaffMapFragment extends BaseMapFragment<StaffMapViewModel> {
 
@@ -31,7 +31,7 @@ public class StaffMapFragment extends BaseMapFragment<StaffMapViewModel> {
 
     @Override
     protected int getContentLayout() {
-        return 0;
+        return R.layout.fragment_map_staff;
     }
 
     @Override

@@ -59,14 +59,31 @@ public class DispatchMissionUseCase {
         Mission mission = missionRepository.findById(missionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Mission not found: " + missionId));
 
-        if (mission.getStatus() != MissionStatus.PENDING) {
+        // Allow dispatch if PENDING or DISPATCHING (for retries)
+        if (mission.getStatus() != MissionStatus.PENDING && mission.getStatus() != MissionStatus.DISPATCHING) {
             log.info("Skipping dispatch for mission {} because status is {}", missionId, mission.getStatus());
             return buildResponse(mission);
         }
 
+        // Increment retry count if this is a subsequent attempt
+        if (mission.getLastDispatchAt() != null) {
+            mission.setRetryCount(mission.getRetryCount() + 1);
+        }
+        mission.setLastDispatchAt(Instant.now());
+
+        // Check if max retry limit reached
+        if (mission.getRetryCount() >= 5) {
+            log.warn("Mission {} reached max retry limit. Setting status to DISPATCH_FAILED", missionId);
+            mission.setStatus(MissionStatus.DISPATCH_FAILED);
+            Mission savedMission = missionRepository.save(mission);
+            return buildResponse(savedMission);
+        }
+
         DispatchPlan plan = buildDispatchPlan(mission, preferredVolunteerIds);
         if (plan.volunteers().isEmpty()) {
-            log.info("No eligible volunteers found for mission {}. Mission remains PENDING", missionId);
+            log.info("No eligible volunteers found for mission {} (Attempt {}). Mission remains PENDING", 
+                    missionId, mission.getRetryCount() + 1);
+            missionRepository.save(mission); // Save lastDispatchAt and retryCount
             return buildResponse(mission);
         }
 
@@ -136,7 +153,8 @@ public class DispatchMissionUseCase {
 
         List<VolunteerDTO> nearby = volunteerFacade.findNearbyVolunteers(
                 mission.getVictimLat(),
-                mission.getVictimLng());
+                mission.getVictimLng(),
+                mission.getRetryCount());
 
         List<VolunteerDTO> selected = nearby.stream()
                 .filter(this::isEligibleVolunteer)
@@ -154,7 +172,8 @@ public class DispatchMissionUseCase {
 
         List<VolunteerDTO> nearby = volunteerFacade.findNearbyVolunteers(
                 mission.getVictimLat(),
-                mission.getVictimLng());
+                mission.getVictimLng(),
+                mission.getRetryCount());
 
         List<VolunteerDTO> selected = nearby.stream()
                 .filter(this::isEligibleVolunteer)
