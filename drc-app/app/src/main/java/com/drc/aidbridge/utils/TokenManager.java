@@ -61,6 +61,18 @@ public class TokenManager {
                              String role,
                              String avatarUrl,
                              boolean verified) {
+        saveUserInfo(userId, userName, email, phone, role, avatarUrl, verified, null);
+    }
+
+    /** Caches user metadata locally after login for quick access throughout the app. */
+    public void saveUserInfo(String userId,
+                             String userName,
+                             String email,
+                             String phone,
+                             String role,
+                             String avatarUrl,
+                             boolean verified,
+                             @Nullable String createdAt) {
         prefs.edit()
                 .putString(Constants.KEY_USER_ID, userId)
                 .putString(Constants.KEY_USER_NAME, userName)
@@ -69,6 +81,7 @@ public class TokenManager {
                 .putString(Constants.KEY_USER_ROLE, role)
                 .putString(Constants.KEY_USER_AVATAR, avatarUrl)
                 .putBoolean(Constants.KEY_USER_VERIFIED, verified)
+                .putString(Constants.KEY_USER_CREATED_AT, createdAt)
                 .apply();
     }
 
@@ -124,6 +137,11 @@ public class TokenManager {
         return prefs.getString(Constants.KEY_USER_ADDRESS, null);
     }
 
+    /** Returns the account creation timestamp from the latest user profile response. */
+    public String getUserCreatedAt() {
+        return prefs.getString(Constants.KEY_USER_CREATED_AT, null);
+    }
+
     public void saveLastKnownLocation(double latitude, double longitude, long updatedAtMillis) {
         prefs.edit()
             .putString(Constants.KEY_LAST_LOCATION_LAT, Double.toString(latitude))
@@ -171,6 +189,16 @@ public class TokenManager {
                                String email,
                                String avatarUrl,
                                String address) {
+        updateUserInfo(userName, phone, email, avatarUrl, address, null);
+    }
+
+    /** Updates editable user fields after successful profile API calls. */
+    public void updateUserInfo(String userName,
+                               String phone,
+                               String email,
+                               String avatarUrl,
+                               String address,
+                               String createdAt) {
         SharedPreferences.Editor editor = prefs.edit();
 
         if (userName != null) {
@@ -195,6 +223,10 @@ public class TokenManager {
 
         if (address != null) {
             editor.putString(Constants.KEY_USER_ADDRESS, address);
+        }
+
+        if (createdAt != null) {
+            editor.putString(Constants.KEY_USER_CREATED_AT, createdAt);
         }
 
         editor.apply();
