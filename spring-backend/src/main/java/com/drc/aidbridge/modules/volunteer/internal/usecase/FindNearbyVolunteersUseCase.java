@@ -4,7 +4,6 @@ import com.drc.aidbridge.modules.volunteer.VolunteerDTO;
 import com.drc.aidbridge.modules.volunteer.internal.entity.Volunteer;
 import com.drc.aidbridge.modules.volunteer.internal.mapper.VolunteerMapper;
 import com.drc.aidbridge.modules.volunteer.internal.repository.VolunteerJpaRepository;
-import com.drc.aidbridge.modules.volunteer.internal.test.H3Visualizer;
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,10 +62,6 @@ public class FindNearbyVolunteersUseCase {
                     break;
                 }
             }
-
-            // Generate debugging spatial map
-            H3Visualizer.generateMapHtml(
-                    h3Core, centerHex, kRingList, lat.doubleValue(), lng.doubleValue(), candidates);
 
             // Phase 2: Distance Matrix Routing (ETA Ranking)
             // Using graphhopper to calculate the real route from volunteer to user

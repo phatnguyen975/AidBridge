@@ -8,9 +8,11 @@ import com.drc.aidbridge.modules.mission.internal.repository.projection.MissionH
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -21,6 +23,11 @@ import com.drc.aidbridge.modules.aid.internal.entity.AidRequest;
 
 @Repository
 public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
+
+        List<MissionStatus> TERMINAL_STATUSES = List.of(
+                        MissionStatus.COMPLETED,
+                        MissionStatus.CANCELLED,
+                        MissionStatus.DISPATCH_FAILED);
 
         Optional<Mission> findBySosRequestId(UUID sosRequestId);
         List<Mission> findBySosRequestIdIn(List<UUID> sosRequestIds);
@@ -60,63 +67,62 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
         long countByVolunteerIdAndStatus(UUID volunteerId, MissionStatus status);
 
         /**
-         * Tìm tất cả missions đang active (không phải COMPLETED hoặc CANCELLED)
+         * Find missions that are not in a terminal state.
          */
-        @Query("SELECT m FROM Mission m WHERE m.status NOT IN (:completed, :cancelled) ORDER BY m.createdAt DESC")
-        Page<Mission> findAllActiveWithStatuses(@Param("completed") MissionStatus completed,
-                        @Param("cancelled") MissionStatus cancelled, Pageable pageable);
+        @Query("SELECT m FROM Mission m WHERE m.status NOT IN (:terminalStatuses) ORDER BY m.createdAt DESC")
+        Page<Mission> findAllActiveWithStatuses(@Param("terminalStatuses") List<MissionStatus> terminalStatuses,
+                        Pageable pageable);
 
         /**
          * Wrapper method với default params
          */
         default Page<Mission> findAllActive(Pageable pageable) {
-                return findAllActiveWithStatuses(MissionStatus.COMPLETED, MissionStatus.CANCELLED, pageable);
+                return findAllActiveWithStatuses(TERMINAL_STATUSES, pageable);
         }
 
         /**
-         * Tìm tất cả missions đang active theo hub
+         * Find missions that are not in a terminal state by hub.
          */
-        @Query("SELECT m FROM Mission m WHERE m.hubId = :hubId AND m.status NOT IN (:completed, :cancelled) ORDER BY m.createdAt DESC")
+        @Query("SELECT m FROM Mission m WHERE m.hubId = :hubId AND m.status NOT IN (:terminalStatuses) ORDER BY m.createdAt DESC")
         Page<Mission> findActiveByHubIdWithStatuses(@Param("hubId") UUID hubId,
-                        @Param("completed") MissionStatus completed, @Param("cancelled") MissionStatus cancelled,
+                        @Param("terminalStatuses") List<MissionStatus> terminalStatuses,
                         Pageable pageable);
 
         /**
          * Wrapper method với default params
          */
         default Page<Mission> findActiveByHubId(UUID hubId, Pageable pageable) {
-                return findActiveByHubIdWithStatuses(hubId, MissionStatus.COMPLETED, MissionStatus.CANCELLED, pageable);
+                return findActiveByHubIdWithStatuses(hubId, TERMINAL_STATUSES, pageable);
         }
 
         /**
-         * Tìm tất cả missions đang active theo type
+         * Find missions that are not in a terminal state by type.
          */
-        @Query("SELECT m FROM Mission m WHERE m.missionType = :type AND m.status NOT IN (:completed, :cancelled) ORDER BY m.createdAt DESC")
+        @Query("SELECT m FROM Mission m WHERE m.missionType = :type AND m.status NOT IN (:terminalStatuses) ORDER BY m.createdAt DESC")
         Page<Mission> findActiveByTypeWithStatuses(@Param("type") MissionType type,
-                        @Param("completed") MissionStatus completed, @Param("cancelled") MissionStatus cancelled,
+                        @Param("terminalStatuses") List<MissionStatus> terminalStatuses,
                         Pageable pageable);
 
         /**
          * Wrapper method với default params
          */
         default Page<Mission> findActiveByType(MissionType type, Pageable pageable) {
-                return findActiveByTypeWithStatuses(type, MissionStatus.COMPLETED, MissionStatus.CANCELLED, pageable);
+                return findActiveByTypeWithStatuses(type, TERMINAL_STATUSES, pageable);
         }
 
         /**
-         * Tìm tất cả missions đang active theo hub và type
+         * Find missions that are not in a terminal state by hub and type.
          */
-        @Query("SELECT m FROM Mission m WHERE m.hubId = :hubId AND m.missionType = :type AND m.status NOT IN (:completed, :cancelled) ORDER BY m.createdAt DESC")
+        @Query("SELECT m FROM Mission m WHERE m.hubId = :hubId AND m.missionType = :type AND m.status NOT IN (:terminalStatuses) ORDER BY m.createdAt DESC")
         Page<Mission> findActiveByHubIdAndTypeWithStatuses(@Param("hubId") UUID hubId, @Param("type") MissionType type,
-                        @Param("completed") MissionStatus completed, @Param("cancelled") MissionStatus cancelled,
+                        @Param("terminalStatuses") List<MissionStatus> terminalStatuses,
                         Pageable pageable);
 
         /**
          * Wrapper method với default params
          */
         default Page<Mission> findActiveByHubIdAndType(UUID hubId, MissionType type, Pageable pageable) {
-                return findActiveByHubIdAndTypeWithStatuses(hubId, type, MissionStatus.COMPLETED,
-                                MissionStatus.CANCELLED, pageable);
+                return findActiveByHubIdAndTypeWithStatuses(hubId, type, TERMINAL_STATUSES, pageable);
         }
 
         /**
@@ -127,29 +133,28 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
         /**
          * Đếm missions đang active theo type
          */
-        @Query("SELECT COUNT(m) FROM Mission m WHERE m.missionType = :type AND m.status NOT IN (:completed, :cancelled)")
-        long countActiveByTypeWithStatuses(@Param("type") MissionType type, @Param("completed") MissionStatus completed,
-                        @Param("cancelled") MissionStatus cancelled);
+        @Query("SELECT COUNT(m) FROM Mission m WHERE m.missionType = :type AND m.status NOT IN (:terminalStatuses)")
+        long countActiveByTypeWithStatuses(@Param("type") MissionType type,
+                        @Param("terminalStatuses") List<MissionStatus> terminalStatuses);
 
         /**
          * Wrapper method với default params
          */
         default long countActiveByType(MissionType type) {
-                return countActiveByTypeWithStatuses(type, MissionStatus.COMPLETED, MissionStatus.CANCELLED);
+                return countActiveByTypeWithStatuses(type, TERMINAL_STATUSES);
         }
 
         /**
          * Đếm tổng missions đang active
          */
-        @Query("SELECT COUNT(m) FROM Mission m WHERE m.status NOT IN (:completed, :cancelled)")
-        long countAllActiveWithStatuses(@Param("completed") MissionStatus completed,
-                        @Param("cancelled") MissionStatus cancelled);
+        @Query("SELECT COUNT(m) FROM Mission m WHERE m.status NOT IN (:terminalStatuses)")
+        long countAllActiveWithStatuses(@Param("terminalStatuses") List<MissionStatus> terminalStatuses);
 
         /**
          * Wrapper method với default params
          */
         default long countAllActive() {
-                return countAllActiveWithStatuses(MissionStatus.COMPLETED, MissionStatus.CANCELLED);
+                return countAllActiveWithStatuses(TERMINAL_STATUSES);
         }
 
         /**
@@ -322,6 +327,15 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
         List<Mission> findMissionsForRetry(@Param("statuses") List<MissionStatus> statuses,
                                           @Param("threshold") Instant threshold,
                                           @Param("maxRetry") int maxRetry);
+
+        @Modifying(clearAutomatically = true, flushAutomatically = true)
+        @Transactional
+        @Query("UPDATE Mission m SET m.status = :status, m.retryCount = :retryCount, m.lastDispatchAt = :lastDispatchAt " +
+                        "WHERE m.id IN (:missionIds)")
+        int markDispatchesFailed(@Param("missionIds") List<UUID> missionIds,
+                        @Param("status") MissionStatus status,
+                        @Param("retryCount") int retryCount,
+                        @Param("lastDispatchAt") Instant lastDispatchAt);
 
         /**
          * JPQL join to get SosRequest entities based on Mission status and date range
