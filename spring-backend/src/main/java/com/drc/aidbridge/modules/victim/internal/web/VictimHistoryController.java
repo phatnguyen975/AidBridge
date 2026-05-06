@@ -36,11 +36,12 @@ public class VictimHistoryController {
     public ResponseEntity<ApiResponse<VictimHistoryPageResponse>> getHistory(
         @RequestParam(name = "page", defaultValue = "1") int page,
         @RequestParam(name = "size", defaultValue = "10") int size,
-        @RequestParam(name = "timeRange", defaultValue = "1h") String timeRange,
+        @RequestParam(name = "timeRange", defaultValue = "all") String timeRange,
+        @RequestParam(name = "status", required = false) String status,
         Authentication authentication
     ) {
         UUID userId = resolveUserId(authentication);
-        VictimHistoryPageResponse response = getVictimHistoryUseCase.execute(userId, page, size, timeRange);
+        VictimHistoryPageResponse response = getVictimHistoryUseCase.execute(userId, page, size, timeRange, status);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

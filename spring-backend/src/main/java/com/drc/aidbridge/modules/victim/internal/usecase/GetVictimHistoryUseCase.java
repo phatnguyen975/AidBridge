@@ -7,6 +7,9 @@ import com.drc.aidbridge.modules.shared.enums.SosStatus;
 import com.drc.aidbridge.modules.shared.exception.AuthenticationException;
 import com.drc.aidbridge.modules.sos.internal.entity.SosRequest;
 import com.drc.aidbridge.modules.sos.internal.repository.SosJpaRepository;
+import com.drc.aidbridge.modules.mission.internal.entity.Mission;
+import com.drc.aidbridge.modules.mission.internal.repository.MissionJpaRepository;
+import com.drc.aidbridge.modules.shared.enums.MissionStatus;
 import com.drc.aidbridge.modules.victim.internal.web.dto.VictimHistoryItemResponse;
 import com.drc.aidbridge.modules.victim.internal.web.dto.VictimHistoryPageResponse;
 import lombok.RequiredArgsConstructor;
@@ -37,12 +40,13 @@ public class GetVictimHistoryUseCase {
 
     private final SosJpaRepository sosJpaRepository;
     private final AidRequestJpaRepository aidRequestJpaRepository;
+    private final MissionJpaRepository missionJpaRepository;
 
     /**
      * Returns paginated victim history sorted by request creation time (desc).
      */
     @Transactional(readOnly = true)
-    public VictimHistoryPageResponse execute(UUID requesterId, int page, int size, String timeRange) {
+    public VictimHistoryPageResponse execute(UUID requesterId, int page, int size, String timeRange, String statusFilter) {
         if (requesterId == null) {
             throw new AuthenticationException("Unauthorized request");
         }
@@ -52,21 +56,43 @@ public class GetVictimHistoryUseCase {
 
         Instant fromTime = resolveFromTime(timeRange);
 
-        List<SosRequest> sosRequests = fromTime == null
+        // 1. Fetch all missions associated with this requester
+        List<Mission> sosMissions = missionJpaRepository.findMissionsBySosRequesterId(requesterId);
+        List<Mission> aidMissions = missionJpaRepository.findMissionsByAidRequesterId(requesterId);
+        
+        // 2. Fetch all requests
+        List<SosRequest> allSos = fromTime == null
             ? sosJpaRepository.findByRequesterIdOrderByCreatedAtDesc(requesterId)
             : sosJpaRepository.findByRequesterIdAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(requesterId, fromTime);
-
-        List<AidRequest> aidRequests = fromTime == null
+        
+        List<AidRequest> allAid = fromTime == null
             ? aidRequestJpaRepository.findByRequesterIdOrderByCreatedAtDesc(requesterId)
-            : aidRequestJpaRepository.findByRequesterIdAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(requesterId,
-                fromTime);
+            : aidRequestJpaRepository.findByRequesterIdAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(requesterId, fromTime);
 
-        List<HistoryRecord> merged = new ArrayList<>(sosRequests.size() + aidRequests.size());
-        for (SosRequest sosRequest : sosRequests) {
-            merged.add(mapSosRecord(sosRequest));
+        // 3. Create maps for quick lookup
+        java.util.Map<UUID, Mission> sosMissionMap = sosMissions.stream()
+            .collect(Collectors.toMap(Mission::getSosRequestId, m -> m, (m1, m2) -> m1));
+        java.util.Map<UUID, Mission> aidMissionMap = aidMissions.stream()
+            .collect(Collectors.toMap(Mission::getAidRequestId, m -> m, (m1, m2) -> m1));
+
+        List<HistoryRecord> merged = new ArrayList<>();
+        
+        // Map all SOS requests, attaching mission if found
+        for (SosRequest s : allSos) {
+            merged.add(mapSosRecord(s, sosMissionMap.get(s.getId())));
         }
-        for (AidRequest aidRequest : aidRequests) {
-            merged.add(mapAidRecord(aidRequest));
+        
+        // Map all Aid requests, attaching mission if found
+        for (AidRequest a : allAid) {
+            merged.add(mapAidRecord(a, aidMissionMap.get(a.getId())));
+        }
+
+        // Apply status filter if provided
+        if (statusFilter != null && !statusFilter.isBlank() && !statusFilter.equalsIgnoreCase("all")) {
+            merged = merged.stream()
+                .filter(record -> record.item().getStatusType().equalsIgnoreCase(statusFilter) 
+                               || record.item().getStatus().equalsIgnoreCase(statusFilter))
+                .collect(Collectors.toList());
         }
 
         merged.sort(Comparator.comparing(HistoryRecord::createdAt, Comparator.nullsLast(Comparator.reverseOrder())));
@@ -106,16 +132,30 @@ public class GetVictimHistoryUseCase {
             .build();
     }
 
-    private HistoryRecord mapSosRecord(SosRequest request) {
+    private HistoryRecord mapSosRecord(SosRequest request, Mission mission) {
         boolean relativeRequest = isRelativeSos(request != null ? request.getDescription() : null)
             || !safeText(request != null ? request.getAddress() : null).isBlank();
-        SosStatus status = request != null ? request.getStatus() : null;
+        
+        String statusLabel;
+        String statusType;
+        String id;
+        
+        if (mission != null) {
+            id = mission.getId().toString();
+            statusType = resolveMissionStatusType(mission.getStatus());
+            statusLabel = resolveMissionStatusLabel(mission.getStatus());
+        } else {
+            id = request != null && request.getId() != null ? request.getId().toString() : "";
+            SosStatus status = request != null ? request.getStatus() : null;
+            statusType = resolveSosStatusType(status);
+            statusLabel = resolveSosStatusLabel(status);
+        }
 
         VictimHistoryItemResponse item = VictimHistoryItemResponse.builder()
-            .id(request != null && request.getId() != null ? request.getId().toString() : "")
+            .id(id)
             .title("")
-            .status(resolveSosStatusLabel(status))
-            .statusType(resolveSosStatusType(status))
+            .status(statusLabel)
+            .statusType(statusType)
             .createdAt(request != null && request.getCreatedAt() != null ? request.getCreatedAt().toString() : "")
             .location(buildLocation(request != null ? request.getAddress() : null,
                 request != null ? request.getLat() : null,
@@ -127,14 +167,27 @@ public class GetVictimHistoryUseCase {
         return new HistoryRecord(request != null ? request.getCreatedAt() : null, item);
     }
 
-    private HistoryRecord mapAidRecord(AidRequest request) {
-        AidStatus status = request != null ? request.getStatus() : null;
+    private HistoryRecord mapAidRecord(AidRequest request, Mission mission) {
+        String statusLabel;
+        String statusType;
+        String id;
+        
+        if (mission != null) {
+            id = mission.getId().toString();
+            statusType = resolveMissionStatusType(mission.getStatus());
+            statusLabel = resolveMissionStatusLabel(mission.getStatus());
+        } else {
+            id = request != null && request.getId() != null ? request.getId().toString() : "";
+            AidStatus status = request != null ? request.getStatus() : null;
+            statusType = resolveAidStatusType(status);
+            statusLabel = resolveAidStatusLabel(status);
+        }
 
         VictimHistoryItemResponse item = VictimHistoryItemResponse.builder()
-            .id(request != null && request.getId() != null ? request.getId().toString() : "")
+            .id(id)
             .title("")
-            .status(resolveAidStatusLabel(status))
-            .statusType(resolveAidStatusType(status))
+            .status(statusLabel)
+            .statusType(statusType)
             .createdAt(request != null && request.getCreatedAt() != null ? request.getCreatedAt().toString() : "")
             .location(buildLocation(request != null ? request.getAddress() : null,
                 request != null ? request.getLat() : null,
@@ -174,27 +227,38 @@ public class GetVictimHistoryUseCase {
         return "Unknown location";
     }
 
-    private String resolveSosStatusType(SosStatus status) {
-        if (status == null) {
-            return "processing";
-        }
-
+    private String resolveMissionStatusType(MissionStatus status) {
+        if (status == null) return "STATUS_PENDING";
         return switch (status) {
-            case PENDING -> "pending";
-            case COMPLETED -> "completed";
-            default -> "processing";
+            case PENDING, DISPATCHING -> "STATUS_PENDING";
+            case ASSIGNED, PICKING_UP, PICKED_UP, IN_TRANSIT -> "STATUS_PROCESSING";
+            case COMPLETED -> "STATUS_COMPLETED";
+            case CANCELLED -> "STATUS_CANCELLED";
+            default -> "STATUS_PROCESSING";
+        };
+    }
+
+    private String resolveMissionStatusLabel(MissionStatus status) {
+        return status != null ? status.name() : "PENDING";
+    }
+
+    private String resolveSosStatusType(SosStatus status) {
+        if (status == null) return "STATUS_PENDING";
+        return switch (status) {
+            case PENDING -> "STATUS_PENDING";
+            case COMPLETED -> "STATUS_COMPLETED";
+            case CANCELLED -> "STATUS_CANCELLED";
+            default -> "STATUS_PROCESSING";
         };
     }
 
     private String resolveAidStatusType(AidStatus status) {
-        if (status == null) {
-            return "processing";
-        }
-
+        if (status == null) return "STATUS_PENDING";
         return switch (status) {
-            case PENDING -> "pending";
-            case COMPLETED -> "completed";
-            default -> "processing";
+            case PENDING -> "STATUS_PENDING";
+            case COMPLETED -> "STATUS_COMPLETED";
+            case CANCELLED -> "STATUS_CANCELLED";
+            default -> "STATUS_PROCESSING";
         };
     }
 

@@ -9,7 +9,7 @@ import com.drc.aidbridge.ui.map.base.BaseMapFragment;
 import com.drc.aidbridge.ui.main.viewmodel.sponsor.SponsorMapViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
-
+import com.drc.aidbridge.R;
 @AndroidEntryPoint
 public class SponsorMapFragment extends BaseMapFragment<SponsorMapViewModel> {
 
@@ -31,7 +31,7 @@ public class SponsorMapFragment extends BaseMapFragment<SponsorMapViewModel> {
 
     @Override
     protected int getContentLayout() {
-        return 0;
+        return R.layout.fragment_map_sponsor;
     }
 
     @Override

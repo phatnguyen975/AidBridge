@@ -37,6 +37,11 @@ public class VolunteerFacadeImpl implements VolunteerFacade {
     }
 
     @Override
+    public List<VolunteerDTO> findNearbyVolunteers(BigDecimal lat, BigDecimal lng, int retryCount) {
+        return findNearbyVolunteersUseCase.execute(lat, lng, retryCount);
+    }
+
+    @Override
     public List<VolunteerDTO> findVolunteersOrderByDistance(BigDecimal lat, BigDecimal lng) {
         Point location = Volunteer.createPoint(lat, lng);
         if (location == null) {

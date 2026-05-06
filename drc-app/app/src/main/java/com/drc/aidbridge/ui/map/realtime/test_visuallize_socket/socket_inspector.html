@@ -1,0 +1,99 @@
+<html>
+<head>
+    <title>Socket Inspector & Mock Tool</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f0f2f5; }
+        .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        #log { font-family: monospace; background: #1e1e1e; color: #00ff00; padding: 15px; height: 300px; overflow: auto; border-radius: 4px; }
+        .status { padding: 5px 10px; border-radius: 4px; font-weight: bold; }
+        .connected { background: #e6fffa; color: #2c7a7b; }
+        .disconnected { background: #fff5f5; color: #c53030; }
+        button { padding: 10px 15px; cursor: pointer; background: #4a90e2; color: white; border: none; border-radius: 4px; margin-right: 10px; }
+        button:hover { background: #357abd; }
+        .controls { margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Socket Inspector <span id="status" class="status disconnected">Đang kết nối...</span></h2>
+        <p><strong>Mission ID:</strong> <span id="mission-display"></span></p>
+        <div id="log">Đang khởi tạo Supabase...</div>
+    </div>
+
+    <div class="card">
+        <h3>Mock Controls (Gửi dữ liệu tới App Victim)</h3>
+        <p>Sử dụng các nút này khi App đang ở màn hình Victim Map để xem kết quả.</p>
+        <div class="controls">
+            <button onclick="sendMockRoute()">1. Gửi Lộ trình (Route)</button>
+            <button onclick="sendMockLocation()">2. Gửi Vị trí (Location)</button>
+            <button onclick="clearLog()" style="background: #718096;">Xóa Log</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const missionId = '33718366-cf86-4b14-9797-ee8d1d8035a7'; 
+        const supabaseUrl = 'https://blexpodgbjzhfgeffxuy.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsZXhwb2RnYmp6aGZnZWZmeHV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMDk1MDAsImV4cCI6MjA4OTU4NTUwMH0.92vo1hDRyTrFdSRoK5tgauVn6FpmRcrFOcIRWJYLOTA';
+        
+        document.getElementById('mission-display').innerText = missionId;
+        const logElement = document.getElementById('log');
+
+        function addLog(msg, color = '#00ff00') {
+            const now = new Date().toLocaleTimeString();
+            logElement.innerHTML += `<div style="color: ${color}">[${now}] ${msg}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function clearLog() { logElement.innerHTML = ''; }
+
+        // Khởi tạo client (Fix lỗi đè biến supabase)
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        const channel = supabaseClient.channel(`tracking_mission_${missionId}`);
+
+        channel
+            .on('broadcast', { event: 'location_update' }, (payload) => {
+                addLog(`📍 Nhận vị trí: Lat ${payload.payload.latitude}, Lng ${payload.payload.longitude}`);
+            })
+            .on('broadcast', { event: 'route_update' }, (payload) => {
+                const poly = payload.payload.polyline;
+                addLog(`🛣 Nhận lộ trình (Encoded): ${poly.substring(0, 20)}...`, '#4a90e2');
+            })
+            .subscribe((status) => {
+                const statusEl = document.getElementById('status');
+                if (status === 'SUBSCRIBED') {
+                    statusEl.innerText = 'ĐÃ KẾT NỐI';
+                    statusEl.className = 'status connected';
+                    addLog('✅ Hệ thống đã sẵn sàng lắng nghe/gửi dữ liệu.');
+                } else {
+                    statusEl.innerText = status;
+                    statusEl.className = 'status disconnected';
+                }
+            });
+
+        // Hàm gửi dữ liệu giả lập (Tọa độ sát vị trí người dùng: 10.7660891, 106.6927658)
+        async function sendMockRoute() {
+            // Lộ trình đi từ 10.766 sang 10.767 (Quận 1, HCM)
+            const polyline = "o{_bAgy_jSl@mAd@qA`AeBfAsBbAmB"; 
+            await channel.send({
+                type: 'broadcast',
+                event: 'route_update',
+                payload: { polyline }
+            });
+            addLog('📤 Đã gửi Lộ trình mã hóa (Polyline) tới App.', '#ecc94b');
+        }
+
+        async function sendMockLocation() {
+            // Tọa độ ngẫu nhiên quanh 10.7660891, 106.6927658
+            const lat = 10.7660891 + (Math.random() * 0.0005);
+            const lng = 106.6927658 + (Math.random() * 0.0005);
+            await channel.send({
+                type: 'broadcast',
+                event: 'location_update',
+                payload: { latitude: lat, longitude: lng, heading: Math.random() * 360 }
+            });
+            addLog(`📤 Đã gửi Vị trí mới: ${lat.toFixed(6)}, ${lng.toFixed(6)}`, '#ecc94b');
+        }
+    </script>
+</body>
+</html>

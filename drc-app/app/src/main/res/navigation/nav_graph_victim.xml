@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/victimMapFragment"
-        android:name="com.drc.aidbridge.ui.map.victim.VictimMapFragment"
+        android:name="com.drc.aidbridge.ui.map.fragment.VictimMapFragment"
         android:label="VictimMapFragment">
 
         <action
