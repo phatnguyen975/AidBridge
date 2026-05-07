@@ -27,7 +27,8 @@ public class AppModule {
      * Provides an EncryptedSharedPreferences instance backed by AES-256 GCM.
      * This is used by TokenManager for secure JWT access/refresh token storage.
      *
-     * NOTE: If the device does not support AES-256-GCM or the keystore is corrupted,
+     * NOTE: If the device does not support AES-256-GCM or the keystore is
+     * corrupted,
      * this will throw a GeneralSecurityException. The catch block falls back to
      * standard SharedPreferences.
      */
@@ -44,11 +45,27 @@ public class AppModule {
                     Constants.PREFS_NAME,
                     masterKey,
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            );
-        } catch (GeneralSecurityException | IOException e) {
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
+        } catch (Exception e) {
             e.printStackTrace();
-            return context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
+            // Keystore or EncryptedSharedPreferences file is corrupted. Clear it and retry.
+            try {
+                context.deleteSharedPreferences(Constants.PREFS_NAME);
+
+                MasterKey masterKey = new MasterKey.Builder(context)
+                        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                        .build();
+
+                return EncryptedSharedPreferences.create(
+                        context,
+                        Constants.PREFS_NAME,
+                        masterKey,
+                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
+            }
         }
     }
 }

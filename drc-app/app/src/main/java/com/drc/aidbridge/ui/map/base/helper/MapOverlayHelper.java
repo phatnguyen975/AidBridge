@@ -27,6 +27,7 @@ public class MapOverlayHelper {
     @Nullable
     private MapView mapView;
     private final List<Polyline> routeOverlays = new ArrayList<>();
+    private final List<Polyline> historyOverlays = new ArrayList<>();
     private final List<Polygon> dangerousZoneOverlays = new ArrayList<>();
 
     public void attach(@NonNull MapView mapView) {
@@ -35,6 +36,7 @@ public class MapOverlayHelper {
 
     public void detach() {
         clearRouteOverlays();
+        clearHistoryOverlays();
         clearDangerousZoneOverlays();
         this.mapView = null;
     }
@@ -51,13 +53,26 @@ public class MapOverlayHelper {
         routeOverlays.clear();
     }
 
+    public void clearHistoryOverlays() {
+        if (mapView == null) {
+            historyOverlays.clear();
+            return;
+        }
+
+        for (Polyline polyline : historyOverlays) {
+            mapView.getOverlays().remove(polyline);
+        }
+        historyOverlays.clear();
+    }
+
     public void drawRouteOverlays(@NonNull Context context,
                                   @NonNull List<GeoPoint> points,
                                   @ColorRes int casingColorRes,
                                   @DimenRes int casingWidthRes,
                                   @ColorRes int coreColorRes,
                                   @DimenRes int coreWidthRes,
-                                  @DimenRes int fitPaddingRes) {
+                                  @DimenRes int fitPaddingRes,
+                                  boolean shouldZoom) {
         if (mapView == null || points.isEmpty()) {
             return;
         }
@@ -104,8 +119,47 @@ public class MapOverlayHelper {
         mapView.getOverlays().add(core);
         routeOverlays.add(core);
 
-        BoundingBox bounds = BoundingBox.fromGeoPointsSafe(points);
-        mapView.zoomToBoundingBox(bounds, true, context.getResources().getDimensionPixelSize(fitPaddingRes));
+        if (shouldZoom) {
+            BoundingBox bounds = BoundingBox.fromGeoPointsSafe(points);
+            mapView.zoomToBoundingBox(bounds, true, context.getResources().getDimensionPixelSize(fitPaddingRes));
+        }
+        mapView.invalidate();
+    }
+
+    public void drawHistoryOverlays(@NonNull Context context,
+                                    @NonNull List<GeoPoint> points,
+                                    @ColorRes int casingColorRes,
+                                    @DimenRes int casingWidthRes,
+                                    @ColorRes int coreColorRes,
+                                    @DimenRes int coreWidthRes) {
+        if (mapView == null || points.size() < 2) {
+            return;
+        }
+
+        clearHistoryOverlays();
+
+        float baseCasingWidth = context.getResources().getDimension(casingWidthRes);
+        int casingColor = ContextCompat.getColor(context, casingColorRes);
+        int coreColor = ContextCompat.getColor(context, coreColorRes);
+
+        // History Casing
+        Polyline casing = new Polyline();
+        casing.setPoints(points);
+        casing.setColor(casingColor);
+        casing.setWidth(baseCasingWidth);
+        configurePolylinePaint(casing.getOutlinePaint());
+        mapView.getOverlays().add(casing);
+        historyOverlays.add(casing);
+
+        // History Core
+        Polyline core = new Polyline();
+        core.setPoints(points);
+        core.setColor(coreColor);
+        core.setWidth(context.getResources().getDimension(coreWidthRes));
+        configurePolylinePaint(core.getOutlinePaint());
+        mapView.getOverlays().add(core);
+        historyOverlays.add(core);
+
         mapView.invalidate();
     }
 

@@ -8,5 +8,6 @@ public enum MissionStatus {
     PICKED_UP,
     IN_TRANSIT,
     COMPLETED,
-    CANCELLED
+    CANCELLED,
+    DISPATCH_FAILED
 }

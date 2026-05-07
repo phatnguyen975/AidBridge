@@ -8,13 +8,13 @@ public class UserDto {
     @SerializedName("id")
     private String id;
 
-    @SerializedName("full_name")
+    @SerializedName(value = "full_name", alternate = {"fullName", "name"})
     private String name;
 
     @SerializedName("email")
     private String email;
 
-    @SerializedName("phone_number")
+    @SerializedName(value = "phone_number", alternate = {"phoneNumber", "phone"})
     private String phone;
 
     @Nullable
@@ -25,11 +25,15 @@ public class UserDto {
     private String role;
 
     @Nullable
-    @SerializedName("avatar_url")
+    @SerializedName(value = "avatar_url", alternate = {"avatarUrl"})
     private String avatarUrl;
 
-    @SerializedName("is_verified")
+    @SerializedName(value = "is_verified", alternate = {"isVerified"})
     private boolean verified;
+
+    @Nullable
+    @SerializedName(value = "created_at", alternate = {"createdAt"})
+    private String createdAt;
 
     public UserDto() {
     }
@@ -41,7 +45,8 @@ public class UserDto {
             @Nullable String address,
             String role,
             @Nullable String avatarUrl,
-            boolean verified) {
+            boolean verified,
+            @Nullable String createdAt) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -50,6 +55,7 @@ public class UserDto {
         this.role = role;
         this.avatarUrl = avatarUrl;
         this.verified = verified;
+        this.createdAt = createdAt;
     }
 
     public String getId() {
@@ -84,5 +90,10 @@ public class UserDto {
 
     public boolean isVerified() {
         return verified;
+    }
+
+    @Nullable
+    public String getCreatedAt() {
+        return createdAt;
     }
 }
