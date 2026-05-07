@@ -107,6 +107,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_profile_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/staff_profile_name"
@@ -115,6 +116,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tv_profile_role"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/staff_profile_role_margin_top"
@@ -294,6 +296,7 @@
                             android:textSize="@dimen/staff_profile_info_label_text_size" />
 
                         <TextView
+                            android:id="@+id/tv_phone_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/staff_profile_info_value_margin_top"
@@ -389,6 +392,7 @@
                             android:textSize="@dimen/staff_profile_info_label_text_size" />
 
                         <TextView
+                            android:id="@+id/tv_join_date_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/staff_profile_info_value_margin_top"

@@ -16,7 +16,8 @@ public interface HistoryApiService {
     Call<BaseResponse<PaginatedData<HistoryResponse>>> getVictimHistory(
         @Query("page") int page,
         @Query("size") int size,
-        @Query("timeRange") String timeRange
+        @Query("timeRange") String timeRange,
+        @Query("status") String status
     );
 
     @GET("victim/history/{requestId}/detail")

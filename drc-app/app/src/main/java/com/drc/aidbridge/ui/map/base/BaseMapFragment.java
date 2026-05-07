@@ -1005,7 +1005,8 @@ public abstract class BaseMapFragment<VM extends BaseMapViewModel> extends BaseF
                 R.dimen.volunteer_map_route_casing_stroke_width,
                 R.color.base_map_route_core,
                 R.dimen.volunteer_map_route_stroke_width,
-                R.dimen.spacing_xl);
+                R.dimen.spacing_xl,
+                true);
 
         if (cachePolyline) {
             getViewModel().setLastPolyline(encodedPolyline);
@@ -1561,13 +1562,26 @@ public abstract class BaseMapFragment<VM extends BaseMapViewModel> extends BaseF
         mapOverlayHelper.clearRouteOverlays();
     }
 
+    protected void clearHistoryOverlays() {
+        mapOverlayHelper.clearHistoryOverlays();
+    }
+
     protected void drawRouteOverlays(@NonNull List<GeoPoint> points,
                                      @ColorRes int casingColorRes,
                                      @DimenRes int casingWidthRes,
                                      @ColorRes int coreColorRes,
                                      @DimenRes int coreWidthRes,
-                                     @DimenRes int fitPaddingRes) {
-        mapOverlayHelper.drawRouteOverlays(requireContext(), points, casingColorRes, casingWidthRes, coreColorRes, coreWidthRes, fitPaddingRes);
+                                     @DimenRes int fitPaddingRes,
+                                     boolean shouldZoom) {
+        mapOverlayHelper.drawRouteOverlays(requireContext(), points, casingColorRes, casingWidthRes, coreColorRes, coreWidthRes, fitPaddingRes, shouldZoom);
+    }
+
+    protected void drawHistoryOverlays(@NonNull List<GeoPoint> points,
+                                       @ColorRes int casingColorRes,
+                                       @DimenRes int casingWidthRes,
+                                       @ColorRes int coreColorRes,
+                                       @DimenRes int coreWidthRes) {
+        mapOverlayHelper.drawHistoryOverlays(requireContext(), points, casingColorRes, casingWidthRes, coreColorRes, coreWidthRes);
     }
 
     protected void updateStandardMarkers(@Nullable GeoPoint startPoint,

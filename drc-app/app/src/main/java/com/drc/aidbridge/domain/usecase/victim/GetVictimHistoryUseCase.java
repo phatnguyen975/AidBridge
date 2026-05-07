@@ -20,7 +20,8 @@ public class GetVictimHistoryUseCase {
     public LiveData<NetworkResultWrapper<VictimHistoryPage>> execute(int page,
                                                                       int size,
                                                                       String timeRange,
+                                                                      String status,
                                                                       boolean forceOffline) {
-        return victimHistoryRepository.getVictimHistory(page, size, timeRange, forceOffline);
+        return victimHistoryRepository.getVictimHistory(page, size, timeRange, status, forceOffline);
     }
 }

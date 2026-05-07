@@ -3,6 +3,7 @@ package com.drc.aidbridge.ui.map.fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,15 +20,20 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Marker;
 
 import dagger.hilt.android.AndroidEntryPoint;
-
+import com.drc.aidbridge.ui.map.realtime.VolunteerLocationBroadcaster;
+import com.drc.aidbridge.BuildConfig;
+import com.drc.aidbridge.data.remote.dto.response.volunteer.MissionHistoryFullItemDto;
 @AndroidEntryPoint
 public class VolunteerMapFragment extends BaseMapFragment<VolunteerMapViewModel> {
 
     private VolunteerMapViewModel volunteerMapViewModel;
     private VolunteerTaskViewModel volunteerTaskViewModel;
+    private VolunteerLocationBroadcaster locationBroadcaster;
     private Marker victimMarker;
     private android.view.View victimPulseView;
     private android.animation.ValueAnimator victimPulseAnimator;
+    private GeoPoint victimPoint;
+    private int routeBroadcastCounter = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,7 +75,7 @@ public class VolunteerMapFragment extends BaseMapFragment<VolunteerMapViewModel>
         
         volunteerTaskViewModel.getCurrentMissionResult().observe(getViewLifecycleOwner(), result -> {
             if (result != null && result.isSuccess()) {
-                com.drc.aidbridge.data.remote.dto.response.volunteer.MissionHistoryFullItemDto data = result.getData();
+                MissionHistoryFullItemDto data = result.getData();
                 if (data != null) {
                     Double victimLat = data.getVictimLat();
                     Double victimLng = data.getVictimLng();
@@ -80,7 +86,7 @@ public class VolunteerMapFragment extends BaseMapFragment<VolunteerMapViewModel>
                     }
 
                     if (victimLat != null && victimLng != null) {
-                        GeoPoint victimPoint = new GeoPoint(victimLat, victimLng);
+                        victimPoint = new GeoPoint(victimLat, victimLng);
                         updateVictimMarker(victimPoint);
                     }
                 }
@@ -89,7 +95,7 @@ public class VolunteerMapFragment extends BaseMapFragment<VolunteerMapViewModel>
     }
 
     private void showEndPointSelectionMenu() {
-        com.drc.aidbridge.data.remote.dto.response.volunteer.MissionHistoryFullItemDto currentMission = 
+        MissionHistoryFullItemDto currentMission = 
             volunteerTaskViewModel.getCurrentMissionResult().getValue() != null ? 
             volunteerTaskViewModel.getCurrentMissionResult().getValue().getData() : null;
 
@@ -99,6 +105,18 @@ public class VolunteerMapFragment extends BaseMapFragment<VolunteerMapViewModel>
         if (victimLat == null && currentMission != null && currentMission.getSosRequestDetail() != null) {
             victimLat = currentMission.getSosRequestDetail().getLat();
             victimLng = currentMission.getSosRequestDetail().getLng();
+        }
+
+        // Initialize broadcaster if we have a mission ID
+        if (currentMission != null && currentMission.getId() != null) {
+            if (locationBroadcaster == null) {
+                locationBroadcaster = new VolunteerLocationBroadcaster(
+                        requireContext(),
+                        BuildConfig.SUPABASE_URL,
+                        BuildConfig.SUPABASE_ANON_KEY,
+                        currentMission.getId()
+                );
+            }
         }
 
         if (victimLat == null || victimLng == null) {
@@ -211,6 +229,101 @@ public class VolunteerMapFragment extends BaseMapFragment<VolunteerMapViewModel>
             }
         }
     }
+
+    @Override
+    protected void enterNavigationMode() {
+        super.enterNavigationMode();
+        
+        // 1. Only broadcast if endpoint is the victim
+        boolean isVictim = isDestinationVictim();
+        Log.d("VolunteerMap", "Checking destination: isVictim=" + isVictim);
+        
+        MissionHistoryFullItemDto currentMission = 
+            volunteerTaskViewModel.getCurrentMissionResult().getValue() != null ? 
+            volunteerTaskViewModel.getCurrentMissionResult().getValue().getData() : null;
+
+        if (locationBroadcaster != null && isVictim && currentMission != null) {
+            Log.i("VolunteerMap", "Starting socket broadcasting for mission: " + currentMission.getId());
+            locationBroadcaster.startBroadcasting();
+            
+            // 2. Broadcast the initial encoded route
+            broadcastCurrentRoute();
+        } else if (locationBroadcaster == null) {
+            Log.w("VolunteerMap", "Broadcaster is NULL, cannot start");
+        } else if (currentMission == null) {
+            Log.w("VolunteerMap", "Cannot start broadcasting: currentMission is null");
+        }
+    }
+
+    @Override
+    protected void exitNavigationMode() {
+        super.exitNavigationMode();
+        if (locationBroadcaster != null) {
+            Log.i("VolunteerMap", "Stopping socket broadcasting");
+            locationBroadcaster.stopBroadcasting();
+        }
+    }
+
+    private boolean isDestinationVictim() {
+        if (endPoint == null || victimPoint == null) {
+            Log.v("VolunteerMap", "isDestinationVictim: endPoint or victimPoint is null");
+            return false;
+        }
+        
+        // Loosen threshold to 100 meters for easier testing/selection
+        double distance = distanceMeters(endPoint, victimPoint);
+        Log.v("VolunteerMap", "Distance to victim: " + distance + "m");
+        return distance < 100.0;
+    }
+
+    @Override
+    protected void applySimulatedPoint(@NonNull org.osmdroid.util.GeoPoint point) {
+        super.applySimulatedPoint(point);
+        
+        // Broadcast simulated location to the victim via socket
+        if (isNavigationActive && locationBroadcaster != null && isDestinationVictim()) {
+            locationBroadcaster.broadcastManualLocation(point.getLatitude(), point.getLongitude(), 0.0f);
+            
+            // Periodic route broadcast (every 20 points ~ 20 seconds) to ensure synchronization
+            routeBroadcastCounter++;
+            if (routeBroadcastCounter >= 20) {
+                routeBroadcastCounter = 0;
+                broadcastCurrentRoute();
+            }
+        } else {
+            // Log once in a while to not spam
+            if (System.currentTimeMillis() % 10 == 0) {
+                Log.v("VolunteerMap", "Simulating but NOT broadcasting. Active=" + isNavigationActive + ", DistVictim=" + isDestinationVictim());
+            }
+        }
+    }
+
+    @Override
+    protected void renderRouteResult(@Nullable com.drc.aidbridge.data.remote.dto.response.RoutingResponseDto response) {
+        super.renderRouteResult(response);
+        
+        // Broadcast updated route if we are navigating to the victim
+        if (isNavigationActive && locationBroadcaster != null && isDestinationVictim()) {
+            if (response != null && response.getPolyline() != null) {
+                locationBroadcaster.broadcastEncodedRoute(response.getPolyline());
+                routeBroadcastCounter = 0; // Reset counter since we just sent it
+            }
+        }
+    }
+
+    private void broadcastCurrentRoute() {
+        if (locationBroadcaster == null) return;
+        
+        String encodedRoute = getViewModel().getRouteResult().getValue() != null ? 
+            (getViewModel().getRouteResult().getValue().getData() != null ? 
+                getViewModel().getRouteResult().getValue().getData().getPolyline() : null) : null;
+                
+        if (encodedRoute != null) {
+            Log.d("VolunteerMap", "Broadcasting current encoded route");
+            locationBroadcaster.broadcastEncodedRoute(encodedRoute);
+        }
+    }
+
 
     @Override
     protected void openQuickDial() {

@@ -209,8 +209,8 @@ public class AdminAddHubFragment extends BaseFragment<FragmentAdminAddHubBinding
         setGeocoding(true);
         geocodingExecutor.execute(() -> {
             try {
-                GoogleGeocodingClient.GeocodingResult geocodingResult =
-                        googleGeocodingClient.geocodeFirstAddress(appContext, address);
+                GoogleGeocodingClient.GeocodingResult geocodingResult = googleGeocodingClient
+                        .geocodeFirstAddress(appContext, address);
 
                 if (!isAdded()) {
                     return;
@@ -333,8 +333,8 @@ public class AdminAddHubFragment extends BaseFragment<FragmentAdminAddHubBinding
 
         geocodingExecutor.execute(() -> {
             try {
-                List<GoogleGeocodingClient.GeocodingResult> suggestions =
-                        googleGeocodingClient.geocodeAddressSuggestions(
+                List<GoogleGeocodingClient.GeocodingResult> suggestions = googleGeocodingClient
+                        .geocodeAddressSuggestions(
                                 appContext,
                                 query,
                                 ADDRESS_SUGGESTION_LIMIT);

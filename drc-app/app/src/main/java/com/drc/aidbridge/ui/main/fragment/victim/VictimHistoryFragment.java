@@ -53,7 +53,7 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
         binding.actTimeFilter.setText(getString(R.string.victim_history_filter_1h), false);
         renderEmptyState(false);
         isScreenLoading = true;
-        viewModel.loadInitial(isNetworkAvailable());
+        viewModel.loadInitial(isNetworkAvailable(), null);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
                 if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                     && firstVisibleItemPosition >= 0) {
                     isScreenLoading = false;
-                    viewModel.loadNextPage(isNetworkAvailable());
+                    viewModel.loadNextPage(isNetworkAvailable(), null);
                 }
             }
         });
@@ -128,7 +128,7 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
             isScreenLoading = true;
             showRefreshSuccessNotice = true;
             renderEmptyState(false);
-            viewModel.refresh(isNetworkAvailable());
+            viewModel.refresh(isNetworkAvailable(), null);
         });
     }
 

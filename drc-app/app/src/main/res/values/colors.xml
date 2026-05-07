@@ -32,4 +32,9 @@
     <color name="border_default">#334155</color>
     <color name="border_input">#475569</color>
     <color name="border_selected">#288DFA</color>
+    <!-- Map Route Colors -->
+    <color name="route_yellow">#FBBF24</color>
+    <color name="route_yellow_casing">#B45309</color>
+    <color name="route_orange">#FB923C</color>
+    <color name="route_orange_casing">#C2410C</color>
 </resources>

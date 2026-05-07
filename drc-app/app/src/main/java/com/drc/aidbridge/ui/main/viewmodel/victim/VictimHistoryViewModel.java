@@ -31,7 +31,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class VictimHistoryViewModel extends BaseViewModel {
 
     private static final int PAGE_SIZE = 10;
-    private static final String DEFAULT_TIME_RANGE = "1h";
+    private static final String DEFAULT_TIME_RANGE = "all";
 
     private final ExecutorService workerExecutor = Executors.newSingleThreadExecutor();
     private final GetVictimHistoryUseCase getVictimHistoryUseCase;
@@ -65,6 +65,7 @@ public class VictimHistoryViewModel extends BaseViewModel {
                 request.page,
                 PAGE_SIZE,
                 request.timeRange,
+                request.status,
                 !request.networkAvailable
             )
         );
@@ -85,30 +86,30 @@ public class VictimHistoryViewModel extends BaseViewModel {
         return historyDetailResult;
     }
 
-    public void loadInitial(boolean networkAvailable) {
+    public void loadInitial(boolean networkAvailable, String status) {
         currentPage = 1;
         isLastPage = false;
-        triggerLoad(1, networkAvailable);
+        triggerLoad(1, networkAvailable, status);
     }
 
-    public void refresh(boolean networkAvailable) {
+    public void refresh(boolean networkAvailable, String status) {
         currentPage = 1;
         isLastPage = false;
-        triggerLoad(1, networkAvailable);
+        triggerLoad(1, networkAvailable, status);
     }
 
     public void applyTimeRange(String timeRange, boolean networkAvailable) {
         currentTimeRange = normalizeTimeRange(timeRange);
         currentPage = 1;
         isLastPage = false;
-        triggerLoad(1, networkAvailable);
+        triggerLoad(1, networkAvailable, null);
     }
 
-    public void loadNextPage(boolean networkAvailable) {
+    public void loadNextPage(boolean networkAvailable, String status) {
         if (isLoading || isLastPage) {
             return;
         }
-        triggerLoad(currentPage + 1, networkAvailable);
+        triggerLoad(currentPage + 1, networkAvailable, status);
     }
 
     public void loadDetail(VictimHistoryAdapter.HistoryModel model) {
@@ -132,7 +133,7 @@ public class VictimHistoryViewModel extends BaseViewModel {
         super.onCleared();
     }
 
-    private void triggerLoad(int page, boolean networkAvailable) {
+    private void triggerLoad(int page, boolean networkAvailable, String status) {
         if (isLoading) {
             return;
         }
@@ -141,7 +142,7 @@ public class VictimHistoryViewModel extends BaseViewModel {
         isLoading = true;
 
         workerExecutor.execute(() -> historyTrigger.postValue(
-            new HistoryRequest(pendingPage, currentTimeRange, networkAvailable)
+            new HistoryRequest(pendingPage, currentTimeRange, status, networkAvailable)
         ));
     }
 
@@ -353,11 +354,13 @@ public class VictimHistoryViewModel extends BaseViewModel {
     private static final class HistoryRequest {
         final int page;
         final String timeRange;
+        final String status;
         final boolean networkAvailable;
 
-        HistoryRequest(int page, String timeRange, boolean networkAvailable) {
+        HistoryRequest(int page, String timeRange, String status, boolean networkAvailable) {
             this.page = page;
             this.timeRange = timeRange;
+            this.status = status;
             this.networkAvailable = networkAvailable;
         }
     }
