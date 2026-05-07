@@ -125,6 +125,11 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
                 return findActiveByHubIdAndTypeWithStatuses(hubId, type, TERMINAL_STATUSES, pageable);
         }
 
+        Page<Mission> findByHubIdAndMissionTypeAndStatusInOrderByCreatedAtAsc(UUID hubId,
+                                                                               MissionType missionType,
+                                                                               List<MissionStatus> statuses,
+                                                                               Pageable pageable);
+
         /**
          * Đếm missions theo status (cho stats)
          */

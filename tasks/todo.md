@@ -7,6 +7,18 @@
 - [x] Add/update unit tests for outbound inventory service/usecase
 - [ ] Review results and note follow-ups
 
+## Staff Tasks - Upcoming List Fix
+
+- [x] Review staff tasks UI, API, and data flow
+- [x] Add staff tasks domain/repository/usecase/viewmodel
+- [x] Refactor StaffTasksFragment + adapter bindings
+- [ ] Verify list rendering and error states
+
+## Review (Staff Tasks)
+
+- Status: In progress
+- Notes: Awaiting runtime verification in app.
+
 ## Review
 
 - Status: Pending test run
