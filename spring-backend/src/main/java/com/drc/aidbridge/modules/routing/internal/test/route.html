@@ -6,12 +6,12 @@
 <div id='map'></div>
 <script src='https://unpkg.com/leaflet@1.9.3/dist/leaflet.js'></script>
 <script>
-  const pts = [[10.76709991349207,106.69486466817347]];
+  const pts = [[10.764046806867523,106.66432858951646],[10.7640785,106.6644831],[10.7630155,106.6647205],[10.7633437,106.6661226],[10.7634111,106.6663792],[10.763482,106.6667131],[10.7637981,106.6680477],[10.7642951,106.6702276],[10.7643695,106.6705308],[10.7644791,106.6710346],[10.7645361,106.6712414],[10.7646988,106.6719222],[10.7647627,106.6722858],[10.7648788,106.6727106],[10.7650707,106.6735553],[10.7652336,106.6742092],[10.7644541,106.6743925],[10.7640605,106.6744663],[10.7633139,106.6746238],[10.7623932,106.6748303],[10.7619524,106.6749226],[10.761275,106.6750463],[10.7619652,106.676054],[10.76218,106.6763867],[10.7624286,106.6768013],[10.7628328,106.6773859],[10.7636416,106.678645],[10.7632067,106.6788381],[10.760028356942946,106.68007562859887]];
   const zones = [{name:'d42310f9-c7b2-43bf-8919-9373cb8d8c52',priority:0.0,coords:[[10.730358781544652,106.66330994289933],[10.722423175680333,106.6641635809413],[10.730036200000555,106.6501113854809],[10.752551564860696,106.67706664826835],[10.730358781544652,106.66330994289933]]},{name:'d700ca56-5a72-4d08-967e-ad7db1994335',priority:0.0,coords:[[10.740136361585627,106.67785515286005],[10.726691537038207,106.68343989010577],[10.741740715973009,106.69477266100802],[10.740136361585627,106.67785515286005],[10.740246098794302,106.67487288829727],[10.742936287288302,106.67959545776671],[10.740136361585627,106.67785515286005]]}];
   var allPts = pts.slice();
   function addIfValid(lat,lon){ if(!isNaN(lat) && !isNaN(lon)) allPts.push([lat,lon]); }
-  addIfValid(10.7671033,106.69488);
-  addIfValid(10.7671033,106.69488);
+  addIfValid(10.7640764,106.6643223);
+  addIfValid(10.76,106.68);
   const map = L.map('map');
   if (allPts.length > 0) { map.fitBounds(allPts, {padding:[20,20]}); } else { map.setView([0,0],2); }
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
@@ -28,11 +28,11 @@
     L.circleMarker(routeStart, {radius:7, color:'white', weight:2, fillColor:'green', fillOpacity:1}).addTo(map).bindPopup('Snapped start');
     L.circleMarker(routeEnd, {radius:7, color:'white', weight:2, fillColor:'red', fillOpacity:1}).addTo(map).bindPopup('Snapped end');
   }
-  if(!isNaN(10.7671033) && !isNaN(106.69488)) {
-    L.circleMarker([10.7671033,106.69488], {radius:6, color:'#000', weight:1, fillColor:'blue', fillOpacity:0.9}).addTo(map).bindPopup('Requested start');
+  if(!isNaN(10.7640764) && !isNaN(106.6643223)) {
+    L.circleMarker([10.7640764,106.6643223], {radius:6, color:'#000', weight:1, fillColor:'blue', fillOpacity:0.9}).addTo(map).bindPopup('Requested start');
   }
-  if(!isNaN(10.7671033) && !isNaN(106.69488)) {
-    L.circleMarker([10.7671033,106.69488], {radius:6, color:'#000', weight:1, fillColor:'orange', fillOpacity:0.9}).addTo(map).bindPopup('Requested end');
+  if(!isNaN(10.76) && !isNaN(106.68)) {
+    L.circleMarker([10.76,106.68], {radius:6, color:'#000', weight:1, fillColor:'orange', fillOpacity:0.9}).addTo(map).bindPopup('Requested end');
   }
   const info = L.control({position:'topright'});
   info.onAdd = function() {
