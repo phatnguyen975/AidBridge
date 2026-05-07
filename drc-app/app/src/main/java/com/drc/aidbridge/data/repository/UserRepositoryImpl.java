@@ -53,10 +53,61 @@ public class UserRepositoryImpl extends BaseRepository implements UserRepository
             safe(tokenManager.getUserAddress()),
             UserRole.fromStringSafe(tokenManager.getUserRole()),
             tokenManager.getUserAvatar(),
-            tokenManager.isUserVerified()
+            tokenManager.isUserVerified(),
+            tokenManager.getUserCreatedAt()
         );
 
         result.postValue(NetworkResultWrapper.success(cachedUser));
+        return result;
+    }
+
+    @Override
+    public LiveData<NetworkResultWrapper<User>> getCurrentUser() {
+        MutableLiveData<NetworkResultWrapper<User>> result = new MutableLiveData<>();
+        result.postValue(NetworkResultWrapper.loading());
+
+        userApiService.getCurrentUser().enqueue(new Callback<BaseResponse<UserDto>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<UserDto>> call,
+                                   Response<BaseResponse<UserDto>> response) {
+                if (!response.isSuccessful()) {
+                    result.postValue(NetworkResultWrapper.error(extractHttpError(response), response.code()));
+                    return;
+                }
+
+                BaseResponse<UserDto> baseResponse = response.body();
+                if (baseResponse == null) {
+                    result.postValue(NetworkResultWrapper.error("Phan hoi ho so nguoi dung khong hop le."));
+                    return;
+                }
+
+                if (!baseResponse.isSuccess()) {
+                    String apiMessage = baseResponse.getMessage();
+                    result.postValue(NetworkResultWrapper.error(
+                        apiMessage != null && !apiMessage.trim().isEmpty()
+                            ? apiMessage
+                            : "Khong the tai ho so nguoi dung."
+                    ));
+                    return;
+                }
+
+                UserDto userDto = baseResponse.getData();
+                if (userDto == null) {
+                    result.postValue(NetworkResultWrapper.error("Khong nhan duoc thong tin nguoi dung."));
+                    return;
+                }
+
+                User user = userMapper.mapToDomain(userDto);
+                cacheUser(user);
+                result.postValue(NetworkResultWrapper.success(user));
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<UserDto>> call, Throwable t) {
+                result.postValue(NetworkResultWrapper.error("Khong the tai ho so nguoi dung: " + safeMessage(t)));
+            }
+        });
+
         return result;
     }
 
@@ -100,7 +151,8 @@ public class UserRepositoryImpl extends BaseRepository implements UserRepository
                         updatedUser.getPhone(),
                         updatedUser.getEmail(),
                         updatedUser.getAvatarUrl(),
-                        updatedUser.getAddress() != null ? updatedUser.getAddress() : address
+                        updatedUser.getAddress() != null ? updatedUser.getAddress() : address,
+                        updatedUser.getCreatedAt()
                     );
                 } else {
                     tokenManager.updateUserInfo(name, phone, null, null, address);
@@ -112,7 +164,8 @@ public class UserRepositoryImpl extends BaseRepository implements UserRepository
                         safe(address),
                         UserRole.fromStringSafe(tokenManager.getUserRole()),
                         tokenManager.getUserAvatar(),
-                        tokenManager.isUserVerified()
+                        tokenManager.isUserVerified(),
+                        tokenManager.getUserCreatedAt()
                     );
                 }
 
@@ -228,5 +281,27 @@ public class UserRepositoryImpl extends BaseRepository implements UserRepository
 
     private String safe(String value) {
         return value != null ? value : "";
+    }
+
+    private void cacheUser(User user) {
+        if (user == null) {
+            return;
+        }
+
+        String role = user.getRole() != null ? user.getRole().name() : tokenManager.getUserRole();
+        tokenManager.saveUserInfo(
+            user.getId(),
+            user.getName(),
+            user.getEmail(),
+            user.getPhone(),
+            role,
+            user.getAvatarUrl(),
+            user.isVerified(),
+            user.getCreatedAt()
+        );
+
+        if (user.getAddress() != null) {
+            tokenManager.updateUserInfo(null, null, null, null, user.getAddress());
+        }
     }
 }

@@ -18,6 +18,7 @@ public class User {
     private final UserRole role;
     private final String avatarUrl;
     private final boolean verified;
+    private final String createdAt;
 
     public User(String id,
                 String name,
@@ -26,7 +27,8 @@ public class User {
                 String address,
                 UserRole role,
                 String avatarUrl,
-                boolean verified) {
+                boolean verified,
+                String createdAt) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -35,6 +37,7 @@ public class User {
         this.role = role;
         this.avatarUrl = avatarUrl;
         this.verified = verified;
+        this.createdAt = createdAt;
     }
 
     public String getId() {
@@ -67,5 +70,9 @@ public class User {
 
     public boolean isVerified() {
         return verified;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
     }
 }

@@ -7,6 +7,7 @@ import com.drc.aidbridge.data.repository.UserRepositoryImpl;
 import com.drc.aidbridge.data.repository.admin.AdminDashboardRepositoryImpl;
 import com.drc.aidbridge.data.repository.admin.AdminStaffRepositoryImpl;
 import com.drc.aidbridge.data.repository.staff.StaffInventoryRepositoryImpl;
+import com.drc.aidbridge.data.repository.staff.StaffTasksRepositoryImpl;
 import com.drc.aidbridge.data.repository.sponsor.SponsorDonationRepositoryImpl;
 import com.drc.aidbridge.data.repository.victim.VictimHistoryRepositoryImpl;
 import com.drc.aidbridge.data.repository.victim.VictimSosRepositoryImpl;
@@ -19,6 +20,7 @@ import com.drc.aidbridge.domain.repository.UserRepository;
 import com.drc.aidbridge.domain.repository.admin.AdminDashboardRepository;
 import com.drc.aidbridge.domain.repository.admin.AdminStaffRepository;
 import com.drc.aidbridge.domain.repository.staff.StaffInventoryRepository;
+import com.drc.aidbridge.domain.repository.staff.StaffTasksRepository;
 import com.drc.aidbridge.domain.repository.sponsor.SponsorDonationRepository;
 import com.drc.aidbridge.domain.repository.volunteer.VolunteerRepository;
 import com.drc.aidbridge.domain.repository.victim.VictimHistoryRepository;
@@ -90,6 +92,10 @@ public abstract class RepositoryModule {
     @Binds
     @Singleton
     public abstract StaffInventoryRepository bindStaffInventoryRepository(StaffInventoryRepositoryImpl impl);
+
+        @Binds
+        @Singleton
+        public abstract StaffTasksRepository bindStaffTasksRepository(StaffTasksRepositoryImpl impl);
 
     @Binds
     @Singleton

@@ -4,7 +4,6 @@ import com.drc.aidbridge.modules.volunteer.VolunteerDTO;
 import com.drc.aidbridge.modules.volunteer.internal.entity.Volunteer;
 import com.drc.aidbridge.modules.volunteer.internal.mapper.VolunteerMapper;
 import com.drc.aidbridge.modules.volunteer.internal.repository.VolunteerJpaRepository;
-import com.drc.aidbridge.modules.volunteer.internal.test.H3Visualizer;
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +28,11 @@ public class FindNearbyVolunteersUseCase {
 
     @Transactional(readOnly = true)
     public List<VolunteerDTO> execute(BigDecimal lat, BigDecimal lng) {
+        return execute(lat, lng, 0);
+    }
+
+    @Transactional(readOnly = true)
+    public List<VolunteerDTO> execute(BigDecimal lat, BigDecimal lng, int retryCount) {
         if (lat == null || lng == null) {
             return List.of();
         }
@@ -37,7 +40,17 @@ public class FindNearbyVolunteersUseCase {
         try {
             // Map coordinates to resolution 8 H3 cell
             String centerHex = h3Core.latLngToCellAddress(lat.doubleValue(), lng.doubleValue(), 8);
-            int[] kSteps = {2, 5, 10};
+            
+            // Adjust search radius based on retry count
+            int[] kSteps;
+            if (retryCount <= 0) {
+                kSteps = new int[]{2, 5};
+            } else if (retryCount <= 2) {
+                kSteps = new int[]{5, 10};
+            } else {
+                kSteps = new int[]{10, 20};
+            }
+
             List<Volunteer> candidates = new java.util.ArrayList<>();
             List<String> kRingList = new java.util.ArrayList<>();
 
@@ -49,10 +62,6 @@ public class FindNearbyVolunteersUseCase {
                     break;
                 }
             }
-
-            // Generate debugging spatial map
-            H3Visualizer.generateMapHtml(
-                    h3Core, centerHex, kRingList, lat.doubleValue(), lng.doubleValue(), candidates);
 
             // Phase 2: Distance Matrix Routing (ETA Ranking)
             // Using graphhopper to calculate the real route from volunteer to user

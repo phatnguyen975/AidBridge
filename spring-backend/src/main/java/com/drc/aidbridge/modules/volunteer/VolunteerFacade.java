@@ -8,6 +8,7 @@ import java.util.UUID;
 public interface VolunteerFacade {
     Optional<VolunteerDTO> getVolunteerByUserId(UUID userId);
     List<VolunteerDTO> findNearbyVolunteers(BigDecimal lat, BigDecimal lng);
+    List<VolunteerDTO> findNearbyVolunteers(BigDecimal lat, BigDecimal lng, int retryCount);
     List<VolunteerDTO> findVolunteersOrderByDistance(BigDecimal lat, BigDecimal lng);
     VolunteerDTO createVolunteerProfile(UUID userId);
     boolean existsByUserId(UUID userId);

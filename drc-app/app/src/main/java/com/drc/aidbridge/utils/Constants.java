@@ -34,6 +34,7 @@ public final class Constants {
     public static final String KEY_USER_AVATAR = "user_avatar";
     public static final String KEY_USER_ADDRESS = "user_address";
     public static final String KEY_USER_VERIFIED = "user_verified";
+    public static final String KEY_USER_CREATED_AT = "user_created_at";
     public static final String KEY_FCM_TOKEN = "fcm_token";
     public static final String KEY_LAST_LOCATION_LAT = "last_location_lat";
     public static final String KEY_LAST_LOCATION_LNG = "last_location_lng";

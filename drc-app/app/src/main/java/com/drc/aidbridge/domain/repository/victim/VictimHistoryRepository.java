@@ -11,6 +11,7 @@ public interface VictimHistoryRepository {
     LiveData<NetworkResultWrapper<VictimHistoryPage>> getVictimHistory(int page,
                                                                        int size,
                                                                        String timeRange,
+                                                                       String status,
                                                                        boolean forceOffline);
 
     LiveData<NetworkResultWrapper<VictimHistoryDetail>> getVictimHistoryDetail(String requestId,

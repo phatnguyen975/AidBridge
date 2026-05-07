@@ -60,6 +60,7 @@ public class VictimHistoryRepositoryImpl extends BaseRepository implements Victi
     public LiveData<NetworkResultWrapper<VictimHistoryPage>> getVictimHistory(int page,
                                                                                int size,
                                                                                String timeRange,
+                                                                               String status,
                                                                                boolean forceOffline) {
         MutableLiveData<NetworkResultWrapper<VictimHistoryPage>> result = new MutableLiveData<>();
         result.postValue(NetworkResultWrapper.loading());
@@ -73,7 +74,7 @@ public class VictimHistoryRepositoryImpl extends BaseRepository implements Victi
             return result;
         }
 
-        historyApiService.getVictimHistory(page, size, normalizedTimeRange)
+        historyApiService.getVictimHistory(page, size, normalizedTimeRange, status)
             .enqueue(new Callback<BaseResponse<PaginatedData<HistoryResponse>>>() {
                 @Override
                 public void onResponse(Call<BaseResponse<PaginatedData<HistoryResponse>>> call,
@@ -386,7 +387,7 @@ public class VictimHistoryRepositoryImpl extends BaseRepository implements Victi
             case "1h":
                 return value;
             default:
-                return "1h";
+                return "all";
         }
     }
 

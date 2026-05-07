@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,5 +27,9 @@ public interface DonationRepository extends JpaRepository<Donation, UUID> {
 	boolean existsByQrCodeToken(String qrCodeToken);
 
 	Optional<Donation> findFirstByQrCodeTokenOrDonationCode(String qrCodeToken, String donationCode);
+
+	Page<Donation> findByHubIdAndStatusInOrderByCreatedAtAsc(UUID hubId,
+	                                                         Collection<DonationStatus> statuses,
+	                                                         Pageable pageable);
 
 }
