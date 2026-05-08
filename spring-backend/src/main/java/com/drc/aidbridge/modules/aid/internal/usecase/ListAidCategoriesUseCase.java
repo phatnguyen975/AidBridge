@@ -27,8 +27,8 @@ public class ListAidCategoriesUseCase {
      */
     @Transactional(readOnly = true)
     public List<AidCategoryResponse> execute() {
-        List<AidRequestItemJpaRepository.AidCategoryProjection> rows =
-            aidRequestItemJpaRepository.findAidCategoryRows();
+        List<AidRequestItemJpaRepository.AidCategoryProjection> rows = aidRequestItemJpaRepository
+                .findAidCategoryRows();
 
         if (rows == null || rows.isEmpty()) {
             return List.of();
@@ -41,32 +41,18 @@ public class ListAidCategoriesUseCase {
             }
 
             CategoryAggregate aggregate = categoryMap.computeIfAbsent(
-                row.getParentId(),
-                ignored -> new CategoryAggregate(row.getParentId(), safeText(row.getParentName()))
-            );
-
-            UUID childId = row.getChildId();
-            String childName = safeText(row.getChildName());
-            if (childId != null && !childName.isBlank()) {
-                aggregate.items.add(
-                    AidCategoryItemResponse.builder()
-                        .id(childId)
-                        .name(childName)
-                        .unit(safeText(row.getChildUnit()))
-                        .build()
-                );
-            }
+                    row.getParentId(),
+                    ignored -> new CategoryAggregate(row.getParentId(), safeText(row.getParentName())));
         }
 
         List<AidCategoryResponse> result = new ArrayList<>();
         for (CategoryAggregate aggregate : categoryMap.values()) {
             result.add(
-                AidCategoryResponse.builder()
-                    .id(aggregate.id)
-                    .name(aggregate.name)
-                    .items(aggregate.items)
-                    .build()
-            );
+                    AidCategoryResponse.builder()
+                            .id(aggregate.id)
+                            .name(aggregate.name)
+                            .items(aggregate.items)
+                            .build());
         }
 
         return result;
