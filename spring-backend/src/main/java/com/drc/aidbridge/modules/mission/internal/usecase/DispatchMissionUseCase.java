@@ -131,7 +131,7 @@ public class DispatchMissionUseCase {
                     .distinct()
                     .map(volunteerFacade::getVolunteerByUserId)
                     .flatMap(Optional::stream)
-                    .filter(this::isEligibleVolunteer)
+                    .filter(v -> isEligibleVolunteer(v, mission.getId()))
                     .collect(Collectors.toList());
 
             DispatchType dispatchType = preferredVolunteers.size() > 1
@@ -157,7 +157,7 @@ public class DispatchMissionUseCase {
                 mission.getRetryCount());
 
         List<VolunteerDTO> selected = nearby.stream()
-                .filter(this::isEligibleVolunteer)
+                .filter(v -> isEligibleVolunteer(v, mission.getId()))
                 .limit(DispatchPolicy.SOS_BROADCAST_LIMIT) // Top candidates for critical rescue
                 .collect(Collectors.toList());
 
@@ -176,7 +176,7 @@ public class DispatchMissionUseCase {
                 mission.getRetryCount());
 
         List<VolunteerDTO> selected = nearby.stream()
-                .filter(this::isEligibleVolunteer)
+                .filter(v -> isEligibleVolunteer(v, mission.getId()))
                 .limit(DispatchPolicy.AID_BATCH_SIZE) // Top candidates for delivery sequential
                 .collect(Collectors.toList());
 
@@ -184,11 +184,17 @@ public class DispatchMissionUseCase {
         return new DispatchPlan(DispatchType.SEQUENTIAL, radiusKm, selected);
     }
 
-    private boolean isEligibleVolunteer(VolunteerDTO volunteer) {
+    private boolean isEligibleVolunteer(VolunteerDTO volunteer, UUID missionId) {
         if (volunteer == null) {
             return false;
         }
-        return missionRepository.findActiveByVolunteerId(volunteer.getUserId()).isEmpty();
+        
+        // 1. Không đang bận mission khác
+        boolean isBusy = !missionRepository.findActiveByVolunteerId(volunteer.getUserId()).isEmpty();
+        if (isBusy) return false;
+
+        // 2. Chưa từng được gửi yêu cầu cho mission này (bao gồm cả đã reject hoặc đang pending từ batch trước)
+        return !dispatchAttemptRepository.existsByMissionIdAndVolunteerId(missionId, volunteer.getUserId());
     }
 
     private BigDecimal calculateMaxDistanceKm(Point missionLocation, Collection<VolunteerDTO> volunteers) {

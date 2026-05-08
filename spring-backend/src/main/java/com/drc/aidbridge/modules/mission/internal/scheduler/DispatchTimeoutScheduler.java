@@ -28,7 +28,7 @@ public class DispatchTimeoutScheduler {
     public void checkDispatchTimeouts() {
         log.debug("Running cron job to check dispatch timeouts...");
         
-        Instant expiryTime = Instant.now().minus(5, ChronoUnit.MINUTES);
+        Instant expiryTime = Instant.now().minus(2, ChronoUnit.MINUTES);
         List<DispatchAttempt> expiredAttempts = dispatchAttemptRepository.findExpiredAttempts(
                 DispatchResponse.PENDING, 
                 expiryTime
