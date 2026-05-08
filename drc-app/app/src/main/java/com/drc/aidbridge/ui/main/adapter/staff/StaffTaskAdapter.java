@@ -1,6 +1,5 @@
 package com.drc.aidbridge.ui.main.adapter.staff;
 
-import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,13 +8,11 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.ItemStaffTaskBinding;
-import com.drc.aidbridge.ui.main.fragment.staff.StaffTaskDetailBottomSheet;
+import com.drc.aidbridge.domain.model.staff.StaffUpcomingTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +22,10 @@ public class StaffTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int VIEW_TYPE_ITEM = 0;
     private static final int VIEW_TYPE_LOADING = 1;
 
-    public static final String TYPE_EXPORT = "export";
-    public static final String TYPE_IMPORT = "import";
-
-    private final List<TaskItem> items = new ArrayList<>();
-    private final FragmentManager fragmentManager;
+    private final List<StaffUpcomingTask> items = new ArrayList<>();
     private boolean isLoadingMore = false;
 
-    public StaffTaskAdapter(@NonNull FragmentManager fragmentManager) {
-        this.fragmentManager = fragmentManager;
+    public StaffTaskAdapter() {
     }
 
     @NonNull
@@ -65,7 +57,7 @@ public class StaffTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             parent,
             false
         );
-        return new TaskViewHolder(binding, fragmentManager);
+        return new TaskViewHolder(binding);
     }
 
     @Override
@@ -88,7 +80,7 @@ public class StaffTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return items.size() + (isLoadingMore ? 1 : 0);
     }
 
-    public void addItems(@NonNull List<TaskItem> newItems) {
+    public void addItems(@NonNull List<StaffUpcomingTask> newItems) {
         int start = items.size();
         items.addAll(newItems);
         notifyItemRangeInserted(start, newItems.size());
@@ -124,80 +116,15 @@ public class StaffTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     static class TaskViewHolder extends RecyclerView.ViewHolder {
 
         private final ItemStaffTaskBinding binding;
-        private final FragmentManager fragmentManager;
-
-        TaskViewHolder(@NonNull ItemStaffTaskBinding binding, @NonNull FragmentManager fragmentManager) {
+        TaskViewHolder(@NonNull ItemStaffTaskBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
-            this.fragmentManager = fragmentManager;
         }
 
-        void bind(@NonNull TaskItem item) {
-            binding.tvEta.setText(item.eta);
-            binding.tvStatus.setText(item.status);
-            binding.tvTaskCode.setText(item.taskCode);
-            binding.tvPersonName.setText(item.personName);
-
-            boolean isIncoming = binding.getRoot().getContext().getString(R.string.staff_task_status_incoming)
-                .contentEquals(item.status);
-            if (isIncoming) {
-                binding.tvStatus.setBackgroundResource(R.drawable.bg_staff_detail_status_chip);
-                binding.tvStatus.setTextColor(ContextCompat.getColor(binding.getRoot().getContext(), R.color.color_primary));
-            } else {
-                binding.tvStatus.setBackgroundResource(R.drawable.bg_staff_task_status_completed);
-                binding.tvStatus.setTextColor(ContextCompat.getColor(binding.getRoot().getContext(), R.color.safe_green));
-            }
-
-            binding.getRoot().setOnClickListener(v -> openDetailBottomSheet(item));
-            binding.tvDetail.setOnClickListener(v -> openDetailBottomSheet(item));
-        }
-
-        private void openDetailBottomSheet(@NonNull TaskItem item) {
-            Bundle args = new Bundle();
-            args.putString(StaffTaskDetailBottomSheet.ARG_TASK_CODE, item.taskCode);
-            args.putString(StaffTaskDetailBottomSheet.ARG_PERSON_NAME, item.personName);
-            args.putString(StaffTaskDetailBottomSheet.ARG_PHONE, item.phone);
-            args.putString(StaffTaskDetailBottomSheet.ARG_STATUS, item.status);
-            args.putStringArrayList(
-                StaffTaskDetailBottomSheet.ARG_EXPECTED_ITEMS,
-                new ArrayList<>(item.mockItemsSummary)
-            );
-
-            StaffTaskDetailBottomSheet bottomSheet = new StaffTaskDetailBottomSheet();
-            bottomSheet.setArguments(args);
-            bottomSheet.show(fragmentManager, StaffTaskDetailBottomSheet.TAG);
-        }
-    }
-
-    public static class TaskItem {
-
-        public final String id;
-        public final String type;
-        public final String eta;
-        public final String status;
-        public final String taskCode;
-        public final String personName;
-        public final String phone;
-        public final ArrayList<String> mockItemsSummary;
-
-        public TaskItem(
-            @NonNull String id,
-            @NonNull String type,
-            @NonNull String eta,
-            @NonNull String status,
-            @NonNull String taskCode,
-            @NonNull String personName,
-            @NonNull String phone,
-            @NonNull ArrayList<String> mockItemsSummary
-        ) {
-            this.id = id;
-            this.type = type;
-            this.eta = eta;
-            this.status = status;
-            this.taskCode = taskCode;
-            this.personName = personName;
-            this.phone = phone;
-            this.mockItemsSummary = mockItemsSummary;
+        void bind(@NonNull StaffUpcomingTask item) {
+            binding.tvTaskCode.setText(item.getCode());
+            binding.tvPersonName.setText(item.getName());
+            binding.tvPhone.setText(item.getPhone());
         }
     }
 }
