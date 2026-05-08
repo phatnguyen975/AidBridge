@@ -4,7 +4,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -38,11 +37,6 @@ public class VictimHistoryAdapter extends RecyclerView.Adapter<VictimHistoryAdap
     public static final String TYPE_SOS_RELATIVE = "TYPE_SOS_RELATIVE";
 
     private final List<HistoryModel> items = new ArrayList<>();
-    private final OnHistoryClickListener listener;
-
-    public VictimHistoryAdapter(@NonNull OnHistoryClickListener listener) {
-        this.listener = listener;
-    }
 
     @NonNull
     @Override
@@ -111,9 +105,6 @@ public class VictimHistoryAdapter extends RecyclerView.Adapter<VictimHistoryAdap
             holder.binding.tvStatus.setCompoundDrawablesRelativeWithIntrinsicBounds(wrapped, null, null, null);
         }
 
-        View.OnClickListener clickListener = v -> listener.onHistoryClick(model);
-        holder.binding.getRoot().setOnClickListener(clickListener);
-        holder.binding.btnDetail.setOnClickListener(clickListener);
     }
 
     @Override
@@ -130,10 +121,6 @@ public class VictimHistoryAdapter extends RecyclerView.Adapter<VictimHistoryAdap
     public void clear() {
         items.clear();
         notifyDataSetChanged();
-    }
-
-    public interface OnHistoryClickListener {
-        void onHistoryClick(@NonNull HistoryModel model);
     }
 
     public static class HistoryModel {

@@ -4,8 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    android:clickable="true"
-    android:focusable="true"
     app:cardBackgroundColor="@color/bg_surface"
     app:cardCornerRadius="@dimen/radius_lg"
     app:strokeColor="@color/border_default"
@@ -99,14 +97,6 @@
                     android:textSize="@dimen/text_sm" />
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDetail"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/victim_history_detail_button"
-                android:textAllCaps="true"
-                android:textColor="@color/color_primary" />
         </LinearLayout>
     </LinearLayout>
 
