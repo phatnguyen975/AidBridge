@@ -27,7 +27,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.data.remote.NetworkResultWrapper;
 import com.drc.aidbridge.databinding.FragmentVictimSupplyTabBinding;
-import com.drc.aidbridge.databinding.ItemSupplyCategoryBinding;
 import com.drc.aidbridge.domain.model.victim.VictimSupplyCategory;
 import com.drc.aidbridge.domain.model.victim.VictimSupplyItem;
 import com.drc.aidbridge.domain.usecase.validation.ValidationResult;
@@ -116,14 +115,12 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         viewModel.getCategoriesResult().observe(getViewLifecycleOwner(), this::handleCategoryState);
 
         viewModel.getSubmitResult().observe(
-            getViewLifecycleOwner(),
-            resultObserver(this::handleSubmitSuccess, this::handleSubmitError)
-        );
+                getViewLifecycleOwner(),
+                resultObserver(this::handleSubmitSuccess, this::handleSubmitError));
 
         viewModel.getVoiceSubmitResult().observe(
-            getViewLifecycleOwner(),
-            resultObserver(this::handleSubmitSuccess, this::handleSubmitError)
-        );
+                getViewLifecycleOwner(),
+                resultObserver(this::handleSubmitSuccess, this::handleSubmitError));
     }
 
     private void renderValidationError(@Nullable ValidationResult validation) {
@@ -133,12 +130,11 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
 
         String message = validation.getErrorMessage();
         showTopSnackbar(
-            binding.mainContainer,
-            message != null && !message.trim().isEmpty()
-                ? message
-                : getString(R.string.victim_supply_submit_error),
-            true
-        );
+                binding.mainContainer,
+                message != null && !message.trim().isEmpty()
+                        ? message
+                        : getString(R.string.victim_supply_submit_error),
+                true);
     }
 
     @Override
@@ -165,12 +161,11 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
                 result.markAsHandled();
                 String message = result.getMessage();
                 showTopSnackbar(
-                    binding.mainContainer,
-                    message != null && !message.trim().isEmpty()
-                        ? message
-                        : getString(R.string.victim_supply_load_categories_error),
-                    true
-                );
+                        binding.mainContainer,
+                        message != null && !message.trim().isEmpty()
+                                ? message
+                                : getString(R.string.victim_supply_load_categories_error),
+                        true);
             }
 
             renderEmptyState(true);
@@ -194,7 +189,7 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
 
     private void setupDynamicCategories(List<VictimSupplyCategory> categories) {
         binding.containerCategories.removeAllViews();
-        Set<String> validItemIds = new LinkedHashSet<>();
+        Set<String> validCategoryIds = new LinkedHashSet<>();
 
         int index = 0;
         for (VictimSupplyCategory category : categories) {
@@ -202,126 +197,37 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
                 continue;
             }
 
-            ItemSupplyCategoryBinding categoryBinding = ItemSupplyCategoryBinding.inflate(
-                getLayoutInflater(),
-                binding.containerCategories,
-                false
-            );
-
-            String categoryName = safeText(category.getName());
-            categoryBinding.tvCategoryName.setText(categoryName);
-            categoryBinding.layoutHeader.setOnClickListener(v -> toggleCategory(categoryBinding));
-
-            List<VictimSupplyItem> items = category.getItems() != null ? category.getItems() : new ArrayList<>();
-            for (VictimSupplyItem item : items) {
-                if (item == null) {
-                    continue;
-                }
-
-                String itemId = safeText(item.getId());
-                if (itemId.isEmpty()) {
-                    continue;
-                }
-
-                validItemIds.add(itemId);
-                if (!itemSelections.containsKey(itemId)) {
-                    itemSelections.put(itemId, false);
-                }
-
-                categoryBinding.layoutContent.addView(createItemSelectionRow(categoryBinding, items, item));
+            String categoryId = safeText(category.getId());
+            if (categoryId.isEmpty()) {
+                continue;
             }
 
-            if (items.isEmpty()) {
-                categoryBinding.layoutContent.addView(createEmptyCategoryItemView());
+            validCategoryIds.add(categoryId);
+            if (!itemSelections.containsKey(categoryId)) {
+                itemSelections.put(categoryId, false);
             }
 
-            updateSelectedCount(categoryBinding, items);
+            MaterialCheckBox checkBox = new MaterialCheckBox(requireContext());
+            checkBox.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            checkBox.setText(safeText(category.getName()));
+            checkBox.setChecked(isItemSelected(categoryId));
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                setItemSelected(categoryId, isChecked);
+            });
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            );
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
             if (index > 0) {
                 params.topMargin = getResources().getDimensionPixelSize(R.dimen.victim_supply_category_item_margin_top);
             }
-            binding.containerCategories.addView(categoryBinding.getRoot(), params);
+            binding.containerCategories.addView(checkBox, params);
             index++;
         }
 
-        itemSelections.keySet().retainAll(validItemIds);
-    }
-
-    private View createItemSelectionRow(ItemSupplyCategoryBinding categoryBinding,
-                                        List<VictimSupplyItem> categoryItems,
-                                        VictimSupplyItem item) {
-        LinearLayout container = new LinearLayout(requireContext());
-        container.setLayoutParams(new LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
-        container.setOrientation(LinearLayout.VERTICAL);
-        container.setPadding(0, getResources().getDimensionPixelSize(R.dimen.spacing_xs), 0, 0);
-
-        String itemId = safeText(item.getId());
-        MaterialCheckBox checkBox = new MaterialCheckBox(requireContext());
-        checkBox.setLayoutParams(new LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
-        checkBox.setText(safeText(item.getName()));
-        checkBox.setChecked(isItemSelected(itemId));
-        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            setItemSelected(itemId, isChecked);
-            updateSelectedCount(categoryBinding, categoryItems);
-        });
-
-        container.addView(checkBox);
-        return container;
-    }
-
-    private View createEmptyCategoryItemView() {
-        TextView textView = new TextView(requireContext());
-        textView.setLayoutParams(new LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
-        textView.setPadding(0, getResources().getDimensionPixelSize(R.dimen.spacing_xs), 0, 0);
-        textView.setText(R.string.victim_supply_level2_empty);
-        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_secondary));
-        textView.setTextSize(14);
-        return textView;
-    }
-
-    private void toggleCategory(ItemSupplyCategoryBinding itemBinding) {
-        boolean isExpanded = itemBinding.layoutContent.getVisibility() == View.VISIBLE;
-        itemBinding.layoutContent.setVisibility(isExpanded ? View.GONE : View.VISIBLE);
-        float targetRotation = isExpanded ? 0f : 180f;
-        itemBinding.ivArrow.animate().rotation(targetRotation).setDuration(180).start();
-
-        int contentDescRes = isExpanded
-            ? R.string.victim_supply_list_expand_desc
-            : R.string.victim_supply_list_collapse_desc;
-        itemBinding.ivArrow.setContentDescription(getString(contentDescRes));
-    }
-
-    private void updateSelectedCount(ItemSupplyCategoryBinding itemBinding, List<VictimSupplyItem> categoryItems) {
-        int selectedCount = 0;
-        for (VictimSupplyItem item : categoryItems) {
-            if (item == null) {
-                continue;
-            }
-
-            String itemId = safeText(item.getId());
-            if (itemId.isEmpty()) {
-                continue;
-            }
-
-            if (isItemSelected(itemId)) {
-                selectedCount++;
-            }
-        }
-
-        itemBinding.tvSelectedCount.setText(getString(R.string.victim_supply_selected_count_format, selectedCount));
+        itemSelections.keySet().retainAll(validCategoryIds);
     }
 
     private boolean isItemSelected(String itemId) {
@@ -471,26 +377,26 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         if (userLocationManager.hasLocationPermission()) {
             fetchCurrentLocation(true);
         } else {
-            locationPermissionLauncher.launch(new String[]{
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+            locationPermissionLauncher.launch(new String[] {
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
             });
         }
     }
 
     private void setupLocationPermissionLauncher() {
         locationPermissionLauncher = registerForActivityResult(
-            new ActivityResultContracts.RequestMultiplePermissions(),
-            result -> {
-                Boolean fineLocation = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
-                Boolean coarseLocation = result.get(Manifest.permission.ACCESS_COARSE_LOCATION);
-                if ((fineLocation != null && fineLocation) || (coarseLocation != null && coarseLocation)) {
-                    fetchCurrentLocation(true);
-                } else {
-                    showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_permission_location_denied), true);
-                }
-            }
-        );
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    Boolean fineLocation = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
+                    Boolean coarseLocation = result.get(Manifest.permission.ACCESS_COARSE_LOCATION);
+                    if ((fineLocation != null && fineLocation) || (coarseLocation != null && coarseLocation)) {
+                        fetchCurrentLocation(true);
+                    } else {
+                        showTopSnackbar(binding.mainContainer,
+                                getString(R.string.victim_supply_permission_location_denied), true);
+                    }
+                });
     }
 
     private void fetchCurrentLocation(boolean shouldSubmitAfterFetch) {
@@ -503,25 +409,28 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
 
         try {
             fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                .addOnSuccessListener(location -> {
-                    if (location != null) {
-                        currentLatitude = location.getLatitude();
-                        currentLongitude = location.getLongitude();
-                        if (shouldSubmitAfterFetch) {
-                            executeSubmitWithLocation();
+                    .addOnSuccessListener(location -> {
+                        if (location != null) {
+                            currentLatitude = location.getLatitude();
+                            currentLongitude = location.getLongitude();
+                            if (shouldSubmitAfterFetch) {
+                                executeSubmitWithLocation();
+                            }
+                        } else if (shouldSubmitAfterFetch) {
+                            showTopSnackbar(binding.mainContainer,
+                                    getString(R.string.victim_supply_location_unavailable), true);
                         }
-                    } else if (shouldSubmitAfterFetch) {
-                        showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_location_unavailable), true);
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    if (shouldSubmitAfterFetch) {
-                        showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_location_unavailable), true);
-                    }
-                });
+                    })
+                    .addOnFailureListener(e -> {
+                        if (shouldSubmitAfterFetch) {
+                            showTopSnackbar(binding.mainContainer,
+                                    getString(R.string.victim_supply_location_unavailable), true);
+                        }
+                    });
         } catch (SecurityException e) {
             if (shouldSubmitAfterFetch) {
-                showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_permission_location_denied), true);
+                showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_permission_location_denied),
+                        true);
             }
         }
     }
@@ -534,25 +443,23 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
 
         if (inputMode == InputMode.VOICE && pendingVoiceSubmitInput != null) {
             viewModel.submitVoiceRequest(
-                pendingVoiceSubmitInput.adults,
-                pendingVoiceSubmitInput.elderly,
-                pendingVoiceSubmitInput.children,
-                "",
-                currentLatitude,
-                currentLongitude,
-                pendingVoiceSubmitInput.file
-            );
+                    pendingVoiceSubmitInput.adults,
+                    pendingVoiceSubmitInput.elderly,
+                    pendingVoiceSubmitInput.children,
+                    "",
+                    currentLatitude,
+                    currentLongitude,
+                    pendingVoiceSubmitInput.file);
             pendingVoiceSubmitInput = null;
         } else if (pendingSubmitInput != null) {
             viewModel.submitRequest(
-                pendingSubmitInput.adults,
-                pendingSubmitInput.elderly,
-                pendingSubmitInput.children,
-                pendingSubmitInput.notes,
-                pendingSubmitInput.items,
-                currentLatitude,
-                currentLongitude
-            );
+                    pendingSubmitInput.adults,
+                    pendingSubmitInput.elderly,
+                    pendingSubmitInput.children,
+                    pendingSubmitInput.notes,
+                    pendingSubmitInput.items,
+                    currentLatitude,
+                    currentLongitude);
             pendingSubmitInput = null;
         }
     }
@@ -567,15 +474,15 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
 
     private void setupSpeechToText() {
         recordAudioPermissionLauncher = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(),
-            isGranted -> {
-                if (isGranted) {
-                    startVoiceRecording();
-                } else {
-                    showTopSnackbar(binding.mainContainer, getString(R.string.victim_supply_voice_permission_denied), true);
-                }
-            }
-        );
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        startVoiceRecording();
+                    } else {
+                        showTopSnackbar(binding.mainContainer,
+                                getString(R.string.victim_supply_voice_permission_denied), true);
+                    }
+                });
 
         binding.btnVoiceToggle.setOnClickListener(v -> {
             if (isVoiceRecording) {
@@ -595,7 +502,8 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
     }
 
     private void checkVoicePermissionAndStart() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
             startVoiceRecording();
         } else {
             recordAudioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
@@ -624,7 +532,8 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
     }
 
     private void stopVoiceRecording() {
-        if (!isVoiceRecording) return;
+        if (!isVoiceRecording)
+            return;
         isVoiceRecording = false;
         updateVoiceStatusText();
         stopVoicePulseAnimation();
@@ -641,7 +550,8 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
     }
 
     private void startVoicePlayback() {
-        if (voiceRecordingFile == null || !voiceRecordingFile.exists()) return;
+        if (voiceRecordingFile == null || !voiceRecordingFile.exists())
+            return;
 
         try {
             mediaPlayer = new MediaPlayer();
@@ -674,25 +584,29 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
     }
 
     private void updateVoiceStatusText() {
-        if (inputMode == InputMode.MANUAL) return;
+        if (inputMode == InputMode.MANUAL)
+            return;
 
         if (isVoiceRecording) {
             binding.tvVoiceStatus.setText(R.string.victim_supply_voice_recording);
             binding.btnVoiceToggle.setIconResource(R.drawable.ic_stop);
-            binding.btnVoiceToggle.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.sos_red)));
+            binding.btnVoiceToggle.setBackgroundTintList(
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.sos_red)));
             binding.btnVoicePlay.setVisibility(View.GONE);
         } else {
             if (voiceRecordingFile != null && voiceRecordingFile.exists()) {
                 binding.tvVoiceStatus.setText(R.string.victim_supply_voice_recorded);
                 binding.btnVoiceToggle.setIconResource(R.drawable.ic_mic);
-                binding.btnVoiceToggle.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.safe_green)));
-                
+                binding.btnVoiceToggle.setBackgroundTintList(
+                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.safe_green)));
+
                 binding.btnVoicePlay.setVisibility(View.VISIBLE);
                 binding.btnVoicePlay.setIconResource(isVoicePlaying ? R.drawable.ic_pause : R.drawable.ic_play);
             } else {
                 binding.tvVoiceStatus.setText(R.string.victim_supply_voice_idle);
                 binding.btnVoiceToggle.setIconResource(R.drawable.ic_mic);
-                binding.btnVoiceToggle.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.color_primary)));
+                binding.btnVoiceToggle.setBackgroundTintList(
+                        ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.color_primary)));
                 binding.btnVoicePlay.setVisibility(View.GONE);
             }
         }
@@ -719,12 +633,14 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
     }
 
     private void handleSubmitSuccess(String message) {
-        showTopSnackbar(binding.mainContainer, message != null ? message : getString(R.string.victim_supply_submit_success), false);
+        showTopSnackbar(binding.mainContainer,
+                message != null ? message : getString(R.string.victim_supply_submit_success), false);
         resetForm();
     }
 
     private void handleSubmitError(String message) {
-        showTopSnackbar(binding.mainContainer, message != null ? message : getString(R.string.victim_supply_submit_error), true);
+        showTopSnackbar(binding.mainContainer,
+                message != null ? message : getString(R.string.victim_supply_submit_error), true);
     }
 
     private void resetForm() {
@@ -752,7 +668,8 @@ public class VictimSupplyTabFragment extends BaseFragment<FragmentVictimSupplyTa
         final int children;
         final String notes;
 
-        PendingSubmitInput(List<VictimSupplyViewModel.RequestedItem> items, int adults, int elderly, int children, String notes) {
+        PendingSubmitInput(List<VictimSupplyViewModel.RequestedItem> items, int adults, int elderly, int children,
+                String notes) {
             this.items = items;
             this.adults = adults;
             this.elderly = elderly;
