@@ -49,6 +49,15 @@ public class VolunteerMissionHistoryFullAdapter
         holder.binding.tvMissionCategory.setText(item.getMissionType());
         holder.binding.tvMissionLocation.setText(item.getAddress() != null ? item.getAddress() : "Không có địa chỉ");
         holder.binding.tvMissionDateTime.setText(formatToVnTime(item.getCreatedAt()));
+        
+        // Hiển thị Mã nhiệm vụ (Code Name)
+        String codeName = item.getCodeName();
+        if (codeName != null && !codeName.trim().isEmpty()) {
+            holder.binding.tvMissionCodeName.setText("Mã: " + codeName.trim());
+            holder.binding.tvMissionCodeName.setVisibility(android.view.View.VISIBLE);
+        } else {
+            holder.binding.tvMissionCodeName.setVisibility(android.view.View.GONE);
+        }
 
         // Set category badge color
         if ("RESCUE".equalsIgnoreCase(item.getMissionType())) {
@@ -61,18 +70,18 @@ public class VolunteerMissionHistoryFullAdapter
 
         // Radius
         if (item.getRadiusKm() != null) {
-            holder.binding.tvMissionRadius.setText(String.format(java.util.Locale.getDefault(), "Bán kính điều phối: %.2f km", item.getRadiusKm()));
+            holder.binding.tvMissionRadius.setText(String.format(java.util.Locale.getDefault(), "Bán kính: %.2f km", item.getRadiusKm()));
             holder.binding.tvMissionRadius.setVisibility(android.view.View.VISIBLE);
         } else {
             holder.binding.tvMissionRadius.setVisibility(android.view.View.GONE);
         }
 
-        // Status (Nền sáng chữ tối)
+        // Status
         String status = item.getStatus() != null ? item.getStatus() : "";
         holder.binding.tvMissionStatus.setText(status);
         
-        int bgColor = android.graphics.Color.parseColor("#E2E8F0"); // default light gray
-        int textColor = android.graphics.Color.parseColor("#1E293B"); // default dark slate
+        int bgColor = android.graphics.Color.parseColor("#E2E8F0");
+        int textColor = android.graphics.Color.parseColor("#1E293B");
 
         if ("PENDING".equalsIgnoreCase(status)) {
             bgColor = android.graphics.Color.parseColor("#FEF3C7");
@@ -94,14 +103,12 @@ public class VolunteerMissionHistoryFullAdapter
         holder.binding.cardMissionStatusBadge.setCardBackgroundColor(bgColor);
         holder.binding.tvMissionStatus.setTextColor(textColor);
 
-        // Photo visibility
+        // Photo
         String photoUrl = item.getImageUrl() != null ? item.getImageUrl() : item.getConfirmationImageUrl();
         if (photoUrl != null && !photoUrl.trim().isEmpty()) {
             holder.binding.ivMissionPhoto.setVisibility(android.view.View.VISIBLE);
             Glide.with(holder.binding.ivMissionPhoto)
                     .load(photoUrl)
-                    .placeholder(android.R.drawable.ic_menu_gallery)
-                    .error(android.R.drawable.ic_menu_report_image)
                     .centerCrop()
                     .into(holder.binding.ivMissionPhoto);
         } else {
@@ -134,6 +141,7 @@ public class VolunteerMissionHistoryFullAdapter
             this.binding = binding;
         }
     }
+
     private String formatToVnTime(String isoString) {
         if (isoString == null || isoString.trim().isEmpty()) return "--";
         try {

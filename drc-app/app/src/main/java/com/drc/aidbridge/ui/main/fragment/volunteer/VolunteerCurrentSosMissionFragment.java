@@ -57,6 +57,10 @@ public class VolunteerCurrentSosMissionFragment extends BaseFragment<FragmentVol
             if (result != null && result.isSuccess()) {
                 com.drc.aidbridge.data.remote.dto.response.volunteer.MissionHistoryFullItemDto data = result.getData();
                 if (data != null) {
+                    String codeName = data.getCodeName();
+                    binding.tvMissionCodeValue.setText(
+                            (codeName == null || codeName.trim().isEmpty()) ? "Ma nhiem vu: N/A" : "Ma nhiem vu: " + codeName.trim()
+                    );
                     if (data.getVictimLat() != null && data.getVictimLng() != null) {
                         binding.tvVictimLocation.setText(String.format("Tọa độ: %.6f, %.6f", data.getVictimLat(), data.getVictimLng()));
                     } else if (data.getSosRequestDetail() != null && data.getSosRequestDetail().getLat() != null) {

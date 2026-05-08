@@ -29,6 +29,7 @@ public class GetCurrentMissionUseCase {
                         .aidRequestId(projection.getAidRequestId())
                         .volunteerId(projection.getVolunteerId())
                         .hubId(projection.getHubId())
+                        .codeName(projection.getCodeName())
                         .missionType(projection.getMissionType())
                         .status(projection.getStatus())
                         .qrCodeToken(projection.getQrCodeToken())

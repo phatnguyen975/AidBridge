@@ -238,6 +238,16 @@
                         android:textSize="@dimen/volunteer_sos_acceptance_mission_title_size"
                         android:textStyle="bold" />
 
+                    <TextView
+                        android:id="@+id/tvMissionCodeValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="N/A"
+                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                        android:textSize="@dimen/text_sm"
+                        android:textStyle="bold" />
+
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardVictimInfo"
                         android:layout_width="match_parent"

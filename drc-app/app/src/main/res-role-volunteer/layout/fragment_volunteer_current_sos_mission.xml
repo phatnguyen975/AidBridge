@@ -175,6 +175,16 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvMissionCodeValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="N/A"
+                        android:textColor="@color/volunteer_acceptance_text_secondary"
+                        android:textSize="@dimen/text_sm"
+                        android:textStyle="bold" />
+
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_xs"

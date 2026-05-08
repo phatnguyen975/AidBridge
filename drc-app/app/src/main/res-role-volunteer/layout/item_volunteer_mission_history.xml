@@ -40,7 +40,6 @@
                     android:id="@+id/ivMissionCategoryIcon"
                     android:layout_width="@dimen/volunteer_mission_history_badge_icon_size"
                     android:layout_height="@dimen/volunteer_mission_history_badge_icon_size"
-                    android:contentDescription="@string/volunteer_mission_history_category_icon_content_desc"
                     android:src="@android:drawable/ic_dialog_alert"
                     android:tint="@color/white" />
 
@@ -50,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/spacing_xs"
                     android:fontFamily="sans-serif-medium"
-                    android:text="@string/volunteer_mission_history_category_emergency"
+                    android:text="RESCUE"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="@dimen/volunteer_mission_history_badge_text_size" />
@@ -76,32 +75,44 @@
                 android:paddingEnd="@dimen/spacing_sm"
                 android:paddingBottom="@dimen/spacing_xs"
                 android:fontFamily="sans-serif-medium"
-                android:text="ASSIGNED"
+                android:text="CANCELLED"
                 android:textAllCaps="true"
                 android:textColor="#1D4ED8"
                 android:textSize="@dimen/volunteer_mission_history_badge_text_size" />
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Đưa Mã Nhiệm Vụ lên làm Header -->
         <TextView
-            android:id="@+id/tvMissionLocation"
+            android:id="@+id/tvMissionCodeName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm"
-            android:fontFamily="sans-serif"
-            android:text="@string/volunteer_mission_history_location_placeholder"
+            android:text="MÃ: MISSION-ID-123"
             android:textColor="@color/white"
-            android:textSize="@dimen/volunteer_mission_history_location_text_size"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cardMissionCategoryBadge" />
 
         <TextView
+            android:id="@+id/tvMissionLocation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Địa chỉ: --"
+            android:textColor="#E2E8F0"
+            android:textSize="@dimen/volunteer_mission_history_location_text_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvMissionCodeName" />
+
+        <TextView
             android:id="@+id/tvMissionDateTime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:text="@string/volunteer_mission_history_datetime_placeholder"
+            android:layout_marginTop="2dp"
+            android:text="Thời gian: --"
             android:textColor="#E2E8F0"
             android:textSize="@dimen/volunteer_mission_history_datetime_text_size"
             app:layout_constraintEnd_toEndOf="parent"
@@ -112,8 +123,8 @@
             android:id="@+id/tvMissionRadius"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:text="Bán kính điều phối: --"
+            android:layout_marginTop="2dp"
+            android:text="Bán kính: --"
             android:textColor="#E2E8F0"
             android:textSize="@dimen/volunteer_mission_history_datetime_text_size"
             app:layout_constraintEnd_toEndOf="parent"
@@ -125,9 +136,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/spacing_sm"
-            android:contentDescription="@string/volunteer_mission_history_photo_content_desc"
             android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_gallery"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="16:9"
             app:layout_constraintEnd_toEndOf="parent"
@@ -136,5 +146,4 @@
             app:shapeAppearance="?attr/shapeAppearanceMediumComponent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </com.google.android.material.card.MaterialCardView>

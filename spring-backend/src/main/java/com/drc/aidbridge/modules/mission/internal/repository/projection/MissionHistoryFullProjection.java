@@ -13,6 +13,7 @@ public interface MissionHistoryFullProjection extends MissionHistoryProjection {
     UUID getAidRequestId();
     UUID getVolunteerId();
     UUID getHubId();
+    String getCodeName();
     MissionStatus getStatus();
     String getQrCodeToken();
     BigDecimal getPriorityScore();

@@ -22,6 +22,10 @@ public class MissionHistoryFullItemDto {
     @SerializedName("hubId")
     private String hubId;
 
+    @Nullable
+    @SerializedName("codeName")
+    private String codeName;
+
     @SerializedName("missionType")
     private String missionType;
 
@@ -103,6 +107,7 @@ public class MissionHistoryFullItemDto {
     @Nullable public String getAidRequestId() { return aidRequestId; }
     public String getVolunteerId() { return volunteerId; }
     @Nullable public String getHubId() { return hubId; }
+    @Nullable public String getCodeName() { return codeName; }
     public String getMissionType() { return missionType; }
     public String getStatus() { return status; }
     @Nullable public String getQrCodeToken() { return qrCodeToken; }

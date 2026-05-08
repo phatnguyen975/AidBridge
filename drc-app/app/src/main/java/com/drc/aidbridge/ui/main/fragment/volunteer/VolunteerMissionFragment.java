@@ -3,13 +3,16 @@ package com.drc.aidbridge.ui.main.fragment.volunteer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import com.drc.aidbridge.data.remote.dto.response.volunteer.LatestDispatchDataDto;
 import com.drc.aidbridge.R;
 import com.drc.aidbridge.databinding.FragmentVolunteerMissionBinding;
-import com.drc.aidbridge.domain.model.VolunteerMission;
 import com.drc.aidbridge.ui.base.BaseFragment;
 import com.drc.aidbridge.ui.main.viewmodel.volunteer.VolunteerTaskViewModel;
 
@@ -152,7 +155,6 @@ public class VolunteerMissionFragment extends BaseFragment<FragmentVolunteerMiss
                     binding.tvMissionPlaceholder.setVisibility(View.GONE);
                     binding.tvMissionRouterHint.setVisibility(View.GONE);
 
-                    // Toggle pagination state
                     binding.btnPrevPage.setEnabled(currentPage > 1);
                     binding.btnNextPage.setEnabled(data.getItems().size() >= PAGE_LIMIT);
                 } else {
@@ -181,6 +183,11 @@ public class VolunteerMissionFragment extends BaseFragment<FragmentVolunteerMiss
                     currentMissionId = data.getId() != null ? data.getId().toString() : null;
                     binding.cardCurrentMission.setVisibility(View.VISIBLE);
                     binding.tvCurrentMissionType.setText("Loại: " + ("RESCUE".equalsIgnoreCase(data.getMissionType()) ? "Cứu trợ khẩn cấp (SOS)" : "Tiếp tế hàng hóa"));
+                    
+                    // Hiển thị Mã Nhiệm Vụ
+                    String code = data.getCodeName();
+                    binding.tvCurrentMissionCodeName.setText("Mã nhiệm vụ: " + ((code != null && !code.trim().isEmpty()) ? code.trim() : "N/A"));
+                    
                     binding.tvCurrentMissionAddress.setText("Địa chỉ: " + (data.getAddress() != null ? data.getAddress() : "N/A"));
                     
                     if (data.getVictimLat() != null && data.getVictimLng() != null) {
@@ -266,7 +273,6 @@ public class VolunteerMissionFragment extends BaseFragment<FragmentVolunteerMiss
                 binding.cardSosAlert.setVisibility(View.GONE);
                 android.widget.Toast.makeText(requireContext(), "Đã nhận tín hiệu SOS thành công.", android.widget.Toast.LENGTH_SHORT).show();
                 
-                // Tự động load lại dữ liệu để hiển thị nhiệm vụ hiện tại và cập nhật lịch sử
                 volunteerTaskViewModel.fetchCurrentMission();
                 volunteerTaskViewModel.fetchMissionHistoryFull(currentPage, PAGE_LIMIT);
             } else if (result != null && result.isError()) {
@@ -282,31 +288,13 @@ public class VolunteerMissionFragment extends BaseFragment<FragmentVolunteerMiss
         volunteerTaskViewModel.fetchMissionHistoryFull(currentPage, PAGE_LIMIT);
     }
 
-    private void routeByActionIfNeeded(int actionId) {
-        if (lastRoutedId != null && lastRoutedId == actionId) {
-            return;
-        }
-
-        lastRoutedId = actionId;
-        navigateSafely(actionId);
-    }
-
-    private void routeByDestinationIfNeeded(int destinationId) {
-        if (lastRoutedId != null && lastRoutedId == destinationId) {
-            return;
-        }
-
-        lastRoutedId = destinationId;
-        navigateToDestinationSafely(destinationId);
-    }
-
     private void startGlowAnimation() {
         if (strokeAnimator != null && strokeAnimator.isRunning()) return;
         
         binding.cardSosAlert.setStrokeWidth((int) (3 * getResources().getDisplayMetrics().density));
         
-        int colorStart = android.graphics.Color.parseColor("#B91C1C"); // Light Red
-        int colorEnd = android.graphics.Color.parseColor("#fc81a2");   // Dark Red
+        int colorStart = android.graphics.Color.parseColor("#B91C1C"); 
+        int colorEnd = android.graphics.Color.parseColor("#fc81a2");
 
         strokeAnimator = android.animation.ValueAnimator.ofObject(new android.animation.ArgbEvaluator(), colorStart, colorEnd);
         strokeAnimator.setDuration(800);
@@ -340,79 +328,85 @@ public class VolunteerMissionFragment extends BaseFragment<FragmentVolunteerMiss
     }
 
     private void showMissionDetailPopup(com.drc.aidbridge.data.remote.dto.response.volunteer.MissionHistoryFullItemDto item) {
-        android.view.View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_mission_full_detail, null);
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_mission_full_detail, null);
         
-        android.widget.TextView tvType = dialogView.findViewById(R.id.tvDetailType);
-        android.widget.TextView tvStatus = dialogView.findViewById(R.id.tvDetailStatus);
-        android.widget.TextView tvAddress = dialogView.findViewById(R.id.tvDetailAddress);
-        android.widget.TextView tvRadius = dialogView.findViewById(R.id.tvDetailRadius);
-        android.widget.TextView tvDescription = dialogView.findViewById(R.id.tvDetailDescription);
-        android.widget.TextView tvAcceptedAt = dialogView.findViewById(R.id.tvDetailAcceptedAt);
-        android.widget.TextView tvPickedUpAt = dialogView.findViewById(R.id.tvDetailPickedUpAt);
-        android.widget.TextView tvCompletedAt = dialogView.findViewById(R.id.tvDetailCompletedAt);
-        android.widget.TextView tvCancelledAt = dialogView.findViewById(R.id.tvDetailCancelledAt);
-        android.widget.TextView tvCancelReason = dialogView.findViewById(R.id.tvDetailCancelReason);
-        android.widget.TextView tvPriority = dialogView.findViewById(R.id.tvDetailPriority);
-        android.widget.TextView tvComment = dialogView.findViewById(R.id.tvDetailComment);
-        android.widget.ImageView ivPhoto = dialogView.findViewById(R.id.ivDetailPhoto);
-        android.widget.Button btnClose = dialogView.findViewById(R.id.btnDetailClose);
+        TextView tvType = dialogView.findViewById(R.id.tvDetailType);
+        TextView tvStatus = dialogView.findViewById(R.id.tvDetailStatus);
+        TextView tvCodeName = dialogView.findViewById(R.id.tvDetailCodeName);
+        TextView tvAddress = dialogView.findViewById(R.id.tvDetailAddress);
+        TextView tvRadius = dialogView.findViewById(R.id.tvDetailRadius);
+        TextView tvDescription = dialogView.findViewById(R.id.tvDetailDescription);
+        TextView tvAcceptedAt = dialogView.findViewById(R.id.tvDetailAcceptedAt);
+        TextView tvPickedUpAt = dialogView.findViewById(R.id.tvDetailPickedUpAt);
+        TextView tvCompletedAt = dialogView.findViewById(R.id.tvDetailCompletedAt);
+        TextView tvCancelledAt = dialogView.findViewById(R.id.tvDetailCancelledAt);
+        TextView tvCancelReason = dialogView.findViewById(R.id.tvDetailCancelReason);
+        TextView tvPriority = dialogView.findViewById(R.id.tvDetailPriority);
+        TextView tvComment = dialogView.findViewById(R.id.tvDetailComment);
+        ImageView ivPhoto = dialogView.findViewById(R.id.ivDetailPhoto);
+        Button btnClose = dialogView.findViewById(R.id.btnDetailClose);
 
-        tvType.setText("Loại nhiệm vụ: " + (item.getMissionType() != null ? item.getMissionType() : "--"));
-        tvStatus.setText("Trạng thái: " + (item.getStatus() != null ? item.getStatus() : "--"));
-        tvAddress.setText("Địa chỉ: " + (item.getAddress() != null ? item.getAddress() : "--"));
-        tvRadius.setText("Bán kính điều phối: " + (item.getRadiusKm() != null ? String.format(java.util.Locale.getDefault(), "%.2f km", item.getRadiusKm()) : "--"));
-        tvDescription.setText("Mô tả: " + (item.getDescription() != null ? item.getDescription() : "--"));
-        tvAcceptedAt.setText("Thời gian nhận: " + formatToVnTime(item.getAcceptedAt()));
-        tvPickedUpAt.setText("Thời gian lấy hàng: " + formatToVnTime(item.getPickedUpAt()));
-        tvCompletedAt.setText("Thời gian hoàn thành: " + formatToVnTime(item.getCompletedAt()));
-        tvCancelledAt.setText("Thời gian hủy: " + formatToVnTime(item.getCancelledAt()));
-        tvCancelReason.setText("Lý do hủy: " + (item.getCancellationReason() != null ? item.getCancellationReason() : "--"));
-        tvPriority.setText("Điểm ưu tiên: " + (item.getPriorityScore() != null ? String.valueOf(item.getPriorityScore()) : "--"));
-        tvComment.setText("Ghi chú: " + (item.getComment() != null ? item.getComment() : "--"));
+        if (tvType != null) tvType.setText("Loại: " + (item.getMissionType() != null ? item.getMissionType() : "--"));
+        if (tvStatus != null) tvStatus.setText("Trạng thái: " + (item.getStatus() != null ? item.getStatus() : "--"));
+        if (tvCodeName != null) {
+            String code = item.getCodeName();
+            tvCodeName.setText("Mã nhiệm vụ: " + ((code != null && !code.trim().isEmpty()) ? code.trim() : "N/A"));
+        }
+        if (tvAddress != null) tvAddress.setText("Địa chỉ: " + (item.getAddress() != null ? item.getAddress() : "--"));
+        if (tvRadius != null) tvRadius.setText("Bán kính điều phối: " + (item.getRadiusKm() != null ? String.format(java.util.Locale.getDefault(), "%.2f km", item.getRadiusKm()) : "--"));
+        if (tvDescription != null) tvDescription.setText("Mô tả: " + (item.getDescription() != null ? item.getDescription() : "--"));
+        if (tvAcceptedAt != null) tvAcceptedAt.setText("Thời gian nhận: " + formatToVnTime(item.getAcceptedAt()));
+        if (tvPickedUpAt != null) tvPickedUpAt.setText("Thời gian lấy hàng: " + formatToVnTime(item.getPickedUpAt()));
+        if (tvCompletedAt != null) tvCompletedAt.setText("Thời gian hoàn thành: " + formatToVnTime(item.getCompletedAt()));
+        if (tvCancelledAt != null) tvCancelledAt.setText("Thời gian hủy: " + formatToVnTime(item.getCancelledAt()));
+        if (tvCancelReason != null) tvCancelReason.setText("Lý do hủy: " + (item.getCancellationReason() != null ? item.getCancellationReason() : "--"));
+        if (tvPriority != null) tvPriority.setText("Điểm ưu tiên: " + (item.getPriorityScore() != null ? String.valueOf(item.getPriorityScore()) : "--"));
+        if (tvComment != null) tvComment.setText("Ghi chú: " + (item.getComment() != null ? item.getComment() : "--"));
 
-        android.widget.TextView tvRequestHeader = dialogView.findViewById(R.id.tvRequestDetailHeader);
-        android.widget.TextView tvRequestDesc = dialogView.findViewById(R.id.tvRequestDetailDesc);
-        android.widget.TextView tvRequestUrgency = dialogView.findViewById(R.id.tvRequestDetailUrgency);
-        android.widget.TextView tvRequestPeopleCount = dialogView.findViewById(R.id.tvRequestDetailPeopleCount);
-        android.widget.TextView tvRequestItems = dialogView.findViewById(R.id.tvRequestDetailItems);
-        android.view.View cardRequestBlock = dialogView.findViewById(R.id.cardRequestDetailBlock);
+        TextView tvRequestHeader = dialogView.findViewById(R.id.tvRequestDetailHeader);
+        TextView tvRequestDesc = dialogView.findViewById(R.id.tvRequestDetailDesc);
+        TextView tvRequestUrgency = dialogView.findViewById(R.id.tvRequestDetailUrgency);
+        TextView tvRequestPeopleCount = dialogView.findViewById(R.id.tvRequestDetailPeopleCount);
+        TextView tvRequestItems = dialogView.findViewById(R.id.tvRequestDetailItems);
+        View cardRequestBlock = dialogView.findViewById(R.id.cardRequestDetailBlock);
 
-        if ("RESCUE".equalsIgnoreCase(item.getMissionType()) && item.getSosRequestDetail() != null) {
-            cardRequestBlock.setVisibility(android.view.View.VISIBLE);
-            tvRequestHeader.setText("Chi tiết Cứu hộ SOS");
-            tvRequestDesc.setText("Mô tả: " + (item.getSosRequestDetail().getDescription() != null ? item.getSosRequestDetail().getDescription() : "--"));
-            tvRequestUrgency.setText("Độ khẩn cấp: " + (item.getSosRequestDetail().getUrgencyLevel() != null ? item.getSosRequestDetail().getUrgencyLevel() : "--"));
-            tvRequestPeopleCount.setText("Số lượng người: " + (item.getSosRequestDetail().getPeopleCount() != null ? item.getSosRequestDetail().getPeopleCount() : "--"));
-            tvRequestItems.setVisibility(android.view.View.GONE);
-        } else if (item.getAidRequestDetail() != null) {
-            cardRequestBlock.setVisibility(android.view.View.VISIBLE);
-            tvRequestHeader.setText("Chi tiết Cứu trợ Vật phẩm");
-            tvRequestDesc.setText("Mô tả: " + (item.getAidRequestDetail().getDescription() != null ? item.getAidRequestDetail().getDescription() : "--"));
-            tvRequestUrgency.setText("Trạng thái yêu cầu: " + (item.getAidRequestDetail().getStatus() != null ? item.getAidRequestDetail().getStatus() : "--"));
-            tvRequestPeopleCount.setText(String.format(java.util.Locale.getDefault(), "Người lớn: %d, Người già: %d, Trẻ em: %d", 
-                item.getAidRequestDetail().getNumberAdult() != null ? item.getAidRequestDetail().getNumberAdult() : 0,
-                item.getAidRequestDetail().getNumberElderly() != null ? item.getAidRequestDetail().getNumberElderly() : 0,
-                item.getAidRequestDetail().getNumberChildren() != null ? item.getAidRequestDetail().getNumberChildren() : 0));
-            tvRequestItems.setVisibility(android.view.View.GONE);
-        } else {
-            cardRequestBlock.setVisibility(android.view.View.GONE);
+        if (cardRequestBlock != null) {
+            if ("RESCUE".equalsIgnoreCase(item.getMissionType()) && item.getSosRequestDetail() != null) {
+                cardRequestBlock.setVisibility(View.VISIBLE);
+                if (tvRequestHeader != null) tvRequestHeader.setText("Chi tiết Cứu hộ SOS");
+                if (tvRequestDesc != null) tvRequestDesc.setText("Mô tả: " + (item.getSosRequestDetail().getDescription() != null ? item.getSosRequestDetail().getDescription() : "--"));
+                if (tvRequestUrgency != null) tvRequestUrgency.setText("Độ khẩn cấp: " + (item.getSosRequestDetail().getUrgencyLevel() != null ? item.getSosRequestDetail().getUrgencyLevel() : "--"));
+                if (tvRequestPeopleCount != null) tvRequestPeopleCount.setText("Số người: " + (item.getSosRequestDetail().getPeopleCount() != null ? item.getSosRequestDetail().getPeopleCount() : "--"));
+            } else if (item.getAidRequestDetail() != null) {
+                cardRequestBlock.setVisibility(View.VISIBLE);
+                if (tvRequestHeader != null) tvRequestHeader.setText("Chi tiết Cứu trợ Vật phẩm");
+                if (tvRequestDesc != null) tvRequestDesc.setText("Mô tả: " + (item.getAidRequestDetail().getDescription() != null ? item.getAidRequestDetail().getDescription() : "--"));
+                if (tvRequestPeopleCount != null) tvRequestPeopleCount.setText(String.format(java.util.Locale.getDefault(), "Người lớn: %d, Người già: %d, Trẻ em: %d", 
+                    item.getAidRequestDetail().getNumberAdult() != null ? item.getAidRequestDetail().getNumberAdult() : 0,
+                    item.getAidRequestDetail().getNumberElderly() != null ? item.getAidRequestDetail().getNumberElderly() : 0,
+                    item.getAidRequestDetail().getNumberChildren() != null ? item.getAidRequestDetail().getNumberChildren() : 0));
+            } else {
+                cardRequestBlock.setVisibility(View.GONE);
+            }
+            if (tvRequestItems != null) tvRequestItems.setVisibility(View.GONE);
         }
 
         String photoUrl = item.getImageUrl() != null ? item.getImageUrl() : item.getConfirmationImageUrl();
-        if (photoUrl != null && !photoUrl.trim().isEmpty()) {
-            ivPhoto.setVisibility(android.view.View.VISIBLE);
+        if (photoUrl != null && !photoUrl.trim().isEmpty() && ivPhoto != null) {
+            ivPhoto.setVisibility(View.VISIBLE);
             com.bumptech.glide.Glide.with(this).load(photoUrl).into(ivPhoto);
-        } else {
-            ivPhoto.setVisibility(android.view.View.GONE);
+        } else if (ivPhoto != null) {
+            ivPhoto.setVisibility(View.GONE);
         }
 
         androidx.appcompat.app.AlertDialog dialog = new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
                 .setView(dialogView)
                 .create();
 
-        btnClose.setOnClickListener(v -> dialog.dismiss());
+        if (btnClose != null) btnClose.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
     }
+
     private String formatToVnTime(String isoString) {
         if (isoString == null || isoString.trim().isEmpty()) return "--";
         try {

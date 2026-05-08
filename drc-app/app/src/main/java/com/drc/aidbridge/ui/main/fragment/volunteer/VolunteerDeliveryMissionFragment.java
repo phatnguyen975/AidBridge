@@ -45,6 +45,7 @@ public class VolunteerDeliveryMissionFragment extends BaseFragment<FragmentVolun
         volunteerTaskViewModel = new ViewModelProvider(requireActivity()).get(VolunteerTaskViewModel.class);
         initUiReferences();
         setupClickListeners();
+        volunteerTaskViewModel.fetchCurrentMission();
 
         Integer initialStep = volunteerTaskViewModel.getCurrentDeliveryStep().getValue();
         updateUIByStep(initialStep == null ? 1 : initialStep);
@@ -71,6 +72,17 @@ public class VolunteerDeliveryMissionFragment extends BaseFragment<FragmentVolun
         volunteerTaskViewModel.getCurrentDeliveryStep().observe(getViewLifecycleOwner(), step -> {
             int currentValue = step == null ? 1 : step;
             updateUIByStep(currentValue);
+        });
+
+        volunteerTaskViewModel.getCurrentMissionResult().observe(getViewLifecycleOwner(), result -> {
+            if (result != null && result.isSuccess() && result.getData() != null) {
+                String codeName = result.getData().getCodeName();
+                if (codeName == null || codeName.trim().isEmpty()) {
+                    binding.tvDeliveryOrderCode.setText("Code: N/A");
+                } else {
+                    binding.tvDeliveryOrderCode.setText("Code: " + codeName.trim());
+                }
+            }
         });
     }
 
