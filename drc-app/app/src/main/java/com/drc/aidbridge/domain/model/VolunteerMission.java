@@ -11,6 +11,8 @@ public class VolunteerMission {
     private final String missionType;
     private final String status;
     @Nullable
+    private final String codeName;
+    @Nullable
     private final Double victimLat;
     @Nullable
     private final Double victimLng;
@@ -30,6 +32,7 @@ public class VolunteerMission {
     public VolunteerMission(String id,
                             String missionType,
                             String status,
+                            @Nullable String codeName,
                             @Nullable Double victimLat,
                             @Nullable Double victimLng,
                             @Nullable BigDecimal priorityScore,
@@ -41,6 +44,7 @@ public class VolunteerMission {
         this.id = id;
         this.missionType = missionType;
         this.status = status;
+        this.codeName = codeName;
         this.victimLat = victimLat;
         this.victimLng = victimLng;
         this.priorityScore = priorityScore;
@@ -61,6 +65,11 @@ public class VolunteerMission {
 
     public String getStatus() {
         return status;
+    }
+
+    @Nullable
+    public String getCodeName() {
+        return codeName;
     }
 
     @Nullable
@@ -108,6 +117,7 @@ public class VolunteerMission {
                 id,
                 missionType,
                 status,
+                codeName,
                 victimLat,
                 victimLng,
                 priorityScore,

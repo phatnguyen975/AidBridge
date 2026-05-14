@@ -67,6 +67,15 @@ public class AcceptMissionUseCase {
         mission.setAcceptedAt(Instant.now());
 
         Mission saved = missionRepository.save(mission);
+        
+        // Cập nhật tất cả các dispatch attempts khác của mission này thành TIMEOUT
+        dispatchAttemptRepository.markOtherAttemptsAsTimeout(
+                missionId, 
+                volunteerId, 
+                DispatchResponse.TIMEOUT, 
+                DispatchResponse.PENDING, 
+                Instant.now());
+
         missionCache.invalidateMissionCache(missionId);
 
         UserDTO volunteer = resolveVolunteer(saved.getVolunteerId());

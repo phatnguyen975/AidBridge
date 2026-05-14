@@ -26,6 +26,7 @@ public class MissionMapper implements BaseMapper<MissionDto, VolunteerMission> {
                 dto.getId(),
                 dto.getMissionType(),
                 dto.getStatus(),
+                dto.getCodeName(),
                 dto.getVictimLat(),
                 dto.getVictimLng(),
                 dto.getPriorityScore(),

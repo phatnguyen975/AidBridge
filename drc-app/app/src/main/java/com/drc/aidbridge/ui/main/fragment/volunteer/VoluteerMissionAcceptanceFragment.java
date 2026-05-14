@@ -195,6 +195,7 @@ public class VoluteerMissionAcceptanceFragment extends BaseFragment<FragmentVolu
         }
 
         String missionType = mission.getMissionType();
+        binding.tvMissionCodeValue.setText(resolveCodeName(mission.getCodeName()));
         binding.tvVictimValue.setText(
                 isDeliveryMissionType(missionType)
                         ? getString(R.string.volunteer_mission_acceptance_delivery_subject)
@@ -355,6 +356,13 @@ public class VoluteerMissionAcceptanceFragment extends BaseFragment<FragmentVolu
                 mission.getVictimLat(),
                 mission.getVictimLng()
         );
+    }
+
+    private String resolveCodeName(@Nullable String codeName) {
+        if (codeName == null || codeName.trim().isEmpty()) {
+            return "Ma nhiem vu: N/A";
+        }
+        return "Ma nhiem vu: " + codeName.trim();
     }
 
     public static boolean isDeliveryMissionType(@Nullable String missionType) {

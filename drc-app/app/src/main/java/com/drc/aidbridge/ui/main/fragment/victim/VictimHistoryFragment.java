@@ -22,8 +22,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBinding> {
 
-    private static final String DETAIL_SHEET_TAG = "VictimHistoryDetailBottomSheet";
-
     private VictimHistoryViewModel viewModel;
     private VictimHistoryAdapter adapter;
     private int baseRecyclerBottomPadding;
@@ -32,7 +30,6 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private boolean isOfflineData = false;
-    private boolean isDetailLoading = false;
     private boolean showRefreshSuccessNotice = false;
 
     @Override
@@ -59,7 +56,6 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
     @Override
     protected void observeViewModel() {
         viewModel.getHistoryResult().observe(getViewLifecycleOwner(), this::handleHistoryResult);
-        viewModel.getHistoryDetailResult().observe(getViewLifecycleOwner(), this::handleHistoryDetailResult);
     }
 
     private void setupToolbar() {
@@ -67,12 +63,7 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
     }
 
     private void setupRecyclerView() {
-        adapter = new VictimHistoryAdapter(model -> {
-            if (isDetailLoading) {
-                return;
-            }
-            viewModel.loadDetail(model);
-        });
+        adapter = new VictimHistoryAdapter();
 
         binding.rvHistory.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvHistory.setAdapter(adapter);
@@ -193,48 +184,6 @@ public class VictimHistoryFragment extends BaseFragment<FragmentVictimHistoryBin
         }
 
         renderEmptyState(adapter.getItemCount() == 0);
-    }
-
-    private void handleHistoryDetailResult(
-        NetworkResultWrapper<VictimHistoryViewModel.HistoryDetailUiModel> result
-    ) {
-        if (result == null) {
-            return;
-        }
-
-        if (result.isLoading()) {
-            isDetailLoading = true;
-            return;
-        }
-
-        if (result.hasBeenHandled()) {
-            return;
-        }
-
-        result.markAsHandled();
-        isDetailLoading = false;
-
-        if (result.isError()) {
-            String message = result.getMessage();
-            showTopSnackbar(
-                binding.getRoot(),
-                message != null && !message.trim().isEmpty()
-                    ? message.trim()
-                    : getString(R.string.victim_history_detail_load_error),
-                true
-            );
-            return;
-        }
-
-        VictimHistoryViewModel.HistoryDetailUiModel detail = result.getData();
-        if (detail == null) {
-            showTopSnackbar(binding.getRoot(), getString(R.string.victim_history_detail_empty_error), true);
-            return;
-        }
-
-        VictimHistoryDetailBottomSheet
-            .newInstance(detail)
-            .show(getParentFragmentManager(), DETAIL_SHEET_TAG);
     }
 
     private void updatePaginationLoading(boolean show) {
