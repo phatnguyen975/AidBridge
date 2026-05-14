@@ -199,6 +199,7 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
 
         @Query(value = "SELECT " +
                         "m.*, " +
+                        "m.code_name AS \"codeName\", " +
                         "ST_Y(CAST(m.victim_location AS geometry)) AS \"victimLat\", " +
                         "ST_X(CAST(m.victim_location AS geometry)) AS \"victimLng\", " +
                         "CAST(m.mission_type AS text) AS \"missionType\", " +
@@ -225,6 +226,7 @@ public interface MissionJpaRepository extends JpaRepository<Mission, UUID> {
 
         @Query(value = "SELECT " +
                         "m.*, " +
+                        "m.code_name AS \"codeName\", " +
                         "ST_Y(CAST(m.victim_location AS geometry)) AS \"victimLat\", " +
                         "ST_X(CAST(m.victim_location AS geometry)) AS \"victimLng\", " +
                         "CAST(m.mission_type AS text) AS \"missionType\", " +

@@ -17,6 +17,10 @@ public class MissionDto {
     @SerializedName("status")
     private String status;
 
+    @Nullable
+    @SerializedName("codeName")
+    private String codeName;
+
     @SerializedName("victimLat")
     private Double victimLat;
 
@@ -44,6 +48,11 @@ public class MissionDto {
 
     public String getStatus() {
         return status;
+    }
+
+    @Nullable
+    public String getCodeName() {
+        return codeName;
     }
 
     public Double getVictimLat() {

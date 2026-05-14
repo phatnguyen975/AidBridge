@@ -114,11 +114,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xs"
-                android:text="Loại: --"
+                android:text="Loai: --"
                 android:textColor="#2E7D32"
                 android:textSize="@dimen/text_sm"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvCurrentMissionTitle" />
+
+            <TextView
+                android:id="@+id/tvCurrentMissionCodeName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:text="Ma nhiem vu: N/A"
+                android:textColor="#2E7D32"
+                android:textSize="@dimen/text_sm"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCurrentMissionType" />
 
             <TextView
                 android:id="@+id/tvCurrentMissionAddress"
@@ -130,7 +141,7 @@
                 android:textSize="@dimen/text_sm"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvCurrentMissionType" />
+                app:layout_constraintTop_toBottomOf="@id/tvCurrentMissionCodeName" />
 
             <TextView
                 android:id="@+id/tvCurrentMissionLocation"
@@ -283,3 +294,5 @@
         app:layout_constraintTop_toBottomOf="@id/tvMissionPlaceholder" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+

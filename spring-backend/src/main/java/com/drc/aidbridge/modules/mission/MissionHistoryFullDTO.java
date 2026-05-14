@@ -24,6 +24,7 @@ public class MissionHistoryFullDTO {
     private UUID aidRequestId;
     private UUID volunteerId;
     private UUID hubId;
+    private String codeName;
     private String missionType;
     private MissionStatus status;
     private String qrCodeToken;

@@ -75,4 +75,14 @@ public interface DispatchAttemptJpaRepository extends JpaRepository<DispatchAtte
          */
         @Query("SELECT COALESCE(MAX(da.batchNumber), 0) + 1 FROM DispatchAttempt da WHERE da.missionId = :missionId")
         Integer getNextBatchNumber(@Param("missionId") UUID missionId);
+
+        @org.springframework.data.jpa.repository.Modifying(clearAutomatically = true, flushAutomatically = true)
+        @org.springframework.transaction.annotation.Transactional
+        @Query("UPDATE DispatchAttempt da SET da.response = :timeout, da.respondedAt = :now " +
+               "WHERE da.missionId = :missionId AND da.volunteerId <> :volunteerId AND da.response = :pending")
+        void markOtherAttemptsAsTimeout(@Param("missionId") UUID missionId,
+                                        @Param("volunteerId") UUID volunteerId,
+                                        @Param("timeout") DispatchResponse timeout,
+                                        @Param("pending") DispatchResponse pending,
+                                        @Param("now") Instant now);
 }
