@@ -9,8 +9,23 @@ spring:
       url: your_redis_url
 
   mail:
+    host: smtp.your_email_provider.com
+    port: 587
     username: your_email_username
     password: your_email_app_password
+
+    properties:
+      mail:
+        smtp:
+          auth: true
+
+          starttls:
+            enable: true
+            required: true
+
+          ssl:
+            trust: smtp.your_email_provider.com
+            protocols: TLSv1.2
 
 jwt:
   rsa:
